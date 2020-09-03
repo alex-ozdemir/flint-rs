@@ -2,15 +2,17 @@
 
 use gmp_mpfr_sys::{gmp, mpfr};
 use libc::{c_char, c_double, c_int, c_long, c_ulong, FILE};
+use std::mem::{MaybeUninit, size_of};
 
 //include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 #[repr(C)]
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Clone, Copy)]
 pub struct fmpz(slong);
 
-type slong = c_long;
-type ulong = c_ulong;
-type mp_limb_t = c_ulong;
+pub type slong = c_long;
+const FLINT_BITS: usize = size_of::<slong>() * 8;
+pub type ulong = c_ulong;
+pub type mp_limb_t = c_ulong;
 
 #[repr(C)]
 pub struct fmpz_mod_poly {
@@ -34,6 +36,36 @@ pub struct flint_rand {
     randval: ulong,
     randval2: ulong,
 }
+
+/// Convert a gmp integer point to a fmpz.
+/// Takes ownership of the pointer given.
+#[inline]
+pub unsafe fn gmp_to_flint(gmp: *const gmp::mpz_t) -> fmpz {
+    let addr = gmp as ulong;
+    fmpz(((addr >> 2) | 1 << (FLINT_BITS - 2)) as slong)
+}
+
+pub unsafe fn fmpz_as_ptr(n: fmpz) -> Result<*mut gmp::mpz_t, slong> {
+    if (n.0 >> (FLINT_BITS - 2)) & 1 == 0 {
+        Err(n.0)
+    } else {
+        Ok((n.0 << 2) as *mut gmp::mpz_t)
+    }
+}
+
+
+pub unsafe fn flint_to_gmp(flint: fmpz) -> *const gmp::mpz_t {
+    fmpz_as_ptr(flint).unwrap_or_else(|v| {
+        let mut n = MaybeUninit::uninit();
+        gmp::mpz_init(n.as_mut_ptr());
+        let mut n = n.assume_init();
+        gmp::mpz_set_si(&mut n, v);
+        Box::into_raw(Box::new(n))
+    })
+}
+
+pub const COEFF_MAX: slong = ((1 as slong) << (FLINT_BITS - 2)) - 1;
+pub const COEFF_MIN: slong = -(((1 as slong) << (FLINT_BITS - 2)) - 1);
 
 extern "C" {
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz.html#c.fmpz_init) for this function.
