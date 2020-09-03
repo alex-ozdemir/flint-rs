@@ -12,6 +12,7 @@ pub struct ModPoly {
 }
 
 impl ModPoly {
+    /// A new polynomial, equal to zero.
     pub fn new(modulus: Integer) -> Self {
         unsafe {
             let mut raw = MaybeUninit::uninit();
@@ -24,6 +25,28 @@ impl ModPoly {
         }
     }
 
+    /// A new polynomial, equal to zero, with room for `n` coefficients.
+    pub fn with_capacity(modulus: Integer, n: usize) -> Self {
+        unsafe {
+            let mut raw = MaybeUninit::uninit();
+            let flint_modulus = flint_sys::gmp_to_flint(modulus.as_raw());
+            flint_sys::fmpz_mod_poly_init2(raw.as_mut_ptr(), &flint_modulus, n as flint_sys::slong);
+            ModPoly {
+                raw: raw.assume_init(),
+                modulus,
+            }
+        }
+    }
+
+    /// Reallocates the polynomial to have room for `n` coefficients. Truncates the polynomial if
+    /// it has more than `n` coefficients.
+    pub fn reserve(&mut self, n: usize) {
+        unsafe {
+            flint_sys::fmpz_mod_poly_realloc(&mut self.raw, n as flint_sys::slong);
+        }
+    }
+
+    /// Get the modulus of this polynomial.
     pub fn modulus(&self) -> &Integer {
         &self.modulus
     }
