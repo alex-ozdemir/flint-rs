@@ -192,6 +192,12 @@ impl Clone for ModPoly {
     }
 }
 
+impl Drop for ModPoly {
+    fn drop(&mut self) {
+        unsafe { flint_sys::fmpz_mod_poly_clear(&mut self.raw) }
+    }
+}
+
 impl PartialEq<ModPoly> for ModPoly {
     fn eq(&self, other: &ModPoly) -> bool {
         unsafe { flint_sys::fmpz_mod_poly_equal(&self.raw, &other.raw) != 0 }
