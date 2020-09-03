@@ -93,7 +93,7 @@ impl ModPoly {
 
     /// `self = self + other`
     pub fn add(&mut self, other: &Self) {
-        debug_assert_eq!(self.modulus, other.modulus);
+        assert_eq!(self.modulus, other.modulus);
         unsafe {
             flint_sys::fmpz_mod_poly_add(&mut self.raw, &self.raw, &other.raw);
         }
@@ -101,7 +101,7 @@ impl ModPoly {
 
     /// `self = self - other`
     pub fn sub(&mut self, other: &Self) {
-        debug_assert_eq!(self.modulus, other.modulus);
+        assert_eq!(self.modulus, other.modulus);
         unsafe {
             flint_sys::fmpz_mod_poly_sub(&mut self.raw, &self.raw, &other.raw);
         }
@@ -109,7 +109,7 @@ impl ModPoly {
 
     /// `self = other - self`
     pub fn sub_from(&mut self, other: &Self) {
-        debug_assert_eq!(self.modulus, other.modulus);
+        assert_eq!(self.modulus, other.modulus);
         unsafe {
             flint_sys::fmpz_mod_poly_sub(&mut self.raw, &other.raw, &self.raw);
         }
@@ -117,7 +117,7 @@ impl ModPoly {
 
     /// `self = self * other`
     pub fn mul(&mut self, other: &Self) {
-        debug_assert_eq!(self.modulus, other.modulus);
+        assert_eq!(self.modulus, other.modulus);
         unsafe {
             flint_sys::fmpz_mod_poly_mul(&mut self.raw, &self.raw, &other.raw);
         }
@@ -129,7 +129,7 @@ impl ModPoly {
     ///
     /// `(q, r)`
     pub fn divrem(&self, other: &Self) -> (ModPoly, ModPoly) {
-        debug_assert_eq!(self.modulus, other.modulus);
+        assert_eq!(self.modulus, other.modulus);
         let mut q = ModPoly::new(self.modulus.clone());
         let mut r = ModPoly::new(self.modulus.clone());
         unsafe {
@@ -140,7 +140,7 @@ impl ModPoly {
 
     /// `self = self / other`
     pub fn div(&mut self, other: &Self) {
-        debug_assert_eq!(self.modulus, other.modulus);
+        assert_eq!(self.modulus, other.modulus);
         let mut r = ModPoly::new(self.modulus.clone());
         unsafe {
             flint_sys::fmpz_mod_poly_divrem(&mut self.raw, &mut r.raw, &self.raw, &other.raw);
@@ -149,7 +149,7 @@ impl ModPoly {
 
     /// `self = other / self`
     pub fn div_from(&mut self, other: &Self) {
-        debug_assert_eq!(self.modulus, other.modulus);
+        assert_eq!(self.modulus, other.modulus);
         let mut r = ModPoly::new(self.modulus.clone());
         unsafe {
             flint_sys::fmpz_mod_poly_divrem(&mut self.raw, &mut r.raw, &other.raw, &self.raw);
@@ -158,7 +158,7 @@ impl ModPoly {
 
     /// `self = self % other`
     pub fn rem(&mut self, other: &Self) {
-        debug_assert_eq!(self.modulus, other.modulus);
+        assert_eq!(self.modulus, other.modulus);
         let mut q = ModPoly::new(self.modulus.clone());
         unsafe {
             flint_sys::fmpz_mod_poly_divrem(&mut q.raw, &mut self.raw, &self.raw, &other.raw);
@@ -167,7 +167,7 @@ impl ModPoly {
 
     /// `self = other % self`
     pub fn rem_from(&mut self, other: &Self) {
-        debug_assert_eq!(self.modulus, other.modulus);
+        assert_eq!(self.modulus, other.modulus);
         let mut q = ModPoly::new(self.modulus.clone());
         unsafe {
             flint_sys::fmpz_mod_poly_divrem(&mut q.raw, &mut self.raw, &other.raw, &self.raw);
