@@ -12,9 +12,6 @@ license = "MIT OR Apache-2.0"
 keywords = ["polynomials", "number-theory", "math"]
 categories = ["cryptography", "algorithms", "external-ffi-bindings"]
 readme = "README.md"
-exclude = [
-    "benches",
-]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
