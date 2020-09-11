@@ -28,23 +28,23 @@ fn check_ntt_params(xs: &[Integer], p: &Integer, w: &Integer) {
 /// use rug::Integer;
 /// use rug_fft::naive_ntt;
 ///
-/// let xs = vec![1, 4]
+/// let mut xs = vec![1, 4]
 ///     .into_iter()
 ///     .map(Integer::from)
 ///     .collect::<Vec<_>>();
 /// let p = Integer::from(7);
 /// let w = Integer::from(6);
-/// let ys = naive_ntt(&xs, &p, &w);
-/// let ys_ex = vec![5, 4]
+/// naive_ntt(&mut xs, &p, &w);
+/// let xs_ex = vec![5, 4]
 ///     .into_iter()
 ///     .map(Integer::from)
 ///     .collect::<Vec<_>>();
-/// assert_eq!(ys, ys_ex);
+/// assert_eq!(xs, xs_ex);
 /// ```
-pub fn naive_ntt(xs: &[Integer], p: &Integer, w: &Integer) -> Vec<Integer> {
+pub fn naive_ntt(xs: &mut [Integer], p: &Integer, w: &Integer) {
     check_ntt_params(xs, p, w);
     let n = xs.len();
-    (0..n)
+    let r = (0..n)
         .map(|i| {
             let wi = w.clone().pow_mod(&Integer::from(i), p).unwrap();
             // Horner
@@ -56,7 +56,10 @@ pub fn naive_ntt(xs: &[Integer], p: &Integer, w: &Integer) -> Vec<Integer> {
             }
             acc
         })
-        .collect()
+        .collect::<Vec<_>>();
+    for (i, ii) in r.into_iter().enumerate() {
+        xs[i] = ii;
+    }
 }
 
 /// Computes, for `i` in `0..n`, `x_i` such that `y_i = sum_{j=0}^{n-1} w^{ij}*x_j`, modulo `p`.
@@ -67,27 +70,30 @@ pub fn naive_ntt(xs: &[Integer], p: &Integer, w: &Integer) -> Vec<Integer> {
 /// use rug::Integer;
 /// use rug_fft::naive_intt;
 ///
-/// let xs = vec![5, 4]
+/// let mut xs = vec![5, 4]
 ///     .into_iter()
 ///     .map(Integer::from)
 ///     .collect::<Vec<_>>();
 /// let p = Integer::from(7);
 /// let w = Integer::from(6);
-/// let ys = naive_intt(&xs, &p, &w);
-/// let ys_ex = vec![1, 4]
+/// naive_intt(&mut xs, &p, &w);
+/// let xs_ex = vec![1, 4]
 ///     .into_iter()
 ///     .map(Integer::from)
 ///     .collect::<Vec<_>>();
-/// assert_eq!(ys, ys_ex);
+/// assert_eq!(xs, xs_ex);
 /// ```
-pub fn naive_intt(ys: &[Integer], p: &Integer, w: &Integer) -> Vec<Integer> {
+pub fn naive_intt(ys: &mut [Integer], p: &Integer, w: &Integer) {
     let n_inv = {
         let mut t = Integer::from(ys.len());
         t.invert_mut(p).unwrap();
         t
     };
-    let ntt = naive_ntt(ys, p, &Integer::from(w.invert_ref(p).unwrap()));
-    ntt.into_iter().map(|i| i * &n_inv % p).collect()
+    naive_ntt(ys, p, &Integer::from(w.invert_ref(p).unwrap()));
+    for y in ys {
+        *y *= &n_inv;
+        *y %= p;
+    }
 }
 
 /// Computes, for `i` in `0..n`, `sum_{j=0}^{n-1} w^{ij}*x_j`, modulo `p`.
@@ -161,6 +167,98 @@ pub fn cooley_tukey_radix_2_intt(ys: &mut [Integer], p: &Integer, w: &Integer) {
     }
 }
 
+fn log2(x: usize) -> Option<usize> {
+    let mut t = 1;
+    let mut ct = 0;
+    while t < x {
+        t <<= 1;
+        ct += 1;
+    }
+    if t == x { Some(ct) } else { None }
+}
+
+// Reverse the low-order n bits of x. Assumes x fits in n bits.
+fn reverse_bits(x: u32, n: u32) -> u32 {
+    use std::mem::size_of;
+    let u32bits = size_of::<u32>() as u32 * 8;
+    x.reverse_bits() >> (u32bits - n)
+}
+
+pub fn bit_rev_radix_2_ntt(xs: &mut [Integer], p: &Integer, w: &Integer) {
+    assert!(Integer::from(xs.len()).is_power_of_two());
+    let n = xs.len();
+    assert!(n < u32::MAX as usize);
+    let log_n = log2(n).expect("need a power of two length") as u32;
+    if log_n == 0 {
+        return
+    }
+
+    for i in 0..(n as u32) {
+        let j = reverse_bits(i, log_n);
+        if i < j {
+            xs.swap(i as usize, j as usize);
+        }
+    }
+
+    let mod_mul = |x: &mut Integer, y: &Integer| {
+        *x *= y;
+        *x %= p;
+    };
+    let mod_add = |x: &mut Integer, y: &Integer| {
+        *x += y;
+        *x %= p;
+    };
+    let mod_sub = |x: &mut Integer, y: &Integer| {
+        *x -= y;
+        *x += p;
+        *x %= p;
+    };
+
+    let mut m = 1;
+    for _ in 0..log_n {
+        // Sweep the entries in 2*m-sized blocks
+        let w_m = w.clone().pow_mod(&Integer::from(n / (2*m)), p).expect("p not prime");
+        let mut k = 0;
+        while k < n {
+            // The block starting at index k
+            let mut ww = Integer::from(1);
+            for j in 0..m {
+                // Butterfly
+                //
+                // x[a]    --->   x[a]
+                //         \ / +
+                //         / \ -
+                // x[b]*w  --->   x[b]
+                let a = (k + j) as usize;
+                let b = (k + j + m) as usize;
+                let mut t = xs[b].clone();
+                mod_mul(&mut t, &ww);
+
+                xs[b] = xs[a].clone();
+                mod_add(&mut xs[a], &t);
+                mod_sub(&mut xs[b], &t);
+
+                mod_mul(&mut ww, &w_m);
+            }
+            k += 2 * m;
+        }
+        m *= 2;
+    }
+}
+
+pub fn bit_rev_radix_2_intt(ys: &mut [Integer], p: &Integer, w: &Integer) {
+    let n_inv = {
+        let mut t = Integer::from(ys.len());
+        t.invert_mut(p).unwrap();
+        t
+    };
+    bit_rev_radix_2_ntt(ys, p, &Integer::from(w.invert_ref(p).unwrap()));
+    for y in ys {
+        *y *= &n_inv;
+        *y %= p;
+    }
+}
+
 fn cooley_tukey_radix_2_ntt_h(xs: &mut [Integer], p: &Integer, ws: &[Integer], wi: usize) {
     let n = xs.len();
     if n < 2 {
@@ -200,62 +298,63 @@ mod tests {
     // Thanks: https://www.nayuki.io/page/number-theoretic-transform-integer-dft
     #[test]
     fn naive_ntt_5() {
-        let xs = vec![6, 0, 10, 7, 2]
+        let mut xs = vec![6, 0, 10, 7, 2]
             .into_iter()
             .map(Integer::from)
             .collect::<Vec<_>>();
         let p = Integer::from(11);
         let w = Integer::from(3);
-        let ys = naive_ntt(&xs, &p, &w);
+        naive_ntt(&mut xs, &p, &w);
         let ys_ex = vec![3, 7, 0, 5, 4]
             .into_iter()
             .map(Integer::from)
             .collect::<Vec<_>>();
-        assert_eq!(ys, ys_ex);
+        assert_eq!(xs, ys_ex);
     }
 
     #[test]
     fn naive_ntt_8() {
-        let xs = vec![4, 1, 4, 2, 1, 3, 5, 6]
+        let mut xs = vec![4, 1, 4, 2, 1, 3, 5, 6]
             .into_iter()
             .map(Integer::from)
             .collect::<Vec<_>>();
         let p = Integer::from(673);
         let w = Integer::from(326);
-        let ys = naive_ntt(&xs, &p, &w);
+        naive_ntt(&mut xs, &p, &w);
         let ys_ex = vec![26, 338, 228, 115, 2, 457, 437, 448]
             .into_iter()
             .map(Integer::from)
             .collect::<Vec<_>>();
-        assert_eq!(ys, ys_ex);
+        assert_eq!(xs, ys_ex);
     }
 
     #[test]
     fn naive_ntt_2() {
-        let xs = vec![1, 4]
+        let mut xs = vec![1, 4]
             .into_iter()
             .map(Integer::from)
             .collect::<Vec<_>>();
         let p = Integer::from(7);
         let w = Integer::from(6);
-        let ys = naive_ntt(&xs, &p, &w);
+        naive_ntt(&mut xs, &p, &w);
         let ys_ex = vec![5, 4]
             .into_iter()
             .map(Integer::from)
             .collect::<Vec<_>>();
-        assert_eq!(ys, ys_ex);
+        assert_eq!(xs, ys_ex);
     }
 
     #[test]
     fn naive_round_trip_8() {
-        let xs = vec![4, 1, 4, 2, 1, 3, 5, 6]
+        let mut xs = vec![4, 1, 4, 2, 1, 3, 5, 6]
             .into_iter()
             .map(Integer::from)
             .collect::<Vec<_>>();
+        let xs2 = xs.clone();
         let p = Integer::from(673);
         let w = Integer::from(326);
-        let ys = naive_ntt(&xs, &p, &w);
-        let xs2 = naive_intt(&ys, &p, &w);
+        naive_ntt(&mut xs, &p, &w);
+        naive_intt(&mut xs, &p, &w);
         assert_eq!(xs, xs2);
     }
 
@@ -307,6 +406,40 @@ mod tests {
         assert_eq!(xs, ys);
     }
 
+    #[test]
+    fn br_ntt_2() {
+        let xs = vec![1, 4]
+            .into_iter()
+            .map(Integer::from)
+            .collect::<Vec<_>>();
+        let p = Integer::from(7);
+        let w = Integer::from(6);
+        let mut ys = xs;
+        bit_rev_radix_2_ntt(&mut ys, &p, &w);
+        let ys_ex = vec![5, 4]
+            .into_iter()
+            .map(Integer::from)
+            .collect::<Vec<_>>();
+        assert_eq!(ys, ys_ex);
+    }
+
+    #[test]
+    fn br_ntt_8() {
+        let xs = vec![4, 1, 4, 2, 1, 3, 5, 6]
+            .into_iter()
+            .map(Integer::from)
+            .collect::<Vec<_>>();
+        let p = Integer::from(673);
+        let w = Integer::from(326);
+        let mut ys = xs;
+        bit_rev_radix_2_ntt(&mut ys, &p, &w);
+        let ys_ex = vec![26, 338, 228, 115, 2, 457, 437, 448]
+            .into_iter()
+            .map(Integer::from)
+            .collect::<Vec<_>>();
+        assert_eq!(ys, ys_ex);
+    }
+
     #[derive(Clone, Debug)]
     struct NttInput {
         p: Integer,
@@ -329,10 +462,18 @@ mod tests {
     }
 
     #[quickcheck]
-    fn ct_round_trip_32(input: NttInput) -> bool {
+    fn ct_round_trip_quickcheck(input: NttInput) -> bool {
         let mut ys = input.xs.clone();
         cooley_tukey_radix_2_ntt(&mut ys, &input.p, &input.w);
         cooley_tukey_radix_2_intt(&mut ys, &input.p, &input.w);
+        ys == input.xs
+    }
+
+    #[quickcheck]
+    fn br_round_trip_quickcheck(input: NttInput) -> bool {
+        let mut ys = input.xs.clone();
+        bit_rev_radix_2_ntt(&mut ys, &input.p, &input.w);
+        bit_rev_radix_2_intt(&mut ys, &input.p, &input.w);
         ys == input.xs
     }
 }
