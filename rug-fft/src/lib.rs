@@ -200,20 +200,6 @@ pub fn bit_rev_radix_2_ntt(xs: &mut [Integer], p: &Integer, w: &Integer) {
         }
     }
 
-    let mod_mul = |x: &mut Integer, y: &Integer| {
-        *x *= y;
-        *x %= p;
-    };
-    let mod_add = |x: &mut Integer, y: &Integer| {
-        *x += y;
-        *x %= p;
-    };
-    let mod_sub = |x: &mut Integer, y: &Integer| {
-        *x -= y;
-        *x += p;
-        *x %= p;
-    };
-
     let mut m = 1;
     for _ in 0..log_n {
         // Sweep the entries in 2*m-sized blocks
@@ -232,13 +218,21 @@ pub fn bit_rev_radix_2_ntt(xs: &mut [Integer], p: &Integer, w: &Integer) {
                 let a = (k + j) as usize;
                 let b = (k + j + m) as usize;
                 let mut t = xs[b].clone();
-                mod_mul(&mut t, &ww);
+                t *= &ww;
+                t %= p;
 
                 xs[b] = xs[a].clone();
-                mod_add(&mut xs[a], &t);
-                mod_sub(&mut xs[b], &t);
+                xs[a] += &t;
+                if &xs[a] > p {
+                    xs[a] -= p;
+                }
+                xs[b] -= &t;
+                if xs[b] < 0 {
+                    xs[b] += p;
+                }
 
-                mod_mul(&mut ww, &w_m);
+                ww *= &w_m;
+                ww %= p;
             }
             k += 2 * m;
         }
