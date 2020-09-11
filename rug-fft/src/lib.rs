@@ -119,6 +119,10 @@ pub fn naive_intt(ys: &mut [Integer], p: &Integer, w: &Integer) {
 ///     .collect::<Vec<_>>();
 /// assert_eq!(xs, ys_ex);
 /// ```
+///
+/// # Algorithm
+///
+/// Classic Cooley-Tukey radix-2 DIT FFT. Splits the odd indices into a newly-allocated array.
 pub fn cooley_tukey_radix_2_ntt(xs: &mut [Integer], p: &Integer, w: &Integer) {
     assert!(Integer::from(xs.len()).is_power_of_two());
     let mut ws = Vec::with_capacity(xs.len());
@@ -184,6 +188,37 @@ fn reverse_bits(x: u32, n: u32) -> u32 {
     x.reverse_bits() >> (u32bits - n)
 }
 
+/// Computes, for `i` in `0..n`, `sum_{j=0}^{n-1} w^{ij}*x_j`, modulo `p`.
+///
+/// Requires `n` to be a power of two, and `w` to be an `n`th root of unity.
+///
+/// # Example
+///
+/// ```
+/// use rug::Integer;
+/// use rug_fft::bit_rev_radix_2_ntt;
+///
+/// let mut xs = vec![1, 4]
+///     .into_iter()
+///     .map(Integer::from)
+///     .collect::<Vec<_>>();
+/// let p = Integer::from(7);
+/// let w = Integer::from(6);
+/// bit_rev_radix_2_ntt(&mut xs, &p, &w);
+/// let ys_ex = vec![5, 4]
+///     .into_iter()
+///     .map(Integer::from)
+///     .collect::<Vec<_>>();
+/// assert_eq!(xs, ys_ex);
+/// ```
+///
+/// # Algorithm
+///
+/// Starts by doing a bit-reversal permutation on the input. Then applies blocks of successively
+/// wider butterfly transformations.
+///
+/// Based on [this
+/// pseudocode](https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm#Data_reordering,_bit_reversal,_and_in-place_algorithms).
 pub fn bit_rev_radix_2_ntt(xs: &mut [Integer], p: &Integer, w: &Integer) {
     assert!(Integer::from(xs.len()).is_power_of_two());
     let n = xs.len();
@@ -240,6 +275,29 @@ pub fn bit_rev_radix_2_ntt(xs: &mut [Integer], p: &Integer, w: &Integer) {
     }
 }
 
+/// Computes, for `i` in `0..n`, `x_i` such that `y_i = sum_{j=0}^{n-1} w^{ij}*x_j`, modulo `p`.
+///
+/// Requires `n` to be a power of two, and `w` to be an `n`th root of unity.
+///
+/// # Example
+///
+/// ```
+/// use rug::Integer;
+/// use rug_fft::bit_rev_radix_2_intt;
+///
+/// let mut xs = vec![5, 4]
+///     .into_iter()
+///     .map(Integer::from)
+///     .collect::<Vec<_>>();
+/// let p = Integer::from(7);
+/// let w = Integer::from(6);
+/// bit_rev_radix_2_intt(&mut xs, &p, &w);
+/// let ys_ex = vec![1, 4]
+///     .into_iter()
+///     .map(Integer::from)
+///     .collect::<Vec<_>>();
+/// assert_eq!(xs, ys_ex);
+/// ```
 pub fn bit_rev_radix_2_intt(ys: &mut [Integer], p: &Integer, w: &Integer) {
     let n_inv = {
         let mut t = Integer::from(ys.len());
