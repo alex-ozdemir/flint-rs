@@ -1,12 +1,12 @@
 [package]
 name = "rug-fft"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Alex Ozdemir <aozdemir@hmc.edu>"]
 edition = "2018"
 description = "FFT implementations for rug integers"
 homepage = "https://github.com/alex-ozdemir/flint-rs/rug-fft"
 repository = "https://github.com/alex-ozdemir/flint-rs"
-documentation = "https://doc.rs/rug-fft"
+documentation = "https://docs.rs/rug-fft"
 license = "MIT OR Apache-2.0"
 keywords = ["signal-processing", "polynomials", "number-theory", "math"]
 categories = ["cryptography", "algorithms"]

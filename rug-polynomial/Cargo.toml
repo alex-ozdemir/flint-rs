@@ -1,12 +1,12 @@
 [package]
 name = "rug-polynomial"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Alex Ozdemir <aozdemir@hmc.edu>"]
 edition = "2018"
 description = "Polynomial arithmetic, built on Rug & FLINT"
 homepage = "https://github.com/alex-ozdemir/flint-rs/rug-polynomial"
 repository = "https://github.com/alex-ozdemir/flint-rs"
-documentation = "https://doc.rs/rug-polynomial"
+documentation = "https://docs.rs/rug-polynomial"
 license = "MIT OR Apache-2.0"
 keywords = ["polynomials", "number-theory", "math"]
 categories = ["cryptography", "algorithms"]

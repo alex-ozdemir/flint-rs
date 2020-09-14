@@ -1,12 +1,12 @@
 [package]
 name = "flint-sys"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Alex Ozdemir <aozdemir@hmc.edu>"]
 edition = "2018"
 description = "Bindings to the FLINT C library"
 homepage = "https://github.com/alex-ozdemir/flint-rs/flint-sys"
 repository = "https://github.com/alex-ozdemir/flint-rs"
-documentation = "https://doc.rs/flint-sys"
+documentation = "https://docs.rs/flint-sys"
 license = "MIT OR Apache-2.0"
 keywords = ["polynomials", "number-theory", "math"]
 categories = ["cryptography", "algorithms", "external-ffi-bindings"]
