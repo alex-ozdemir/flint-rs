@@ -1,4 +1,4 @@
-use flint_rs::mod_poly::ModPoly;
+use rug_polynomial::ModPoly;
 use rug::Integer;
 use std::str::FromStr;
 use std::time::Instant;

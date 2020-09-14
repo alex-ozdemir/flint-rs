@@ -1,19 +1,21 @@
 [package]
-name = "flint-sys"
+name = "rug-polynomial"
 version = "0.1.0"
 authors = ["Alex Ozdemir <aozdemir@hmc.edu>"]
 edition = "2018"
-description = "Bindings to the FLINT C library"
-homepage = "https://github.com/alex-ozdemir/flint-rs/flint-sys"
+description = "Polynomial arithmetic, built on Rug & FLINT"
+homepage = "https://github.com/alex-ozdemir/flint-rs/rug-polynomial"
 repository = "https://github.com/alex-ozdemir/flint-rs"
-documentation = "https://doc.rs/flint-sys"
+documentation = "https://doc.rs/rug-polynomial"
 license = "MIT OR Apache-2.0"
 keywords = ["polynomials", "number-theory", "math"]
-categories = ["cryptography", "algorithms", "external-ffi-bindings"]
+categories = ["cryptography", "algorithms"]
 readme = "README.md"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-libc = "0.2"
+flint-sys = "0.1.0"
+rug-fft = "0.1.0"
 gmp-mpfr-sys = "1.3.1"
+rug = "1.10.0"

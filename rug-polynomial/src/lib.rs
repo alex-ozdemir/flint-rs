@@ -55,7 +55,7 @@ impl ModPoly {
     /// # Examples
     ///
     /// ```
-    /// use flint_rs::mod_poly::*;
+    /// use rug_polynomial::*;
     /// use rug::Integer;
     ///
     /// let m = Integer::from(5);
@@ -80,7 +80,7 @@ impl ModPoly {
     /// # Example
     ///
     /// ```
-    /// use flint_rs::mod_poly::*;
+    /// use rug_polynomial::*;
     /// use rug::Integer;
     ///
     /// let p = ModPoly::with_roots(vec![0, 1].into_iter().map(Integer::from), &Integer::from(5));
