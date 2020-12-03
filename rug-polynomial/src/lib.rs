@@ -1,6 +1,9 @@
 use flint_sys::{self, fmpz_mod_poly};
 use rug_fft;
 use rug::Integer;
+use serde::ser::{Serializer};
+use serde::de::{Deserializer};
+use serde::{Deserialize, Serialize};
 
 
 use std::cmp::*;
@@ -8,6 +11,17 @@ use std::fmt::{self, Debug, Display, Formatter};
 use std::mem::MaybeUninit;
 use std::ops::*;
 
+/// A polynomial with modular integer coefficients.
+///
+/// That is, a member of `Z/nZ[X]`.
+///
+/// # Examples
+///
+/// See constructors:
+///
+///    * [`new`](fn.ModPoly.new)
+///    * [`interpolate_from_mul_subgroup`](fn.ModPoly.interpolate_from_mul_subgroup)
+///
 pub struct ModPoly {
     raw: fmpz_mod_poly,
     modulus: Integer,
@@ -397,6 +411,53 @@ impl_self_binary!(
     Rem { rem },
     RemAssign { rem_assign }
 );
+
+
+use std::convert::From;
+
+/// Serializable modular polynomial
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Eq)]
+pub struct ModPolySer {
+    pub modulus: Integer,
+    pub coefficients: Vec<Integer>,
+}
+
+impl From<ModPolySer> for ModPoly {
+    fn from(other: ModPolySer) -> ModPoly {
+        let mut inner = ModPoly::new(other.modulus.clone());
+        for (i, c) in other.coefficients.into_iter().enumerate() {
+            inner.set_coefficient(i, &c);
+        }
+        inner
+    }
+}
+
+impl From<&ModPoly> for ModPolySer {
+    fn from(other: &ModPoly) -> ModPolySer {
+        let modulus = other.modulus().clone();
+        let coefficients = (0..(other.len())).into_iter().map(|i| other.get_coefficient(i).clone()).collect();
+        ModPolySer { modulus, coefficients }
+    }
+}
+
+impl Serialize for ModPoly
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        ModPolySer::from(self).serialize(serializer)
+    }
+}
+
+impl<'de> Deserialize<'de> for ModPoly {
+    fn deserialize<D>(deserializer: D) -> Result<ModPoly, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        ModPolySer::deserialize(deserializer).map(ModPoly::from)
+    }
+}
 
 #[cfg(test)]
 mod test {
