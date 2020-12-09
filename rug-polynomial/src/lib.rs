@@ -1,10 +1,9 @@
 use flint_sys::{self, fmpz_mod_poly};
-use rug_fft;
 use rug::Integer;
-use serde::ser::{Serializer};
-use serde::de::{Deserializer};
+use rug_fft;
+use serde::de::Deserializer;
+use serde::ser::Serializer;
 use serde::{Deserialize, Serialize};
-
 
 use std::cmp::*;
 use std::fmt::{self, Debug, Display, Formatter};
@@ -39,6 +38,13 @@ impl ModPoly {
                 modulus,
             }
         }
+    }
+
+    /// A new polynomial, equal to `constant`.
+    pub fn from_int(modulus: Integer, constant: &Integer) -> Self {
+        let mut this = ModPoly::new(modulus);
+        this.set_coefficient(0, constant);
+        this
     }
 
     /// A new polynomial, equal to zero, with room for `n` coefficients.
@@ -104,12 +110,15 @@ impl ModPoly {
     /// debug_assert_eq!(p.get_coefficient(2), Integer::from(1));
     /// ```
     pub fn with_roots(xs: impl IntoIterator<Item = Integer>, m: &Integer) -> Self {
-        let mut ps = xs.into_iter().map(|x| {
-            let mut p = ModPoly::new(m.clone());
-            p.set_coefficient_ui(1, 1);
-            p.set_coefficient(0, &-x);
-            p
-        }).collect::<Vec<_>>();
+        let mut ps = xs
+            .into_iter()
+            .map(|x| {
+                let mut p = ModPoly::new(m.clone());
+                p.set_coefficient_ui(1, 1);
+                p.set_coefficient(0, &-x);
+                p
+            })
+            .collect::<Vec<_>>();
         while ps.len() > 1 {
             for i in 0..(ps.len() / 2) {
                 let back = ps.pop().unwrap();
@@ -272,7 +281,6 @@ impl ModPoly {
             flint_sys::fmpz_mod_poly_sqr(&mut self.raw, &self.raw);
         }
     }
-
 }
 
 impl Clone for ModPoly {
@@ -388,7 +396,56 @@ macro_rules! impl_self_binary {
     };
 }
 
+macro_rules! impl_int_binary {
+    ($Big:ty,
+     $Base:ty,
+     $func:ident,
+     $from_func:ident,
+     $lift_func:ident,
+     $Trait:ident { $method:ident },
+     $TraitAssign:ident { $method_assign:ident }
+    ) => {
+        // Big + &Base
+        impl $Trait<&$Base> for $Big {
+            type Output = $Big;
+            #[inline]
+            fn $method(mut self, rhs: &$Base) -> $Big {
+                let rhs = <$Big>::$lift_func(self.modulus.clone(), &rhs);
+                <$Big>::$func(&mut self, &rhs);
+                self
+            }
+        }
+        // &Base + Big
+        impl $Trait<$Big> for &$Base {
+            type Output = $Big;
+            #[inline]
+            fn $method(self, mut rhs: $Big) -> $Big {
+                let lhs = <$Big>::$lift_func(rhs.modulus.clone(), self);
+                <$Big>::$from_func(&mut rhs, &lhs);
+                rhs
+            }
+        }
+        // Big += &Base
+        impl $TraitAssign<&$Base> for $Big {
+            #[inline]
+            fn $method_assign(&mut self, rhs: &$Base) {
+                let rhs = <$Big>::$lift_func(self.modulus.clone(), &rhs);
+                <$Big>::$func(self, &rhs)
+            }
+        }
+    };
+}
+
 impl_self_binary!(ModPoly, add, add, Add { add }, AddAssign { add_assign });
+impl_int_binary!(
+    ModPoly,
+    Integer,
+    add,
+    add,
+    from_int,
+    Add { add },
+    AddAssign { add_assign }
+);
 impl_self_binary!(
     ModPoly,
     sub,
@@ -396,11 +453,38 @@ impl_self_binary!(
     Sub { sub },
     SubAssign { sub_assign }
 );
+impl_int_binary!(
+    ModPoly,
+    Integer,
+    sub,
+    sub_from,
+    from_int,
+    Sub { sub },
+    SubAssign { sub_assign }
+);
 impl_self_binary!(ModPoly, mul, mul, Mul { mul }, MulAssign { mul_assign });
+impl_int_binary!(
+    ModPoly,
+    Integer,
+    mul,
+    mul,
+    from_int,
+    Mul { mul },
+    MulAssign { mul_assign }
+);
 impl_self_binary!(
     ModPoly,
     div,
     div_from,
+    Div { div },
+    DivAssign { div_assign }
+);
+impl_int_binary!(
+    ModPoly,
+    Integer,
+    div,
+    div_from,
+    from_int,
     Div { div },
     DivAssign { div_assign }
 );
@@ -411,7 +495,15 @@ impl_self_binary!(
     Rem { rem },
     RemAssign { rem_assign }
 );
-
+impl_int_binary!(
+    ModPoly,
+    Integer,
+    rem,
+    rem_from,
+    from_int,
+    Rem { rem },
+    RemAssign { rem_assign }
+);
 
 use std::convert::From;
 
@@ -435,13 +527,18 @@ impl From<ModPolySer> for ModPoly {
 impl From<&ModPoly> for ModPolySer {
     fn from(other: &ModPoly) -> ModPolySer {
         let modulus = other.modulus().clone();
-        let coefficients = (0..(other.len())).into_iter().map(|i| other.get_coefficient(i).clone()).collect();
-        ModPolySer { modulus, coefficients }
+        let coefficients = (0..(other.len()))
+            .into_iter()
+            .map(|i| other.get_coefficient(i).clone())
+            .collect();
+        ModPolySer {
+            modulus,
+            coefficients,
+        }
     }
 }
 
-impl Serialize for ModPoly
-{
+impl Serialize for ModPoly {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
@@ -498,6 +595,8 @@ mod test {
         assert_eq!(h.len(), 4);
         assert_eq!(h, f.clone() + &g);
         assert_eq!(h, &f + g.clone());
+        assert_eq!(h, g.clone() + &Integer::from(1));
+        assert_eq!(h, &Integer::from(1) + g.clone());
     }
 
     #[test]
@@ -515,6 +614,7 @@ mod test {
         assert_eq!(h.len(), 4);
         assert_eq!(h, f.clone() - &g);
         assert_eq!(h, &f - g.clone());
+        assert_eq!(h, &Integer::from(1) - g.clone());
     }
 
     #[test]
@@ -533,6 +633,8 @@ mod test {
         assert_eq!(h.len(), 5);
         assert_eq!(h, f.clone() * &g);
         assert_eq!(h, &f * g.clone());
+        assert_eq!(h, h.clone() * &Integer::from(1));
+        assert_eq!(h, &Integer::from(1) * h.clone());
     }
 
     #[test]
@@ -549,5 +651,6 @@ mod test {
         assert_eq!(h.len(), 3);
         assert_eq!(h, g.clone() / &f);
         assert_eq!(h, &g / f.clone());
+        assert_eq!(h, h.clone() / &Integer::from(1));
     }
 }
