@@ -41,9 +41,10 @@ impl ModPoly {
     }
 
     /// A new polynomial, equal to `constant`.
-    pub fn from_int(modulus: Integer, constant: &Integer) -> Self {
+    pub fn from_int(modulus: Integer, mut constant: Integer) -> Self {
+        constant %= &modulus;
         let mut this = ModPoly::new(modulus);
-        this.set_coefficient(0, constant);
+        this.set_coefficient(0, &constant);
         this
     }
 
@@ -406,17 +407,17 @@ macro_rules! impl_int_binary {
      $TraitAssign:ident { $method_assign:ident }
     ) => {
         // Big + &Base
-        impl $Trait<&$Base> for $Big {
+        impl $Trait<$Base> for $Big {
             type Output = $Big;
             #[inline]
-            fn $method(mut self, rhs: &$Base) -> $Big {
-                let rhs = <$Big>::$lift_func(self.modulus.clone(), &rhs);
+            fn $method(mut self, rhs: $Base) -> $Big {
+                let rhs = <$Big>::$lift_func(self.modulus.clone(), rhs);
                 <$Big>::$func(&mut self, &rhs);
                 self
             }
         }
         // &Base + Big
-        impl $Trait<$Big> for &$Base {
+        impl $Trait<$Big> for $Base {
             type Output = $Big;
             #[inline]
             fn $method(self, mut rhs: $Big) -> $Big {
@@ -426,10 +427,10 @@ macro_rules! impl_int_binary {
             }
         }
         // Big += &Base
-        impl $TraitAssign<&$Base> for $Big {
+        impl $TraitAssign<$Base> for $Big {
             #[inline]
-            fn $method_assign(&mut self, rhs: &$Base) {
-                let rhs = <$Big>::$lift_func(self.modulus.clone(), &rhs);
+            fn $method_assign(&mut self, rhs: $Base) {
+                let rhs = <$Big>::$lift_func(self.modulus.clone(), rhs);
                 <$Big>::$func(self, &rhs)
             }
         }
@@ -595,8 +596,8 @@ mod test {
         assert_eq!(h.len(), 4);
         assert_eq!(h, f.clone() + &g);
         assert_eq!(h, &f + g.clone());
-        assert_eq!(h, g.clone() + &Integer::from(1));
-        assert_eq!(h, &Integer::from(1) + g.clone());
+        assert_eq!(h, g.clone() + Integer::from(1));
+        assert_eq!(h, Integer::from(1) + g.clone());
     }
 
     #[test]
@@ -614,7 +615,7 @@ mod test {
         assert_eq!(h.len(), 4);
         assert_eq!(h, f.clone() - &g);
         assert_eq!(h, &f - g.clone());
-        assert_eq!(h, &Integer::from(1) - g.clone());
+        assert_eq!(h, Integer::from(1) - g.clone());
     }
 
     #[test]
@@ -633,8 +634,8 @@ mod test {
         assert_eq!(h.len(), 5);
         assert_eq!(h, f.clone() * &g);
         assert_eq!(h, &f * g.clone());
-        assert_eq!(h, h.clone() * &Integer::from(1));
-        assert_eq!(h, &Integer::from(1) * h.clone());
+        assert_eq!(h, h.clone() * Integer::from(1));
+        assert_eq!(h, Integer::from(1) * h.clone());
     }
 
     #[test]
@@ -651,6 +652,6 @@ mod test {
         assert_eq!(h.len(), 3);
         assert_eq!(h, g.clone() / &f);
         assert_eq!(h, &g / f.clone());
-        assert_eq!(h, h.clone() / &Integer::from(1));
+        assert_eq!(h, h.clone() / Integer::from(1));
     }
 }
