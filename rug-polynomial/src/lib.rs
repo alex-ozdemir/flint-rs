@@ -155,7 +155,7 @@ impl ModPoly {
                 &self.raw,
                 i as flint_sys::slong,
             );
-            c
+            c % &self.modulus
         }
     }
 
@@ -636,6 +636,19 @@ mod test {
         assert_eq!(h, &f * g.clone());
         assert_eq!(h, h.clone() * Integer::from(1));
         assert_eq!(h, Integer::from(1) * h.clone());
+    }
+    #[test]
+    fn mul_wrap() {
+        let p = Integer::from(17);
+        let mut g = ModPoly::new(p);
+        g.set_coefficient_ui(3, 1);
+        g.set_coefficient_ui(0, 5);
+        let h = g.clone() * Integer::from(4);
+        assert_eq!(h.get_coefficient(0), Integer::from(3));
+        assert_eq!(h.get_coefficient(1), Integer::from(0));
+        assert_eq!(h.get_coefficient(2), Integer::from(0));
+        assert_eq!(h.get_coefficient(3), Integer::from(4));
+        assert_eq!(h.len(), 4);
     }
 
     #[test]
