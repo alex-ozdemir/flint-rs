@@ -9,6 +9,22 @@ use std::mem::{MaybeUninit, size_of};
 #[derive(Default, Debug, Clone, Copy)]
 pub struct fmpz(slong);
 
+impl std::fmt::LowerHex for fmpz {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        f.debug_tuple("fmpz")
+            .field(&format!("0x{:x}", self.0))
+            .finish()
+    }
+}
+
+impl std::fmt::Binary for fmpz {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        f.debug_tuple("fmpz")
+            .field(&format!("0b{:b}", self.0))
+            .finish()
+    }
+}
+
 pub type slong = c_long;
 const FLINT_BITS: usize = size_of::<slong>() * 8;
 pub type ulong = c_ulong;
@@ -37,31 +53,31 @@ pub struct flint_rand {
     randval2: ulong,
 }
 
-/// Convert a gmp integer point to a fmpz.
-/// Takes ownership of the pointer given.
-#[inline]
-pub unsafe fn gmp_to_flint(gmp: *const gmp::mpz_t) -> fmpz {
-    let addr = gmp as ulong;
-    fmpz(((addr >> 2) | 1 << (FLINT_BITS - 2)) as slong)
-}
+///// Convert a gmp integer point to a fmpz.
+///// Takes ownership of the pointer given.
+///// It may free that pointer, so it must be free-able
+//#[inline]
+//pub unsafe fn gmp_to_flint(gmp: *const gmp::mpz_t) -> fmpz {
+//    let addr = gmp as ulong;
+//    let mut f = fmpz(((addr >> 2) | 1 << (FLINT_BITS - 2)) as slong);
+//    // free
+//    _fmpz_demote_val(&mut f);
+//    f
+//}
+//
+//pub unsafe fn fmpz_as_ptr(n: fmpz) -> Result<*mut gmp::mpz_t, slong> {
+//    if (n.0 >> (FLINT_BITS - 2)) & 1 == 0 {
+//        Err(n.0)
+//    } else {
+//        Ok((n.0 << 2) as *mut gmp::mpz_t)
+//    }
+//}
 
-pub unsafe fn fmpz_as_ptr(n: fmpz) -> Result<*mut gmp::mpz_t, slong> {
-    if (n.0 >> (FLINT_BITS - 2)) & 1 == 0 {
-        Err(n.0)
-    } else {
-        Ok((n.0 << 2) as *mut gmp::mpz_t)
-    }
-}
 
-
-pub unsafe fn flint_to_gmp(flint: fmpz) -> *const gmp::mpz_t {
-    fmpz_as_ptr(flint).unwrap_or_else(|v| {
-        let mut n = MaybeUninit::uninit();
-        gmp::mpz_init(n.as_mut_ptr());
-        let mut n = n.assume_init();
-        gmp::mpz_set_si(&mut n, v);
-        Box::into_raw(Box::new(n))
-    })
+/// Convert a flint integer to a gmp pointer
+/// Takes ownership of the input integer, returning a pointer that must be freed.
+pub unsafe fn flint_to_gmp(mut flint: fmpz) -> *const gmp::mpz_t {
+    _fmpz_promote_val(&mut flint)
 }
 
 pub const COEFF_MAX: slong = ((1 as slong) << (FLINT_BITS - 2)) - 1;
@@ -71,6 +87,13 @@ extern "C" {
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz.html#c.fmpz_init) for this function.
     #[link_name = "__fmpz_init"]
     pub fn fmpz_init(f: *mut fmpz);
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz.html#c._fmpz_demote_val) for this function.
+    #[link_name = "_fmpz_demote_val"]
+    pub fn _fmpz_demote_val(f: *mut fmpz);
+    /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz.html#c._fmpz_promote_val) for this function.
+    #[link_name = "_fmpz_promote_val"]
+    pub fn _fmpz_promote_val(f: *mut fmpz) -> *mut gmp::mpz_t;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz.html#c.fmpz_init2) for this function.
     #[link_name = "fmpz_init2"]
@@ -2757,6 +2780,41 @@ mod tests {
             fmpz_mod_poly_set_coeff_ui(&mut f, 0, 5);
             let x = std::ffi::CString::new("x").unwrap();
             debug_assert!(fmpz_mod_poly_print_pretty(&f, x.as_ptr()) > 0);
+        }
+    }
+
+    mod random {
+        use crate::*;
+        use std::mem::MaybeUninit;
+        use quickcheck_macros;
+
+        #[quickcheck_macros::quickcheck]
+        fn mult_same_as_gmp(v: u64, u: u64) -> bool {
+            unsafe {
+                let mut g_v = MaybeUninit::uninit();
+                gmp::mpz_init(g_v.as_mut_ptr());
+                let mut g_v = g_v.assume_init();
+                gmp::mpz_set_ui(&mut g_v, v);
+                let mut g_u = MaybeUninit::uninit();
+                gmp::mpz_init(g_u.as_mut_ptr());
+                let mut g_u = g_u.assume_init();
+                gmp::mpz_set_ui(&mut g_u, u);
+                let mut f_u = fmpz::default();
+                fmpz_init(&mut f_u);
+                fmpz_set_ui(&mut f_u, u);
+                let mut f_v = fmpz::default();
+                fmpz_init(&mut f_v);
+                fmpz_set_ui(&mut f_v, v);
+                gmp::mpz_mul(&mut g_v, &g_v, &g_u);
+                fmpz_mul(&mut f_v, &f_v, &f_u);
+                let f_as_g = _fmpz_promote_val(&mut f_v);
+                let eq = gmp::mpz_cmp(f_as_g, &g_v) == 0;
+                gmp::mpz_clear(&mut g_v);
+                gmp::mpz_clear(&mut g_u);
+                gmp::mpz_clear(f_as_g);
+                fmpz_clear(&mut f_u);
+                eq
+            }
         }
     }
 }
