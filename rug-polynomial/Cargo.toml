@@ -1,6 +1,6 @@
 [package]
 name = "rug-polynomial"
-version = "0.1.5"
+version = "0.1.6"
 authors = ["Alex Ozdemir <aozdemir@hmc.edu>"]
 edition = "2018"
 description = "Polynomial arithmetic, built on Rug & FLINT"

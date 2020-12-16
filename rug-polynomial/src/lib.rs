@@ -180,6 +180,34 @@ impl ModPoly {
         }
     }
 
+    /// Evaluate the polynomial at the given input.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use rug_polynomial::*;
+    /// use rug::Integer;
+    ///
+    /// let p = ModPoly::with_roots(vec![0, 1].into_iter().map(Integer::from), &Integer::from(5));
+    /// let y = p.evaluate(&Integer::from(3));
+    /// debug_assert_eq!(y, Integer::from(1));
+    /// ```
+    pub fn evaluate(&self, i: &Integer) -> Integer {
+        unsafe {
+            let mut in_ = flint_sys::fmpz::default();
+            flint_sys::fmpz_init(&mut in_);
+            flint_sys::fmpz_set_mpz(&mut in_, i.as_raw());
+            let mut out = flint_sys::fmpz::default();
+            flint_sys::fmpz_init(&mut out);
+            flint_sys::fmpz_mod_poly_evaluate_fmpz(&mut out, &self.raw, &in_);
+            let mut out_rug = Integer::new();
+            flint_sys::fmpz_get_mpz(out_rug.as_raw_mut(), &out);
+            flint_sys::fmpz_clear(&mut in_);
+            flint_sys::fmpz_clear(&mut out);
+            out_rug
+        }
+    }
+
     /// Get the modulus of this polynomial.
     pub fn modulus(&self) -> &Integer {
         &self.modulus
