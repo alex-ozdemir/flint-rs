@@ -3,4 +3,3 @@ fn main() {
     // shared library.
     println!("cargo:rustc-link-lib=flint");
 }
-

@@ -17,7 +17,7 @@ you'd like!). The following are:
 
 You must install the following before installing this crate:
 
-   * [FLINT](http://flintlib.org/)
+   * [FLINT](http://flintlib.org/) version 2.7.0 or greater
 
 ### Arch Linux
 

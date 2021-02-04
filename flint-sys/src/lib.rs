@@ -1,8 +1,8 @@
 #![allow(non_camel_case_types)]
 
 use gmp_mpfr_sys::{gmp, mpfr};
-use libc::{c_char, c_double, c_int, c_long, c_ulong, FILE};
-use std::mem::{MaybeUninit, size_of};
+use libc::{c_char, c_double, c_int, c_long, c_ulong, c_void, FILE};
+use std::mem::size_of;
 
 //include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
 #[repr(C)]
@@ -29,13 +29,31 @@ pub type slong = c_long;
 const FLINT_BITS: usize = size_of::<slong>() * 8;
 pub type ulong = c_ulong;
 pub type mp_limb_t = c_ulong;
+pub type flint_bitcnt_t = c_ulong;
 
 #[repr(C)]
 pub struct fmpz_mod_poly {
     coeffs: *mut fmpz,
     alloc: slong,
     length: slong,
-    p: fmpz,
+}
+
+#[repr(C)]
+pub struct nmod {
+    n: mp_limb_t,
+    ninv: mp_limb_t,
+    norm: flint_bitcnt_t,
+}
+
+#[repr(C)]
+pub struct fmpz_mod_ctx {
+    n: *mut fmpz,
+    add_fxn: *mut c_void,
+    sub_fxn: *mut c_void,
+    mul_fxn: *mut c_void,
+    mod_: *mut nmod,
+    n_limbs: [ulong; 3],
+    ninv_limbs: [ulong; 3],
 }
 
 #[repr(C)]
@@ -73,7 +91,6 @@ pub struct flint_rand {
 //    }
 //}
 
-
 /// Convert a flint integer to a gmp pointer
 /// Takes ownership of the input integer, returning a pointer that must be freed.
 pub unsafe fn flint_to_gmp(mut flint: fmpz) -> *const gmp::mpz_t {
@@ -84,6 +101,9 @@ pub const COEFF_MAX: slong = ((1 as slong) << (FLINT_BITS - 2)) - 1;
 pub const COEFF_MIN: slong = -(((1 as slong) << (FLINT_BITS - 2)) - 1);
 
 extern "C" {
+    pub fn fmpz_mod_ctx_init(ctx: *const fmpz_mod_ctx, n: *const fmpz);
+    pub fn fmpz_mod_ctx_clear(ctx: *const fmpz_mod_ctx);
+
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz.html#c.fmpz_init) for this function.
     #[link_name = "__fmpz_init"]
     pub fn fmpz_init(f: *mut fmpz);
@@ -1000,23 +1020,23 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_init) for this function.
     #[link_name = "fmpz_mod_poly_init"]
-    pub fn fmpz_mod_poly_init(poly: *const fmpz_mod_poly, p: *const fmpz);
+    pub fn fmpz_mod_poly_init(poly: *const fmpz_mod_poly, ctx: *const fmpz_mod_ctx);
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_init2) for this function.
     #[link_name = "fmpz_mod_poly_init2"]
-    pub fn fmpz_mod_poly_init2(poly: *const fmpz_mod_poly, p: *const fmpz, alloc: slong);
+    pub fn fmpz_mod_poly_init2(poly: *const fmpz_mod_poly, alloc: slong, ctx: *const fmpz_mod_ctx);
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_clear) for this function.
     #[link_name = "fmpz_mod_poly_clear"]
-    pub fn fmpz_mod_poly_clear(poly: *const fmpz_mod_poly);
+    pub fn fmpz_mod_poly_clear(poly: *const fmpz_mod_poly, ctx: *const fmpz_mod_ctx);
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_realloc) for this function.
     #[link_name = "fmpz_mod_poly_realloc"]
-    pub fn fmpz_mod_poly_realloc(poly: *const fmpz_mod_poly, alloc: slong);
+    pub fn fmpz_mod_poly_realloc(poly: *const fmpz_mod_poly, alloc: slong, ctx: *const fmpz_mod_ctx);
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_fit_length) for this function.
     #[link_name = "fmpz_mod_poly_fit_length"]
-    pub fn fmpz_mod_poly_fit_length(poly: *const fmpz_mod_poly, len: slong);
+    pub fn fmpz_mod_poly_fit_length(poly: *const fmpz_mod_poly, len: slong, ctx: *const fmpz_mod_ctx);
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_normalise) for this function.
     #[link_name = "_fmpz_mod_poly_normalise"]
@@ -1028,15 +1048,25 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_truncate) for this function.
     #[link_name = "fmpz_mod_poly_truncate"]
-    pub fn fmpz_mod_poly_truncate(poly: *const fmpz_mod_poly, len: slong);
+    pub fn fmpz_mod_poly_truncate(poly: *const fmpz_mod_poly, len: slong, ctx: *const fmpz_mod_ctx);
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_set_trunc) for this function.
     #[link_name = "fmpz_mod_poly_set_trunc"]
-    pub fn fmpz_mod_poly_set_trunc(res: *const fmpz_mod_poly, poly: *const fmpz_mod_poly, n: slong);
+    pub fn fmpz_mod_poly_set_trunc(
+        res: *const fmpz_mod_poly,
+        poly: *const fmpz_mod_poly,
+        n: slong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_randtest) for this function.
     #[link_name = "fmpz_mod_poly_randtest"]
-    pub fn fmpz_mod_poly_randtest(f: *const fmpz_mod_poly, state: *mut flint_rand, len: slong);
+    pub fn fmpz_mod_poly_randtest(
+        f: *const fmpz_mod_poly,
+        state: *mut flint_rand,
+        len: slong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_randtest_irreducible) for this function.
     #[link_name = "fmpz_mod_poly_randtest_irreducible"]
@@ -1044,6 +1074,7 @@ extern "C" {
         f: *const fmpz_mod_poly,
         state: *mut flint_rand,
         len: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_randtest_not_zero) for this function.
@@ -1052,6 +1083,7 @@ extern "C" {
         f: *const fmpz_mod_poly,
         state: *mut flint_rand,
         len: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_randtest_monic) for this function.
@@ -1060,6 +1092,7 @@ extern "C" {
         poly: *const fmpz_mod_poly,
         state: *mut flint_rand,
         len: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_randtest_monic_irreducible) for this function.
@@ -1068,6 +1101,7 @@ extern "C" {
         poly: *const fmpz_mod_poly,
         state: *mut flint_rand,
         len: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_randtest_monic_primitive) for this function.
@@ -1076,6 +1110,7 @@ extern "C" {
         poly: *const fmpz_mod_poly,
         state: *mut flint_rand,
         len: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_randtest_trinomial) for this function.
@@ -1084,6 +1119,7 @@ extern "C" {
         poly: *const fmpz_mod_poly,
         state: *mut flint_rand,
         len: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_randtest_trinomial_irreducible) for this function.
@@ -1093,6 +1129,7 @@ extern "C" {
         state: *mut flint_rand,
         len: slong,
         max_attempts: slong,
+        ctx: *const fmpz_mod_ctx,
     ) -> c_int;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_randtest_pentomial) for this function.
@@ -1101,6 +1138,7 @@ extern "C" {
         poly: *const fmpz_mod_poly,
         state: *mut flint_rand,
         len: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_randtest_pentomial_irreducible) for this function.
@@ -1110,6 +1148,7 @@ extern "C" {
         state: *mut flint_rand,
         len: slong,
         max_attempts: slong,
+        ctx: *const fmpz_mod_ctx,
     ) -> c_int;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_randtest_sparse_irreducible) for this function.
@@ -1118,67 +1157,98 @@ extern "C" {
         poly: *const fmpz_mod_poly,
         state: *mut flint_rand,
         len: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
-    /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_modulus) for this function.
-    #[link_name = "fmpz_mod_poly_modulus"]
-    pub fn fmpz_mod_poly_modulus(poly: *const fmpz_mod_poly) -> *mut fmpz;
+    // /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_modulus) for this function.
+    //#[link_name = "fmpz_mod_poly_modulus"]
+    //pub fn fmpz_mod_poly_modulus(poly: *const fmpz_mod_poly) -> *mut fmpz;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_degree) for this function.
     #[link_name = "fmpz_mod_poly_degree"]
-    pub fn fmpz_mod_poly_degree(poly: *const fmpz_mod_poly) -> slong;
+    pub fn fmpz_mod_poly_degree(poly: *const fmpz_mod_poly, ctx: *const fmpz_mod_ctx) -> slong;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_length) for this function.
     #[link_name = "fmpz_mod_poly_length"]
-    pub fn fmpz_mod_poly_length(poly: *const fmpz_mod_poly) -> slong;
+    pub fn fmpz_mod_poly_length(poly: *const fmpz_mod_poly, ctx: *const fmpz_mod_ctx) -> slong;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_lead) for this function.
     #[link_name = "fmpz_mod_poly_lead"]
-    pub fn fmpz_mod_poly_lead(poly: *const fmpz_mod_poly) -> *mut fmpz;
+    pub fn fmpz_mod_poly_lead(poly: *const fmpz_mod_poly, ctx: *const fmpz_mod_ctx) -> *mut fmpz;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_set) for this function.
     #[link_name = "fmpz_mod_poly_set"]
-    pub fn fmpz_mod_poly_set(poly1: *const fmpz_mod_poly, poly2: *const fmpz_mod_poly);
+    pub fn fmpz_mod_poly_set(
+        poly1: *const fmpz_mod_poly,
+        poly2: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_swap) for this function.
     #[link_name = "fmpz_mod_poly_swap"]
-    pub fn fmpz_mod_poly_swap(poly1: *const fmpz_mod_poly, poly2: *const fmpz_mod_poly);
+    pub fn fmpz_mod_poly_swap(
+        poly1: *const fmpz_mod_poly,
+        poly2: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_zero) for this function.
     #[link_name = "fmpz_mod_poly_zero"]
-    pub fn fmpz_mod_poly_zero(poly: *const fmpz_mod_poly);
+    pub fn fmpz_mod_poly_zero(poly: *const fmpz_mod_poly, ctx: *const fmpz_mod_ctx);
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_one) for this function.
     #[link_name = "fmpz_mod_poly_one"]
-    pub fn fmpz_mod_poly_one(poly: *const fmpz_mod_poly);
+    pub fn fmpz_mod_poly_one(poly: *const fmpz_mod_poly, ctx: *const fmpz_mod_ctx);
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_zero_coeffs) for this function.
     #[link_name = "fmpz_mod_poly_zero_coeffs"]
-    pub fn fmpz_mod_poly_zero_coeffs(poly: *const fmpz_mod_poly, i: slong, j: slong);
+    pub fn fmpz_mod_poly_zero_coeffs(
+        poly: *const fmpz_mod_poly,
+        i: slong,
+        j: slong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_reverse) for this function.
     #[link_name = "fmpz_mod_poly_reverse"]
-    pub fn fmpz_mod_poly_reverse(res: *const fmpz_mod_poly, poly: *const fmpz_mod_poly, n: slong);
+    pub fn fmpz_mod_poly_reverse(
+        res: *const fmpz_mod_poly,
+        poly: *const fmpz_mod_poly,
+        n: slong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_set_ui) for this function.
     #[link_name = "fmpz_mod_poly_set_ui"]
-    pub fn fmpz_mod_poly_set_ui(f: *const fmpz_mod_poly, c: ulong);
+    pub fn fmpz_mod_poly_set_ui(f: *const fmpz_mod_poly, c: ulong, ctx: *const fmpz_mod_ctx);
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_set_fmpz) for this function.
     #[link_name = "fmpz_mod_poly_set_fmpz"]
-    pub fn fmpz_mod_poly_set_fmpz(f: *const fmpz_mod_poly, c: *const fmpz);
+    pub fn fmpz_mod_poly_set_fmpz(f: *const fmpz_mod_poly, c: *const fmpz, ctx: *const fmpz_mod_ctx);
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_set_fmpz_poly) for this function.
     #[link_name = "fmpz_mod_poly_set_fmpz_poly"]
-    pub fn fmpz_mod_poly_set_fmpz_poly(f: *const fmpz_mod_poly, g: *const fmpz_poly);
+    pub fn fmpz_mod_poly_set_fmpz_poly(
+        f: *const fmpz_mod_poly,
+        g: *const fmpz_poly,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_get_fmpz_poly) for this function.
     #[link_name = "fmpz_mod_poly_get_fmpz_poly"]
-    pub fn fmpz_mod_poly_get_fmpz_poly(f: *mut fmpz_poly, g: *const fmpz_mod_poly);
+    pub fn fmpz_mod_poly_get_fmpz_poly(
+        f: *mut fmpz_poly,
+        g: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_equal) for this function.
     #[link_name = "fmpz_mod_poly_equal"]
-    pub fn fmpz_mod_poly_equal(poly1: *const fmpz_mod_poly, poly2: *const fmpz_mod_poly) -> c_int;
+    pub fn fmpz_mod_poly_equal(
+        poly1: *const fmpz_mod_poly,
+        poly2: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
+    ) -> c_int;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_equal_trunc) for this function.
     #[link_name = "fmpz_mod_poly_equal_trunc"]
@@ -1186,39 +1256,65 @@ extern "C" {
         poly1: *const fmpz_mod_poly,
         poly2: *const fmpz_mod_poly,
         n: slong,
+        ctx: *const fmpz_mod_ctx,
     ) -> c_int;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_is_zero) for this function.
     #[link_name = "fmpz_mod_poly_is_zero"]
-    pub fn fmpz_mod_poly_is_zero(poly: *const fmpz_mod_poly) -> c_int;
+    pub fn fmpz_mod_poly_is_zero(poly: *const fmpz_mod_poly, ctx: *const fmpz_mod_ctx) -> c_int;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_is_one) for this function.
     #[link_name = "fmpz_mod_poly_is_one"]
-    pub fn fmpz_mod_poly_is_one(poly: *const fmpz_mod_poly) -> c_int;
+    pub fn fmpz_mod_poly_is_one(poly: *const fmpz_mod_poly, ctx: *const fmpz_mod_ctx) -> c_int;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_is_gen) for this function.
     #[link_name = "fmpz_mod_poly_is_gen"]
-    pub fn fmpz_mod_poly_is_gen(poly: *const fmpz_mod_poly) -> c_int;
+    pub fn fmpz_mod_poly_is_gen(poly: *const fmpz_mod_poly, ctx: *const fmpz_mod_ctx) -> c_int;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_set_coeff_fmpz) for this function.
     #[link_name = "fmpz_mod_poly_set_coeff_fmpz"]
-    pub fn fmpz_mod_poly_set_coeff_fmpz(poly: *const fmpz_mod_poly, n: slong, x: *const fmpz);
+    pub fn fmpz_mod_poly_set_coeff_fmpz(
+        poly: *const fmpz_mod_poly,
+        n: slong,
+        x: *const fmpz,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_set_coeff_ui) for this function.
     #[link_name = "fmpz_mod_poly_set_coeff_ui"]
-    pub fn fmpz_mod_poly_set_coeff_ui(poly: *const fmpz_mod_poly, n: slong, x: ulong);
+    pub fn fmpz_mod_poly_set_coeff_ui(
+        poly: *const fmpz_mod_poly,
+        n: slong,
+        x: ulong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_get_coeff_fmpz) for this function.
     #[link_name = "fmpz_mod_poly_get_coeff_fmpz"]
-    pub fn fmpz_mod_poly_get_coeff_fmpz(x: *mut fmpz, poly: *const fmpz_mod_poly, n: slong);
+    pub fn fmpz_mod_poly_get_coeff_fmpz(
+        x: *mut fmpz,
+        poly: *const fmpz_mod_poly,
+        n: slong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_set_coeff_mpz) for this function.
     #[link_name = "fmpz_mod_poly_set_coeff_mpz"]
-    pub fn fmpz_mod_poly_set_coeff_mpz(poly: *const fmpz_mod_poly, n: slong, x: *const gmp::mpz_t);
+    pub fn fmpz_mod_poly_set_coeff_mpz(
+        poly: *const fmpz_mod_poly,
+        n: slong,
+        x: *const gmp::mpz_t,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_get_coeff_mpz) for this function.
     #[link_name = "fmpz_mod_poly_get_coeff_mpz"]
-    pub fn fmpz_mod_poly_get_coeff_mpz(x: *mut gmp::mpz_t, poly: *const fmpz_mod_poly, n: slong);
+    pub fn fmpz_mod_poly_get_coeff_mpz(
+        x: *mut gmp::mpz_t,
+        poly: *const fmpz_mod_poly,
+        n: slong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_shift_left) for this function.
     #[link_name = "_fmpz_mod_poly_shift_left"]
@@ -1226,7 +1322,12 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_shift_left) for this function.
     #[link_name = "fmpz_mod_poly_shift_left"]
-    pub fn fmpz_mod_poly_shift_left(f: *const fmpz_mod_poly, g: *const fmpz_mod_poly, n: slong);
+    pub fn fmpz_mod_poly_shift_left(
+        f: *const fmpz_mod_poly,
+        g: *const fmpz_mod_poly,
+        n: slong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_shift_right) for this function.
     #[link_name = "_fmpz_mod_poly_shift_right"]
@@ -1234,7 +1335,12 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_shift_right) for this function.
     #[link_name = "fmpz_mod_poly_shift_right"]
-    pub fn fmpz_mod_poly_shift_right(f: *const fmpz_mod_poly, g: *const fmpz_mod_poly, n: slong);
+    pub fn fmpz_mod_poly_shift_right(
+        f: *const fmpz_mod_poly,
+        g: *const fmpz_mod_poly,
+        n: slong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_add) for this function.
     #[link_name = "_fmpz_mod_poly_add"]
@@ -1253,6 +1359,7 @@ extern "C" {
         res: *const fmpz_mod_poly,
         poly1: *const fmpz_mod_poly,
         poly2: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_add_series) for this function.
@@ -1262,6 +1369,7 @@ extern "C" {
         poly1: *const fmpz_mod_poly,
         poly2: *const fmpz_mod_poly,
         n: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_sub) for this function.
@@ -1281,6 +1389,7 @@ extern "C" {
         res: *const fmpz_mod_poly,
         poly1: *const fmpz_mod_poly,
         poly2: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_sub_series) for this function.
@@ -1290,6 +1399,7 @@ extern "C" {
         poly1: *const fmpz_mod_poly,
         poly2: *const fmpz_mod_poly,
         n: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_neg) for this function.
@@ -1298,7 +1408,11 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_neg) for this function.
     #[link_name = "fmpz_mod_poly_neg"]
-    pub fn fmpz_mod_poly_neg(res: *const fmpz_mod_poly, poly: *const fmpz_mod_poly);
+    pub fn fmpz_mod_poly_neg(
+        res: *const fmpz_mod_poly,
+        poly: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_scalar_mul_fmpz) for this function.
     #[link_name = "_fmpz_mod_poly_scalar_mul_fmpz"]
@@ -1316,6 +1430,7 @@ extern "C" {
         res: *const fmpz_mod_poly,
         poly: *const fmpz_mod_poly,
         x: *const fmpz,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_scalar_div_fmpz) for this function.
@@ -1334,6 +1449,7 @@ extern "C" {
         res: *const fmpz_mod_poly,
         poly: *const fmpz_mod_poly,
         x: *const fmpz,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_mul) for this function.
@@ -1353,6 +1469,7 @@ extern "C" {
         res: *const fmpz_mod_poly,
         poly1: *const fmpz_mod_poly,
         poly2: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_mullow) for this function.
@@ -1374,6 +1491,7 @@ extern "C" {
         poly1: *const fmpz_mod_poly,
         poly2: *const fmpz_mod_poly,
         n: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_sqr) for this function.
@@ -1382,7 +1500,11 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_sqr) for this function.
     #[link_name = "fmpz_mod_poly_sqr"]
-    pub fn fmpz_mod_poly_sqr(res: *const fmpz_mod_poly, poly: *const fmpz_mod_poly);
+    pub fn fmpz_mod_poly_sqr(
+        res: *const fmpz_mod_poly,
+        poly: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_mulmod) for this function.
     #[link_name = "_fmpz_mod_poly_mulmod"]
@@ -1404,6 +1526,7 @@ extern "C" {
         poly1: *const fmpz_mod_poly,
         poly2: *const fmpz_mod_poly,
         f: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_mulmod_preinv) for this function.
@@ -1429,6 +1552,7 @@ extern "C" {
         poly2: *const fmpz_mod_poly,
         f: *const fmpz_mod_poly,
         finv: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_product_roots_fmpz_vec) for this function.
@@ -1447,6 +1571,7 @@ extern "C" {
         xs: *const fmpz,
         n: slong,
         f: *const fmpz,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_find_distinct_nonzero_roots) for this function.
@@ -1454,6 +1579,7 @@ extern "C" {
     pub fn fmpz_mod_poly_find_distinct_nonzero_roots(
         roots: *mut fmpz,
         A: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     ) -> c_int;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_pow) for this function.
@@ -1468,7 +1594,12 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_pow) for this function.
     #[link_name = "fmpz_mod_poly_pow"]
-    pub fn fmpz_mod_poly_pow(rop: *const fmpz_mod_poly, op: *const fmpz_mod_poly, e: ulong);
+    pub fn fmpz_mod_poly_pow(
+        rop: *const fmpz_mod_poly,
+        op: *const fmpz_mod_poly,
+        e: ulong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_pow_trunc) for this function.
     #[link_name = "_fmpz_mod_poly_pow_trunc"]
@@ -1487,6 +1618,7 @@ extern "C" {
         poly: *const fmpz_mod_poly,
         e: ulong,
         trunc: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_pow_trunc_binexp) for this function.
@@ -1506,6 +1638,7 @@ extern "C" {
         poly: *const fmpz_mod_poly,
         e: ulong,
         trunc: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_powmod_ui_binexp) for this function.
@@ -1526,6 +1659,7 @@ extern "C" {
         poly: *const fmpz_mod_poly,
         e: ulong,
         f: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_powmod_ui_binexp_preinv) for this function.
@@ -1549,6 +1683,7 @@ extern "C" {
         e: ulong,
         f: *const fmpz_mod_poly,
         finv: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_powmod_fmpz_binexp) for this function.
@@ -1569,6 +1704,7 @@ extern "C" {
         poly: *const fmpz_mod_poly,
         e: *const fmpz,
         f: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_powmod_fmpz_binexp_preinv) for this function.
@@ -1592,6 +1728,7 @@ extern "C" {
         e: *const fmpz,
         f: *const fmpz_mod_poly,
         finv: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_powmod_x_fmpz_preinv) for this function.
@@ -1613,6 +1750,7 @@ extern "C" {
         e: *const fmpz,
         f: *const fmpz_mod_poly,
         finv: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_powers_mod_preinv_naive) for this function.
@@ -1636,6 +1774,7 @@ extern "C" {
         f: *const fmpz_mod_poly,
         n: slong,
         g: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_powers_mod_bsgs) for this function.
@@ -1645,6 +1784,7 @@ extern "C" {
         f: *const fmpz_mod_poly,
         n: slong,
         g: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_divrem_basecase) for this function.
@@ -1667,6 +1807,7 @@ extern "C" {
         R: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_divrem_newton_n_preinv) for this function.
@@ -1691,6 +1832,7 @@ extern "C" {
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
         Binv: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_div_basecase) for this function.
@@ -1712,6 +1854,7 @@ extern "C" {
         Q: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_div_newton_n_preinv) for this function.
@@ -1734,11 +1877,16 @@ extern "C" {
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
         Binv: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_remove) for this function.
     #[link_name = "fmpz_mod_poly_remove"]
-    pub fn fmpz_mod_poly_remove(f: *const fmpz_mod_poly, g: *const fmpz_mod_poly) -> ulong;
+    pub fn fmpz_mod_poly_remove(
+        f: *const fmpz_mod_poly,
+        g: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
+    ) -> ulong;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_rem_basecase) for this function.
     #[link_name = "_fmpz_mod_poly_rem_basecase"]
@@ -1758,6 +1906,7 @@ extern "C" {
         R: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_divrem_divconquer_recursive) for this function.
@@ -1793,6 +1942,7 @@ extern "C" {
         R: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_divrem) for this function.
@@ -1815,6 +1965,7 @@ extern "C" {
         R: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_divrem_f) for this function.
@@ -1825,6 +1976,7 @@ extern "C" {
         R: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_rem) for this function.
@@ -1858,6 +2010,7 @@ extern "C" {
         R: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_inv_series_newton) for this function.
@@ -1876,6 +2029,7 @@ extern "C" {
         Qinv: *const fmpz_mod_poly,
         Q: *const fmpz_mod_poly,
         n: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_inv_series_newton_f) for this function.
@@ -1885,6 +2039,7 @@ extern "C" {
         Qinv: *const fmpz_mod_poly,
         Q: *const fmpz_mod_poly,
         n: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_inv_series) for this function.
@@ -1899,7 +2054,12 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_inv_series) for this function.
     #[link_name = "fmpz_mod_poly_inv_series"]
-    pub fn fmpz_mod_poly_inv_series(Qinv: *const fmpz_mod_poly, Q: *const fmpz_mod_poly, n: slong);
+    pub fn fmpz_mod_poly_inv_series(
+        Qinv: *const fmpz_mod_poly,
+        Q: *const fmpz_mod_poly,
+        n: slong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_inv_series_f) for this function.
     #[link_name = "fmpz_mod_poly_inv_series_f"]
@@ -1908,6 +2068,7 @@ extern "C" {
         Qinv: *const fmpz_mod_poly,
         Q: *const fmpz_mod_poly,
         n: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_div_series) for this function.
@@ -1929,11 +2090,16 @@ extern "C" {
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
         n: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_make_monic) for this function.
     #[link_name = "fmpz_mod_poly_make_monic"]
-    pub fn fmpz_mod_poly_make_monic(res: *const fmpz_mod_poly, poly: *const fmpz_mod_poly);
+    pub fn fmpz_mod_poly_make_monic(
+        res: *const fmpz_mod_poly,
+        poly: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_make_monic_f) for this function.
     #[link_name = "fmpz_mod_poly_make_monic_f"]
@@ -1941,6 +2107,7 @@ extern "C" {
         f: *mut fmpz,
         res: *const fmpz_mod_poly,
         poly: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_gcd_euclidean) for this function.
@@ -1961,6 +2128,7 @@ extern "C" {
         G: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_gcd) for this function.
@@ -1981,6 +2149,7 @@ extern "C" {
         G: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_gcd_euclidean_f) for this function.
@@ -2002,6 +2171,7 @@ extern "C" {
         G: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_gcd_f) for this function.
@@ -2023,6 +2193,7 @@ extern "C" {
         G: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_hgcd) for this function.
@@ -2058,6 +2229,7 @@ extern "C" {
         G: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_xgcd_euclidean) for this function.
@@ -2097,6 +2269,7 @@ extern "C" {
         T: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_xgcd_euclidean_f) for this function.
@@ -2108,6 +2281,7 @@ extern "C" {
         T: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_xgcd_hgcd) for this function.
@@ -2131,6 +2305,7 @@ extern "C" {
         T: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_xgcd) for this function.
@@ -2155,6 +2330,7 @@ extern "C" {
         T: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_xgcd_f) for this function.
@@ -2166,6 +2342,7 @@ extern "C" {
         T: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_gcdinv_euclidean) for this function.
@@ -2187,6 +2364,7 @@ extern "C" {
         S: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_gcdinv_euclidean_f) for this function.
@@ -2210,6 +2388,7 @@ extern "C" {
         S: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_gcdinv) for this function.
@@ -2244,6 +2423,7 @@ extern "C" {
         S: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_gcdinv_f) for this function.
@@ -2254,6 +2434,7 @@ extern "C" {
         S: *const fmpz_mod_poly,
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_invmod) for this function.
@@ -2285,6 +2466,7 @@ extern "C" {
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
         P: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     ) -> c_int;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_invmod_f) for this function.
@@ -2294,6 +2476,7 @@ extern "C" {
         A: *const fmpz_mod_poly,
         B: *const fmpz_mod_poly,
         P: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     ) -> c_int;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_minpoly_bm) for this function.
@@ -2307,7 +2490,12 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_minpoly_bm) for this function.
     #[link_name = "fmpz_mod_poly_minpoly_bm"]
-    pub fn fmpz_mod_poly_minpoly_bm(poly: *const fmpz_mod_poly, seq: *const fmpz, len: slong);
+    pub fn fmpz_mod_poly_minpoly_bm(
+        poly: *const fmpz_mod_poly,
+        seq: *const fmpz,
+        len: slong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_minpoly_hgcd) for this function.
     #[link_name = "_fmpz_mod_poly_minpoly_hgcd"]
@@ -2320,7 +2508,12 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_minpoly_hgcd) for this function.
     #[link_name = "fmpz_mod_poly_minpoly_hgcd"]
-    pub fn fmpz_mod_poly_minpoly_hgcd(poly: *const fmpz_mod_poly, seq: *const fmpz, len: slong);
+    pub fn fmpz_mod_poly_minpoly_hgcd(
+        poly: *const fmpz_mod_poly,
+        seq: *const fmpz,
+        len: slong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_minpoly) for this function.
     #[link_name = "_fmpz_mod_poly_minpoly"]
@@ -2333,7 +2526,12 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_minpoly) for this function.
     #[link_name = "fmpz_mod_poly_minpoly"]
-    pub fn fmpz_mod_poly_minpoly(poly: *const fmpz_mod_poly, seq: *const fmpz, len: slong);
+    pub fn fmpz_mod_poly_minpoly(
+        poly: *const fmpz_mod_poly,
+        seq: *const fmpz,
+        len: slong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_resultant_euclidean) for this function.
     #[link_name = "_fmpz_mod_poly_resultant_euclidean"]
@@ -2352,6 +2550,7 @@ extern "C" {
         r: *mut fmpz,
         f: *const fmpz_mod_poly,
         g: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_resultant_hgcd) for this function.
@@ -2371,6 +2570,7 @@ extern "C" {
         res: *mut fmpz,
         f: *const fmpz_mod_poly,
         g: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_resultant) for this function.
@@ -2390,6 +2590,7 @@ extern "C" {
         res: *mut fmpz,
         f: *const fmpz_mod_poly,
         g: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_discriminant) for this function.
@@ -2403,7 +2604,11 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_discriminant) for this function.
     #[link_name = "fmpz_mod_poly_discriminant"]
-    pub fn fmpz_mod_poly_discriminant(d: *mut fmpz, f: *const fmpz_mod_poly);
+    pub fn fmpz_mod_poly_discriminant(
+        d: *mut fmpz,
+        f: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_derivative) for this function.
     #[link_name = "_fmpz_mod_poly_derivative"]
@@ -2411,7 +2616,11 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_derivative) for this function.
     #[link_name = "fmpz_mod_poly_derivative"]
-    pub fn fmpz_mod_poly_derivative(res: *const fmpz_mod_poly, poly: *const fmpz_mod_poly);
+    pub fn fmpz_mod_poly_derivative(
+        res: *const fmpz_mod_poly,
+        poly: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_evaluate_fmpz) for this function.
     #[link_name = "_fmpz_mod_poly_evaluate_fmpz"]
@@ -2425,7 +2634,12 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_evaluate_fmpz) for this function.
     #[link_name = "fmpz_mod_poly_evaluate_fmpz"]
-    pub fn fmpz_mod_poly_evaluate_fmpz(res: *mut fmpz, poly: *const fmpz_mod_poly, a: *const fmpz);
+    pub fn fmpz_mod_poly_evaluate_fmpz(
+        res: *mut fmpz,
+        poly: *const fmpz_mod_poly,
+        a: *const fmpz,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_evaluate_fmpz_vec_iter) for this function.
     #[link_name = "_fmpz_mod_poly_evaluate_fmpz_vec_iter"]
@@ -2445,6 +2659,7 @@ extern "C" {
         poly: *const fmpz_mod_poly,
         xs: *const fmpz,
         n: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_evaluate_fmpz_vec_fast_precomp) for this function.
@@ -2476,6 +2691,7 @@ extern "C" {
         poly: *const fmpz_mod_poly,
         xs: *const fmpz,
         n: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_evaluate_fmpz_vec) for this function.
@@ -2496,6 +2712,7 @@ extern "C" {
         poly: *const fmpz_mod_poly,
         xs: *const fmpz,
         n: slong,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_compose_horner) for this function.
@@ -2515,6 +2732,7 @@ extern "C" {
         res: *const fmpz_mod_poly,
         poly1: *const fmpz_mod_poly,
         poly2: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_compose_divconquer) for this function.
@@ -2534,6 +2752,7 @@ extern "C" {
         res: *const fmpz_mod_poly,
         poly1: *const fmpz_mod_poly,
         poly2: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_compose) for this function.
@@ -2553,6 +2772,7 @@ extern "C" {
         res: *const fmpz_mod_poly,
         poly1: *const fmpz_mod_poly,
         poly2: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_compose_mod) for this function.
@@ -2574,6 +2794,7 @@ extern "C" {
         f: *const fmpz_mod_poly,
         g: *const fmpz_mod_poly,
         h: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_compose_mod_horner) for this function.
@@ -2595,6 +2816,7 @@ extern "C" {
         f: *const fmpz_mod_poly,
         g: *const fmpz_mod_poly,
         h: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_compose_mod_brent_kung) for this function.
@@ -2616,6 +2838,7 @@ extern "C" {
         f: *const fmpz_mod_poly,
         g: *const fmpz_mod_poly,
         h: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_compose_mod_brent_kung_preinv) for this function.
@@ -2640,6 +2863,7 @@ extern "C" {
         g: *const fmpz_mod_poly,
         h: *const fmpz_mod_poly,
         hinv: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_compose_mod_brent_kung_vec_preinv) for this function.
@@ -2668,6 +2892,7 @@ extern "C" {
         g: *const fmpz_mod_poly,
         h: *const fmpz_mod_poly,
         hinv: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_compose_mod_brent_kung_vec_preinv_threaded) for this function.
@@ -2680,6 +2905,7 @@ extern "C" {
         g: *const fmpz_mod_poly,
         poly: *const fmpz_mod_poly,
         polyinv: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
     );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_tree_alloc) for this function.
@@ -2736,7 +2962,11 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_fprint) for this function.
     #[link_name = "fmpz_mod_poly_fprint"]
-    pub fn fmpz_mod_poly_fprint(file: *mut FILE, poly: *const fmpz_mod_poly) -> c_int;
+    pub fn fmpz_mod_poly_fprint(
+        file: *mut FILE,
+        poly: *const fmpz_mod_poly,
+        ctx: *const fmpz_mod_ctx,
+    ) -> c_int;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_fprint_pretty) for this function.
     #[link_name = "fmpz_mod_poly_fprint_pretty"]
@@ -2744,15 +2974,20 @@ extern "C" {
         file: *mut FILE,
         poly: *const fmpz_mod_poly,
         x: *const c_char,
+        ctx: *const fmpz_mod_ctx,
     ) -> c_int;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_print) for this function.
     #[link_name = "fmpz_mod_poly_print"]
-    pub fn fmpz_mod_poly_print(poly: *const fmpz_mod_poly) -> c_int;
+    pub fn fmpz_mod_poly_print(poly: *const fmpz_mod_poly, ctx: *const fmpz_mod_ctx) -> c_int;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_print_pretty) for this function.
     #[link_name = "fmpz_mod_poly_print_pretty"]
-    pub fn fmpz_mod_poly_print_pretty(poly: *const fmpz_mod_poly, x: *const c_char) -> c_int;
+    pub fn fmpz_mod_poly_print_pretty(
+        poly: *const fmpz_mod_poly,
+        x: *const c_char,
+        ctx: *const fmpz_mod_ctx,
+    ) -> c_int;
 
 }
 
@@ -2769,24 +3004,27 @@ mod tests {
     #[test]
     fn try_it() {
         let mut p: fmpz = fmpz::default();
+        let mut ctx = MaybeUninit::uninit();
         unsafe {
             fmpz_init(&mut p);
             fmpz_set_ui(&mut p, 17);
             debug_assert!(fmpz_print(&mut p) > 0);
             let mut f = MaybeUninit::uninit();
-            fmpz_mod_poly_init(f.as_mut_ptr(), &p);
+            fmpz_mod_ctx_init(ctx.as_mut_ptr(), &p);
+            let mut ctx = ctx.assume_init();
+            fmpz_mod_poly_init(f.as_mut_ptr(), &mut ctx);
             let mut f = f.assume_init();
-            fmpz_mod_poly_set_coeff_ui(&mut f, 1, 5);
-            fmpz_mod_poly_set_coeff_ui(&mut f, 0, 5);
+            fmpz_mod_poly_set_coeff_ui(&mut f, 1, 5, &mut ctx);
+            fmpz_mod_poly_set_coeff_ui(&mut f, 0, 5, &mut ctx);
             let x = std::ffi::CString::new("x").unwrap();
-            debug_assert!(fmpz_mod_poly_print_pretty(&f, x.as_ptr()) > 0);
+            debug_assert!(fmpz_mod_poly_print_pretty(&f, x.as_ptr(), &mut ctx) > 0);
         }
     }
 
     mod random {
         use crate::*;
-        use std::mem::MaybeUninit;
         use quickcheck_macros;
+        use std::mem::MaybeUninit;
 
         #[quickcheck_macros::quickcheck]
         fn mult_same_as_gmp(v: u64, u: u64) -> bool {
