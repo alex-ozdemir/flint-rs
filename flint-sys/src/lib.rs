@@ -1,7 +1,7 @@
 #![allow(non_camel_case_types)]
 
 use gmp_mpfr_sys::{gmp, mpfr};
-use libc::{c_char, c_double, c_int, c_long, c_ulong, c_void, FILE};
+use libc::{c_char, c_double, c_int, c_long, c_uchar, c_uint, c_ulong, c_void, FILE};
 use std::mem::size_of;
 
 //include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
@@ -29,6 +29,7 @@ pub type slong = c_long;
 const FLINT_BITS: usize = size_of::<slong>() * 8;
 pub type ulong = c_ulong;
 pub type mp_limb_t = c_ulong;
+pub type mp_limb_signed_t = c_long;
 pub type flint_bitcnt_t = c_ulong;
 
 #[repr(C)]
@@ -69,6 +70,42 @@ pub struct flint_rand {
     gmp_init: c_int,
     randval: ulong,
     randval2: ulong,
+}
+
+#[repr(C)]
+#[allow(non_snake_case)]
+pub struct n_ecm {
+    x: ulong,
+    z: ulong,   /* the coordinates */
+    a24: ulong, /* value (a + 2)/4 */
+    ninv: ulong,
+    normbits: ulong,
+    one: ulong,
+    GCD_table: *mut c_uchar, /* checks whether baby step int is
+                             coprime to Primorial or not */
+    prime_table: *mut *mut c_uchar,
+}
+
+pub const FLINT_MAX_FACTORS_IN_LIMB: usize = 15;
+
+#[repr(C)]
+pub struct n_factor {
+    num: c_int,
+    exp: [c_int; FLINT_MAX_FACTORS_IN_LIMB],
+    p: [c_ulong; FLINT_MAX_FACTORS_IN_LIMB],
+}
+
+#[repr(C)]
+pub struct n_primes {
+    small_i: slong,
+    small_num: slong,
+    small_primes: *mut c_uint,
+
+    sieve_a: ulong,
+    sieve_b: ulong,
+    sieve_i: slong,
+    sieve_num: slong,
+    sieve: *mut c_char,
 }
 
 ///// Convert a gmp integer point to a fmpz.
@@ -3010,6 +3047,572 @@ extern "C" {
         ctx: *const fmpz_mod_ctx,
     ) -> c_int;
 
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_randlimb) for this function.
+    #[link_name = "n_randlimb"]
+    pub fn n_randlimb(state: *mut flint_rand) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_randbits) for this function.
+    #[link_name = "n_randbits"]
+    pub fn n_randbits(state: *mut flint_rand, bits: c_uint) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_randtest_bits) for this function.
+    #[link_name = "n_randtest_bits"]
+    pub fn n_randtest_bits(state: *mut flint_rand, bits: c_int) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_randint) for this function.
+    #[link_name = "n_randint"]
+    pub fn n_randint(state: *mut flint_rand, limit: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_urandint) for this function.
+    #[link_name = "n_urandint"]
+    pub fn n_urandint(state: *mut flint_rand, limit: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_randtest) for this function.
+    #[link_name = "n_randtest"]
+    pub fn n_randtest(state: *mut flint_rand) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_randtest_not_zero) for this function.
+    #[link_name = "n_randtest_not_zero"]
+    pub fn n_randtest_not_zero(state: *mut flint_rand) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_randprime) for this function.
+    #[link_name = "n_randprime"]
+    pub fn n_randprime(state: *mut flint_rand, bits: ulong, proved: c_int) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_randtest_prime) for this function.
+    #[link_name = "n_randtest_prime"]
+    pub fn n_randtest_prime(state: *mut flint_rand, proved: c_int) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_pow) for this function.
+    #[link_name = "n_pow"]
+    pub fn n_pow(n: ulong, exp: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_flog) for this function.
+    #[link_name = "n_flog"]
+    pub fn n_flog(n: ulong, b: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_clog) for this function.
+    #[link_name = "n_clog"]
+    pub fn n_clog(n: ulong, b: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_revbin) for this function.
+    #[link_name = "n_revbin"]
+    pub fn n_revbin(n: ulong, b: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_sizeinbase) for this function.
+    #[link_name = "n_sizeinbase"]
+    pub fn n_sizeinbase(n: ulong, base: c_int) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_preinvert_limb) for this function.
+    #[link_name = "n_preinvert_limb"]
+    pub fn n_preinvert_limb(n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_precompute_inverse) for this function.
+    #[link_name = "n_precompute_inverse"]
+    pub fn n_precompute_inverse(n: ulong) -> c_double;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_mod_precomp) for this function.
+    #[link_name = "n_mod_precomp"]
+    pub fn n_mod_precomp(a: ulong, n: ulong, ninv: c_double) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_mod2_precomp) for this function.
+    #[link_name = "n_mod2_precomp"]
+    pub fn n_mod2_precomp(a: ulong, n: ulong, ninv: c_double) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_divrem2_preinv) for this function.
+    #[link_name = "n_divrem2_preinv"]
+    pub fn n_divrem2_preinv(q: *mut ulong, a: ulong, n: ulong, ninv: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_div2_preinv) for this function.
+    #[link_name = "n_div2_preinv"]
+    pub fn n_div2_preinv(a: ulong, n: ulong, ninv: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_mod2_preinv) for this function.
+    #[link_name = "n_mod2_preinv"]
+    pub fn n_mod2_preinv(a: ulong, n: ulong, ninv: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_divrem2_precomp) for this function.
+    #[link_name = "n_divrem2_precomp"]
+    pub fn n_divrem2_precomp(q: *mut ulong, a: ulong, n: ulong, npre: c_double) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_ll_mod_preinv) for this function.
+    #[link_name = "n_ll_mod_preinv"]
+    pub fn n_ll_mod_preinv(a_hi: ulong, a_lo: ulong, n: ulong, ninv: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_lll_mod_preinv) for this function.
+    #[link_name = "n_lll_mod_preinv"]
+    pub fn n_lll_mod_preinv(a_hi: ulong, a_mi: ulong, a_lo: ulong, n: ulong, ninv: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_mulmod_precomp) for this function.
+    #[link_name = "n_mulmod_precomp"]
+    pub fn n_mulmod_precomp(a: ulong, b: ulong, n: ulong, ninv: c_double) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_mulmod2_preinv) for this function.
+    #[link_name = "n_mulmod2_preinv"]
+    pub fn n_mulmod2_preinv(a: ulong, b: ulong, n: ulong, ninv: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_mulmod2) for this function.
+    #[link_name = "n_mulmod2"]
+    pub fn n_mulmod2(a: ulong, b: ulong, n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_mulmod_preinv) for this function.
+    #[link_name = "n_mulmod_preinv"]
+    pub fn n_mulmod_preinv(a: ulong, b: ulong, n: ulong, ninv: ulong, norm: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_gcd) for this function.
+    #[link_name = "n_gcd"]
+    pub fn n_gcd(x: ulong, y: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_gcd_full) for this function.
+    #[link_name = "n_gcd_full"]
+    pub fn n_gcd_full(x: ulong, y: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_gcdinv) for this function.
+    #[link_name = "n_gcdinv"]
+    pub fn n_gcdinv(a: *mut ulong, x: ulong, y: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_xgcd) for this function.
+    #[link_name = "n_xgcd"]
+    pub fn n_xgcd(a: *mut ulong, b: *mut ulong, x: ulong, y: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_jacobi) for this function.
+    #[link_name = "n_jacobi"]
+    pub fn n_jacobi(x: mp_limb_signed_t, y: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_jacobi_unsigned) for this function.
+    #[link_name = "n_jacobi_unsigned"]
+    pub fn n_jacobi_unsigned(x: ulong, y: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_addmod) for this function.
+    #[link_name = "n_addmod"]
+    pub fn n_addmod(a: ulong, b: ulong, n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_submod) for this function.
+    #[link_name = "n_submod"]
+    pub fn n_submod(a: ulong, b: ulong, n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_invmod) for this function.
+    #[link_name = "n_invmod"]
+    pub fn n_invmod(x: ulong, y: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_powmod_precomp) for this function.
+    #[link_name = "n_powmod_precomp"]
+    pub fn n_powmod_precomp(a: ulong, exp: mp_limb_signed_t, n: ulong, npre: c_double) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_powmod_ui_precomp) for this function.
+    #[link_name = "n_powmod_ui_precomp"]
+    pub fn n_powmod_ui_precomp(a: ulong, exp: ulong, n: ulong, npre: c_double) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_powmod) for this function.
+    #[link_name = "n_powmod"]
+    pub fn n_powmod(a: ulong, exp: mp_limb_signed_t, n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_powmod2_preinv) for this function.
+    #[link_name = "n_powmod2_preinv"]
+    pub fn n_powmod2_preinv(a: ulong, exp: mp_limb_signed_t, n: ulong, ninv: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_powmod2) for this function.
+    #[link_name = "n_powmod2"]
+    pub fn n_powmod2(a: ulong, exp: mp_limb_signed_t, n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_powmod2_ui_preinv) for this function.
+    #[link_name = "n_powmod2_ui_preinv"]
+    pub fn n_powmod2_ui_preinv(a: ulong, exp: ulong, n: ulong, ninv: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_powmod2_fmpz_preinv) for this function.
+    #[link_name = "n_powmod2_fmpz_preinv"]
+    pub fn n_powmod2_fmpz_preinv(a: ulong, exp: *const fmpz, n: ulong, ninv: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_sqrtmod) for this function.
+    #[link_name = "n_sqrtmod"]
+    pub fn n_sqrtmod(a: ulong, p: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_sqrtmod_2pow) for this function.
+    #[link_name = "n_sqrtmod_2pow"]
+    pub fn n_sqrtmod_2pow(sqrt: *mut *mut ulong, a: ulong, exp: slong) -> slong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_sqrtmod_primepow) for this function.
+    #[link_name = "n_sqrtmod_primepow"]
+    pub fn n_sqrtmod_primepow(sqrt: *mut *mut ulong, a: ulong, p: ulong, exp: slong) -> slong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_sqrtmodn) for this function.
+    #[link_name = "n_sqrtmodn"]
+    pub fn n_sqrtmodn(sqrt: *mut *mut ulong, a: ulong, fac: *mut n_factor) -> slong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_mulmod_shoup) for this function.
+    #[link_name = "n_mulmod_shoup"]
+    pub fn n_mulmod_shoup(
+        w: mp_limb_t,
+        t: mp_limb_t,
+        w_precomp: mp_limb_t,
+        p: mp_limb_t,
+    ) -> mp_limb_t;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_mulmod_precomp_shoup) for this function.
+    #[link_name = "n_mulmod_precomp_shoup"]
+    pub fn n_mulmod_precomp_shoup(w: mp_limb_t, p: mp_limb_t) -> mp_limb_t;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_primes_init) for this function.
+    #[link_name = "n_primes_init"]
+    pub fn n_primes_init(iter: *mut n_primes);
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_primes_clear) for this function.
+    #[link_name = "n_primes_clear"]
+    pub fn n_primes_clear(iter: *mut n_primes);
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_primes_next) for this function.
+    #[link_name = "n_primes_next"]
+    pub fn n_primes_next(iter: *mut n_primes) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_primes_jump_after) for this function.
+    #[link_name = "n_primes_jump_after"]
+    pub fn n_primes_jump_after(iter: *mut n_primes, n: ulong);
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_primes_extend_small) for this function.
+    #[link_name = "n_primes_extend_small"]
+    pub fn n_primes_extend_small(iter: *mut n_primes, bound: ulong);
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_primes_sieve_range) for this function.
+    #[link_name = "n_primes_sieve_range"]
+    pub fn n_primes_sieve_range(iter: *mut n_primes, a: ulong, b: ulong);
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_compute_primes) for this function.
+    #[link_name = "n_compute_primes"]
+    pub fn n_compute_primes(num_primes: ulong);
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_primes_arr_readonly) for this function.
+    #[link_name = "n_primes_arr_readonly"]
+    pub fn n_primes_arr_readonly(num_primes: ulong) -> *const ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_prime_inverses_arr_readonly) for this function.
+    #[link_name = "n_prime_inverses_arr_readonly"]
+    pub fn n_prime_inverses_arr_readonly(n: ulong) -> *const c_double;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_cleanup_primes) for this function.
+    #[link_name = "n_cleanup_primes"]
+    pub fn n_cleanup_primes();
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_nextprime) for this function.
+    #[link_name = "n_nextprime"]
+    pub fn n_nextprime(n: ulong, proved: c_int) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_prime_pi) for this function.
+    #[link_name = "n_prime_pi"]
+    pub fn n_prime_pi(n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_prime_pi_bounds) for this function.
+    #[link_name = "n_prime_pi_bounds"]
+    pub fn n_prime_pi_bounds(lo: *mut ulong, hi: *mut ulong, n: ulong);
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_nth_prime) for this function.
+    #[link_name = "n_nth_prime"]
+    pub fn n_nth_prime(n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_nth_prime_bounds) for this function.
+    #[link_name = "n_nth_prime_bounds"]
+    pub fn n_nth_prime_bounds(lo: *mut ulong, hi: *mut ulong, n: ulong);
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_is_oddprime_small) for this function.
+    #[link_name = "n_is_oddprime_small"]
+    pub fn n_is_oddprime_small(n: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_is_oddprime_binary) for this function.
+    #[link_name = "n_is_oddprime_binary"]
+    pub fn n_is_oddprime_binary(n: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_is_prime_pocklington) for this function.
+    #[link_name = "n_is_prime_pocklington"]
+    pub fn n_is_prime_pocklington(n: ulong, iterations: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_is_prime_pseudosquare) for this function.
+    #[link_name = "n_is_prime_pseudosquare"]
+    pub fn n_is_prime_pseudosquare(n: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_is_prime) for this function.
+    #[link_name = "n_is_prime"]
+    pub fn n_is_prime(n: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_is_strong_probabprime_precomp) for this function.
+    #[link_name = "n_is_strong_probabprime_precomp"]
+    pub fn n_is_strong_probabprime_precomp(n: ulong, npre: c_double, a: ulong, d: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_is_strong_probabprime2_preinv) for this function.
+    #[link_name = "n_is_strong_probabprime2_preinv"]
+    pub fn n_is_strong_probabprime2_preinv(n: ulong, ninv: ulong, a: ulong, d: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_is_probabprime_fermat) for this function.
+    #[link_name = "n_is_probabprime_fermat"]
+    pub fn n_is_probabprime_fermat(n: ulong, i: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_is_probabprime_fibonacci) for this function.
+    #[link_name = "n_is_probabprime_fibonacci"]
+    pub fn n_is_probabprime_fibonacci(n: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_is_probabprime_BPSW) for this function.
+    #[link_name = "n_is_probabprime_BPSW"]
+    pub fn n_is_probabprime_BPSW(n: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_is_probabprime_lucas) for this function.
+    #[link_name = "n_is_probabprime_lucas"]
+    pub fn n_is_probabprime_lucas(n: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_is_probabprime) for this function.
+    #[link_name = "n_is_probabprime"]
+    pub fn n_is_probabprime(n: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_CRT) for this function.
+    #[link_name = "n_CRT"]
+    pub fn n_CRT(r1: ulong, m1: ulong, r2: ulong, m2: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_sqrt) for this function.
+    #[link_name = "n_sqrt"]
+    pub fn n_sqrt(a: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_sqrtrem) for this function.
+    #[link_name = "n_sqrtrem"]
+    pub fn n_sqrtrem(r: *mut ulong, a: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_is_square) for this function.
+    #[link_name = "n_is_square"]
+    pub fn n_is_square(x: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_is_perfect_power235) for this function.
+    #[link_name = "n_is_perfect_power235"]
+    pub fn n_is_perfect_power235(n: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_is_perfect_power) for this function.
+    #[link_name = "n_is_perfect_power"]
+    pub fn n_is_perfect_power(root: *mut ulong, n: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_rootrem) for this function.
+    #[link_name = "n_rootrem"]
+    pub fn n_rootrem(remainder: *mut ulong, n: ulong, root: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_cbrt) for this function.
+    #[link_name = "n_cbrt"]
+    pub fn n_cbrt(n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_cbrt_newton_iteration) for this function.
+    #[link_name = "n_cbrt_newton_iteration"]
+    pub fn n_cbrt_newton_iteration(n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_cbrt_binary_search) for this function.
+    #[link_name = "n_cbrt_binary_search"]
+    pub fn n_cbrt_binary_search(n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_cbrt_chebyshev_approx) for this function.
+    #[link_name = "n_cbrt_chebyshev_approx"]
+    pub fn n_cbrt_chebyshev_approx(n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_cbrtrem) for this function.
+    #[link_name = "n_cbrtrem"]
+    pub fn n_cbrtrem(remainder: *mut ulong, n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_remove) for this function.
+    #[link_name = "n_remove"]
+    pub fn n_remove(n: *mut ulong, p: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_remove2_precomp) for this function.
+    #[link_name = "n_remove2_precomp"]
+    pub fn n_remove2_precomp(n: *mut ulong, p: ulong, ppre: c_double) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_insert) for this function.
+    #[link_name = "n_factor_insert"]
+    pub fn n_factor_insert(factors: *mut n_factor, p: ulong, exp: ulong);
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_trial_range) for this function.
+    #[link_name = "n_factor_trial_range"]
+    pub fn n_factor_trial_range(
+        factors: *mut n_factor,
+        n: ulong,
+        start: ulong,
+        num_primes: ulong,
+    ) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_trial) for this function.
+    #[link_name = "n_factor_trial"]
+    pub fn n_factor_trial(factors: *mut n_factor, n: ulong, num_primes: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_power235) for this function.
+    #[link_name = "n_factor_power235"]
+    pub fn n_factor_power235(exp: *mut ulong, n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_one_line) for this function.
+    #[link_name = "n_factor_one_line"]
+    pub fn n_factor_one_line(n: ulong, iters: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_lehman) for this function.
+    #[link_name = "n_factor_lehman"]
+    pub fn n_factor_lehman(n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_SQUFOF) for this function.
+    #[link_name = "n_factor_SQUFOF"]
+    pub fn n_factor_SQUFOF(n: ulong, iters: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor) for this function.
+    #[link_name = "n_factor"]
+    pub fn n_factor(factors: *mut n_factor, n: ulong, proved: c_int);
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_trial_partial) for this function.
+    #[link_name = "n_factor_trial_partial"]
+    pub fn n_factor_trial_partial(
+        factors: *mut n_factor,
+        n: ulong,
+        prod: *mut ulong,
+        num_primes: ulong,
+        limit: ulong,
+    ) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_partial) for this function.
+    #[link_name = "n_factor_partial"]
+    pub fn n_factor_partial(factors: *mut n_factor, n: ulong, limit: ulong, proved: c_int)
+        -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_pp1) for this function.
+    #[link_name = "n_factor_pp1"]
+    pub fn n_factor_pp1(n: ulong, B1: ulong, c: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_pp1_wrapper) for this function.
+    #[link_name = "n_factor_pp1_wrapper"]
+    pub fn n_factor_pp1_wrapper(n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_pollard_brent_single) for this function.
+    #[link_name = "n_factor_pollard_brent_single"]
+    pub fn n_factor_pollard_brent_single(
+        factor: *mut mp_limb_t,
+        n: mp_limb_t,
+        ninv: mp_limb_t,
+        ai: mp_limb_t,
+        xi: mp_limb_t,
+        normbits: mp_limb_t,
+        max_iters: mp_limb_t,
+    ) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_pollard_brent) for this function.
+    #[link_name = "n_factor_pollard_brent"]
+    pub fn n_factor_pollard_brent(
+        factor: *mut mp_limb_t,
+        state: *mut flint_rand,
+        n_in: mp_limb_t,
+        max_tries: mp_limb_t,
+        max_iters: mp_limb_t,
+    ) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_moebius_mu) for this function.
+    #[link_name = "n_moebius_mu"]
+    pub fn n_moebius_mu(n: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_moebius_mu_vec) for this function.
+    #[link_name = "n_moebius_mu_vec"]
+    pub fn n_moebius_mu_vec(mu: *mut c_int, len: ulong);
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_is_squarefree) for this function.
+    #[link_name = "n_is_squarefree"]
+    pub fn n_is_squarefree(n: ulong) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_euler_phi) for this function.
+    #[link_name = "n_euler_phi"]
+    pub fn n_euler_phi(n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factorial_fast_mod2_preinv) for this function.
+    #[link_name = "n_factorial_fast_mod2_preinv"]
+    pub fn n_factorial_fast_mod2_preinv(n: ulong, p: ulong, pinv: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factorial_mod2_preinv) for this function.
+    #[link_name = "n_factorial_mod2_preinv"]
+    pub fn n_factorial_mod2_preinv(n: ulong, p: ulong, pinv: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_primitive_root_prime_prefactor) for this function.
+    #[link_name = "n_primitive_root_prime_prefactor"]
+    pub fn n_primitive_root_prime_prefactor(p: ulong, factors: *mut n_factor) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_primitive_root_prime) for this function.
+    #[link_name = "n_primitive_root_prime"]
+    pub fn n_primitive_root_prime(p: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_discrete_log_bsgs) for this function.
+    #[link_name = "n_discrete_log_bsgs"]
+    pub fn n_discrete_log_bsgs(b: ulong, a: ulong, n: ulong) -> ulong;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_ecm_double) for this function.
+    #[link_name = "n_factor_ecm_double"]
+    pub fn n_factor_ecm_double(
+        x: *mut mp_limb_t,
+        z: *mut mp_limb_t,
+        x0: mp_limb_t,
+        z0: mp_limb_t,
+        n: mp_limb_t,
+        n_ecm_inf: *mut n_ecm,
+    );
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_ecm_add) for this function.
+    #[link_name = "n_factor_ecm_add"]
+    pub fn n_factor_ecm_add(
+        x: *mut mp_limb_t,
+        z: *mut mp_limb_t,
+        x1: mp_limb_t,
+        z1: mp_limb_t,
+        x2: mp_limb_t,
+        z2: mp_limb_t,
+        x0: mp_limb_t,
+        z0: mp_limb_t,
+        n: mp_limb_t,
+        n_ecm_inf: *mut n_ecm,
+    );
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_ecm_mul_montgomery_ladder) for this function.
+    #[link_name = "n_factor_ecm_mul_montgomery_ladder"]
+    pub fn n_factor_ecm_mul_montgomery_ladder(
+        x: *mut mp_limb_t,
+        z: *mut mp_limb_t,
+        x0: mp_limb_t,
+        z0: mp_limb_t,
+        k: mp_limb_t,
+        n: mp_limb_t,
+        n_ecm_inf: *mut n_ecm,
+    );
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_ecm_select_curve) for this function.
+    #[link_name = "n_factor_ecm_select_curve"]
+    pub fn n_factor_ecm_select_curve(
+        f: *mut mp_limb_t,
+        sigma: mp_limb_t,
+        n: mp_limb_t,
+        n_ecm_inf: *mut n_ecm,
+    ) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_ecm_stage_I) for this function.
+    #[link_name = "n_factor_ecm_stage_I"]
+    pub fn n_factor_ecm_stage_I(
+        f: *mut mp_limb_t,
+        prime_array: *const mp_limb_t,
+        num: mp_limb_t,
+        B1: mp_limb_t,
+        n: mp_limb_t,
+        n_ecm_inf: *mut n_ecm,
+    ) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_ecm_stage_II) for this function.
+    #[link_name = "n_factor_ecm_stage_II"]
+    pub fn n_factor_ecm_stage_II(
+        f: *mut mp_limb_t,
+        B1: mp_limb_t,
+        B2: mp_limb_t,
+        P: mp_limb_t,
+        n: mp_limb_t,
+        n_ecm_inf: *mut n_ecm,
+    ) -> c_int;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/ulong_extras.html#c.n_factor_ecm) for this function.
+    #[link_name = "n_factor_ecm"]
+    pub fn n_factor_ecm(
+        f: *mut mp_limb_t,
+        curves: mp_limb_t,
+        B1: mp_limb_t,
+        B2: mp_limb_t,
+        state: *mut flint_rand,
+        n: mp_limb_t,
+    ) -> c_int;
 }
 
 #[cfg(test)]

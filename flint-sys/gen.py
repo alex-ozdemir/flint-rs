@@ -8,7 +8,7 @@ from pprint import pprint
 from typing import NamedTuple, List, Dict, Set, Optional
 
 flint_url = "http://flintlib.org/doc/{}.html"
-flint_files = ["fmpz", "fmpz_mod_poly"]
+flint_files = ["fmpz", "fmpz_mod_poly", "ulong_extras"]
 
 
 def main():
@@ -19,10 +19,12 @@ def main():
         "fmpz_t": "*const fmpz",
         "const fmpz_t": "*const fmpz",
         "flint_rand_t": "*mut flint_rand",
+        "flint_rant_t": "*mut flint_rand", # typo in the documentation
         "flint_bitcnt_t": "usize",
         "mp_limb_t": "mp_limb_t",
         "mp_limb_signed_t": "mp_limb_signed_t",
         "int": "c_int",
+        "unsigned int": "c_uint",
         "double": "c_double",
         "size_t": "usize",
         "const mpz_t": "*const gmp::mpz_t",
@@ -41,7 +43,11 @@ def main():
         "mp_srcptr": "*const mp_limb_t",
         "mp_ptr": "*mut mp_limb_t",
         "const ulong *": "*const ulong",
+        "int *": "*mut c_int",
+        "ulong*": "*mut ulong",
         "ulong *": "*mut ulong",
+        "ulong **": "*mut *mut ulong",
+        "const double *": "*const c_double",
         "char *": "*mut c_char",
         "const char *": "*const c_char",
         "FILE *": "*mut FILE",
@@ -61,6 +67,9 @@ def main():
         "fmpz_poly_struct * const *": "*const *const fmpz_poly",
         "const fmpz_poly_t": "*const fmpz_poly",
         "const fmpz_mod_ctx_t": "*const fmpz_mod_ctx",
+        "n_factor_t *": "*mut n_factor",
+        "n_primes_t": "*mut n_primes",
+        "n_ecm_t": "*mut n_ecm",
     }
     # Functions to omit
     skipfn = {
