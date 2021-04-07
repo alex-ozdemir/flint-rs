@@ -29,6 +29,7 @@ def main():
         "const mpf_t": "*const gmp::mpf_t",
         "const mpfr_t": "*const mpfr::mpfr_t",
         "const mpq_t": "*const gmp::mpq_t",
+        "__mpz_struct *": "*mut gmp::mpz_t",
         "mpz_t": "*mut gmp::mpz_t",
         "mpf_t": "*mut gmp::mpf_t",
         "mpfr_t": "*mut mpfr::mpfr_t",
@@ -59,6 +60,7 @@ def main():
         "fmpz_poly_struct **": "*mut *mut fmpz_poly",
         "fmpz_poly_struct * const *": "*const *const fmpz_poly",
         "const fmpz_poly_t": "*const fmpz_poly",
+        "const fmpz_mod_ctx_t": "*const fmpz_mod_ctx",
     }
     # Functions to omit
     skipfn = {
@@ -70,9 +72,7 @@ def main():
         "_fmpz_cleanup_mpz_content",
         "_fmpz_cleanup",
         "_fmpz_promote",
-        "_fmpz_promote_val",
         "_fmpz_demote",
-        "_fmpz_demote_val",
         "fmpz_preinvn_init",
         "fmpz_fdiv_qr_preinvn",
         "fmpz_preinvn_clear",
@@ -117,9 +117,10 @@ def main():
         url = flint_url.format(file)
         r = requests.get(url)
         soup = BeautifulSoup(r.text, features="lxml")
-        encoding = soup.meta["charset"]
-        r.encoding = encoding
-        soup = BeautifulSoup(r.text, features="lxml")
+        if "charset" in soup.meta:
+            encoding = soup.meta["charset"]
+            r.encoding = encoding
+            soup = BeautifulSoup(r.text, features="lxml")
         fns = []
         for d in soup("dl"):
             if "function" in d["class"]:
@@ -217,8 +218,10 @@ class CDecl(NamedTuple):
     @classmethod
     def from_str(cls, s) -> "CDecl":
         s = s.strip()
-        i = s.rfind(" ")
-        return cls(s[:i], s[i + 1 :])
+        i = s.rfind(" ") + 1
+        while not s[i].isalnum():
+            i += 1
+        return cls(s[:i].strip(), s[i:])
 
     def as_rust_decl(self, i: int, ty_map: Dict[str, str]) -> str:
         t = ty_map[self.ty]

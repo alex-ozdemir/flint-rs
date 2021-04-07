@@ -104,16 +104,17 @@ extern "C" {
     pub fn fmpz_mod_ctx_init(ctx: *const fmpz_mod_ctx, n: *const fmpz);
     pub fn fmpz_mod_ctx_clear(ctx: *const fmpz_mod_ctx);
 
-    /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz.html#c.fmpz_init) for this function.
-    #[link_name = "__fmpz_init"]
-    pub fn fmpz_init(f: *mut fmpz);
+    /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz.html#c._fmpz_promote_val) for this function.
+    #[link_name = "_fmpz_promote_val"]
+    pub fn _fmpz_promote_val(f: *mut fmpz) -> *mut gmp::mpz_t;
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz.html#c._fmpz_demote_val) for this function.
     #[link_name = "_fmpz_demote_val"]
     pub fn _fmpz_demote_val(f: *mut fmpz);
-    /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz.html#c._fmpz_promote_val) for this function.
-    #[link_name = "_fmpz_promote_val"]
-    pub fn _fmpz_promote_val(f: *mut fmpz) -> *mut gmp::mpz_t;
+
+    /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz.html#c.fmpz_init) for this function.
+    #[link_name = "__fmpz_init"]
+    pub fn fmpz_init(f: *mut fmpz);
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz.html#c.fmpz_init2) for this function.
     #[link_name = "fmpz_init2"]
@@ -1168,10 +1169,6 @@ extern "C" {
         ctx: *const fmpz_mod_ctx,
     );
 
-    // /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_modulus) for this function.
-    //#[link_name = "fmpz_mod_poly_modulus"]
-    //pub fn fmpz_mod_poly_modulus(poly: *const fmpz_mod_poly) -> *mut fmpz;
-
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_degree) for this function.
     #[link_name = "fmpz_mod_poly_degree"]
     pub fn fmpz_mod_poly_degree(poly: *const fmpz_mod_poly, ctx: *const fmpz_mod_ctx) -> slong;
@@ -1330,7 +1327,13 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_shift_left) for this function.
     #[link_name = "_fmpz_mod_poly_shift_left"]
-    pub fn _fmpz_mod_poly_shift_left(res: *mut fmpz, poly: *const fmpz, len: slong, n: slong);
+    pub fn _fmpz_mod_poly_shift_left(
+        res: *mut fmpz,
+        poly: *const fmpz,
+        len: slong,
+        n: slong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_shift_left) for this function.
     #[link_name = "fmpz_mod_poly_shift_left"]
@@ -1343,7 +1346,13 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_shift_right) for this function.
     #[link_name = "_fmpz_mod_poly_shift_right"]
-    pub fn _fmpz_mod_poly_shift_right(res: *mut fmpz, poly: *const fmpz, len: slong, n: slong);
+    pub fn _fmpz_mod_poly_shift_right(
+        res: *mut fmpz,
+        poly: *const fmpz,
+        len: slong,
+        n: slong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_shift_right) for this function.
     #[link_name = "fmpz_mod_poly_shift_right"]
