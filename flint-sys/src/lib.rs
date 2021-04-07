@@ -1032,11 +1032,19 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_realloc) for this function.
     #[link_name = "fmpz_mod_poly_realloc"]
-    pub fn fmpz_mod_poly_realloc(poly: *const fmpz_mod_poly, alloc: slong, ctx: *const fmpz_mod_ctx);
+    pub fn fmpz_mod_poly_realloc(
+        poly: *const fmpz_mod_poly,
+        alloc: slong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_fit_length) for this function.
     #[link_name = "fmpz_mod_poly_fit_length"]
-    pub fn fmpz_mod_poly_fit_length(poly: *const fmpz_mod_poly, len: slong, ctx: *const fmpz_mod_ctx);
+    pub fn fmpz_mod_poly_fit_length(
+        poly: *const fmpz_mod_poly,
+        len: slong,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c._fmpz_mod_poly_normalise) for this function.
     #[link_name = "_fmpz_mod_poly_normalise"]
@@ -1224,7 +1232,11 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_set_fmpz) for this function.
     #[link_name = "fmpz_mod_poly_set_fmpz"]
-    pub fn fmpz_mod_poly_set_fmpz(f: *const fmpz_mod_poly, c: *const fmpz, ctx: *const fmpz_mod_ctx);
+    pub fn fmpz_mod_poly_set_fmpz(
+        f: *const fmpz_mod_poly,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx,
+    );
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz_mod_poly.html#c.fmpz_mod_poly_set_fmpz_poly) for this function.
     #[link_name = "fmpz_mod_poly_set_fmpz_poly"]
