@@ -8,7 +8,7 @@ from pprint import pprint
 from typing import NamedTuple, List, Dict, Set, Optional
 
 flint_url = "http://flintlib.org/doc/{}.html"
-flint_files = ["fmpz", "fmpz_mod_poly"]
+flint_files = ["fmpz", "fmpz_mod_poly", "ulong_extras"]
 
 
 def main():
@@ -19,16 +19,19 @@ def main():
         "fmpz_t": "*const fmpz",
         "const fmpz_t": "*const fmpz",
         "flint_rand_t": "*mut flint_rand",
+        "flint_rant_t": "*mut flint_rand", # typo in the documentation
         "flint_bitcnt_t": "usize",
         "mp_limb_t": "mp_limb_t",
         "mp_limb_signed_t": "mp_limb_signed_t",
         "int": "c_int",
+        "unsigned int": "c_uint",
         "double": "c_double",
         "size_t": "usize",
         "const mpz_t": "*const gmp::mpz_t",
         "const mpf_t": "*const gmp::mpf_t",
         "const mpfr_t": "*const mpfr::mpfr_t",
         "const mpq_t": "*const gmp::mpq_t",
+        "__mpz_struct *": "*mut gmp::mpz_t",
         "mpz_t": "*mut gmp::mpz_t",
         "mpf_t": "*mut gmp::mpf_t",
         "mpfr_t": "*mut mpfr::mpfr_t",
@@ -40,7 +43,11 @@ def main():
         "mp_srcptr": "*const mp_limb_t",
         "mp_ptr": "*mut mp_limb_t",
         "const ulong *": "*const ulong",
+        "int *": "*mut c_int",
+        "ulong*": "*mut ulong",
         "ulong *": "*mut ulong",
+        "ulong **": "*mut *mut ulong",
+        "const double *": "*const c_double",
         "char *": "*mut c_char",
         "const char *": "*const c_char",
         "FILE *": "*mut FILE",
@@ -59,6 +66,10 @@ def main():
         "fmpz_poly_struct **": "*mut *mut fmpz_poly",
         "fmpz_poly_struct * const *": "*const *const fmpz_poly",
         "const fmpz_poly_t": "*const fmpz_poly",
+        "const fmpz_mod_ctx_t": "*const fmpz_mod_ctx",
+        "n_factor_t *": "*mut n_factor",
+        "n_primes_t": "*mut n_primes",
+        "n_ecm_t": "*mut n_ecm",
     }
     # Functions to omit
     skipfn = {
@@ -70,9 +81,7 @@ def main():
         "_fmpz_cleanup_mpz_content",
         "_fmpz_cleanup",
         "_fmpz_promote",
-        "_fmpz_promote_val",
         "_fmpz_demote",
-        "_fmpz_demote_val",
         "fmpz_preinvn_init",
         "fmpz_fdiv_qr_preinvn",
         "fmpz_preinvn_clear",
@@ -117,9 +126,10 @@ def main():
         url = flint_url.format(file)
         r = requests.get(url)
         soup = BeautifulSoup(r.text, features="lxml")
-        encoding = soup.meta["charset"]
-        r.encoding = encoding
-        soup = BeautifulSoup(r.text, features="lxml")
+        if "charset" in soup.meta:
+            encoding = soup.meta["charset"]
+            r.encoding = encoding
+            soup = BeautifulSoup(r.text, features="lxml")
         fns = []
         for d in soup("dl"):
             if "function" in d["class"]:
@@ -217,8 +227,10 @@ class CDecl(NamedTuple):
     @classmethod
     def from_str(cls, s) -> "CDecl":
         s = s.strip()
-        i = s.rfind(" ")
-        return cls(s[:i], s[i + 1 :])
+        i = s.rfind(" ") + 1
+        while not s[i].isalnum():
+            i += 1
+        return cls(s[:i].strip(), s[i:])
 
     def as_rust_decl(self, i: int, ty_map: Dict[str, str]) -> str:
         t = ty_map[self.ty]
