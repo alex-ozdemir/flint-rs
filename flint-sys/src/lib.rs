@@ -3645,6 +3645,38 @@ mod tests {
         }
     }
 
+    #[test]
+    fn factor() {
+        let mut factors = n_factor {
+            num: 0,
+            exp: [0; FLINT_MAX_FACTORS_IN_LIMB],
+            p: [0; FLINT_MAX_FACTORS_IN_LIMB],
+        };
+
+        unsafe {
+            n_factor(&mut factors, 12897006562022856050, 0);
+        };
+        assert_eq!(factors.num, 7);
+        let mut factors = factors.p[..7]
+            .iter()
+            .copied()
+            .zip(factors.exp[..7].iter().copied())
+            .collect::<Vec<_>>();
+        factors.sort();
+        assert_eq!(
+            factors,
+            &[
+                (2, 1),
+                (5, 2),
+                (37, 1),
+                (41, 1),
+                (89, 1),
+                (349, 1),
+                (5474165233, 1)
+            ]
+        );
+    }
+
     mod random {
         use crate::*;
         use quickcheck_macros;
