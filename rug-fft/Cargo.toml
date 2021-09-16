@@ -1,6 +1,6 @@
 [package]
 name = "rug-fft"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["Alex Ozdemir <aozdemir@hmc.edu>"]
 edition = "2018"
 description = "FFT implementations for rug integers"
