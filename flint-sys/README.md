@@ -11,13 +11,13 @@ Most of FLINT is covered with the exception of some functions not listed in the 
 
 Internal crates marked with an asterisk in the documentation have functions which may require mutable borrows where const borrows will suffice (these need to be corrected but the bindings will still work as expected).
 
-These bindings have been tested with FLINT 2.7.1. Feedback on other versions of FLINT is appreciated.
+These bindings have been tested with FLINT 2.8.0. Feedback on other versions of FLINT is appreciated.
 
 ## Dependencies
 
 You must install the following before installing this crate:
 
-   * [FLINT](http://flintlib.org/) version 2.7.0 or greater
+   * [FLINT](http://flintlib.org/) version 2.8 or greater
 
 ### Arch Linux
 

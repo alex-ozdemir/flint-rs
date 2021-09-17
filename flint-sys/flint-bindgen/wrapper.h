@@ -22,8 +22,10 @@
 #include <flint/fmpz_mod.h>
 #include <flint/fmpz_mod_mat.h>
 #include <flint/fmpz_mod_mpoly.h>
+#include <flint/fmpz_mod_mpoly_factor.h>
 #include <flint/fmpz_mod_poly.h>
 #include <flint/fmpz_mod_poly_factor.h>
+#include <flint/fmpz_mod_vec.h>
 #include <flint/fmpz_mpoly.h>
 #include <flint/fmpz_mpoly_factor.h>
 #include <flint/fmpz_poly.h>
@@ -32,6 +34,10 @@
 #include <flint/fmpz_poly_q.h>
 #include <flint/fmpz_vec.h>
 #include <flint/fq.h>
+#include <flint/fq_default.h>
+#include <flint/fq_default_mat.h>
+#include <flint/fq_default_poly.h>
+#include <flint/fq_default_poly_factor.h>
 #include <flint/fq_embed.h>
 #include <flint/fq_embed_templates.h>
 #include <flint/fq_mat.h>
