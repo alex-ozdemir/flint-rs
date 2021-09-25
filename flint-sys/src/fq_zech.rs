@@ -13,7 +13,7 @@ use libc::{c_char, c_int, FILE};
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Hash)]
 pub struct fq_zech_struct {
     pub value: mp_limb_t,
 }

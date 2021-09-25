@@ -15,7 +15,7 @@ pub type fq_nmod_t = nmod_poly_t;
 pub type fq_nmod_struct = nmod_poly_struct;
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Hash)]
 pub struct fq_nmod_ctx_struct {
     pub p: fmpz,
     pub mod_: nmod_t,

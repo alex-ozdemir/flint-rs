@@ -10,7 +10,7 @@ use libc::{c_int, FILE};
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Hash)]
 pub struct fq_zech_mat_struct {
     pub entries: *mut fq_zech_struct,
     pub r: mp_limb_signed_t,

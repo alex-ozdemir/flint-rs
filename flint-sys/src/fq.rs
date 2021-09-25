@@ -17,7 +17,7 @@ pub type fq_t = fmpz_poly_t;
 pub type fq_struct = fmpz_poly_struct;
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_ctx_struct {
     pub ctxp: fmpz_mod_ctx_t,
     pub sparse_modulus: c_int,

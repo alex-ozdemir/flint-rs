@@ -13,7 +13,7 @@ use libc::{c_char, c_int, c_void, FILE};
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Hash)]
 pub struct nmod_poly_struct {
     pub coeffs: mp_ptr,
     pub alloc: mp_limb_signed_t,
@@ -24,7 +24,7 @@ pub struct nmod_poly_struct {
 pub type nmod_poly_t = [nmod_poly_struct; 1usize];
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Hash)]
 pub struct nmod_poly_res_struct {
     pub res: mp_limb_t,
     pub lc: mp_limb_t,
