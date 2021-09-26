@@ -1,4 +1,4 @@
-use flint_sys::{self, fmpz_mod_poly};
+use flint_sys::{self, deps, fmpz::*, fmpz_mod::*, fmpz_mod_poly::*};
 use rug::Integer;
 use rug_fft;
 use serde::de::Deserializer;
@@ -9,6 +9,8 @@ use std::cmp::*;
 use std::fmt::{self, Debug, Display, Formatter};
 use std::mem::MaybeUninit;
 use std::ops::*;
+
+mod flint_rug_bridge;
 
 /// A polynomial with modular integer coefficients.
 ///
@@ -22,8 +24,8 @@ use std::ops::*;
 ///    * [`interpolate_from_mul_subgroup`](fn.ModPoly.interpolate_from_mul_subgroup)
 ///
 pub struct ModPoly {
-    raw: fmpz_mod_poly,
-    ctx: flint_sys::fmpz_mod_ctx,
+    raw: fmpz_mod_poly_struct,
+    ctx: fmpz_mod_ctx,
     modulus: Integer,
 }
 
@@ -33,13 +35,11 @@ impl ModPoly {
         unsafe {
             let mut raw = MaybeUninit::uninit();
             let mut ctx = MaybeUninit::uninit();
-            let mut flint_modulus = flint_sys::fmpz::default();
-            flint_sys::fmpz_init(&mut flint_modulus);
-            flint_sys::fmpz_set_mpz(&mut flint_modulus, modulus.as_raw());
-            flint_sys::fmpz_mod_ctx_init(ctx.as_mut_ptr(), &flint_modulus);
-            flint_sys::fmpz_clear(&mut flint_modulus);
+            let mut flint_modulus = flint_rug_bridge::int_to_fmpz(&modulus);
+            fmpz_mod_ctx_init(ctx.as_mut_ptr(), &flint_modulus);
+            fmpz_clear(&mut flint_modulus);
             let ctx = ctx.assume_init();
-            flint_sys::fmpz_mod_poly_init(raw.as_mut_ptr(), &ctx);
+            fmpz_mod_poly_init(raw.as_mut_ptr(), &ctx as *const _ as *mut _);
             ModPoly {
                 raw: raw.assume_init(),
                 ctx,
@@ -60,14 +60,16 @@ impl ModPoly {
     pub fn with_capacity(modulus: Integer, n: usize) -> Self {
         unsafe {
             let mut raw = MaybeUninit::uninit();
-            let mut flint_modulus = flint_sys::fmpz::default();
+            let mut flint_modulus = flint_rug_bridge::int_to_fmpz(&modulus);
             let mut ctx = MaybeUninit::uninit();
-            flint_sys::fmpz_init(&mut flint_modulus);
-            flint_sys::fmpz_set_mpz(&mut flint_modulus, modulus.as_raw());
-            flint_sys::fmpz_mod_ctx_init(ctx.as_mut_ptr(), &flint_modulus);
-            flint_sys::fmpz_clear(&mut flint_modulus);
+            fmpz_mod_ctx_init(ctx.as_mut_ptr(), &flint_modulus);
+            fmpz_clear(&mut flint_modulus);
             let ctx = ctx.assume_init();
-            flint_sys::fmpz_mod_poly_init2(raw.as_mut_ptr(), n as flint_sys::slong, &ctx);
+            fmpz_mod_poly_init2(
+                raw.as_mut_ptr(),
+                n as deps::slong,
+                &ctx as *const _ as *mut _,
+            );
             ModPoly {
                 raw: raw.assume_init(),
                 modulus,
@@ -185,7 +187,7 @@ impl ModPoly {
     /// it has more than `n` coefficients.
     pub fn reserve(&mut self, n: usize) {
         unsafe {
-            flint_sys::fmpz_mod_poly_realloc(&mut self.raw, n as flint_sys::slong, &self.ctx);
+            fmpz_mod_poly_realloc(&mut self.raw, n as deps::slong, &mut self.ctx);
         }
     }
 
@@ -203,16 +205,20 @@ impl ModPoly {
     /// ```
     pub fn evaluate(&self, i: &Integer) -> Integer {
         unsafe {
-            let mut in_ = flint_sys::fmpz::default();
-            flint_sys::fmpz_init(&mut in_);
-            flint_sys::fmpz_set_mpz(&mut in_, i.as_raw());
-            let mut out = flint_sys::fmpz::default();
-            flint_sys::fmpz_init(&mut out);
-            flint_sys::fmpz_mod_poly_evaluate_fmpz(&mut out, &self.raw, &in_, &self.ctx);
-            let mut out_rug = Integer::new();
-            flint_sys::fmpz_get_mpz(out_rug.as_raw_mut(), &out);
-            flint_sys::fmpz_clear(&mut in_);
-            flint_sys::fmpz_clear(&mut out);
+            let mut in_ = flint_rug_bridge::int_to_fmpz(i);
+
+            let mut out = fmpz::default();
+            fmpz_init(&mut out);
+            fmpz_mod_poly_evaluate_fmpz(
+                &mut out,
+                &self.raw as *const _ as *mut _,
+                &mut in_,
+                &self.ctx as *const _ as *mut _,
+            );
+
+            let out_rug = flint_rug_bridge::fmpz_to_int(&out);
+            fmpz_clear(&mut in_);
+            fmpz_clear(&mut out);
             out_rug
         }
     }
@@ -225,50 +231,60 @@ impl ModPoly {
     /// Get the `i`th coefficient
     pub fn get_coefficient(&self, i: usize) -> Integer {
         unsafe {
-            let mut c = Integer::new();
-            flint_sys::fmpz_mod_poly_get_coeff_mpz(
-                c.as_raw_mut(),
-                &self.raw,
-                i as flint_sys::slong,
-                &self.ctx,
+            let mut c = fmpz::default();
+            fmpz_init(&mut c);
+            fmpz_mod_poly_get_coeff_fmpz(
+                &mut c,
+                &self.raw as *const _ as *mut _,
+                i as deps::slong,
+                &self.ctx as *const _ as *mut _,
             );
-            c % &self.modulus
+            let c_gmp = flint_rug_bridge::fmpz_to_int(&c);
+            fmpz_clear(&mut c);
+            c_gmp % &self.modulus
         }
     }
 
     /// Set the `i`th coefficient to be `c`
     pub fn set_coefficient(&mut self, i: usize, c: &Integer) {
         unsafe {
-            flint_sys::fmpz_mod_poly_set_coeff_mpz(
+            let mut c_flint = flint_rug_bridge::int_to_fmpz(c);
+            fmpz_mod_poly_set_coeff_fmpz(
                 &mut self.raw,
-                i as flint_sys::slong,
-                c.as_raw(),
-                &self.ctx,
+                i as deps::slong,
+                &mut c_flint,
+                &mut self.ctx,
             );
+            fmpz_clear(&mut c_flint);
         }
     }
 
     /// Set the `i`th coefficient to be `c`
     pub fn set_coefficient_ui(&mut self, i: usize, c: usize) {
         unsafe {
-            flint_sys::fmpz_mod_poly_set_coeff_ui(
+            fmpz_mod_poly_set_coeff_ui(
                 &mut self.raw,
-                i as flint_sys::slong,
-                c as flint_sys::ulong,
-                &self.ctx,
+                i as deps::slong,
+                c as deps::ulong,
+                &mut self.ctx,
             );
         }
     }
 
     /// The number of coefficients in the polynomial. One more than the degree.
     pub fn len(&self) -> usize {
-        unsafe { flint_sys::fmpz_mod_poly_length(&self.raw, &self.ctx) as usize }
+        unsafe {
+            fmpz_mod_poly_length(
+                &self.raw as *const _ as *mut _,
+                &self.ctx as *const _ as *mut _,
+            ) as usize
+        }
     }
 
     /// `self = -self`
     pub fn neg(&mut self) {
         unsafe {
-            flint_sys::fmpz_mod_poly_neg(&mut self.raw, &self.raw, &self.ctx);
+            fmpz_mod_poly_neg(&mut self.raw, &mut self.raw, &mut self.ctx);
         }
     }
 
@@ -276,7 +292,12 @@ impl ModPoly {
     pub fn add(&mut self, other: &Self) {
         assert_eq!(self.modulus, other.modulus);
         unsafe {
-            flint_sys::fmpz_mod_poly_add(&mut self.raw, &self.raw, &other.raw, &self.ctx);
+            fmpz_mod_poly_add(
+                &mut self.raw,
+                &mut self.raw,
+                &other.raw as *const _ as *mut _,
+                &mut self.ctx,
+            );
         }
     }
 
@@ -284,7 +305,12 @@ impl ModPoly {
     pub fn sub(&mut self, other: &Self) {
         assert_eq!(self.modulus, other.modulus);
         unsafe {
-            flint_sys::fmpz_mod_poly_sub(&mut self.raw, &self.raw, &other.raw, &self.ctx);
+            fmpz_mod_poly_sub(
+                &mut self.raw,
+                &mut self.raw,
+                &other.raw as *const _ as *mut _,
+                &mut self.ctx,
+            );
         }
     }
 
@@ -292,7 +318,12 @@ impl ModPoly {
     pub fn sub_from(&mut self, other: &Self) {
         assert_eq!(self.modulus, other.modulus);
         unsafe {
-            flint_sys::fmpz_mod_poly_sub(&mut self.raw, &other.raw, &self.raw, &self.ctx);
+            fmpz_mod_poly_sub(
+                &mut self.raw,
+                &other.raw as *const _ as *mut _,
+                &mut self.raw,
+                &mut self.ctx,
+            );
         }
     }
 
@@ -300,7 +331,12 @@ impl ModPoly {
     pub fn mul(&mut self, other: &Self) {
         assert_eq!(self.modulus, other.modulus);
         unsafe {
-            flint_sys::fmpz_mod_poly_mul(&mut self.raw, &self.raw, &other.raw, &self.ctx);
+            fmpz_mod_poly_mul(
+                &mut self.raw,
+                &mut self.raw,
+                &other.raw as *const _ as *mut _,
+                &mut self.ctx,
+            );
         }
     }
 
@@ -314,8 +350,12 @@ impl ModPoly {
         let mut q = ModPoly::new(self.modulus.clone());
         let mut r = ModPoly::new(self.modulus.clone());
         unsafe {
-            flint_sys::fmpz_mod_poly_divrem(
-                &mut q.raw, &mut r.raw, &self.raw, &other.raw, &self.ctx,
+            fmpz_mod_poly_divrem(
+                &mut q.raw,
+                &mut r.raw,
+                &self.raw as *const _ as *mut _,
+                &other.raw as *const _ as *mut _,
+                &self.ctx as *const _ as *mut _,
             );
         }
         (q, r)
@@ -326,12 +366,12 @@ impl ModPoly {
         assert_eq!(self.modulus, other.modulus);
         let mut r = ModPoly::new(self.modulus.clone());
         unsafe {
-            flint_sys::fmpz_mod_poly_divrem(
+            fmpz_mod_poly_divrem(
                 &mut self.raw,
                 &mut r.raw,
-                &self.raw,
-                &other.raw,
-                &self.ctx,
+                &mut self.raw,
+                &other.raw as *const _ as *mut _,
+                &mut self.ctx,
             );
         }
     }
@@ -341,12 +381,12 @@ impl ModPoly {
         assert_eq!(self.modulus, other.modulus);
         let mut r = ModPoly::new(self.modulus.clone());
         unsafe {
-            flint_sys::fmpz_mod_poly_divrem(
+            fmpz_mod_poly_divrem(
                 &mut self.raw,
                 &mut r.raw,
-                &other.raw,
-                &self.raw,
-                &self.ctx,
+                &other.raw as *const _ as *mut _,
+                &mut self.raw,
+                &mut self.ctx,
             );
         }
     }
@@ -356,12 +396,12 @@ impl ModPoly {
         assert_eq!(self.modulus, other.modulus);
         let mut q = ModPoly::new(self.modulus.clone());
         unsafe {
-            flint_sys::fmpz_mod_poly_divrem(
+            fmpz_mod_poly_divrem(
                 &mut q.raw,
                 &mut self.raw,
-                &self.raw,
-                &other.raw,
-                &self.ctx,
+                &mut self.raw,
+                &other.raw as *const _ as *mut _,
+                &mut self.ctx,
             );
         }
     }
@@ -371,12 +411,12 @@ impl ModPoly {
         assert_eq!(self.modulus, other.modulus);
         let mut q = ModPoly::new(self.modulus.clone());
         unsafe {
-            flint_sys::fmpz_mod_poly_divrem(
+            fmpz_mod_poly_divrem(
                 &mut q.raw,
                 &mut self.raw,
-                &other.raw,
-                &self.raw,
-                &self.ctx,
+                &other.raw as *const _ as *mut _,
+                &mut self.raw,
+                &mut self.ctx,
             );
         }
     }
@@ -384,7 +424,7 @@ impl ModPoly {
     /// `self = self * self`
     pub fn sqr(&mut self) {
         unsafe {
-            flint_sys::fmpz_mod_poly_sqr(&mut self.raw, &self.raw, &self.ctx);
+            fmpz_mod_poly_sqr(&mut self.raw, &mut self.raw, &mut self.ctx);
         }
     }
 }
@@ -393,7 +433,11 @@ impl Clone for ModPoly {
     fn clone(&self) -> Self {
         let mut this = ModPoly::new(self.modulus.clone());
         unsafe {
-            flint_sys::fmpz_mod_poly_set(&mut this.raw, &self.raw, &self.ctx);
+            fmpz_mod_poly_set(
+                &mut this.raw,
+                &self.raw as *const _ as *mut _,
+                &self.ctx as *const _ as *mut _,
+            );
         }
         this
     }
@@ -401,13 +445,19 @@ impl Clone for ModPoly {
 
 impl Drop for ModPoly {
     fn drop(&mut self) {
-        unsafe { flint_sys::fmpz_mod_poly_clear(&mut self.raw, &self.ctx) }
+        unsafe { fmpz_mod_poly_clear(&mut self.raw, &mut self.ctx) }
     }
 }
 
 impl PartialEq<ModPoly> for ModPoly {
     fn eq(&self, other: &ModPoly) -> bool {
-        unsafe { flint_sys::fmpz_mod_poly_equal(&self.raw, &other.raw, &self.ctx) != 0 }
+        unsafe {
+            fmpz_mod_poly_equal(
+                &self.raw as *const _ as *mut _,
+                &other.raw as *const _ as *mut _,
+                &self.ctx as *const _ as *mut _,
+            ) != 0
+        }
     }
 }
 impl Eq for ModPoly {}
@@ -674,6 +724,27 @@ mod test {
         let f = ModPoly::new(p);
         assert_eq!(f.len(), 0);
     }
+
+    #[test]
+    fn from_const() {
+        let p = Integer::from(17);
+        let f = ModPoly::from_int(p, Integer::from(0));
+        assert_eq!(f.len(), 0);
+        assert_eq!(f.evaluate(&Integer::from(0)), Integer::from(0));
+    }
+
+    #[test]
+    fn just_set() {
+        let p = Integer::from(17);
+        let mut f = ModPoly::new(p);
+        f.set_coefficient_ui(0, 1);
+        assert_eq!(f.len(), 1);
+        f.set_coefficient_ui(5, 1);
+        assert_eq!(f.len(), 6);
+        f.set_coefficient_ui(5, 0);
+        assert_eq!(f.len(), 1);
+    }
+
 
     #[test]
     fn set_get() {
