@@ -1,0 +1,301 @@
+#![allow(non_camel_case_types)]
+
+//! *See the [FLINT documentation](http://flintlib.org/doc/fq_default_mat.html).
+
+
+use crate::deps::*;
+use crate::flint::*;
+use crate::fmpz::fmpz;
+use crate::fmpz_mat::fmpz_mat_struct;
+use crate::nmod_mat::nmod_mat_struct;
+use crate::fmpz_mod_mat::fmpz_mod_mat_struct;
+use crate::fq_mat::fq_mat_t;
+use crate::fq_nmod_mat::fq_nmod_mat_t;
+use crate::fq_zech_mat::fq_zech_mat_t;
+use crate::fq_default::{fq_default_struct, fq_default_ctx_struct};
+use libc::{c_int, FILE};
+
+
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash)]
+pub struct fq_default_mat_struct {
+    pub fq: fq_mat_t,
+    pub fq_nmod: fq_nmod_mat_t,
+    pub fq_zech: fq_zech_mat_t,
+}
+
+pub type fq_default_mat_t = [fq_default_mat_struct; 1usize];
+
+extern "C" {
+    pub fn fq_default_mat_init(
+        mat: *mut fq_default_mat_struct,
+        rows: mp_limb_signed_t,
+        cols: mp_limb_signed_t,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_init_set(
+        mat: *mut fq_default_mat_struct,
+        src: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_swap(
+        mat1: *mut fq_default_mat_struct,
+        mat2: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_set(
+        mat1: *mut fq_default_mat_struct,
+        mat2: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_clear(mat: *mut fq_default_mat_struct, ctx: *mut fq_default_ctx_struct);
+    pub fn fq_default_mat_equal(
+        mat1: *mut fq_default_mat_struct,
+        mat2: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> c_int;
+    pub fn fq_default_mat_is_zero(
+        mat: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> c_int;
+    pub fn fq_default_mat_is_one(
+        mat: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> c_int;
+    pub fn fq_default_mat_is_empty(
+        mat: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> c_int;
+    pub fn fq_default_mat_is_square(
+        mat: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> c_int;
+    pub fn fq_default_mat_entry(
+        val: *mut fq_default_struct,
+        mat: *mut fq_default_mat_struct,
+        i: mp_limb_signed_t,
+        j: mp_limb_signed_t,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_entry_set(
+        mat: *mut fq_default_mat_struct,
+        i: mp_limb_signed_t,
+        j: mp_limb_signed_t,
+        x: *mut fq_default_struct,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_entry_set_fmpz(
+        mat: *mut fq_default_mat_struct,
+        i: mp_limb_signed_t,
+        j: mp_limb_signed_t,
+        x: *mut fmpz,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_nrows(
+        mat: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> mp_limb_signed_t;
+    pub fn fq_default_mat_ncols(
+        mat: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> mp_limb_signed_t;
+    pub fn fq_default_mat_swap_rows(
+        mat: *mut fq_default_mat_struct,
+        perm: *mut mp_limb_signed_t,
+        r: mp_limb_signed_t,
+        s: mp_limb_signed_t,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_invert_rows(
+        mat: *mut fq_default_mat_struct,
+        perm: *mut mp_limb_signed_t,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_swap_cols(
+        mat: *mut fq_default_mat_struct,
+        perm: *mut mp_limb_signed_t,
+        r: mp_limb_signed_t,
+        s: mp_limb_signed_t,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_invert_cols(
+        mat: *mut fq_default_mat_struct,
+        perm: *mut mp_limb_signed_t,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_zero(A: *mut fq_default_mat_struct, ctx: *mut fq_default_ctx_struct);
+    pub fn fq_default_mat_one(A: *mut fq_default_mat_struct, ctx: *mut fq_default_ctx_struct);
+    pub fn fq_default_mat_set_nmod_mat(
+        mat1: *mut fq_default_mat_struct,
+        mat2: *mut nmod_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_set_fmpz_mod_mat(
+        mat1: *mut fq_default_mat_struct,
+        mat2: *mut fmpz_mod_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_set_fmpz_mat(
+        mat1: *mut fq_default_mat_struct,
+        mat2: *mut fmpz_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_window_init(
+        window: *mut fq_default_mat_struct,
+        mat: *mut fq_default_mat_struct,
+        r1: mp_limb_signed_t,
+        c1: mp_limb_signed_t,
+        r2: mp_limb_signed_t,
+        c2: mp_limb_signed_t,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_window_clear(
+        window: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_concat_horizontal(
+        res: *mut fq_default_mat_struct,
+        mat1: *mut fq_default_mat_struct,
+        mat2: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_concat_vertical(
+        res: *mut fq_default_mat_struct,
+        mat1: *mut fq_default_mat_struct,
+        mat2: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_fprint(
+        file: *mut FILE,
+        mat: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> c_int;
+    pub fn fq_default_mat_fprint_pretty(
+        file: *mut FILE,
+        mat: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> c_int;
+    pub fn fq_default_mat_print(
+        mat: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> c_int;
+    pub fn fq_default_mat_print_pretty(
+        mat: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> c_int;
+    pub fn fq_default_mat_randtest(
+        mat: *mut fq_default_mat_struct,
+        state: *mut flint_rand_s,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_randrank(
+        mat: *mut fq_default_mat_struct,
+        state: *mut flint_rand_s,
+        rank: mp_limb_signed_t,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_randops(
+        mat: *mut fq_default_mat_struct,
+        count: mp_limb_signed_t,
+        state: *mut flint_rand_s,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_randtril(
+        mat: *mut fq_default_mat_struct,
+        state: *mut flint_rand_s,
+        unit: c_int,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_randtriu(
+        mat: *mut fq_default_mat_struct,
+        state: *mut flint_rand_s,
+        unit: c_int,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_add(
+        C: *mut fq_default_mat_struct,
+        A: *mut fq_default_mat_struct,
+        B: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_sub(
+        C: *mut fq_default_mat_struct,
+        A: *mut fq_default_mat_struct,
+        B: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_neg(
+        B: *mut fq_default_mat_struct,
+        A: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_submul(
+        D: *mut fq_default_mat_struct,
+        C: *mut fq_default_mat_struct,
+        A: *mut fq_default_mat_struct,
+        B: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_mul(
+        C: *mut fq_default_mat_struct,
+        A: *mut fq_default_mat_struct,
+        B: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_lu(
+        P: *mut mp_limb_signed_t,
+        A: *mut fq_default_mat_struct,
+        rank_check: c_int,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> mp_limb_signed_t;
+    pub fn fq_default_mat_inv(
+        B: *mut fq_default_mat_struct,
+        A: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> c_int;
+    pub fn fq_default_mat_rref(
+        A: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> mp_limb_signed_t;
+    pub fn fq_default_mat_nullspace(
+        X: *mut fq_default_mat_struct,
+        A: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> mp_limb_signed_t;
+    pub fn fq_default_mat_rank(
+        A: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> mp_limb_signed_t;
+    pub fn fq_default_mat_solve_tril(
+        X: *mut fq_default_mat_struct,
+        L: *mut fq_default_mat_struct,
+        B: *mut fq_default_mat_struct,
+        unit: c_int,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_solve_triu(
+        X: *mut fq_default_mat_struct,
+        U: *mut fq_default_mat_struct,
+        B: *mut fq_default_mat_struct,
+        unit: c_int,
+        ctx: *mut fq_default_ctx_struct,
+    );
+    pub fn fq_default_mat_solve(
+        X: *mut fq_default_mat_struct,
+        A: *mut fq_default_mat_struct,
+        C: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> c_int;
+    pub fn fq_default_mat_can_solve(
+        X: *mut fq_default_mat_struct,
+        A: *mut fq_default_mat_struct,
+        B: *mut fq_default_mat_struct,
+        ctx: *mut fq_default_ctx_struct,
+    ) -> c_int;
+    pub fn fq_default_mat_similarity(
+        A: *mut fq_default_mat_struct,
+        r: mp_limb_signed_t,
+        d: *mut fq_default_struct,
+        ctx: *mut fq_default_ctx_struct,
+    );
+}
