@@ -10,7 +10,7 @@ use libc::{c_char, c_int};
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Hash)]
 pub struct fmpz_poly_q_struct {
     pub num: *mut fmpz_poly_struct,
     pub den: *mut fmpz_poly_struct,
