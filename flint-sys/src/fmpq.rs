@@ -52,7 +52,7 @@ extern "C" {
     pub fn fmpq_set_ui(res: *mut fmpq, p: mp_limb_t, q: mp_limb_t);
     pub fn _fmpq_set_si(rnum: *mut fmpz, rden: *mut fmpz, p: mp_limb_signed_t, q: mp_limb_t);
     pub fn fmpq_set_si(res: *mut fmpq, p: mp_limb_signed_t, q: mp_limb_t);
-    pub fn fmpq_equal_ui(q: *const fmpq, n: mp_limb_signed_t) -> c_int;
+    pub fn fmpq_equal_ui(q: *const fmpq, n: mp_limb_t) -> c_int;
     pub fn fmpq_equal_si(q: *const fmpq, n: mp_limb_signed_t) -> c_int;
     pub fn fmpq_set_fmpz_frac(res: *mut fmpq, p: *const fmpz, q: *const fmpz);
     pub fn fmpq_set_str(
@@ -362,14 +362,14 @@ extern "C" {
     pub fn _fmpq_vec_clear(vec: *mut fmpq, len: mp_limb_signed_t);
 }
 
-pub fn fmpq_set_ui_den1(res: *mut fmpq, num: mp_limb_t) {
-    unsafe {fmpq_set_ui(res, num, 1 as mp_limb_t);}
+pub unsafe fn fmpq_set_ui_den1(res: *mut fmpq, num: mp_limb_t) {
+    fmpq_set_ui(res, num, 1 as mp_limb_t);
 }
 
-pub fn fmpq_set_si_den1(res: *mut fmpq, num: mp_limb_signed_t) {
-    unsafe {fmpq_set_si(res, num, 1 as mp_limb_t);}
+pub unsafe fn fmpq_set_si_den1(res: *mut fmpq, num: mp_limb_signed_t) {
+    fmpq_set_si(res, num, 1 as mp_limb_t);
 }
 
-pub fn fmpq_set_fmpz_den1(res: *mut fmpq, num: *const fmpz) {
-    unsafe {fmpq_set_fmpz_frac(res, num, &fmpz(1) as *const fmpz);}
+pub unsafe fn fmpq_set_fmpz_den1(res: *mut fmpq, num: *const fmpz) {
+    fmpq_set_fmpz_frac(res, num, &fmpz(1) as *const fmpz);
 }
