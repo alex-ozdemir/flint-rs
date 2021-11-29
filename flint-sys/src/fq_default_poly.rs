@@ -65,11 +65,11 @@ extern "C" {
         ctx: *const fq_default_ctx_struct,
     );
     pub fn fq_default_poly_length(
-        poly: *mut fq_default_poly_struct,
+        poly: *const fq_default_poly_struct,
         ctx: *const fq_default_ctx_struct,
     ) -> mp_limb_signed_t;
     pub fn fq_default_poly_degree(
-        poly: *mut fq_default_poly_struct,
+        poly: *const fq_default_poly_struct,
         ctx: *const fq_default_ctx_struct,
     ) -> mp_limb_signed_t;
     pub fn fq_default_poly_randtest(
