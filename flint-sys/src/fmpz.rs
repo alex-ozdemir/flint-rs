@@ -237,13 +237,14 @@ extern "C" {
     );
     pub fn fmpz_invmod(f: *mut fmpz, g: *const fmpz, h: *const fmpz) -> c_int;
     pub fn fmpz_jacobi(a: *const fmpz, p: *const fmpz) -> c_int;
+    pub fn fmpz_kronecker(a: *const fmpz, n: *const fmpz) -> c_int;
     pub fn fmpz_divides_mod_list(
         xstart: *mut fmpz,
         xstride: *mut fmpz,
         xlength: *mut fmpz,
-        a: *mut fmpz,
-        b: *mut fmpz,
-        n: *mut fmpz,
+        a: *const fmpz,
+        b: *const fmpz,
+        n: *const fmpz,
     );
     pub fn _fmpz_remove(x: *mut fmpz, f: *const fmpz, finv: f64) -> mp_limb_signed_t;
     pub fn fmpz_remove(rop: *mut fmpz, op: *const fmpz, f: *const fmpz) -> mp_limb_signed_t;
@@ -278,7 +279,7 @@ extern "C" {
     pub fn fmpz_tdiv_q_ui(f: *mut fmpz, g: *const fmpz, h: mp_limb_t);
     pub fn fmpz_tdiv_q_si(f: *mut fmpz, g: *const fmpz, h: mp_limb_signed_t);
     pub fn fmpz_tdiv_r_2exp(f: *mut fmpz, g: *const fmpz, exp: mp_limb_t);
-    pub fn fmpz_tdiv_ui(g: *mut fmpz, h: mp_limb_t) -> mp_limb_t;
+    pub fn fmpz_tdiv_ui(g: *const fmpz, h: mp_limb_t) -> mp_limb_t;
     pub fn fmpz_tdiv_q_2exp(f: *mut fmpz, g: *const fmpz, exp: mp_limb_t);
     pub fn fmpz_preinvn_init(inv: *mut fmpz_preinvn_struct, f: *const fmpz);
     pub fn fmpz_preinvn_clear(inv: *mut fmpz_preinvn_struct);
@@ -291,8 +292,8 @@ extern "C" {
     pub fn fmpz_fac_ui(f: *mut fmpz, n: mp_limb_t);
     pub fn fmpz_fib_ui(f: *mut fmpz, n: mp_limb_t);
     pub fn fmpz_bin_uiui(res: *mut fmpz, n: mp_limb_t, k: mp_limb_t);
-    pub fn _fmpz_rfac_ui(r: *mut fmpz, x: *mut fmpz, a: mp_limb_t, b: mp_limb_t);
-    pub fn fmpz_rfac_ui(r: *mut fmpz, x: *mut fmpz, n: mp_limb_t);
+    pub fn _fmpz_rfac_ui(r: *mut fmpz, x: *const fmpz, a: mp_limb_t, b: mp_limb_t);
+    pub fn fmpz_rfac_ui(r: *mut fmpz, x: *const fmpz, n: mp_limb_t);
     pub fn fmpz_rfac_uiui(r: *mut fmpz, x: mp_limb_t, n: mp_limb_t);
     pub fn fmpz_bit_pack(
         arr: mp_ptr,

@@ -24,34 +24,34 @@ extern "C" {
         mat: *mut fmpz_mod_mat_struct,
         i: mp_limb_signed_t,
         j: mp_limb_signed_t,
-    ) -> *mut fmpz;
+    ) -> *const fmpz;
     pub fn fmpz_mod_mat_set_entry(
         mat: *mut fmpz_mod_mat_struct,
         i: mp_limb_signed_t,
         j: mp_limb_signed_t,
-        val: *mut fmpz,
+        val: *const fmpz,
     );
     pub fn fmpz_mod_mat_init(
         mat: *mut fmpz_mod_mat_struct,
         rows: mp_limb_signed_t,
         cols: mp_limb_signed_t,
-        n: *mut fmpz,
+        n: *const fmpz,
     );
-    pub fn fmpz_mod_mat_init_set(mat: *mut fmpz_mod_mat_struct, src: *mut fmpz_mod_mat_struct);
+    pub fn fmpz_mod_mat_init_set(mat: *mut fmpz_mod_mat_struct, src: *const fmpz_mod_mat_struct);
     pub fn fmpz_mod_mat_clear(mat: *mut fmpz_mod_mat_struct);
-    pub fn fmpz_mod_mat_nrows(mat: *mut fmpz_mod_mat_struct) -> mp_limb_signed_t;
-    pub fn fmpz_mod_mat_ncols(mat: *mut fmpz_mod_mat_struct) -> mp_limb_signed_t;
-    pub fn _fmpz_mod_mat_set_mod(mat: *mut fmpz_mod_mat_struct, n: *mut fmpz);
+    pub fn fmpz_mod_mat_nrows(mat: *const fmpz_mod_mat_struct) -> mp_limb_signed_t;
+    pub fn fmpz_mod_mat_ncols(mat: *const fmpz_mod_mat_struct) -> mp_limb_signed_t;
+    pub fn _fmpz_mod_mat_set_mod(mat: *mut fmpz_mod_mat_struct, n: *const fmpz);
     pub fn fmpz_mod_mat_one(mat: *mut fmpz_mod_mat_struct);
     pub fn fmpz_mod_mat_zero(mat: *mut fmpz_mod_mat_struct);
-    pub fn fmpz_mod_mat_is_empty(mat: *mut fmpz_mod_mat_struct) -> c_int;
-    pub fn fmpz_mod_mat_is_square(mat: *mut fmpz_mod_mat_struct) -> c_int;
+    pub fn fmpz_mod_mat_is_empty(mat: *const fmpz_mod_mat_struct) -> c_int;
+    pub fn fmpz_mod_mat_is_square(mat: *const fmpz_mod_mat_struct) -> c_int;
     pub fn fmpz_mod_mat_swap(mat1: *mut fmpz_mod_mat_struct, mat2: *mut fmpz_mod_mat_struct);
     pub fn _fmpz_mod_mat_reduce(mat: *mut fmpz_mod_mat_struct);
-    pub fn fmpz_mod_mat_randtest(mat: *mut fmpz_mod_mat_struct, state: *mut flint_rand_s);
+    pub fn fmpz_mod_mat_randtest(mat: *mut fmpz_mod_mat_struct, state: *const flint_rand_s);
     pub fn fmpz_mod_mat_window_init(
         window: *mut fmpz_mod_mat_struct,
-        mat: *mut fmpz_mod_mat_struct,
+        mat: *const fmpz_mod_mat_struct,
         r1: mp_limb_signed_t,
         c1: mp_limb_signed_t,
         r2: mp_limb_signed_t,
@@ -60,78 +60,78 @@ extern "C" {
     pub fn fmpz_mod_mat_window_clear(window: *mut fmpz_mod_mat_struct);
     pub fn fmpz_mod_mat_concat_horizontal(
         res: *mut fmpz_mod_mat_struct,
-        mat1: *mut fmpz_mod_mat_struct,
-        mat2: *mut fmpz_mod_mat_struct,
+        mat1: *const fmpz_mod_mat_struct,
+        mat2: *const fmpz_mod_mat_struct,
     );
     pub fn fmpz_mod_mat_concat_vertical(
         res: *mut fmpz_mod_mat_struct,
-        mat1: *mut fmpz_mod_mat_struct,
-        mat2: *mut fmpz_mod_mat_struct,
+        mat1: *const fmpz_mod_mat_struct,
+        mat2: *const fmpz_mod_mat_struct,
     );
     pub fn fmpz_mod_mat_print_pretty(mat: *mut fmpz_mod_mat_struct);
     pub fn fmpz_mod_mat_equal(
-        mat1: *mut fmpz_mod_mat_struct,
-        mat2: *mut fmpz_mod_mat_struct,
+        mat1: *const fmpz_mod_mat_struct,
+        mat2: *const fmpz_mod_mat_struct,
     ) -> c_int;
-    pub fn fmpz_mod_mat_is_zero(mat: *mut fmpz_mod_mat_struct) -> c_int;
-    pub fn fmpz_mod_mat_set(B: *mut fmpz_mod_mat_struct, A: *mut fmpz_mod_mat_struct);
-    pub fn fmpz_mod_mat_transpose(B: *mut fmpz_mod_mat_struct, A: *mut fmpz_mod_mat_struct);
+    pub fn fmpz_mod_mat_is_zero(mat: *const fmpz_mod_mat_struct) -> c_int;
+    pub fn fmpz_mod_mat_set(B: *mut fmpz_mod_mat_struct, A: *const fmpz_mod_mat_struct);
+    pub fn fmpz_mod_mat_transpose(B: *mut fmpz_mod_mat_struct, A: *const fmpz_mod_mat_struct);
     pub fn fmpz_mod_mat_add(
         C: *mut fmpz_mod_mat_struct,
-        A: *mut fmpz_mod_mat_struct,
-        B: *mut fmpz_mod_mat_struct,
+        A: *const fmpz_mod_mat_struct,
+        B: *const fmpz_mod_mat_struct,
     );
     pub fn fmpz_mod_mat_sub(
         C: *mut fmpz_mod_mat_struct,
-        A: *mut fmpz_mod_mat_struct,
-        B: *mut fmpz_mod_mat_struct,
+        A: *const fmpz_mod_mat_struct,
+        B: *const fmpz_mod_mat_struct,
     );
-    pub fn fmpz_mod_mat_neg(B: *mut fmpz_mod_mat_struct, A: *mut fmpz_mod_mat_struct);
+    pub fn fmpz_mod_mat_neg(B: *mut fmpz_mod_mat_struct, A: *const fmpz_mod_mat_struct);
     pub fn fmpz_mod_mat_scalar_mul_si(
         B: *mut fmpz_mod_mat_struct,
-        A: *mut fmpz_mod_mat_struct,
+        A: *const fmpz_mod_mat_struct,
         c: mp_limb_signed_t,
     );
     pub fn fmpz_mod_mat_scalar_mul_ui(
         B: *mut fmpz_mod_mat_struct,
-        A: *mut fmpz_mod_mat_struct,
+        A: *const fmpz_mod_mat_struct,
         c: mp_limb_t,
     );
     pub fn fmpz_mod_mat_scalar_mul_fmpz(
         B: *mut fmpz_mod_mat_struct,
-        A: *mut fmpz_mod_mat_struct,
-        c: *mut fmpz,
+        A: *const fmpz_mod_mat_struct,
+        c: *const fmpz,
     );
     pub fn fmpz_mod_mat_mul(
         C: *mut fmpz_mod_mat_struct,
-        A: *mut fmpz_mod_mat_struct,
-        B: *mut fmpz_mod_mat_struct,
+        A: *const fmpz_mod_mat_struct,
+        B: *const fmpz_mod_mat_struct,
     );
     pub fn _fmpz_mod_mat_mul_classical_threaded_pool_op(
         D: *mut fmpz_mod_mat_struct,
-        C: *mut fmpz_mod_mat_struct,
-        A: *mut fmpz_mod_mat_struct,
-        B: *mut fmpz_mod_mat_struct,
+        C: *const fmpz_mod_mat_struct,
+        A: *const fmpz_mod_mat_struct,
+        B: *const fmpz_mod_mat_struct,
         op: c_int,
-        threads: *mut thread_pool_handle,
+        threads: *const thread_pool_handle,
         num_threads: mp_limb_signed_t,
     );
     pub fn fmpz_mod_mat_mul_classical_threaded(
         C: *mut fmpz_mod_mat_struct,
-        A: *mut fmpz_mod_mat_struct,
-        B: *mut fmpz_mod_mat_struct,
+        A: *const fmpz_mod_mat_struct,
+        B: *const fmpz_mod_mat_struct,
     );
-    pub fn fmpz_mod_mat_sqr(B: *mut fmpz_mod_mat_struct, A: *mut fmpz_mod_mat_struct);
-    pub fn fmpz_mod_mat_trace(trace: *mut fmpz, mat: *mut fmpz_mod_mat_struct);
+    pub fn fmpz_mod_mat_sqr(B: *mut fmpz_mod_mat_struct, A: *const fmpz_mod_mat_struct);
+    pub fn fmpz_mod_mat_trace(trace: *mut fmpz, mat: *const fmpz_mod_mat_struct);
     pub fn fmpz_mod_mat_rref(
         perm: *mut mp_limb_signed_t,
-        mat: *mut fmpz_mod_mat_struct,
+        mat: *const fmpz_mod_mat_struct,
     ) -> mp_limb_signed_t;
     pub fn fmpz_mod_mat_howell_form(mat: *mut fmpz_mod_mat_struct) -> mp_limb_signed_t;
     pub fn fmpz_mod_mat_strong_echelon_form(mat: *mut fmpz_mod_mat_struct);
     pub fn fmpz_mod_mat_get_entry(
         x: *mut fmpz,
-        mat: *mut fmpz_mod_mat_struct,
+        mat: *const fmpz_mod_mat_struct,
         i: mp_limb_signed_t,
         j: mp_limb_signed_t,
     );
