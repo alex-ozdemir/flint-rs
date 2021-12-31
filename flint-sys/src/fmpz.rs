@@ -276,6 +276,7 @@ extern "C" {
     pub fn fmpz_fdiv_r_2exp(f: *mut fmpz, g: *const fmpz, exp: mp_limb_t);
     pub fn fmpz_tdiv_q(f: *mut fmpz, g: *const fmpz, h: *const fmpz);
     pub fn fmpz_tdiv_qr(f: *mut fmpz, s: *mut fmpz, g: *const fmpz, h: *const fmpz);
+    pub fn fmpz_ndiv_qr(q: *mut fmpz, r: *mut fmpz, a: *const fmpz, b: *const fmpz);
     pub fn fmpz_tdiv_q_ui(f: *mut fmpz, g: *const fmpz, h: mp_limb_t);
     pub fn fmpz_tdiv_q_si(f: *mut fmpz, g: *const fmpz, h: mp_limb_signed_t);
     pub fn fmpz_tdiv_r_2exp(f: *mut fmpz, g: *const fmpz, exp: mp_limb_t);
