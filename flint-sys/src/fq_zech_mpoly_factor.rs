@@ -3,14 +3,12 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_zech_mpoly_factor.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
-use crate::fq_zech::{fq_zech_struct, fq_zech_t, fq_zech_ctx_struct};
-use crate::fq_zech_poly::fq_zech_poly_struct;
+use crate::fq_zech::{fq_zech_ctx_struct, fq_zech_struct, fq_zech_t};
 use crate::fq_zech_mpoly::*;
-
+use crate::fq_zech_poly::fq_zech_poly_struct;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

@@ -2,16 +2,14 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fmpq_mpoly.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
-use crate::mpoly::*;
-use crate::fmpz::fmpz;
 use crate::fmpq::{fmpq, fmpq_t};
 use crate::fmpq_poly::fmpq_poly_struct;
-use crate::fmpz_mpoly::{fmpz_mpoly_struct, fmpz_mpoly_t, fmpz_mpoly_ctx_t};
+use crate::fmpz::fmpz;
+use crate::fmpz_mpoly::{fmpz_mpoly_ctx_t, fmpz_mpoly_struct, fmpz_mpoly_t};
+use crate::mpoly::*;
 use libc::FILE;
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

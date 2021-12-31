@@ -4,17 +4,15 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/nmod_mpoly.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
-use crate::mpoly::*;
-use crate::n_poly::{n_poly_struct, n_bpoly_struct, n_polyun_struct};
 use crate::fmpz::fmpz;
 use crate::fmpz_mat::fmpz_mat_struct;
-use crate::nmod_vec::nmod_t;
+use crate::mpoly::*;
+use crate::n_poly::{n_bpoly_struct, n_poly_struct, n_polyun_struct};
 use crate::nmod_poly::nmod_poly_struct;
+use crate::nmod_vec::nmod_t;
 use libc::{c_char, c_int, c_uint, FILE};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -367,10 +365,7 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn nmod_mpoly_is_ui(
-        A: *mut nmod_mpoly_struct,
-        ctx: *mut nmod_mpoly_ctx_struct,
-    ) -> c_int;
+    pub fn nmod_mpoly_is_ui(A: *mut nmod_mpoly_struct, ctx: *mut nmod_mpoly_ctx_struct) -> c_int;
 }
 extern "C" {
     pub fn nmod_mpoly_get_ui(
@@ -406,16 +401,10 @@ extern "C" {
     ) -> c_int;
 }
 extern "C" {
-    pub fn nmod_mpoly_is_zero(
-        A: *mut nmod_mpoly_struct,
-        ctx: *mut nmod_mpoly_ctx_struct,
-    ) -> c_int;
+    pub fn nmod_mpoly_is_zero(A: *mut nmod_mpoly_struct, ctx: *mut nmod_mpoly_ctx_struct) -> c_int;
 }
 extern "C" {
-    pub fn nmod_mpoly_is_one(
-        A: *mut nmod_mpoly_struct,
-        ctx: *mut nmod_mpoly_ctx_struct,
-    ) -> c_int;
+    pub fn nmod_mpoly_is_one(A: *mut nmod_mpoly_struct, ctx: *mut nmod_mpoly_ctx_struct) -> c_int;
 }
 extern "C" {
     pub fn nmod_mpoly_degrees_fit_si(
@@ -1015,16 +1004,10 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn _ff_poly_pow_fmpz_is_not_feasible(
-        length: mp_limb_signed_t,
-        e: *mut fmpz,
-    ) -> c_int;
+    pub fn _ff_poly_pow_fmpz_is_not_feasible(length: mp_limb_signed_t, e: *mut fmpz) -> c_int;
 }
 extern "C" {
-    pub fn _ff_poly_pow_ui_is_not_feasible(
-        length: mp_limb_signed_t,
-        e: mp_limb_t,
-    ) -> c_int;
+    pub fn _ff_poly_pow_ui_is_not_feasible(length: mp_limb_signed_t, e: mp_limb_t) -> c_int;
 }
 extern "C" {
     pub fn _nmod_mpoly_eval_all_ui(

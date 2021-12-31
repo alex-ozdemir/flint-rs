@@ -4,7 +4,7 @@
 
 use crate::deps::*;
 use crate::flint::*;
-use libc::{c_char, c_int, FILE, size_t};
+use libc::{c_char, c_int, size_t, FILE};
 
 #[repr(C)]
 #[derive(Default, Debug, Copy, Clone, Hash)]
@@ -80,11 +80,11 @@ extern "C" {
     pub fn _fmpz_cleanup_mpz_content();
     pub fn _fmpz_cleanup();
     pub fn _fmpz_promote(f: *mut fmpz) -> *mut __mpz_struct;
-    
+
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz.html#c._fmpz_promote_val) for this function.
     pub fn _fmpz_promote_val(f: *mut fmpz) -> *mut __mpz_struct;
     pub fn _fmpz_demote(f: *mut fmpz);
-    
+
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz.html#c._fmpz_demote_val) for this function.
     pub fn _fmpz_demote_val(f: *mut fmpz);
     pub fn _fmpz_init_readonly_mpz(f: *mut fmpz, z: *mut __mpz_struct);
@@ -92,10 +92,10 @@ extern "C" {
 
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz.html#c.fmpz_init) for this function.
     pub fn fmpz_init(f: *mut fmpz);
-    
+
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz.html#c.fmpz_init) for this function.
     pub fn fmpz_init2(f: *mut fmpz, limbs: mp_limb_t);
-    
+
     /// See the [FLINT Documentation](http://flintlib.org/doc/fmpz.html#c.fmpz_init) for this function.
     pub fn fmpz_init_set(f: *mut fmpz, g: *const fmpz);
     pub fn fmpz_init_set_ui(f: *mut fmpz, g: mp_limb_t);
@@ -108,12 +108,7 @@ extern "C" {
     pub fn fmpz_randtest_not_zero(f: *mut fmpz, state: *const flint_rand_s, bits: mp_limb_t);
     pub fn fmpz_randtest_mod(f: *mut fmpz, state: *const flint_rand_s, m: *const fmpz);
     pub fn fmpz_randtest_mod_signed(f: *mut fmpz, state: *const flint_rand_s, m: *const fmpz);
-    pub fn fmpz_randprime(
-        f: *mut fmpz,
-        state: *const flint_rand_s,
-        bits: mp_limb_t,
-        proved: c_int,
-    );
+    pub fn fmpz_randprime(f: *mut fmpz, state: *const flint_rand_s, bits: mp_limb_t, proved: c_int);
     pub fn fmpz_get_si(f: *const fmpz) -> mp_limb_signed_t;
     pub fn fmpz_get_ui(f: *const fmpz) -> mp_limb_t;
     pub fn fmpz_get_uiui(hi: *mut mp_limb_t, low: *mut mp_limb_t, f: *const fmpz);
@@ -134,11 +129,7 @@ extern "C" {
     pub fn fmpz_set_mpf(f: *mut fmpz, x: *const __mpf_struct);
     pub fn fmpz_get_mpfr(x: *mut __mpfr_struct, f: *const fmpz, rnd: mpfr_rnd_t);
     pub fn fmpz_get_mpn(n: *mut mp_ptr, n_in: *const fmpz) -> c_int;
-    pub fn fmpz_set_str(
-        f: *mut fmpz,
-        str_: *const c_char,
-        b: c_int,
-    ) -> c_int;
+    pub fn fmpz_set_str(f: *mut fmpz, str_: *const c_char, b: c_int) -> c_int;
     pub fn flint_mpz_init_set_readonly(z: *mut __mpz_struct, f: *const fmpz);
     pub fn flint_mpz_clear_readonly(z: *mut __mpz_struct);
     pub fn fmpz_init_set_readonly(f: *mut fmpz, z: *const __mpz_struct);
@@ -161,11 +152,7 @@ extern "C" {
     pub fn fmpz_fprint(file: *mut FILE, x: *const fmpz) -> c_int;
     pub fn fmpz_out_raw(fout: *mut FILE, x: *const fmpz) -> size_t;
     pub fn fmpz_sizeinbase(f: *const fmpz, b: c_int) -> size_t;
-    pub fn fmpz_get_str(
-        str_: *mut c_char,
-        b: c_int,
-        f: *const fmpz,
-    ) -> *mut c_char;
+    pub fn fmpz_get_str(str_: *mut c_char, b: c_int, f: *const fmpz) -> *mut c_char;
     pub fn fmpz_swap(f: *mut fmpz, g: *mut fmpz);
     pub fn fmpz_cmp(f: *const fmpz, g: *const fmpz) -> c_int;
     pub fn fmpz_cmp_ui(f: *const fmpz, g: mp_limb_t) -> c_int;
@@ -547,4 +534,3 @@ pub unsafe fn fmpz_tdiv_r(r: *mut fmpz, g: *const fmpz, h: *const fmpz) {
     fmpz_tdiv_qr(&mut f, r, g, h);
     fmpz_clear(&mut f);
 }
-

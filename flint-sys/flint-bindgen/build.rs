@@ -8,7 +8,7 @@ fn main() {
 
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")
-                    /*
+        /*
         .clang_args([
             "-fno-inline-functions",
             "-DFLINT_INLINES_C",
@@ -104,4 +104,3 @@ fn main() {
         .write_to_file(out_path.join("bindings.rs"))
         .expect("Couldn't write bindings!");
 }
-

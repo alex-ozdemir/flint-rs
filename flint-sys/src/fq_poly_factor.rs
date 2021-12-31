@@ -2,14 +2,12 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_poly_factor.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz_poly::fmpz_poly_struct;
-use crate::fq::{fq_struct, fq_ctx_struct};
+use crate::fq::{fq_ctx_struct, fq_struct};
 use crate::fq_poly::{fq_poly_struct, fq_poly_t};
 use libc::{c_char, c_int};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -71,27 +69,15 @@ extern "C" {
         len: mp_limb_signed_t,
         ctx: *mut fq_ctx_struct,
     ) -> c_int;
-    pub fn fq_poly_is_squarefree(
-        f: *mut fq_poly_struct,
-        ctx: *mut fq_ctx_struct,
-    ) -> c_int;
+    pub fn fq_poly_is_squarefree(f: *mut fq_poly_struct, ctx: *mut fq_ctx_struct) -> c_int;
     pub fn fq_poly_factor_squarefree(
         res: *mut fq_poly_factor_struct,
         f: *mut fq_poly_struct,
         ctx: *mut fq_ctx_struct,
     );
-    pub fn fq_poly_is_irreducible(
-        f: *mut fq_poly_struct,
-        ctx: *mut fq_ctx_struct,
-    ) -> c_int;
-    pub fn fq_poly_is_irreducible_ddf(
-        f: *mut fq_poly_struct,
-        ctx: *mut fq_ctx_struct,
-    ) -> c_int;
-    pub fn fq_poly_is_irreducible_ben_or(
-        f: *mut fq_poly_struct,
-        ctx: *mut fq_ctx_struct,
-    ) -> c_int;
+    pub fn fq_poly_is_irreducible(f: *mut fq_poly_struct, ctx: *mut fq_ctx_struct) -> c_int;
+    pub fn fq_poly_is_irreducible_ddf(f: *mut fq_poly_struct, ctx: *mut fq_ctx_struct) -> c_int;
+    pub fn fq_poly_is_irreducible_ben_or(f: *mut fq_poly_struct, ctx: *mut fq_ctx_struct) -> c_int;
     pub fn fq_poly_factor_distinct_deg(
         res: *mut fq_poly_factor_struct,
         poly: *mut fq_poly_struct,

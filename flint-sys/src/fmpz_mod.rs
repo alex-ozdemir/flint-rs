@@ -2,12 +2,10 @@
 
 //! See the [FLINT documentation](http://flintlib.org/doc/fmpz_mod.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::{fmpz, fmpz_t};
 use crate::nmod_vec::nmod_t;
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -77,7 +75,10 @@ extern "C" {
     pub fn fmpz_mod_assert_canonical(a: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
 }
 extern "C" {
-    pub fn fmpz_mod_is_one(a: *const fmpz, ctx: *const fmpz_mod_ctx_struct) -> ::std::os::raw::c_int;
+    pub fn fmpz_mod_is_one(
+        a: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
+    ) -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn fmpz_mod_equal_fmpz(
@@ -103,19 +104,44 @@ extern "C" {
     pub fn fmpz_mod_set_si(a: *mut fmpz, b: mp_limb_signed_t, ctx: *const fmpz_mod_ctx_struct);
 }
 extern "C" {
-    pub fn _fmpz_mod_add1(a: *mut fmpz, b: *const fmpz, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
+    pub fn _fmpz_mod_add1(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
-    pub fn _fmpz_mod_add2s(a: *mut fmpz, b: *const fmpz, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
+    pub fn _fmpz_mod_add2s(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
-    pub fn _fmpz_mod_add2(a: *mut fmpz, b: *const fmpz, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
+    pub fn _fmpz_mod_add2(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
-    pub fn _fmpz_mod_addN(a: *mut fmpz, b: *const fmpz, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
+    pub fn _fmpz_mod_addN(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
-    pub fn fmpz_mod_add(a: *mut fmpz, b: *const fmpz, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
+    pub fn fmpz_mod_add(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
     pub fn fmpz_mod_add_fmpz(
@@ -126,7 +152,12 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn fmpz_mod_add_ui(a: *mut fmpz, b: *const fmpz, c: mp_limb_t, ctx: *const fmpz_mod_ctx_struct);
+    pub fn fmpz_mod_add_ui(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: mp_limb_t,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
     pub fn fmpz_mod_add_si(
@@ -137,19 +168,44 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn _fmpz_mod_sub1(a: *mut fmpz, b: *const fmpz, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
+    pub fn _fmpz_mod_sub1(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
-    pub fn _fmpz_mod_sub2s(a: *mut fmpz, b: *const fmpz, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
+    pub fn _fmpz_mod_sub2s(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
-    pub fn _fmpz_mod_sub2(a: *mut fmpz, b: *const fmpz, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
+    pub fn _fmpz_mod_sub2(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
-    pub fn _fmpz_mod_subN(a: *mut fmpz, b: *const fmpz, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
+    pub fn _fmpz_mod_subN(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
-    pub fn fmpz_mod_sub(a: *mut fmpz, b: *const fmpz, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
+    pub fn fmpz_mod_sub(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
     pub fn fmpz_mod_sub_fmpz(
@@ -160,7 +216,12 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn fmpz_mod_sub_ui(a: *mut fmpz, b: *const fmpz, c: mp_limb_t, ctx: *const fmpz_mod_ctx_struct);
+    pub fn fmpz_mod_sub_ui(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: mp_limb_t,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
     pub fn fmpz_mod_sub_si(
@@ -179,7 +240,12 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn fmpz_mod_ui_sub(a: *mut fmpz, b: mp_limb_t, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
+    pub fn fmpz_mod_ui_sub(
+        a: *mut fmpz,
+        b: mp_limb_t,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
     pub fn fmpz_mod_si_sub(
@@ -193,19 +259,44 @@ extern "C" {
     pub fn fmpz_mod_neg(a: *mut fmpz, b: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
 }
 extern "C" {
-    pub fn _fmpz_mod_mul1(a: *mut fmpz, b: *const fmpz, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
+    pub fn _fmpz_mod_mul1(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
-    pub fn _fmpz_mod_mul2s(a: *mut fmpz, b: *const fmpz, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
+    pub fn _fmpz_mod_mul2s(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
-    pub fn _fmpz_mod_mul2(a: *mut fmpz, b: *const fmpz, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
+    pub fn _fmpz_mod_mul2(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
-    pub fn _fmpz_mod_mulN(a: *mut fmpz, b: *const fmpz, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
+    pub fn _fmpz_mod_mulN(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
-    pub fn fmpz_mod_mul(a: *mut fmpz, b: *const fmpz, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
+    pub fn fmpz_mod_mul(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
     pub fn fmpz_mod_addmul(
@@ -225,7 +316,12 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn fmpz_mod_mul_ui(a: *mut fmpz, b: *const fmpz, c: mp_limb_t, ctx: *const fmpz_mod_ctx_struct);
+    pub fn fmpz_mod_mul_ui(
+        a: *mut fmpz,
+        b: *const fmpz,
+        c: mp_limb_t,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
 }
 extern "C" {
     pub fn fmpz_mod_mul_si(

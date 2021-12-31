@@ -2,11 +2,10 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_zech_embed.html).
 
-
 use crate::deps::*;
+use crate::fq_zech::{fq_zech_ctx_struct, fq_zech_struct};
 use crate::nmod_mat::nmod_mat_struct;
 use crate::nmod_poly::nmod_poly_struct;
-use crate::fq_zech::{fq_zech_struct, fq_zech_ctx_struct};
 
 extern "C" {
     pub fn fq_zech_embed_gens(

@@ -2,12 +2,11 @@
 
 //! See the [FLINT documentation](http://flintlib.org/doc/fmpz_poly_factor.html).
 
-
 use crate::deps::*;
 use crate::fmpz::fmpz;
 use crate::fmpz_mat::fmpz_mat_struct;
 use crate::fmpz_poly::fmpz_poly_struct;
-use libc::{c_uchar, c_int};
+use libc::{c_int, c_uchar};
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -59,7 +58,10 @@ extern "C" {
         P: *const fmpz,
         exp: mp_limb_signed_t,
     );
-    pub fn fmpz_poly_factor_squarefree(fac: *mut fmpz_poly_factor_struct, F: *const fmpz_poly_struct);
+    pub fn fmpz_poly_factor_squarefree(
+        fac: *mut fmpz_poly_factor_struct,
+        F: *const fmpz_poly_struct,
+    );
     pub fn fmpz_poly_factor_mignotte(B: *mut fmpz, f: *const fmpz_poly_struct);
     pub fn _fmpz_poly_factor_zassenhaus(
         final_fac: *mut fmpz_poly_factor_struct,
@@ -68,7 +70,10 @@ extern "C" {
         cutoff: mp_limb_signed_t,
         use_van_hoeij: c_int,
     );
-    pub fn fmpz_poly_factor_zassenhaus(fac: *mut fmpz_poly_factor_struct, G: *const fmpz_poly_struct);
+    pub fn fmpz_poly_factor_zassenhaus(
+        fac: *mut fmpz_poly_factor_struct,
+        G: *const fmpz_poly_struct,
+    );
     pub fn _fmpz_poly_factor_quadratic(
         fac: *mut fmpz_poly_factor_struct,
         f: *const fmpz_poly_struct,
@@ -115,10 +120,7 @@ extern "C" {
         r: mp_limb_signed_t,
         m: mp_limb_signed_t,
     );
-    pub fn zassenhaus_subset_next(
-        s: *mut mp_limb_signed_t,
-        r: mp_limb_signed_t,
-    ) -> c_int;
+    pub fn zassenhaus_subset_next(s: *mut mp_limb_signed_t, r: mp_limb_signed_t) -> c_int;
     pub fn zassenhaus_subset_next_disjoint(
         s: *mut mp_limb_signed_t,
         r: mp_limb_signed_t,
@@ -133,9 +135,7 @@ extern "C" {
         exp: mp_limb_signed_t,
     );
     pub fn zassenhaus_prune_end_add_factors(Z: *mut zassenhaus_prune_struct);
-    pub fn zassenhaus_prune_must_be_irreducible(
-        Z: *mut zassenhaus_prune_struct,
-    ) -> c_int;
+    pub fn zassenhaus_prune_must_be_irreducible(Z: *mut zassenhaus_prune_struct) -> c_int;
     pub fn zassenhaus_prune_degree_is_possible(
         Z: *mut zassenhaus_prune_struct,
         d: mp_limb_signed_t,

@@ -3,18 +3,16 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fmpz_mod_mpoly_factor.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
-use crate::mpoly::*;
 use crate::fmpz::{fmpz, fmpz_t};
 use crate::fmpz_mod::fmpz_mod_ctx_struct;
 use crate::fmpz_mod_mat::fmpz_mod_mat_struct;
-use crate::fmpz_mod_poly::fmpz_mod_poly_struct;
 use crate::fmpz_mod_mpoly::*;
+use crate::fmpz_mod_poly::fmpz_mod_poly_struct;
+use crate::mpoly::*;
 use crate::nmod_mpoly::nmod_mpoly_ctx_struct;
 use crate::nmod_mpoly_factor::nmod_mpoly_factor_struct;
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

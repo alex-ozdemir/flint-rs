@@ -2,13 +2,11 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/nmod_poly_mat.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
-use crate::nmod_poly::nmod_poly_struct;
 use crate::nmod_mat::nmod_mat_struct;
+use crate::nmod_poly::nmod_poly_struct;
 use libc::{c_char, c_int};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

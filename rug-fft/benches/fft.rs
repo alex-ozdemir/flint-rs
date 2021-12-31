@@ -2,8 +2,8 @@
 
 extern crate test;
 
-use rug_fft::*;
 use rug::Integer;
+use rug_fft::*;
 use std::str::FromStr;
 use test::Bencher;
 

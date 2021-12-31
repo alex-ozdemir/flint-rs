@@ -2,19 +2,17 @@
 
 //! See the [FLINT documentation](http://flintlib.org/doc/fq_default.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
-use crate::fmpz_poly::fmpz_poly_struct;
 use crate::fmpz_mod::fmpz_mod_ctx_struct;
 use crate::fmpz_mod_poly::fmpz_mod_poly_struct;
+use crate::fmpz_poly::fmpz_poly_struct;
+use crate::fq::{fq_ctx_t, fq_t};
+use crate::fq_nmod::{fq_nmod_ctx_t, fq_nmod_t};
+use crate::fq_zech::{fq_zech_ctx_t, fq_zech_t};
 use crate::nmod_poly::nmod_poly_struct;
-use crate::fq::{fq_t, fq_ctx_t};
-use crate::fq_nmod::{fq_nmod_t, fq_nmod_ctx_t};
-use crate::fq_zech::{fq_zech_t, fq_zech_ctx_t};
 use libc::{c_char, c_int, FILE};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash)]
@@ -87,10 +85,7 @@ extern "C" {
     pub fn fq_default_ctx_prime(prime: *mut fmpz, ctx: *const fq_default_ctx_struct);
     pub fn fq_default_ctx_modulus(p: *mut fmpz_mod_poly_struct, ctx: *const fq_default_ctx_struct);
     pub fn fq_default_ctx_order(f: *mut fmpz, ctx: *const fq_default_ctx_struct);
-    pub fn fq_default_ctx_fprint(
-        file: *mut FILE,
-        ctx: *const fq_default_ctx_struct,
-    ) -> c_int;
+    pub fn fq_default_ctx_fprint(file: *mut FILE, ctx: *const fq_default_ctx_struct) -> c_int;
     pub fn fq_default_ctx_print(ctx: *const fq_default_ctx_struct);
     pub fn fq_default_init(rop: *mut fq_default_struct, ctx: *const fq_default_ctx_struct);
     pub fn fq_default_init2(rop: *mut fq_default_struct, ctx: *const fq_default_ctx_struct);

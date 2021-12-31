@@ -3,14 +3,12 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/nmod_poly.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
-use crate::nmod_vec::nmod_t;
 use crate::nmod_mat::nmod_mat_struct;
+use crate::nmod_vec::nmod_t;
 use libc::{c_char, c_int, c_void, FILE};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash)]
@@ -142,10 +140,7 @@ extern "C" {
         input: *mut nmod_poly_struct,
         m: mp_limb_signed_t,
     );
-    pub fn nmod_poly_equal(
-        a: *mut nmod_poly_struct,
-        b: *mut nmod_poly_struct,
-    ) -> c_int;
+    pub fn nmod_poly_equal(a: *mut nmod_poly_struct, b: *mut nmod_poly_struct) -> c_int;
     pub fn nmod_poly_equal_trunc(
         poly1: *mut nmod_poly_struct,
         poly2: *mut nmod_poly_struct,
@@ -213,14 +208,8 @@ extern "C" {
     pub fn nmod_poly_get_coeff_ui(poly: *mut nmod_poly_struct, j: mp_limb_signed_t) -> mp_limb_t;
     pub fn nmod_poly_set_coeff_ui(poly: *mut nmod_poly_struct, j: mp_limb_signed_t, c: mp_limb_t);
     pub fn nmod_poly_get_str(poly: *mut nmod_poly_struct) -> *mut c_char;
-    pub fn nmod_poly_get_str_pretty(
-        poly: *mut nmod_poly_struct,
-        x: *const c_char,
-    ) -> *mut c_char;
-    pub fn nmod_poly_set_str(
-        poly: *mut nmod_poly_struct,
-        s: *const c_char,
-    ) -> c_int;
+    pub fn nmod_poly_get_str_pretty(poly: *mut nmod_poly_struct, x: *const c_char) -> *mut c_char;
+    pub fn nmod_poly_set_str(poly: *mut nmod_poly_struct, s: *const c_char) -> c_int;
     pub fn nmod_poly_fread(f: *mut FILE, poly: *mut nmod_poly_struct) -> c_int;
     pub fn nmod_poly_fprint(f: *mut FILE, poly: *mut nmod_poly_struct) -> c_int;
     pub fn nmod_poly_fprint_pretty(
@@ -229,10 +218,7 @@ extern "C" {
         x: *const c_char,
     ) -> c_int;
     pub fn nmod_poly_print(a: *mut nmod_poly_struct) -> c_int;
-    pub fn nmod_poly_print_pretty(
-        a: *mut nmod_poly_struct,
-        x: *const c_char,
-    ) -> c_int;
+    pub fn nmod_poly_print_pretty(a: *mut nmod_poly_struct, x: *const c_char) -> c_int;
     pub fn nmod_poly_read(poly: *mut nmod_poly_struct) -> c_int;
     pub fn _nmod_poly_shift_left(
         res: mp_ptr,
@@ -1401,9 +1387,7 @@ extern "C" {
         len3inv: mp_limb_signed_t,
         mod_: nmod_t,
     );
-    pub fn _nmod_poly_compose_mod_brent_kung_precomp_preinv_worker(
-        arg_ptr: *mut c_void,
-    );
+    pub fn _nmod_poly_compose_mod_brent_kung_precomp_preinv_worker(arg_ptr: *mut c_void);
     pub fn nmod_poly_compose_mod_brent_kung_precomp_preinv(
         res: *mut nmod_poly_struct,
         poly1: *mut nmod_poly_struct,
@@ -1451,9 +1435,7 @@ extern "C" {
         poly: *mut nmod_poly_struct,
         polyinv: *mut nmod_poly_struct,
     );
-    pub fn _nmod_poly_compose_mod_brent_kung_vec_preinv_worker(
-        arg_ptr: *mut c_void,
-    );
+    pub fn _nmod_poly_compose_mod_brent_kung_vec_preinv_worker(arg_ptr: *mut c_void);
     pub fn nmod_poly_compose_mod_brent_kung_vec_preinv_threaded_pool(
         res: *mut nmod_poly_struct,
         polys: *const nmod_poly_struct,
@@ -1820,16 +1802,8 @@ extern "C" {
         h: *mut nmod_poly_struct,
         n: mp_limb_signed_t,
     );
-    pub fn _nmod_poly_sqrt(
-        s: mp_ptr,
-        p: mp_srcptr,
-        len: mp_limb_signed_t,
-        mod_: nmod_t,
-    ) -> c_int;
-    pub fn nmod_poly_sqrt(
-        b: *mut nmod_poly_struct,
-        a: *mut nmod_poly_struct,
-    ) -> c_int;
+    pub fn _nmod_poly_sqrt(s: mp_ptr, p: mp_srcptr, len: mp_limb_signed_t, mod_: nmod_t) -> c_int;
+    pub fn nmod_poly_sqrt(b: *mut nmod_poly_struct, a: *mut nmod_poly_struct) -> c_int;
     pub fn _nmod_poly_power_sums_naive(
         res: mp_ptr,
         poly: mp_srcptr,
@@ -2118,9 +2092,7 @@ extern "C" {
         count: mp_limb_signed_t,
     );
     pub fn nmod_berlekamp_massey_add_point(B: *mut nmod_berlekamp_massey_struct, a: mp_limb_t);
-    pub fn nmod_berlekamp_massey_reduce(
-        B: *mut nmod_berlekamp_massey_struct,
-    ) -> c_int;
+    pub fn nmod_berlekamp_massey_reduce(B: *mut nmod_berlekamp_massey_struct) -> c_int;
     pub fn nmod_berlekamp_massey_points(B: *mut nmod_berlekamp_massey_struct) -> *const mp_limb_t;
     pub fn nmod_berlekamp_massey_point_count(
         B: *mut nmod_berlekamp_massey_struct,

@@ -745,7 +745,6 @@ mod test {
         assert_eq!(f.len(), 1);
     }
 
-
     #[test]
     fn set_get() {
         let p = Integer::from(17);

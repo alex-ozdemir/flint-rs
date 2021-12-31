@@ -2,14 +2,12 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_nmod_poly_factor.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
-use crate::nmod_poly::nmod_poly_struct;
-use crate::fq_nmod::{fq_nmod_struct,fq_nmod_ctx_struct};
+use crate::fq_nmod::{fq_nmod_ctx_struct, fq_nmod_struct};
 use crate::fq_nmod_poly::{fq_nmod_poly_struct, fq_nmod_poly_t};
+use crate::nmod_poly::nmod_poly_struct;
 use libc::{c_char, c_int};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

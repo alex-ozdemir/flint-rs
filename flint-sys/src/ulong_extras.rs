@@ -5,8 +5,7 @@
 
 use crate::deps::*;
 use crate::flint::*;
-use libc::{c_char, c_uchar, c_int, c_uint};
-
+use libc::{c_char, c_int, c_uchar, c_uint};
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -79,11 +78,7 @@ extern "C" {
     pub fn n_randtest_bits(state: *mut flint_rand_s, bits: c_int) -> mp_limb_t;
     pub fn n_randtest(state: *mut flint_rand_s) -> mp_limb_t;
     pub fn n_randtest_not_zero(state: *mut flint_rand_s) -> mp_limb_t;
-    pub fn n_randprime(
-        state: *mut flint_rand_s,
-        bits: mp_limb_t,
-        proved: c_int,
-    ) -> mp_limb_t;
+    pub fn n_randprime(state: *mut flint_rand_s, bits: mp_limb_t, proved: c_int) -> mp_limb_t;
     pub fn n_randtest_prime(state: *mut flint_rand_s, proved: c_int) -> mp_limb_t;
     pub fn n_pow(n: mp_limb_t, exp: mp_limb_t) -> mp_limb_t;
     pub fn n_flog(n: mp_limb_t, b: mp_limb_t) -> mp_limb_t;

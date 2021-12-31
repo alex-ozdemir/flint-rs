@@ -2,17 +2,15 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_poly.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
-use crate::fmpz_poly::fmpz_poly_struct;
 use crate::fmpz_mod_poly::fmpz_mod_poly_struct;
-use crate::nmod_poly::nmod_poly_struct;
-use crate::fq::{fq_struct, fq_ctx_struct};
+use crate::fmpz_poly::fmpz_poly_struct;
+use crate::fq::{fq_ctx_struct, fq_struct};
 use crate::fq_mat::fq_mat_struct;
+use crate::nmod_poly::nmod_poly_struct;
 use libc::{c_char, c_int, FILE};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -177,10 +175,7 @@ extern "C" {
         x: *mut fmpz,
         ctx: *mut fq_ctx_struct,
     );
-    pub fn fq_poly_is_gen(
-        poly: *mut fq_poly_struct,
-        ctx: *mut fq_ctx_struct,
-    ) -> c_int;
+    pub fn fq_poly_is_gen(poly: *mut fq_poly_struct, ctx: *mut fq_ctx_struct) -> c_int;
     pub fn fq_poly_equal(
         poly1: *mut fq_poly_struct,
         poly2: *mut fq_poly_struct,
@@ -192,18 +187,9 @@ extern "C" {
         n: mp_limb_signed_t,
         ctx: *mut fq_ctx_struct,
     ) -> c_int;
-    pub fn fq_poly_is_zero(
-        poly: *mut fq_poly_struct,
-        ctx: *mut fq_ctx_struct,
-    ) -> c_int;
-    pub fn fq_poly_is_one(
-        op: *mut fq_poly_struct,
-        ctx: *mut fq_ctx_struct,
-    ) -> c_int;
-    pub fn fq_poly_is_unit(
-        op: *mut fq_poly_struct,
-        ctx: *mut fq_ctx_struct,
-    ) -> c_int;
+    pub fn fq_poly_is_zero(poly: *mut fq_poly_struct, ctx: *mut fq_ctx_struct) -> c_int;
+    pub fn fq_poly_is_one(op: *mut fq_poly_struct, ctx: *mut fq_ctx_struct) -> c_int;
+    pub fn fq_poly_is_unit(op: *mut fq_poly_struct, ctx: *mut fq_ctx_struct) -> c_int;
     pub fn fq_poly_equal_fq(
         poly: *mut fq_poly_struct,
         c: *mut fmpz_poly_struct,
@@ -1386,10 +1372,7 @@ extern "C" {
         len: mp_limb_signed_t,
         ctx: *mut fq_ctx_struct,
     ) -> c_int;
-    pub fn fq_poly_print(
-        poly: *mut fq_poly_struct,
-        ctx: *mut fq_ctx_struct,
-    ) -> c_int;
+    pub fn fq_poly_print(poly: *mut fq_poly_struct, ctx: *mut fq_ctx_struct) -> c_int;
     pub fn _fq_poly_print_pretty(
         poly: *const fq_struct,
         len: mp_limb_signed_t,
@@ -1417,10 +1400,7 @@ extern "C" {
         len: mp_limb_signed_t,
         ctx: *mut fq_ctx_struct,
     ) -> *mut c_char;
-    pub fn fq_poly_get_str(
-        poly: *mut fq_poly_struct,
-        ctx: *mut fq_ctx_struct,
-    ) -> *mut c_char;
+    pub fn fq_poly_get_str(poly: *mut fq_poly_struct, ctx: *mut fq_ctx_struct) -> *mut c_char;
     pub fn fq_mat_charpoly_danilevsky(
         p: *mut fq_poly_struct,
         A: *mut fq_mat_struct,

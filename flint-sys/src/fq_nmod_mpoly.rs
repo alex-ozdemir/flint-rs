@@ -2,20 +2,18 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_nmod_mpoly.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
-use crate::mpoly::*;
-use crate::n_poly::*;
 use crate::fmpz::fmpz;
 use crate::fmpz_mat::fmpz_mat_struct;
-use crate::nmod_mat::nmod_mat_t;
-use crate::nmod_poly::nmod_poly_struct;
-use crate::nmod_mpoly::*;
-use crate::fq_nmod::{fq_nmod_struct, fq_nmod_t, fq_nmod_ctx_struct, fq_nmod_ctx_t};
+use crate::fq_nmod::{fq_nmod_ctx_struct, fq_nmod_ctx_t, fq_nmod_struct, fq_nmod_t};
 use crate::fq_nmod_poly::{fq_nmod_poly_struct, fq_nmod_poly_t};
-use libc::{c_char, c_uint, c_int, FILE};
-
+use crate::mpoly::*;
+use crate::n_poly::*;
+use crate::nmod_mat::nmod_mat_t;
+use crate::nmod_mpoly::*;
+use crate::nmod_poly::nmod_poly_struct;
+use libc::{c_char, c_int, c_uint, FILE};
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -1560,10 +1558,7 @@ extern "C" {
         A: *mut fq_nmod_mpolyun_struct,
         ctx: *mut fq_nmod_mpoly_ctx_struct,
     ) -> *mut n_poly_struct;
-    pub fn fq_nmod_next(
-        alpha: *mut nmod_poly_struct,
-        fqctx: *mut fq_nmod_ctx_struct,
-    ) -> c_int;
+    pub fn fq_nmod_next(alpha: *mut nmod_poly_struct, fqctx: *mut fq_nmod_ctx_struct) -> c_int;
     pub fn fq_nmod_next_not_zero(alpha: *mut nmod_poly_struct, fqctx: *mut fq_nmod_ctx_struct);
     pub fn fq_nmod_mpolyu_gcds_zippel(
         G: *mut fq_nmod_mpolyu_struct,

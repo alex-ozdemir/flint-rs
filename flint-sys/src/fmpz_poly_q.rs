@@ -2,12 +2,10 @@
 
 //! See the [FLINT documentation](http://flintlib.org/doc/fmpz_poly_q.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz_poly::fmpz_poly_struct;
 use libc::{c_char, c_int};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash)]
@@ -125,18 +123,12 @@ extern "C" {
         f: *const fmpz_poly_q_struct,
         a: *const __mpq_struct,
     ) -> c_int;
-    pub fn fmpz_poly_q_set_str(
-        rop: *mut fmpz_poly_q_struct,
-        s: *const c_char,
-    ) -> c_int;
+    pub fn fmpz_poly_q_set_str(rop: *mut fmpz_poly_q_struct, s: *const c_char) -> c_int;
     pub fn fmpz_poly_q_get_str(op: *const fmpz_poly_q_struct) -> *const c_char;
     pub fn fmpz_poly_q_get_str_pretty(
         op: *const fmpz_poly_q_struct,
         x: *const c_char,
     ) -> *const c_char;
     pub fn fmpz_poly_q_print(op: *const fmpz_poly_q_struct) -> c_int;
-    pub fn fmpz_poly_q_print_pretty(
-        op: *const fmpz_poly_q_struct,
-        x: *const c_char,
-    ) -> c_int;
+    pub fn fmpz_poly_q_print_pretty(op: *const fmpz_poly_q_struct, x: *const c_char) -> c_int;
 }

@@ -3,13 +3,11 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/qsieve.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::{fmpz, fmpz_t};
 use crate::fmpz_factor::fmpz_factor_struct;
-use libc::{c_char, c_uchar, c_int, c_void, pthread_mutex_t, FILE};
-
+use libc::{c_char, c_int, c_uchar, c_void, pthread_mutex_t, FILE};
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -160,16 +158,8 @@ extern "C" {
     pub fn qsieve_compute_C(C: *mut fmpz, qs_inf: *mut qs_s, poly: *mut qs_poly_s);
     pub fn qsieve_poly_copy(poly: *mut qs_poly_s, qs_inf: *mut qs_s);
     pub fn qsieve_poly_clear(qs_inf: *mut qs_s);
-    pub fn qsieve_do_sieving(
-        qs_inf: *mut qs_s,
-        sieve: *mut c_uchar,
-        poly: *mut qs_poly_s,
-    );
-    pub fn qsieve_do_sieving2(
-        qs_inf: *mut qs_s,
-        sieve: *mut c_uchar,
-        poly: *mut qs_poly_s,
-    );
+    pub fn qsieve_do_sieving(qs_inf: *mut qs_s, sieve: *mut c_uchar, poly: *mut qs_poly_s);
+    pub fn qsieve_do_sieving2(qs_inf: *mut qs_s, sieve: *mut c_uchar, poly: *mut qs_poly_s);
     pub fn qsieve_evaluate_candidate(
         qs_inf: *mut qs_s,
         i: mp_limb_t,
@@ -181,17 +171,11 @@ extern "C" {
         sieve: *mut c_uchar,
         poly: *mut qs_poly_s,
     ) -> mp_limb_signed_t;
-    pub fn qsieve_collect_relations(
-        qs_inf: *mut qs_s,
-        sieve: *mut c_uchar,
-    ) -> mp_limb_signed_t;
+    pub fn qsieve_collect_relations(qs_inf: *mut qs_s, sieve: *mut c_uchar) -> mp_limb_signed_t;
     pub fn qsieve_linalg_init(qs_inf: *mut qs_s);
     pub fn qsieve_linalg_realloc(qs_inf: *mut qs_s);
     pub fn qsieve_linalg_clear(qs_inf: *mut qs_s);
-    pub fn qsieve_relations_cmp(
-        a: *const c_void,
-        b: *const c_void,
-    ) -> c_int;
+    pub fn qsieve_relations_cmp(a: *const c_void, b: *const c_void) -> c_int;
     pub fn qsieve_merge_relations(qs_inf: *mut qs_s) -> mp_limb_signed_t;
     pub fn qsieve_write_to_file(
         qs_inf: *mut qs_s,
@@ -201,15 +185,9 @@ extern "C" {
     );
     pub fn qsieve_get_table_entry(qs_inf: *mut qs_s, prime: mp_limb_t) -> *mut hash_t;
     pub fn qsieve_add_to_hashtable(qs_inf: *mut qs_s, prime: mp_limb_t);
-    pub fn qsieve_parse_relation(
-        qs_inf: *mut qs_s,
-        str_: *mut c_char,
-    ) -> relation_t;
+    pub fn qsieve_parse_relation(qs_inf: *mut qs_s, str_: *mut c_char) -> relation_t;
     pub fn qsieve_merge_relation(qs_inf: *mut qs_s, a: relation_t, b: relation_t) -> relation_t;
-    pub fn qsieve_compare_relation(
-        a: *const c_void,
-        b: *const c_void,
-    ) -> c_int;
+    pub fn qsieve_compare_relation(a: *const c_void, b: *const c_void) -> c_int;
     pub fn qsieve_remove_duplicates(
         rel_list: *mut relation_t,
         num_relations: mp_limb_signed_t,

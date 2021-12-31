@@ -3,13 +3,11 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fmpq_mpoly_factor.html).
 
-
 use crate::deps::*;
-use crate::fmpz::fmpz;
-use crate::fmpz_mpoly_factor::fmpz_mpoly_factor_struct;
 use crate::fmpq::{fmpq, fmpq_t};
 use crate::fmpq_mpoly::*;
-
+use crate::fmpz::fmpz;
+use crate::fmpz_mpoly_factor::fmpz_mpoly_factor_struct;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

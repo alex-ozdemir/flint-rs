@@ -4,11 +4,10 @@
 
 use crate::deps::*;
 use crate::flint::*;
-use crate::fmpz::{fmpz, fmpz_t, fmpz_preinvn_struct};
 use crate::fmpq::fmpq;
+use crate::fmpz::{fmpz, fmpz_preinvn_struct, fmpz_t};
 use crate::fmpz_poly::fmpz_poly_struct;
 use libc::{c_char, c_int, FILE};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash)]
@@ -103,10 +102,7 @@ extern "C" {
         str_: *const c_char,
         len: mp_limb_signed_t,
     ) -> c_int;
-    pub fn fmpq_poly_set_str(
-        poly: *mut fmpq_poly_struct,
-        str_: *const c_char,
-    ) -> c_int;
+    pub fn fmpq_poly_set_str(poly: *mut fmpq_poly_struct, str_: *const c_char) -> c_int;
     pub fn fmpq_poly_get_str(poly: *const fmpq_poly_struct) -> *mut c_char;
     pub fn fmpq_poly_get_str_pretty(
         poly: *const fmpq_poly_struct,
@@ -140,8 +136,16 @@ extern "C" {
         poly: *const fmpq_poly_struct,
         n: mp_limb_signed_t,
     );
-    pub fn fmpq_poly_get_coeff_fmpz(x: *mut fmpz, poly: *const fmpq_poly_struct, n: mp_limb_signed_t);
-    pub fn fmpq_poly_get_coeff_fmpq(x: *mut fmpq, poly: *const fmpq_poly_struct, n: mp_limb_signed_t);
+    pub fn fmpq_poly_get_coeff_fmpz(
+        x: *mut fmpz,
+        poly: *const fmpq_poly_struct,
+        n: mp_limb_signed_t,
+    );
+    pub fn fmpq_poly_get_coeff_fmpq(
+        x: *mut fmpq,
+        poly: *const fmpq_poly_struct,
+        n: mp_limb_signed_t,
+    );
     pub fn fmpq_poly_get_coeff_mpq(
         x: *mut __mpq_struct,
         poly: *const fmpq_poly_struct,
@@ -153,8 +157,16 @@ extern "C" {
         x: mp_limb_signed_t,
     );
     pub fn fmpq_poly_set_coeff_ui(poly: *mut fmpq_poly_struct, n: mp_limb_signed_t, x: mp_limb_t);
-    pub fn fmpq_poly_set_coeff_fmpz(poly: *mut fmpq_poly_struct, n: mp_limb_signed_t, x: *const fmpz);
-    pub fn fmpq_poly_set_coeff_fmpq(poly: *mut fmpq_poly_struct, n: mp_limb_signed_t, x: *const fmpq);
+    pub fn fmpq_poly_set_coeff_fmpz(
+        poly: *mut fmpq_poly_struct,
+        n: mp_limb_signed_t,
+        x: *const fmpz,
+    );
+    pub fn fmpq_poly_set_coeff_fmpq(
+        poly: *mut fmpq_poly_struct,
+        n: mp_limb_signed_t,
+        x: *const fmpq,
+    );
     pub fn fmpq_poly_set_coeff_mpz(
         poly: *mut fmpq_poly_struct,
         n: mp_limb_signed_t,
@@ -165,10 +177,8 @@ extern "C" {
         n: mp_limb_signed_t,
         x: *const __mpq_struct,
     );
-    pub fn fmpq_poly_equal(
-        poly1: *const fmpq_poly_struct,
-        poly2: *const fmpq_poly_struct,
-    ) -> c_int;
+    pub fn fmpq_poly_equal(poly1: *const fmpq_poly_struct, poly2: *const fmpq_poly_struct)
+        -> c_int;
     pub fn _fmpq_poly_cmp(
         lpoly: *const fmpz,
         lden: *const fmpz,
@@ -176,10 +186,7 @@ extern "C" {
         rden: *const fmpz,
         len: mp_limb_signed_t,
     ) -> c_int;
-    pub fn fmpq_poly_cmp(
-        left: *const fmpq_poly_struct,
-        right: *const fmpq_poly_struct,
-    ) -> c_int;
+    pub fn fmpq_poly_cmp(left: *const fmpq_poly_struct, right: *const fmpq_poly_struct) -> c_int;
     pub fn _fmpq_poly_equal_trunc(
         poly1: *const fmpz,
         den1: *const fmpz,
@@ -777,7 +784,11 @@ extern "C" {
         den2: *const fmpz,
         len2: mp_limb_signed_t,
     );
-    pub fn fmpq_poly_resultant(r: *mut fmpq, f: *const fmpq_poly_struct, g: *const fmpq_poly_struct);
+    pub fn fmpq_poly_resultant(
+        r: *mut fmpq,
+        f: *const fmpq_poly_struct,
+        g: *const fmpq_poly_struct,
+    );
     pub fn _fmpq_poly_resultant_div(
         rnum: *mut fmpz,
         rden: *mut fmpz,
@@ -857,7 +868,10 @@ extern "C" {
         den: *const fmpz,
         len: mp_limb_signed_t,
     );
-    pub fn fmpq_poly_power_sums_to_fmpz_poly(res: *mut fmpz_poly_struct, Q: *const fmpq_poly_struct);
+    pub fn fmpq_poly_power_sums_to_fmpz_poly(
+        res: *mut fmpz_poly_struct,
+        Q: *const fmpq_poly_struct,
+    );
     pub fn fmpq_poly_power_sums_to_poly(res: *mut fmpq_poly_struct, Q: *const fmpq_poly_struct);
     pub fn _fmpq_poly_log_series(
         g: *mut fmpz,
@@ -1103,7 +1117,11 @@ extern "C" {
         xnum: *const fmpz,
         xden: *const fmpz,
     );
-    pub fn fmpq_poly_rescale(res: *mut fmpq_poly_struct, poly: *const fmpq_poly_struct, x: *const fmpq);
+    pub fn fmpq_poly_rescale(
+        res: *mut fmpq_poly_struct,
+        poly: *const fmpq_poly_struct,
+        x: *const fmpq,
+    );
     pub fn _fmpq_poly_compose_series_horner(
         res: *mut fmpz,
         den: *mut fmpz,
@@ -1222,11 +1240,8 @@ extern "C" {
         len: mp_limb_signed_t,
     );
     pub fn fmpq_poly_primitive_part(res: *mut fmpq_poly_struct, poly: *const fmpq_poly_struct);
-    pub fn _fmpq_poly_is_monic(
-        poly: *const fmpz,
-        den: *const fmpz,
-        len: mp_limb_signed_t,
-    ) -> c_int;
+    pub fn _fmpq_poly_is_monic(poly: *const fmpz, den: *const fmpz, len: mp_limb_signed_t)
+        -> c_int;
     pub fn fmpq_poly_is_monic(poly: *const fmpq_poly_struct) -> c_int;
     pub fn _fmpq_poly_make_monic(
         rpoly: *mut fmpz,
@@ -1257,11 +1272,7 @@ extern "C" {
         poly: *const fmpq_poly_struct,
         var: *const c_char,
     ) -> c_int;
-    pub fn _fmpq_poly_print(
-        poly: *const fmpz,
-        den: *const fmpz,
-        len: mp_limb_signed_t,
-    ) -> c_int;
+    pub fn _fmpq_poly_print(poly: *const fmpz, den: *const fmpz, len: mp_limb_signed_t) -> c_int;
     pub fn fmpq_poly_print(poly: *const fmpq_poly_struct) -> c_int;
     pub fn _fmpq_poly_print_pretty(
         poly: *const fmpz,
@@ -1269,10 +1280,7 @@ extern "C" {
         len: mp_limb_signed_t,
         x: *const c_char,
     ) -> c_int;
-    pub fn fmpq_poly_print_pretty(
-        poly: *const fmpq_poly_struct,
-        var: *const c_char,
-    ) -> c_int;
+    pub fn fmpq_poly_print_pretty(poly: *const fmpq_poly_struct, var: *const c_char) -> c_int;
     pub fn fmpq_poly_fread(file: *const FILE, poly: *mut fmpq_poly_struct) -> c_int;
     pub fn fmpq_poly_read(poly: *mut fmpq_poly_struct) -> c_int;
 }

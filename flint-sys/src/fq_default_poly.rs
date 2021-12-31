@@ -2,20 +2,18 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_default_poly.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
-use crate::nmod_poly::nmod_poly_struct;
-use crate::fmpz_poly::fmpz_poly_struct;
 use crate::fmpz_mod_poly::fmpz_mod_poly_struct;
-use crate::fq_poly::fq_poly_t;
-use crate::fq_nmod_poly::fq_nmod_poly_t;
-use crate::fq_zech_poly::fq_zech_poly_t;
-use crate::fq_default::{fq_default_struct, fq_default_ctx_struct};
+use crate::fmpz_poly::fmpz_poly_struct;
+use crate::fq_default::{fq_default_ctx_struct, fq_default_struct};
 use crate::fq_default_mat::fq_default_mat_struct;
+use crate::fq_nmod_poly::fq_nmod_poly_t;
+use crate::fq_poly::fq_poly_t;
+use crate::fq_zech_poly::fq_zech_poly_t;
+use crate::nmod_poly::nmod_poly_struct;
 use libc::{c_char, c_int, FILE};
-
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -28,7 +26,10 @@ pub union fq_default_poly_struct {
 pub type fq_default_poly_t = [fq_default_poly_struct; 1usize];
 
 extern "C" {
-    pub fn fq_default_poly_init(poly: *mut fq_default_poly_struct, ctx: *const fq_default_ctx_struct);
+    pub fn fq_default_poly_init(
+        poly: *mut fq_default_poly_struct,
+        ctx: *const fq_default_ctx_struct,
+    );
     pub fn fq_default_poly_init2(
         poly: *mut fq_default_poly_struct,
         alloc: mp_limb_signed_t,
@@ -111,8 +112,14 @@ extern "C" {
         op2: *mut fq_default_poly_struct,
         ctx: *const fq_default_ctx_struct,
     );
-    pub fn fq_default_poly_zero(poly: *mut fq_default_poly_struct, ctx: *const fq_default_ctx_struct);
-    pub fn fq_default_poly_one(poly: *mut fq_default_poly_struct, ctx: *const fq_default_ctx_struct);
+    pub fn fq_default_poly_zero(
+        poly: *mut fq_default_poly_struct,
+        ctx: *const fq_default_ctx_struct,
+    );
+    pub fn fq_default_poly_one(
+        poly: *mut fq_default_poly_struct,
+        ctx: *const fq_default_ctx_struct,
+    );
     pub fn fq_default_poly_gen(f: *mut fq_default_poly_struct, ctx: *const fq_default_ctx_struct);
     pub fn fq_default_poly_make_monic(
         rop: *mut fq_default_poly_struct,

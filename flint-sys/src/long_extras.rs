@@ -6,7 +6,6 @@ use crate::deps::*;
 use crate::flint::*;
 use libc::{c_int, size_t};
 
-
 extern "C" {
     pub fn z_sizeinbase(n: mp_limb_signed_t, b: ::std::os::raw::c_int) -> size_t;
     pub fn z_mul_checked(

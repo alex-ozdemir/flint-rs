@@ -2,14 +2,12 @@
 
 //! See the [FLINT documentation](http://flintlib.org/doc/fmpz_poly_mat.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
-use crate::fmpz_poly::fmpz_poly_struct;
 use crate::fmpz_mat::fmpz_mat_struct;
+use crate::fmpz_poly::fmpz_poly_struct;
 use libc::{c_char, c_int};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -135,7 +133,10 @@ extern "C" {
         len: mp_limb_signed_t,
     );
     pub fn fmpz_poly_mat_sqr(B: *mut fmpz_poly_mat_struct, A: *const fmpz_poly_mat_struct);
-    pub fn fmpz_poly_mat_sqr_classical(B: *mut fmpz_poly_mat_struct, A: *const fmpz_poly_mat_struct);
+    pub fn fmpz_poly_mat_sqr_classical(
+        B: *mut fmpz_poly_mat_struct,
+        A: *const fmpz_poly_mat_struct,
+    );
     pub fn fmpz_poly_mat_sqr_KS(B: *mut fmpz_poly_mat_struct, A: *const fmpz_poly_mat_struct);
     pub fn fmpz_poly_mat_sqrlow(
         B: *mut fmpz_poly_mat_struct,
@@ -190,7 +191,10 @@ extern "C" {
     pub fn fmpz_poly_mat_trace(trace: *mut fmpz_poly_struct, mat: *const fmpz_poly_mat_struct);
     pub fn fmpz_poly_mat_det(det: *mut fmpz_poly_struct, A: *const fmpz_poly_mat_struct);
     pub fn fmpz_poly_mat_det_fflu(det: *mut fmpz_poly_struct, A: *const fmpz_poly_mat_struct);
-    pub fn fmpz_poly_mat_det_interpolate(det: *mut fmpz_poly_struct, A: *const fmpz_poly_mat_struct);
+    pub fn fmpz_poly_mat_det_interpolate(
+        det: *mut fmpz_poly_struct,
+        A: *const fmpz_poly_mat_struct,
+    );
     pub fn fmpz_poly_mat_rank(A: *const fmpz_poly_mat_struct) -> mp_limb_signed_t;
     pub fn fmpz_poly_mat_inv(
         Ainv: *mut fmpz_poly_mat_struct,

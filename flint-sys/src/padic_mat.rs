@@ -3,15 +3,13 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/padic_mat.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
+use crate::fmpq_mat::fmpq_mat_struct;
 use crate::fmpz::fmpz;
 use crate::fmpz_mat::fmpz_mat_struct;
-use crate::fmpq_mat::fmpq_mat_struct;
-use crate::padic::{padic_struct, padic_ctx_struct};
+use crate::padic::{padic_ctx_struct, padic_struct};
 use libc::{c_int, FILE};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -47,14 +45,8 @@ extern "C" {
     pub fn padic_mat_reduce(A: *mut padic_mat_struct, ctx: *mut padic_ctx_struct);
     pub fn padic_mat_is_empty(A: *mut padic_mat_struct) -> c_int;
     pub fn padic_mat_is_square(A: *mut padic_mat_struct) -> c_int;
-    pub fn padic_mat_is_canonical(
-        A: *mut padic_mat_struct,
-        ctx: *mut padic_ctx_struct,
-    ) -> c_int;
-    pub fn padic_mat_is_reduced(
-        A: *mut padic_mat_struct,
-        ctx: *mut padic_ctx_struct,
-    ) -> c_int;
+    pub fn padic_mat_is_canonical(A: *mut padic_mat_struct, ctx: *mut padic_ctx_struct) -> c_int;
+    pub fn padic_mat_is_reduced(A: *mut padic_mat_struct, ctx: *mut padic_ctx_struct) -> c_int;
     pub fn padic_mat_set(
         B: *mut padic_mat_struct,
         A: *mut padic_mat_struct,
@@ -87,10 +79,7 @@ extern "C" {
         op: *mut padic_struct,
         ctx: *mut padic_ctx_struct,
     );
-    pub fn padic_mat_equal(
-        A: *mut padic_mat_struct,
-        B: *mut padic_mat_struct,
-    ) -> c_int;
+    pub fn padic_mat_equal(A: *mut padic_mat_struct, B: *mut padic_mat_struct) -> c_int;
     pub fn padic_mat_is_zero(A: *mut padic_mat_struct) -> c_int;
     pub fn padic_mat_fprint(
         file: *mut FILE,
@@ -102,14 +91,8 @@ extern "C" {
         A: *mut padic_mat_struct,
         ctx: *mut padic_ctx_struct,
     ) -> c_int;
-    pub fn padic_mat_print(
-        A: *mut padic_mat_struct,
-        ctx: *mut padic_ctx_struct,
-    ) -> c_int;
-    pub fn padic_mat_print_pretty(
-        A: *mut padic_mat_struct,
-        ctx: *mut padic_ctx_struct,
-    ) -> c_int;
+    pub fn padic_mat_print(A: *mut padic_mat_struct, ctx: *mut padic_ctx_struct) -> c_int;
+    pub fn padic_mat_print_pretty(A: *mut padic_mat_struct, ctx: *mut padic_ctx_struct) -> c_int;
     pub fn padic_mat_randtest(
         mat: *mut padic_mat_struct,
         state: *mut flint_rand_s,

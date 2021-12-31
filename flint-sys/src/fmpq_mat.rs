@@ -4,12 +4,11 @@
 
 use crate::deps::*;
 use crate::flint::*;
-use crate::fmpz::fmpz;
 use crate::fmpq::fmpq;
-use crate::fmpz_mat::fmpz_mat_struct;
 use crate::fmpq_poly::fmpq_poly_struct;
+use crate::fmpz::fmpz;
+use crate::fmpz_mat::fmpz_mat_struct;
 use libc::c_int;
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash)]
@@ -64,8 +63,16 @@ extern "C" {
         mat2: *const fmpq_mat_struct,
     );
     pub fn fmpq_mat_print(mat: *const fmpq_mat_struct);
-    pub fn fmpq_mat_randbits(mat: *mut fmpq_mat_struct, state: *const flint_rand_s, bits: mp_limb_t);
-    pub fn fmpq_mat_randtest(mat: *mut fmpq_mat_struct, state: *const flint_rand_s, bits: mp_limb_t);
+    pub fn fmpq_mat_randbits(
+        mat: *mut fmpq_mat_struct,
+        state: *const flint_rand_s,
+        bits: mp_limb_t,
+    );
+    pub fn fmpq_mat_randtest(
+        mat: *mut fmpq_mat_struct,
+        state: *const flint_rand_s,
+        bits: mp_limb_t,
+    );
     pub fn fmpq_mat_hilbert_matrix(mat: *const fmpq_mat_struct);
     pub fn fmpq_mat_set(dest: *mut fmpq_mat_struct, src: *const fmpq_mat_struct);
     pub fn fmpq_mat_zero(mat: *mut fmpq_mat_struct);
@@ -97,19 +104,13 @@ extern "C" {
         op: *const fmpq_mat_struct,
         x: *const fmpz,
     );
-    pub fn fmpq_mat_equal(
-        mat1: *const fmpq_mat_struct,
-        mat2: *const fmpq_mat_struct,
-    ) -> c_int;
+    pub fn fmpq_mat_equal(mat1: *const fmpq_mat_struct, mat2: *const fmpq_mat_struct) -> c_int;
     pub fn fmpq_mat_is_integral(mat: *const fmpq_mat_struct) -> c_int;
     pub fn fmpq_mat_is_zero(mat: *const fmpq_mat_struct) -> c_int;
     pub fn fmpq_mat_is_one(mat: *const fmpq_mat_struct) -> c_int;
     pub fn fmpq_mat_is_empty(mat: *const fmpq_mat_struct) -> c_int;
     pub fn fmpq_mat_is_square(mat: *const fmpq_mat_struct) -> c_int;
-    pub fn fmpq_mat_get_fmpz_mat(
-        dest: *mut fmpz_mat_struct,
-        mat: *const fmpq_mat_struct,
-    ) -> c_int;
+    pub fn fmpq_mat_get_fmpz_mat(dest: *mut fmpz_mat_struct, mat: *const fmpq_mat_struct) -> c_int;
     pub fn fmpq_mat_get_fmpz_mat_entrywise(
         num: *mut fmpz_mat_struct,
         den: *mut fmpz_mat_struct,
@@ -163,7 +164,11 @@ extern "C" {
         A: *const fmpq_mat_struct,
         B: *const fmpq_mat_struct,
     );
-    pub fn fmpq_mat_mul(C: *mut fmpq_mat_struct, A: *const fmpq_mat_struct, B: *const fmpq_mat_struct);
+    pub fn fmpq_mat_mul(
+        C: *mut fmpq_mat_struct,
+        A: *const fmpq_mat_struct,
+        B: *const fmpq_mat_struct,
+    );
     pub fn fmpq_mat_mul_fmpz_mat(
         C: *mut fmpq_mat_struct,
         A: *const fmpq_mat_struct,
