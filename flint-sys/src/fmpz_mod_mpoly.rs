@@ -3,17 +3,15 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fmpz_mod_mpoly.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
-use crate::mpoly::*;
-use crate::nmod_mpoly::*;
 use crate::fmpz::fmpz;
 use crate::fmpz_mat::fmpz_mat_struct;
 use crate::fmpz_mod::{fmpz_mod_ctx_struct, fmpz_mod_ctx_t};
 use crate::fmpz_mod_poly::fmpz_mod_poly_struct;
+use crate::mpoly::*;
+use crate::nmod_mpoly::*;
 use libc::FILE;
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -1375,11 +1373,10 @@ extern "C" {
     );
 }
 
-    
 #[inline]
 pub unsafe fn fmpz_mod_mpoly_init(
-        A: *mut fmpz_mod_mpoly_struct,
-        ctx: *mut fmpz_mod_mpoly_ctx_struct)
-{
+    A: *mut fmpz_mod_mpoly_struct,
+    ctx: *mut fmpz_mod_mpoly_ctx_struct,
+) {
     fmpz_mod_mpoly_init2(A, 0, ctx);
 }

@@ -2,13 +2,11 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_zech_poly_factor.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
-use crate::fq_zech::{fq_zech_struct, fq_zech_ctx_struct};
+use crate::fq_zech::{fq_zech_ctx_struct, fq_zech_struct};
 use crate::fq_zech_poly::{fq_zech_poly_struct, fq_zech_poly_t};
 use libc::{c_char, c_int};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

@@ -2,10 +2,9 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_zech_vec.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
-use crate::fq_zech::{fq_zech_struct, fq_zech_ctx_struct};
+use crate::fq_zech::{fq_zech_ctx_struct, fq_zech_struct};
 use libc::{c_int, FILE};
 
 extern "C" {

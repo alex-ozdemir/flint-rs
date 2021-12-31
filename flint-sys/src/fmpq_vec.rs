@@ -4,10 +4,9 @@
 
 use crate::deps::*;
 use crate::flint::*;
-use crate::fmpz::fmpz;
 use crate::fmpq::fmpq;
+use crate::fmpz::fmpz;
 use libc::{c_int, FILE};
-
 
 extern "C" {
     pub fn _fmpq_vec_init(len: mp_limb_signed_t) -> *mut fmpq;
@@ -33,10 +32,6 @@ extern "C" {
         vec2: *const fmpq,
         len: mp_limb_signed_t,
     );
-    pub fn _fmpq_vec_fprint(
-        file: *mut FILE,
-        vec: *const fmpq,
-        len: mp_limb_signed_t,
-    ) -> c_int;
+    pub fn _fmpq_vec_fprint(file: *mut FILE, vec: *const fmpq, len: mp_limb_signed_t) -> c_int;
     pub fn _fmpq_vec_print(vec: *const fmpq, len: mp_limb_signed_t) -> c_int;
 }

@@ -4,15 +4,13 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/nmod_mpoly_factor.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
+use crate::fmpz::fmpz;
 use crate::mpoly::*;
 use crate::n_poly::*;
-use crate::fmpz::fmpz;
-use crate::nmod_vec::nmod_t;
 use crate::nmod_mpoly::*;
-
+use crate::nmod_vec::nmod_t;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

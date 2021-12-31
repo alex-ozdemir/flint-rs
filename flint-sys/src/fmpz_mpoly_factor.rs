@@ -3,20 +3,20 @@
 
 //! See the [FLINT documentation](http://flintlib.org/doc/fmpz_mpoly_factor.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
-use crate::mpoly::*;
-use crate::nmod_mpoly::*;
-use crate::fmpz::{fmpz, fmpz_t};
 use crate::fmpq::fmpq;
+use crate::fmpz::{fmpz, fmpz_t};
 use crate::fmpz_mod::{fmpz_mod_ctx_struct, fmpz_mod_ctx_t};
+use crate::fmpz_mod_poly::{fmpz_mod_poly_struct, fmpz_mod_poly_t};
+use crate::fmpz_mpoly::{
+    fmpz_mpoly_ctx_struct, fmpz_mpoly_geobucket_struct, fmpz_mpoly_struct, fmpz_mpoly_univar_struct,
+};
 use crate::fmpz_poly::{fmpz_poly_struct, fmpz_poly_t};
 use crate::fmpz_poly_factor::{fmpz_poly_factor_struct, zassenhaus_prune_struct};
-use crate::fmpz_mod_poly::{fmpz_mod_poly_struct, fmpz_mod_poly_t};
-use crate::fmpz_mpoly::{fmpz_mpoly_struct, fmpz_mpoly_ctx_struct, fmpz_mpoly_univar_struct, fmpz_mpoly_geobucket_struct};
+use crate::mpoly::*;
+use crate::nmod_mpoly::*;
 use libc::{c_char, c_int, c_uint};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

@@ -2,13 +2,11 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/nmod_mat.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
 use crate::nmod_vec::nmod_t;
 use libc::c_int;
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -83,27 +81,13 @@ extern "C" {
         count: mp_limb_signed_t,
         state: *mut flint_rand_s,
     );
-    pub fn nmod_mat_randtril(
-        mat: *mut nmod_mat_struct,
-        state: *mut flint_rand_s,
-        unit: c_int,
-    );
-    pub fn nmod_mat_randtriu(
-        mat: *mut nmod_mat_struct,
-        state: *mut flint_rand_s,
-        unit: c_int,
-    );
+    pub fn nmod_mat_randtril(mat: *mut nmod_mat_struct, state: *mut flint_rand_s, unit: c_int);
+    pub fn nmod_mat_randtriu(mat: *mut nmod_mat_struct, state: *mut flint_rand_s, unit: c_int);
     pub fn nmod_mat_print_pretty(mat: *mut nmod_mat_struct);
-    pub fn nmod_mat_equal(
-        mat1: *mut nmod_mat_struct,
-        mat2: *mut nmod_mat_struct,
-    ) -> c_int;
+    pub fn nmod_mat_equal(mat1: *mut nmod_mat_struct, mat2: *mut nmod_mat_struct) -> c_int;
     pub fn nmod_mat_zero(mat: *mut nmod_mat_struct);
     pub fn nmod_mat_is_zero(mat: *mut nmod_mat_struct) -> c_int;
-    pub fn nmod_mat_is_zero_row(
-        mat: *mut nmod_mat_struct,
-        i: mp_limb_signed_t,
-    ) -> c_int;
+    pub fn nmod_mat_is_zero_row(mat: *mut nmod_mat_struct, i: mp_limb_signed_t) -> c_int;
     pub fn nmod_mat_is_empty(mat: *mut nmod_mat_struct) -> c_int;
     pub fn nmod_mat_is_square(mat: *mut nmod_mat_struct) -> c_int;
     pub fn nmod_mat_set(B: *mut nmod_mat_struct, A: *mut nmod_mat_struct);
@@ -260,11 +244,7 @@ extern "C" {
         A: *mut nmod_mat_struct,
         B: *mut nmod_mat_struct,
     ) -> c_int;
-    pub fn nmod_mat_solve_vec(
-        x: mp_ptr,
-        A: *mut nmod_mat_struct,
-        b: mp_srcptr,
-    ) -> c_int;
+    pub fn nmod_mat_solve_vec(x: mp_ptr, A: *mut nmod_mat_struct, b: mp_srcptr) -> c_int;
     pub fn nmod_mat_can_solve_inner(
         rank: *mut mp_limb_signed_t,
         prm: *mut mp_limb_signed_t,

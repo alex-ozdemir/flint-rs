@@ -2,11 +2,9 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fmpz_mod_vec.html).
 
-
 use crate::deps::*;
 use crate::fmpz::fmpz;
 use crate::fmpz_mod::fmpz_mod_ctx_struct;
-
 
 extern "C" {
     pub fn _fmpz_mod_vec_set_fmpz_vec(

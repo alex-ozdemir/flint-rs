@@ -2,19 +2,17 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_default_mat.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
 use crate::fmpz_mat::fmpz_mat_struct;
-use crate::nmod_mat::nmod_mat_struct;
 use crate::fmpz_mod_mat::fmpz_mod_mat_struct;
+use crate::fq_default::{fq_default_ctx_struct, fq_default_struct};
 use crate::fq_mat::fq_mat_t;
 use crate::fq_nmod_mat::fq_nmod_mat_t;
 use crate::fq_zech_mat::fq_zech_mat_t;
-use crate::fq_default::{fq_default_struct, fq_default_ctx_struct};
+use crate::nmod_mat::nmod_mat_struct;
 use libc::{c_int, FILE};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash)]

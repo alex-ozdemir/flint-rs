@@ -2,11 +2,10 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_embed.html).
 
-
 use crate::deps::*;
-use crate::fmpz_poly::fmpz_poly_struct;
 use crate::fmpz_mod_mat::fmpz_mod_mat_struct;
 use crate::fmpz_mod_poly::fmpz_mod_poly_struct;
+use crate::fmpz_poly::fmpz_poly_struct;
 use crate::fq::fq_ctx_struct;
 
 extern "C" {

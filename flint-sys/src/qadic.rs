@@ -2,15 +2,13 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/qadic.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
 use crate::fmpz_poly::fmpz_poly_struct;
-use crate::padic::{padic_struct, padic_ctx_struct, padic_print_mode};
+use crate::padic::{padic_ctx_struct, padic_print_mode, padic_struct};
 use crate::padic_poly::{padic_poly_struct, padic_poly_t};
 use libc::{c_char, c_int, FILE};
-
 
 pub type qadic_t = padic_poly_t;
 pub type qadic_struct = padic_poly_struct;
@@ -112,10 +110,7 @@ extern "C" {
     );
     pub fn qadic_is_zero(op: *const padic_poly_struct) -> c_int;
     pub fn qadic_is_one(op: *const padic_poly_struct) -> c_int;
-    pub fn qadic_equal(
-        op1: *const padic_poly_struct,
-        op2: *const padic_poly_struct,
-    ) -> c_int;
+    pub fn qadic_equal(op1: *const padic_poly_struct, op2: *const padic_poly_struct) -> c_int;
     pub fn qadic_add(
         x: *mut padic_poly_struct,
         y: *const padic_poly_struct,
@@ -382,9 +377,6 @@ extern "C" {
         op: *const padic_poly_struct,
         ctx: *const qadic_ctx_struct,
     ) -> c_int;
-    pub fn qadic_print_pretty(
-        op: *mut padic_poly_struct,
-        ctx: *const qadic_ctx_struct,
-    ) -> c_int;
+    pub fn qadic_print_pretty(op: *mut padic_poly_struct, ctx: *const qadic_ctx_struct) -> c_int;
     pub fn qadic_debug(op: *const padic_poly_struct) -> c_int;
 }

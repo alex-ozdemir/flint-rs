@@ -2,11 +2,9 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/nmod_vec.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use libc::c_int;
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash)]
@@ -75,11 +73,7 @@ extern "C" {
     pub fn _nmod_vec_max_bits(vec: mp_srcptr, len: mp_limb_signed_t) -> mp_limb_t;
     pub fn _nmod_vec_set(res: mp_ptr, vec: mp_srcptr, len: mp_limb_signed_t);
     pub fn _nmod_vec_swap(a: mp_ptr, b: mp_ptr, length: mp_limb_signed_t);
-    pub fn _nmod_vec_equal(
-        vec: mp_srcptr,
-        vec2: mp_srcptr,
-        len: mp_limb_signed_t,
-    ) -> c_int;
+    pub fn _nmod_vec_equal(vec: mp_srcptr, vec2: mp_srcptr, len: mp_limb_signed_t) -> c_int;
     pub fn _nmod_vec_is_zero(vec: mp_srcptr, len: mp_limb_signed_t) -> c_int;
     pub fn _nmod_vec_reduce(res: mp_ptr, vec: mp_srcptr, len: mp_limb_signed_t, mod_: nmod_t);
     pub fn _nmod_vec_add(

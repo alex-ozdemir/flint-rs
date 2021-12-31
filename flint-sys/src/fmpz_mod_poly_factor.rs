@@ -3,7 +3,6 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fmpz_mod_poly_factor.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
@@ -11,7 +10,6 @@ use crate::fmpz_factor::fmpz_factor_struct;
 use crate::fmpz_mod::fmpz_mod_ctx_struct;
 use crate::fmpz_mod_poly::fmpz_mod_poly_struct;
 use libc::{c_int, c_void};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

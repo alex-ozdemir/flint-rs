@@ -3,12 +3,11 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/nmod_poly_factor.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
-use crate::ulong_extras::n_factor_t;
-use crate::nmod_vec::nmod_t;
 use crate::nmod_poly::nmod_poly_struct;
+use crate::nmod_vec::nmod_t;
+use crate::ulong_extras::n_factor_t;
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

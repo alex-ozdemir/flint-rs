@@ -2,15 +2,13 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_zech.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
+use crate::fq_nmod::fq_nmod_ctx_struct;
 use crate::nmod_mat::nmod_mat_struct;
 use crate::nmod_poly::nmod_poly_struct;
-use crate::fq_nmod::fq_nmod_ctx_struct;
 use libc::{c_char, c_int, FILE};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash)]
@@ -80,10 +78,7 @@ extern "C" {
     pub fn fq_zech_ctx_degree(ctx: *mut fq_zech_ctx_struct) -> mp_limb_signed_t;
     pub fn fq_zech_ctx_order(f: *mut fmpz, ctx: *mut fq_zech_ctx_struct);
     pub fn fq_zech_ctx_order_ui(ctx: *mut fq_zech_ctx_struct) -> mp_limb_t;
-    pub fn fq_zech_ctx_fprint(
-        file: *mut FILE,
-        ctx: *mut fq_zech_ctx_struct,
-    ) -> c_int;
+    pub fn fq_zech_ctx_fprint(file: *mut FILE, ctx: *mut fq_zech_ctx_struct) -> c_int;
     pub fn fq_zech_ctx_print(ctx: *mut fq_zech_ctx_struct);
     pub fn fq_zech_init(rop: *mut fq_zech_struct, ctx: *mut fq_zech_ctx_struct);
     pub fn fq_zech_init2(rop: *mut fq_zech_struct, ctx: *mut fq_zech_ctx_struct);
@@ -177,10 +172,7 @@ extern "C" {
         op1: *mut fq_zech_struct,
         ctx: *mut fq_zech_ctx_struct,
     );
-    pub fn fq_zech_is_square(
-        op1: *mut fq_zech_struct,
-        ctx: *mut fq_zech_ctx_struct,
-    ) -> c_int;
+    pub fn fq_zech_is_square(op1: *mut fq_zech_struct, ctx: *mut fq_zech_ctx_struct) -> c_int;
     pub fn fq_zech_randtest(
         rop: *mut fq_zech_struct,
         state: *mut flint_rand_s,
@@ -206,14 +198,8 @@ extern "C" {
         op2: *mut fq_zech_struct,
         ctx: *mut fq_zech_ctx_struct,
     ) -> c_int;
-    pub fn fq_zech_is_zero(
-        op: *mut fq_zech_struct,
-        ctx: *mut fq_zech_ctx_struct,
-    ) -> c_int;
-    pub fn fq_zech_is_one(
-        op: *mut fq_zech_struct,
-        ctx: *mut fq_zech_ctx_struct,
-    ) -> c_int;
+    pub fn fq_zech_is_zero(op: *mut fq_zech_struct, ctx: *mut fq_zech_ctx_struct) -> c_int;
+    pub fn fq_zech_is_one(op: *mut fq_zech_struct, ctx: *mut fq_zech_ctx_struct) -> c_int;
     pub fn fq_zech_set(
         rop: *mut fq_zech_struct,
         op: *mut fq_zech_struct,
@@ -266,10 +252,7 @@ extern "C" {
         ctx: *mut fq_zech_ctx_struct,
     ) -> c_int;
     pub fn fq_zech_print(op: *mut fq_zech_struct, ctx: *mut fq_zech_ctx_struct);
-    pub fn fq_zech_get_str(
-        op: *mut fq_zech_struct,
-        ctx: *mut fq_zech_ctx_struct,
-    ) -> *mut c_char;
+    pub fn fq_zech_get_str(op: *mut fq_zech_struct, ctx: *mut fq_zech_ctx_struct) -> *mut c_char;
     pub fn fq_zech_get_str_pretty(
         op: *mut fq_zech_struct,
         ctx: *mut fq_zech_ctx_struct,
@@ -301,10 +284,7 @@ extern "C" {
         op: *mut fq_zech_struct,
         ctx: *mut fq_zech_ctx_struct,
     );
-    pub fn fq_zech_is_invertible(
-        op: *mut fq_zech_struct,
-        ctx: *mut fq_zech_ctx_struct,
-    ) -> c_int;
+    pub fn fq_zech_is_invertible(op: *mut fq_zech_struct, ctx: *mut fq_zech_ctx_struct) -> c_int;
     pub fn fq_zech_is_invertible_f(
         rop: *mut fq_zech_struct,
         op: *mut fq_zech_struct,
@@ -331,10 +311,7 @@ extern "C" {
         col: *mut nmod_mat_struct,
         ctx: *mut fq_zech_ctx_struct,
     );
-    pub fn fq_zech_is_primitive(
-        op: *mut fq_zech_struct,
-        ctx: *mut fq_zech_ctx_struct,
-    ) -> c_int;
+    pub fn fq_zech_is_primitive(op: *mut fq_zech_struct, ctx: *mut fq_zech_ctx_struct) -> c_int;
     pub fn fq_zech_embed_gens(
         gen_sub: *mut fq_zech_struct,
         gen_sup: *mut fq_zech_struct,

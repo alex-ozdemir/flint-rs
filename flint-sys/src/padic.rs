@@ -4,13 +4,11 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/padic.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
-use crate::fmpz::{fmpz, fmpz_t};
 use crate::fmpq::fmpq;
+use crate::fmpz::{fmpz, fmpz_t};
 use libc::{c_char, c_int, c_uint, FILE};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -62,11 +60,7 @@ extern "C" {
     pub fn padic_get_val(x: *const padic_struct) -> mp_limb_signed_t;
     pub fn padic_get_prec(x: *const padic_struct) -> mp_limb_signed_t;
     pub fn padic_ctx_clear(ctx: *mut padic_ctx_struct);
-    pub fn _padic_ctx_pow_ui(
-        rop: *mut fmpz,
-        e: mp_limb_t,
-        ctx: *const padic_ctx_struct,
-    ) -> c_int;
+    pub fn _padic_ctx_pow_ui(rop: *mut fmpz, e: mp_limb_t, ctx: *const padic_ctx_struct) -> c_int;
     pub fn padic_ctx_pow_ui(rop: *mut fmpz, e: mp_limb_t, ctx: *const padic_ctx_struct);
     pub fn padic_init(rop: *mut padic_struct);
     pub fn padic_init2(rop: *mut padic_struct, N: mp_limb_signed_t);
@@ -94,12 +88,28 @@ extern "C" {
     pub fn padic_set_ui(rop: *mut padic_struct, op: mp_limb_t, ctx: *const padic_ctx_struct);
     pub fn padic_set_fmpz(rop: *mut padic_struct, op: *const fmpz, ctx: *const padic_ctx_struct);
     pub fn padic_set_fmpq(rop: *mut padic_struct, op: *const fmpq, ctx: *const padic_ctx_struct);
-    pub fn padic_set_mpz(rop: *mut padic_struct, op: *const __mpz_struct, ctx: *const padic_ctx_struct);
-    pub fn padic_set_mpq(rop: *mut padic_struct, op: *const __mpq_struct, ctx: *const padic_ctx_struct);
+    pub fn padic_set_mpz(
+        rop: *mut padic_struct,
+        op: *const __mpz_struct,
+        ctx: *const padic_ctx_struct,
+    );
+    pub fn padic_set_mpq(
+        rop: *mut padic_struct,
+        op: *const __mpq_struct,
+        ctx: *const padic_ctx_struct,
+    );
     pub fn padic_get_fmpz(rop: *mut fmpz, op: *const padic_struct, ctx: *const padic_ctx_struct);
     pub fn padic_get_fmpq(rop: *mut fmpq, op: *const padic_struct, ctx: *const padic_ctx_struct);
-    pub fn padic_get_mpz(rop: *mut __mpz_struct, op: *const padic_struct, ctx: *const padic_ctx_struct);
-    pub fn padic_get_mpq(rop: *mut __mpq_struct, op: *const padic_struct, ctx: *const padic_ctx_struct);
+    pub fn padic_get_mpz(
+        rop: *mut __mpz_struct,
+        op: *const padic_struct,
+        ctx: *const padic_ctx_struct,
+    );
+    pub fn padic_get_mpq(
+        rop: *mut __mpq_struct,
+        op: *const padic_struct,
+        ctx: *const padic_ctx_struct,
+    );
     pub fn padic_swap(op1: *mut padic_struct, op2: *const padic_struct);
     pub fn padic_zero(rop: *mut padic_struct);
     pub fn padic_one(rop: *mut padic_struct);
@@ -288,11 +298,7 @@ extern "C" {
         op: *const padic_struct,
         ctx: *const padic_ctx_struct,
     ) -> c_int;
-    pub fn _padic_print(
-        u: *mut fmpz,
-        v: mp_limb_signed_t,
-        ctx: *const padic_ctx_struct,
-    ) -> c_int;
+    pub fn _padic_print(u: *mut fmpz, v: mp_limb_signed_t, ctx: *const padic_ctx_struct) -> c_int;
     pub fn padic_print(op: *mut padic_struct, ctx: *const padic_ctx_struct) -> c_int;
     pub fn padic_debug(op: *mut padic_struct);
 }

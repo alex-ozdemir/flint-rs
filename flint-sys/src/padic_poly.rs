@@ -3,16 +3,14 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/padic_poly.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
-use crate::fmpz::fmpz;
 use crate::fmpq::fmpq;
-use crate::fmpz_poly::fmpz_poly_struct;
 use crate::fmpq_poly::fmpq_poly_struct;
-use crate::padic::{padic_struct, padic_ctx_struct};
+use crate::fmpz::fmpz;
+use crate::fmpz_poly::fmpz_poly_struct;
+use crate::padic::{padic_ctx_struct, padic_struct};
 use libc::{c_char, c_int, FILE};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -139,10 +137,7 @@ extern "C" {
         c: *mut padic_struct,
         ctx: *mut padic_ctx_struct,
     );
-    pub fn padic_poly_equal(
-        f: *mut padic_poly_struct,
-        g: *mut padic_poly_struct,
-    ) -> c_int;
+    pub fn padic_poly_equal(f: *mut padic_poly_struct, g: *mut padic_poly_struct) -> c_int;
     pub fn padic_poly_is_zero(poly: *mut padic_poly_struct) -> c_int;
     pub fn padic_poly_is_one(poly: *mut padic_poly_struct) -> c_int;
     pub fn _padic_poly_add(
@@ -342,10 +337,7 @@ extern "C" {
         len: mp_limb_signed_t,
         ctx: *mut padic_ctx_struct,
     ) -> c_int;
-    pub fn padic_poly_print(
-        poly: *mut padic_poly_struct,
-        ctx: *mut padic_ctx_struct,
-    ) -> c_int;
+    pub fn padic_poly_print(poly: *mut padic_poly_struct, ctx: *mut padic_ctx_struct) -> c_int;
     pub fn _padic_poly_fprint_pretty(
         file: *mut FILE,
         poly: *const fmpz,
@@ -379,10 +371,8 @@ extern "C" {
         len: mp_limb_signed_t,
         ctx: *mut padic_ctx_struct,
     ) -> c_int;
-    pub fn padic_poly_is_canonical(
-        op: *mut padic_poly_struct,
-        ctx: *mut padic_ctx_struct,
-    ) -> c_int;
+    pub fn padic_poly_is_canonical(op: *mut padic_poly_struct, ctx: *mut padic_ctx_struct)
+        -> c_int;
     pub fn _padic_poly_is_reduced(
         op: *const fmpz,
         val: mp_limb_signed_t,
@@ -390,8 +380,5 @@ extern "C" {
         N: mp_limb_signed_t,
         ctx: *mut padic_ctx_struct,
     ) -> c_int;
-    pub fn padic_poly_is_reduced(
-        op: *mut padic_poly_struct,
-        ctx: *mut padic_ctx_struct,
-    ) -> c_int;
+    pub fn padic_poly_is_reduced(op: *mut padic_poly_struct, ctx: *mut padic_ctx_struct) -> c_int;
 }

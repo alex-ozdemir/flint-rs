@@ -2,13 +2,11 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_vec.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz_poly::fmpz_poly_struct;
-use crate::fq::{fq_struct, fq_ctx_struct};
+use crate::fq::{fq_ctx_struct, fq_struct};
 use libc::{c_int, FILE};
-
 
 extern "C" {
     pub fn _fq_vec_init(len: mp_limb_signed_t, ctx: *mut fq_ctx_struct) -> *mut fq_struct;

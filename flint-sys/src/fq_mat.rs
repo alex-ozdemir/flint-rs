@@ -2,16 +2,14 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_mat.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz_poly::fmpz_poly_struct;
-use crate::nmod_poly::nmod_poly_struct;
-use crate::nmod_mat::nmod_mat_struct;
-use crate::fq::{fq_struct, fq_ctx_struct};
+use crate::fq::{fq_ctx_struct, fq_struct};
 use crate::fq_nmod::fq_nmod_ctx_struct;
+use crate::nmod_mat::nmod_mat_struct;
+use crate::nmod_poly::nmod_poly_struct;
 use libc::{c_int, FILE};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash)]
@@ -49,18 +47,9 @@ extern "C" {
         mat2: *mut fq_mat_struct,
         ctx: *mut fq_ctx_struct,
     ) -> c_int;
-    pub fn fq_mat_is_zero(
-        mat: *mut fq_mat_struct,
-        ctx: *mut fq_ctx_struct,
-    ) -> c_int;
-    pub fn fq_mat_is_empty(
-        mat: *mut fq_mat_struct,
-        ctx: *mut fq_ctx_struct,
-    ) -> c_int;
-    pub fn fq_mat_is_square(
-        mat: *mut fq_mat_struct,
-        ctx: *mut fq_ctx_struct,
-    ) -> c_int;
+    pub fn fq_mat_is_zero(mat: *mut fq_mat_struct, ctx: *mut fq_ctx_struct) -> c_int;
+    pub fn fq_mat_is_empty(mat: *mut fq_mat_struct, ctx: *mut fq_ctx_struct) -> c_int;
+    pub fn fq_mat_is_square(mat: *mut fq_mat_struct, ctx: *mut fq_ctx_struct) -> c_int;
     pub fn fq_mat_entry(
         mat: *mut fq_mat_struct,
         i: mp_limb_signed_t,
@@ -133,10 +122,7 @@ extern "C" {
         ctx: *mut fq_ctx_struct,
     ) -> c_int;
     pub fn fq_mat_print(mat: *mut fq_mat_struct, ctx: *mut fq_ctx_struct) -> c_int;
-    pub fn fq_mat_print_pretty(
-        mat: *mut fq_mat_struct,
-        ctx: *mut fq_ctx_struct,
-    ) -> c_int;
+    pub fn fq_mat_print_pretty(mat: *mut fq_mat_struct, ctx: *mut fq_ctx_struct) -> c_int;
     pub fn fq_mat_randtest(
         mat: *mut fq_mat_struct,
         state: *mut flint_rand_s,

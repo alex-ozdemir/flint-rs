@@ -3,16 +3,14 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/n_poly.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
-use crate::nmod_poly::nmod_poly_struct;
-use crate::nmod_vec::nmod_t;
 use crate::fq_nmod::fq_nmod_ctx_struct;
 use crate::fq_nmod_poly::fq_nmod_poly_struct;
+use crate::nmod_poly::nmod_poly_struct;
+use crate::nmod_vec::nmod_t;
 use libc::{c_char, c_int, FILE};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -526,11 +524,7 @@ extern "C" {
     pub fn _n_fq_swap(a: *mut mp_limb_t, b: *mut mp_limb_t, d: mp_limb_signed_t);
 }
 extern "C" {
-    pub fn _n_fq_equal(
-        a: *mut mp_limb_t,
-        b: *const mp_limb_t,
-        d: mp_limb_signed_t,
-    ) -> c_int;
+    pub fn _n_fq_equal(a: *mut mp_limb_t, b: *const mp_limb_t, d: mp_limb_signed_t) -> c_int;
 }
 extern "C" {
     pub fn n_fq_equal_fq_nmod(
@@ -540,10 +534,7 @@ extern "C" {
     ) -> c_int;
 }
 extern "C" {
-    pub fn n_fq_is_canonical(
-        a: *const mp_limb_t,
-        ctx: *mut fq_nmod_ctx_struct,
-    ) -> c_int;
+    pub fn n_fq_is_canonical(a: *const mp_limb_t, ctx: *mut fq_nmod_ctx_struct) -> c_int;
 }
 extern "C" {
     pub fn n_fq_randtest_not_zero(
@@ -553,10 +544,7 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn n_fq_get_str_pretty(
-        a: *const mp_limb_t,
-        ctx: *mut fq_nmod_ctx_struct,
-    ) -> *mut c_char;
+    pub fn n_fq_get_str_pretty(a: *const mp_limb_t, ctx: *mut fq_nmod_ctx_struct) -> *mut c_char;
 }
 extern "C" {
     pub fn n_fq_fprint_pretty(
@@ -721,10 +709,7 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn _n_fq_dot_lazy_size(
-        len: mp_limb_signed_t,
-        ctx: *mut fq_nmod_ctx_struct,
-    ) -> c_int;
+    pub fn _n_fq_dot_lazy_size(len: mp_limb_signed_t, ctx: *mut fq_nmod_ctx_struct) -> c_int;
 }
 extern "C" {
     pub fn _n_fq_reduce2_lazy1(a: *mut mp_limb_t, d: mp_limb_signed_t, ctx: nmod_t);
@@ -857,16 +842,10 @@ extern "C" {
     pub fn n_fq_poly_one(A: *mut n_poly_struct, ctx: *mut fq_nmod_ctx_struct);
 }
 extern "C" {
-    pub fn n_fq_poly_is_one(
-        A: *mut n_poly_struct,
-        ctx: *mut fq_nmod_ctx_struct,
-    ) -> c_int;
+    pub fn n_fq_poly_is_one(A: *mut n_poly_struct, ctx: *mut fq_nmod_ctx_struct) -> c_int;
 }
 extern "C" {
-    pub fn n_fq_poly_is_canonical(
-        a: *mut n_poly_struct,
-        ctx: *mut fq_nmod_ctx_struct,
-    ) -> c_int;
+    pub fn n_fq_poly_is_canonical(a: *mut n_poly_struct, ctx: *mut fq_nmod_ctx_struct) -> c_int;
 }
 extern "C" {
     pub fn _n_fq_poly_normalise(A: *mut n_poly_struct, d: mp_limb_signed_t);
@@ -1221,11 +1200,7 @@ extern "C" {
     pub fn n_bpoly_swap(A: *mut n_bpoly_struct, B: *mut n_bpoly_struct);
 }
 extern "C" {
-    pub fn n_bpoly_print_pretty(
-        A: *mut n_bpoly_struct,
-        xvar: *const c_char,
-        yvar: *const c_char,
-    );
+    pub fn n_bpoly_print_pretty(A: *mut n_bpoly_struct, xvar: *const c_char, yvar: *const c_char);
 }
 extern "C" {
     pub fn n_bpoly_normalise(A: *mut n_bpoly_struct);
@@ -1549,10 +1524,7 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn n_fq_bpoly_is_canonical(
-        A: *mut n_bpoly_struct,
-        ctx: *mut fq_nmod_ctx_struct,
-    ) -> c_int;
+    pub fn n_fq_bpoly_is_canonical(A: *mut n_bpoly_struct, ctx: *mut fq_nmod_ctx_struct) -> c_int;
 }
 extern "C" {
     pub fn n_tpoly_init(A: *mut n_tpoly_struct);
@@ -1843,10 +1815,7 @@ extern "C" {
     pub fn n_polyun_fit_length(A: *mut n_polyun_struct, len: mp_limb_signed_t);
 }
 extern "C" {
-    pub fn n_polyun_mod_is_canonical(
-        A: *mut n_polyun_struct,
-        mod_: nmod_t,
-    ) -> c_int;
+    pub fn n_polyun_mod_is_canonical(A: *mut n_polyun_struct, mod_: nmod_t) -> c_int;
 }
 extern "C" {
     pub fn n_polyun_swap(A: *mut n_polyun_struct, B: *mut n_polyun_struct);
@@ -1886,10 +1855,7 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn n_polyun_equal(
-        A: *mut n_polyun_struct,
-        B: *mut n_polyun_struct,
-    ) -> c_int;
+    pub fn n_polyun_equal(A: *mut n_polyun_struct, B: *mut n_polyun_struct) -> c_int;
 }
 extern "C" {
     pub fn n_polyun_one(A: *mut n_polyun_struct);

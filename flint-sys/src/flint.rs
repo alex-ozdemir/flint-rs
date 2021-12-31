@@ -1,7 +1,7 @@
 #![allow(non_camel_case_types)]
 
 use crate::deps::*;
-use libc::{FILE, size_t, c_int, c_uint, c_char, c_void};
+use libc::{c_char, c_int, c_uint, c_void, size_t, FILE};
 
 pub type __builtin_va_list = [__va_list_tag; 1usize];
 
@@ -44,27 +44,19 @@ extern "C" {
     pub static rec_word_tab: [c_int; 256usize];
     pub static mut flint_version: [c_char; 0usize];
     pub fn flint_malloc(size: size_t) -> *mut c_void;
-    pub fn flint_realloc(
-        ptr: *mut c_void,
-        size: size_t,
-    ) -> *mut c_void;
+    pub fn flint_realloc(ptr: *mut c_void, size: size_t) -> *mut c_void;
     pub fn flint_calloc(num: size_t, size: size_t) -> *mut c_void;
     pub fn flint_free(ptr: *mut c_void);
     pub fn flint_register_cleanup_function(cleanup_function: flint_cleanup_function_t);
     pub fn flint_cleanup();
     pub fn flint_cleanup_master();
     pub fn __flint_set_memory_functions(
-        alloc_func: ::std::option::Option<
-            unsafe extern "C" fn(arg1: size_t) -> *mut c_void,
-        >,
+        alloc_func: ::std::option::Option<unsafe extern "C" fn(arg1: size_t) -> *mut c_void>,
         calloc_func: ::std::option::Option<
             unsafe extern "C" fn(arg1: size_t, arg2: size_t) -> *mut c_void,
         >,
         realloc_func: ::std::option::Option<
-            unsafe extern "C" fn(
-                arg1: *mut c_void,
-                arg2: size_t,
-            ) -> *mut c_void,
+            unsafe extern "C" fn(arg1: *mut c_void, arg2: size_t) -> *mut c_void,
         >,
         free_func: ::std::option::Option<unsafe extern "C" fn(arg1: *mut c_void)>,
     );
@@ -74,10 +66,7 @@ extern "C" {
     pub fn _flint_set_num_workers(num_workers: c_int);
     pub fn flint_set_num_workers(num_workers: c_int) -> c_int;
     pub fn flint_reset_num_workers(max_workers: c_int);
-    pub fn flint_set_thread_affinity(
-        cpus: *mut c_int,
-        length: mp_limb_signed_t,
-    ) -> c_int;
+    pub fn flint_set_thread_affinity(cpus: *mut c_int, length: mp_limb_signed_t) -> c_int;
     pub fn flint_restore_thread_affinity() -> c_int;
     pub fn flint_test_multiplier() -> c_int;
     pub fn flint_randinit(state: *mut flint_rand_s);
@@ -91,35 +80,13 @@ extern "C" {
     pub fn flint_randclear(state: *mut flint_rand_s);
     pub fn flint_rand_alloc() -> *mut flint_rand_s;
     pub fn flint_rand_free(state: *mut flint_rand_s);
-    pub fn parse_fmt(
-        floating: *mut c_int,
-        fmt: *const c_char,
-    ) -> c_int;
+    pub fn parse_fmt(floating: *mut c_int, fmt: *const c_char) -> c_int;
     pub fn flint_printf(str_: *const c_char, ...) -> c_int;
-    pub fn flint_vprintf(
-        str_: *const c_char,
-        ap: *mut __va_list_tag,
-    ) -> c_int;
-    pub fn flint_fprintf(
-        f: *mut FILE,
-        str_: *const c_char,
-        ...
-    ) -> c_int;
-    pub fn flint_sprintf(
-        s: *mut c_char,
-        str_: *const c_char,
-        ...
-    ) -> c_int;
+    pub fn flint_vprintf(str_: *const c_char, ap: *mut __va_list_tag) -> c_int;
+    pub fn flint_fprintf(f: *mut FILE, str_: *const c_char, ...) -> c_int;
+    pub fn flint_sprintf(s: *mut c_char, str_: *const c_char, ...) -> c_int;
     pub fn flint_scanf(str_: *const c_char, ...) -> c_int;
-    pub fn flint_fscanf(
-        f: *mut FILE,
-        str_: *const c_char,
-        ...
-    ) -> c_int;
-    pub fn flint_sscanf(
-        s: *const c_char,
-        str_: *const c_char,
-        ...
-    ) -> c_int;
+    pub fn flint_fscanf(f: *mut FILE, str_: *const c_char, ...) -> c_int;
+    pub fn flint_sscanf(s: *const c_char, str_: *const c_char, ...) -> c_int;
     pub fn flint_mul_sizes(x: mp_limb_signed_t, y: mp_limb_signed_t) -> mp_limb_signed_t;
 }
