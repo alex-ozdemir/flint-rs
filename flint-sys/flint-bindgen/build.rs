@@ -8,7 +8,9 @@ fn main() {
 
     let bindings = bindgen::Builder::default()
         .header("wrapper.h")
+                    /*
         .clang_args([
+            "-fno-inline-functions",
             "-DFLINT_INLINES_C",
             "-DPERM_INLINES_C",
             "-DMPOLY_INLINES_C",
@@ -86,12 +88,14 @@ fn main() {
             "-DPADIC_MAT_INLINES_C",
             "-DQADIC_INLINES_C"
                 ])
+                */
         .blocklist_item("FP_NAN")
         .blocklist_item("FP_INFINITE")
         .blocklist_item("FP_ZERO")
         .blocklist_item("FP_SUBNORMAL")
         .blocklist_item("FP_NORMAL")
         .layout_tests(false)
+        //.generate_inline_functions(true)
         .generate()
         .expect("Unable to generate bindings");
 

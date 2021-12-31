@@ -13,6 +13,7 @@ use crate::fmpz_mod_mat::fmpz_mod_mat_struct;
 use crate::fmpz_mod_poly::fmpz_mod_poly_struct;
 use crate::fmpz_mod_mpoly::*;
 use crate::nmod_mpoly::nmod_mpoly_ctx_struct;
+use crate::nmod_mpoly_factor::nmod_mpoly_factor_struct;
 
 
 #[repr(C)]
