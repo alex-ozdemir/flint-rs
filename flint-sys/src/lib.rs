@@ -109,9 +109,14 @@ mod tests {
             debug_assert!(
                 fmpz_mod_poly::fmpz_mod_poly_print_pretty(&mut f, x.as_ptr(), &mut ctx) > 0
             );
+            fmpz_mod_poly::fmpz_mod_poly_clear(&mut f, &mut ctx);
+            fmpz_mod::fmpz_mod_ctx_clear(&mut ctx);
+            fmpz::fmpz_clear(&mut p);
+
         }
     }
 
+    /*
     mod random {
         use crate::*;
         use gmp_mpfr_sys::gmp;
@@ -125,24 +130,31 @@ mod tests {
                 gmp::mpz_init(g_v.as_mut_ptr());
                 let mut g_v = g_v.assume_init();
                 gmp::mpz_set_ui(&mut g_v, v);
+
                 let mut g_u = MaybeUninit::uninit();
                 gmp::mpz_init(g_u.as_mut_ptr());
                 let mut g_u = g_u.assume_init();
                 gmp::mpz_set_ui(&mut g_u, u);
+
                 let mut f_u = fmpz::fmpz::default();
                 fmpz::fmpz_init(&mut f_u);
                 fmpz::fmpz_set_ui(&mut f_u, u);
+
                 let mut f_v = fmpz::fmpz::default();
                 fmpz::fmpz_init(&mut f_v);
                 fmpz::fmpz_set_ui(&mut f_v, v);
+
                 gmp::mpz_mul(&mut g_v, &g_v, &g_u);
                 fmpz::fmpz_mul(&mut f_v, &f_v, &f_u);
                 let f_as_g = fmpz::_fmpz_promote_val(&mut f_v);
                 let eq = gmp::mpz_cmp(flint_to_gmp::mpz_srcptr(f_as_g), &g_v) == 0;
+
                 gmp::mpz_clear(&mut g_v);
                 gmp::mpz_clear(&mut g_u);
                 gmp::mpz_clear(flint_to_gmp::mpz_ptr(f_as_g));
+                fmpz::_fmpz_demote_val(&mut f_v);
                 fmpz::fmpz_clear(&mut f_u);
+                fmpz::fmpz_clear(&mut f_v);
                 eq
             }
         }
@@ -167,5 +179,5 @@ mod tests {
                 unsafe { &mut std::mem::transmute(*p) }
             }
         }
-    }
+    }*/
 }
