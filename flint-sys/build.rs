@@ -19,6 +19,7 @@ use std::{
 };
 
 const FLINT_DIR: &str = "flint-2.8.4-c";
+const FLINT_VER: &str = "2.8.4";
 const FLINT_HEADERS: &[&str] = &[
     "aprcl.h",
     "arith.h",
@@ -135,8 +136,6 @@ struct Environment {
     include_dir: PathBuf,
     build_dir: PathBuf,
     cache_dir: Option<PathBuf>,
-    version_prefix: String,
-    version_patch: Option<u64>,
 }
 
 fn main() {
@@ -163,8 +162,6 @@ fn main() {
     let src_dir = PathBuf::from(cargo_env("CARGO_MANIFEST_DIR"));
     let out_dir = PathBuf::from(cargo_env("OUT_DIR"));
 
-    let (version_prefix, version_patch) = get_version();
-
     println!("cargo:rerun-if-env-changed=FLINT_SYS_CACHE");
     let cache_dir = match env::var_os("FLINT_SYS_CACHE") {
         Some(ref c) if c.is_empty() || c == "_" => None,
@@ -172,7 +169,7 @@ fn main() {
         None => system_cache_dir().map(|c| c.join("flint-sys")),
     };
     let cache_dir = cache_dir
-        .map(|cache| cache.join(&version_prefix))
+        .map(|cache| cache.join(&FLINT_VER))
         .map(|cache| match cc_cache_dir {
             Some(dir) => cache.join(dir),
             None => cache,
@@ -187,8 +184,6 @@ fn main() {
         include_dir: out_dir.join("include"),
         build_dir: out_dir.join("build"),
         cache_dir,
-        version_prefix,
-        version_patch,
     };
        
     // make sure we have target directories
@@ -210,27 +205,6 @@ fn compile(env: &Environment) {
         assert!(save_cache(env));
     }
     write_link_info(env);
-}
-
-
-fn get_version() -> (String, Option<u64>) {
-    let version = cargo_env("CARGO_PKG_VERSION")
-        .into_string()
-        .unwrap_or_else(|e| panic!("version not in utf-8: {:?}", e));
-    let last_dot = version
-        .rfind('.')
-        .unwrap_or_else(|| panic!("version has no dots: {}", version));
-    if last_dot == 0 {
-        panic!("version starts with dot: {}", version);
-    }
-    match version[last_dot + 1..].parse::<u64>() {
-        Ok(patch) => {
-            let mut v = version;
-            v.truncate(last_dot);
-            (v, Some(patch))
-        }
-        Err(_) => (version, None),
-    }
 }
 
 fn need_compile(env: &Environment) -> bool {
@@ -257,59 +231,13 @@ fn save_cache(env: &Environment) -> bool {
         Some(ref s) => s,
         None => return false,
     };
-    let version_dir = match env.version_patch {
-        None => cache_dir.join(&env.version_prefix),
-        Some(patch) => cache_dir.join(format!("{}.{}", env.version_prefix, patch)),
-    };
-    let mut ok = create_dir(&version_dir).is_ok();
-    ok = ok && copy_file(&env.lib_dir.join("libflint.a"), &version_dir.join("libflint.a")).is_ok();
+    let mut ok = create_dir(&cache_dir).is_ok();
+    ok = ok && copy_file(&env.lib_dir.join("libflint.a"), &cache_dir.join("libflint.a")).is_ok();
 
     for h in FLINT_HEADERS {
-        ok = ok && copy_file(&env.include_dir.join(h), &version_dir.join(h)).is_ok();
+        ok = ok && copy_file(&env.include_dir.join(h), &cache_dir.join(h)).is_ok();
     }
     ok
-}
-
-fn cache_directories(env: &Environment, base: &Path) -> Vec<(PathBuf, Option<u64>)> {
-    let dir = match fs::read_dir(base) {
-        Ok(dir) => dir,
-        Err(_) => return Vec::new(),
-    };
-    let mut vec = Vec::new();
-    for entry in dir {
-        let path = match entry {
-            Ok(e) => e.path(),
-            Err(_) => continue,
-        };
-        if !path.is_dir() {
-            continue;
-        }
-        let patch = {
-            let file_name = match path.file_name() {
-                Some(name) => name,
-                None => continue,
-            };
-            let path_str = match file_name.to_str() {
-                Some(p) => p,
-                None => continue,
-            };
-            if path_str == env.version_prefix {
-                None
-            } else if !path_str.starts_with(&env.version_prefix)
-                || !path_str[env.version_prefix.len()..].starts_with('.')
-            {
-                continue;
-            } else {
-                match path_str[env.version_prefix.len() + 1..].parse::<u64>() {
-                    Ok(patch) => Some(patch),
-                    Err(_) => continue,
-                }
-            }
-        };
-        vec.push((path, patch));
-    }
-    vec.sort_by_key(|k| k.1);
-    vec
 }
 
 fn load_cache(env: &Environment) -> bool {
@@ -317,37 +245,13 @@ fn load_cache(env: &Environment) -> bool {
         Some(ref s) => s,
         None => return false,
     };
-    let env_version_patch = env.version_patch;
-    let cache_dirs = cache_directories(env, cache_dir)
-        .into_iter()
-        .rev()
-        .filter(|x| match env_version_patch {
-            None => x.1.is_none(),
-            Some(patch) => x.1.map(|p| p >= patch).unwrap_or(false),
-        })
-        .collect::<Vec<_>>();
-    let suffixes: &[Option<&str>] = &[None];
-    for suffix in suffixes {
-        for (version_dir, _) in &cache_dirs {
-            let joined;
-            let dir = if let Some(suffix) = suffix {
-                joined = version_dir.join(suffix);
-                &joined
-            } else {
-                version_dir
-            };
-            let mut ok = true;
-            ok = ok && copy_file(&dir.join("libflint.a"), &env.lib_dir.join("libflint.a")).is_ok();
+    let mut ok = true;
+    ok = ok && copy_file(&cache_dir.join("libflint.a"), &env.lib_dir.join("libflint.a")).is_ok();
 
-            for h in FLINT_HEADERS {
-                ok = ok && copy_file(&dir.join(h), &env.include_dir.join(h)).is_ok();
-            }
-            if ok {
-                return true;
-            }
-        }
+    for h in FLINT_HEADERS {
+        ok = ok && copy_file(&cache_dir.join(h), &env.include_dir.join(h)).is_ok();
     }
-    false
+    ok
 }
 
 fn should_save_cache(env: &Environment) -> bool {
@@ -355,37 +259,13 @@ fn should_save_cache(env: &Environment) -> bool {
         Some(ref s) => s,
         None => return false,
     };
-    let cache_dirs = cache_directories(env, cache_dir)
-        .into_iter()
-        .rev()
-        .filter(|x| match env.version_patch {
-            None => x.1.is_none(),
-            Some(patch) => x.1.map(|p| p >= patch).unwrap_or(false),
-        })
-        .collect::<Vec<_>>();
-    let suffixes: &[Option<&str>] = &[None];
-    for suffix in suffixes {
-        for (version_dir, _) in &cache_dirs {
-            let joined;
-            let dir = if let Some(suffix) = suffix {
-                joined = version_dir.join(suffix);
-                &joined
-            } else {
-                version_dir
-            };
-            let mut ok = true;
-            ok = ok && dir.join("libflint.a").is_file();
+    let mut ok = true;
+    ok = ok && cache_dir.join("libflint.a").is_file();
 
-            for h in FLINT_HEADERS {
-                ok = ok && dir.join(h).is_file();
-            }
-
-            if ok {
-                return false;
-            }
-        }
+    for h in FLINT_HEADERS {
+        ok = ok && cache_dir.join(h).is_file();
     }
-    true
+    !ok
 }
 
 fn build(env: &Environment) {
