@@ -3,7 +3,6 @@
 
 //! See the [FLINT documentation](http://flintlib.org/doc/fmpz_vec.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
@@ -35,19 +34,14 @@ extern "C" {
     pub fn _fmpz_vec_max_limbs(vec: *const fmpz, len: mp_limb_signed_t) -> mp_size_t;
     pub fn _fmpz_vec_height(height: *mut fmpz, vec: *const fmpz, len: mp_limb_signed_t);
     pub fn _fmpz_vec_height_index(vec: *const fmpz, len: mp_limb_signed_t) -> mp_limb_signed_t;
-    pub fn _fmpz_vec_fprint(
-        file: *mut FILE,
-        vec: *const fmpz,
-        len: mp_limb_signed_t,
-    ) -> c_int;
+    pub fn _fmpz_vec_fprint(file: *mut FILE, vec: *const fmpz, len: mp_limb_signed_t) -> c_int;
     pub fn _fmpz_vec_print(vec: *const fmpz, len: mp_limb_signed_t) -> c_int;
     pub fn _fmpz_vec_fread(
         file: *const FILE,
         vec: *mut *mut fmpz,
         len: *mut mp_limb_signed_t,
     ) -> c_int;
-    pub fn _fmpz_vec_read(vec: *mut *mut fmpz, len: *mut mp_limb_signed_t)
-        -> c_int;
+    pub fn _fmpz_vec_read(vec: *mut *mut fmpz, len: *mut mp_limb_signed_t) -> c_int;
     /*
     pub fn _fmpz_vec_set_nmod_vec(
         res: *mut fmpz,
@@ -86,11 +80,7 @@ extern "C" {
     pub fn _fmpz_vec_zero(vec: *mut fmpz, len: mp_limb_signed_t);
     pub fn _fmpz_vec_neg(vec1: *mut fmpz, vec2: *const fmpz, len2: mp_limb_signed_t);
     pub fn _fmpz_vec_scalar_abs(vec1: *mut fmpz, vec2: *const fmpz, len2: mp_limb_signed_t);
-    pub fn _fmpz_vec_equal(
-        vec1: *const fmpz,
-        vec2: *const fmpz,
-        len: mp_limb_signed_t,
-    ) -> c_int;
+    pub fn _fmpz_vec_equal(vec1: *const fmpz, vec2: *const fmpz, len: mp_limb_signed_t) -> c_int;
     pub fn _fmpz_vec_is_zero(vec: *const fmpz, len: mp_limb_signed_t) -> c_int;
     pub fn _fmpz_vec_max(
         vec1: *mut fmpz,

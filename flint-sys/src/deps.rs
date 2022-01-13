@@ -3,7 +3,7 @@
 
 //! We avoid a gmp-mpfr-sys dependency by defining the GMP and MPFR types used by FLINT.
 
-use libc::{c_int, c_uint, c_long, c_ulong, c_void, size_t};
+use libc::{c_int, c_long, c_uint, c_ulong, c_void, size_t};
 
 // GMP
 
@@ -74,7 +74,6 @@ pub type mpf_ptr = *mut __mpf_struct;
 pub type mpq_srcptr = *const __mpq_struct;
 pub type mpq_ptr = *mut __mpq_struct;
 
-
 // MPFR
 
 pub type mpfr_void = c_void;
@@ -118,5 +117,3 @@ pub type mpfr_kind_t = c_uint;
 pub const mpfr_free_cache_t_MPFR_FREE_LOCAL_CACHE: mpfr_free_cache_t = 1;
 pub const mpfr_free_cache_t_MPFR_FREE_GLOBAL_CACHE: mpfr_free_cache_t = 2;
 pub type mpfr_free_cache_t = c_uint;
-
-

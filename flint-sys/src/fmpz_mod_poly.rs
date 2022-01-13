@@ -3,15 +3,13 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fmpz_mod_poly.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::{fmpz, fmpz_t};
 use crate::fmpz_mat::fmpz_mat_struct;
-use crate::fmpz_poly::fmpz_poly_struct;
 use crate::fmpz_mod::fmpz_mod_ctx_struct;
+use crate::fmpz_poly::fmpz_poly_struct;
 use libc::{c_char, c_int, c_void, FILE};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash)]
@@ -1549,9 +1547,7 @@ extern "C" {
         len3inv: mp_limb_signed_t,
         p: *mut fmpz,
     );
-    pub fn _fmpz_mod_poly_compose_mod_brent_kung_precomp_preinv_worker(
-        arg_ptr: *mut c_void,
-    );
+    pub fn _fmpz_mod_poly_compose_mod_brent_kung_precomp_preinv_worker(arg_ptr: *mut c_void);
     pub fn fmpz_mod_poly_compose_mod_brent_kung_precomp_preinv(
         res: *mut fmpz_mod_poly_struct,
         poly1: *mut fmpz_mod_poly_struct,
@@ -1710,11 +1706,7 @@ extern "C" {
         x: *const c_char,
         ctx: *mut fmpz_mod_ctx_struct,
     ) -> c_int;
-    pub fn _fmpz_mod_poly_print(
-        poly: *const fmpz,
-        len: mp_limb_signed_t,
-        p: *mut fmpz,
-    ) -> c_int;
+    pub fn _fmpz_mod_poly_print(poly: *const fmpz, len: mp_limb_signed_t, p: *mut fmpz) -> c_int;
     pub fn fmpz_mod_poly_print(
         poly: *mut fmpz_mod_poly_struct,
         ctx: *mut fmpz_mod_ctx_struct,

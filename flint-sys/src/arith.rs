@@ -3,13 +3,12 @@
 //! *See the [FLINT documentation](http://flintlib.org/doc/arith.html).
 
 use crate::deps::*;
-use crate::fmpz::fmpz;
 use crate::fmpq::fmpq;
-use crate::fmpz_poly::fmpz_poly_struct;
 use crate::fmpq_poly::fmpq_poly_struct;
+use crate::fmpz::fmpz;
 use crate::fmpz_mat::fmpz_mat_struct;
+use crate::fmpz_poly::fmpz_poly_struct;
 use libc::{c_int, c_uint};
-
 
 #[repr(C)]
 #[derive(Copy, Clone)]
@@ -29,11 +28,7 @@ extern "C" {
     pub static _bernoulli_numer_small: [mp_limb_signed_t; 18usize];
     pub static partitions_lookup: [c_uint; 128usize];
 
-    pub fn mpfr_zeta_inv_euler_product(
-        res: *mut __mpfr_struct,
-        s: mp_limb_t,
-        char_4: c_int,
-    );
+    pub fn mpfr_zeta_inv_euler_product(res: *mut __mpfr_struct, s: mp_limb_t, char_4: c_int);
     pub fn _arith_harmonic_number(num: *mut fmpz, den: *mut fmpz, n: mp_limb_signed_t);
     pub fn arith_harmonic_number(x: *mut fmpq, n: mp_limb_signed_t);
     pub fn arith_ramanujan_tau(res: *mut fmpz, n: *mut fmpz);

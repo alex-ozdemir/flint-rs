@@ -2,11 +2,9 @@
 
 //! See the [FLINT documentation](http://flintlib.org/doc/perm.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use libc::c_int;
-
 
 extern "C" {
     pub fn _perm_init(n: mp_limb_signed_t) -> *mut mp_limb_signed_t;
@@ -30,11 +28,7 @@ extern "C" {
         n: mp_limb_signed_t,
         state: *const flint_rand_s,
     ) -> c_int;
-    pub fn _perm_parity(vec: *const mp_limb_signed_t, n: mp_limb_signed_t)
-        -> c_int;
-    pub fn _long_vec_print(
-        vec: *const mp_limb_signed_t,
-        len: mp_limb_signed_t,
-    ) -> c_int;
+    pub fn _perm_parity(vec: *const mp_limb_signed_t, n: mp_limb_signed_t) -> c_int;
+    pub fn _long_vec_print(vec: *const mp_limb_signed_t, len: mp_limb_signed_t) -> c_int;
     pub fn _perm_print(vec: *const mp_limb_signed_t, n: mp_limb_signed_t) -> c_int;
 }

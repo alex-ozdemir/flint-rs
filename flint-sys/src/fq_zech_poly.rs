@@ -2,16 +2,14 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_zech_poly.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
 use crate::fmpz_mod_poly::fmpz_mod_poly_struct;
-use crate::nmod_poly::nmod_poly_struct;
-use crate::fq_zech::{fq_zech_struct, fq_zech_ctx_struct};
+use crate::fq_zech::{fq_zech_ctx_struct, fq_zech_struct};
 use crate::fq_zech_mat::fq_zech_mat_struct;
+use crate::nmod_poly::nmod_poly_struct;
 use libc::{c_char, c_int, FILE};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -215,10 +213,8 @@ extern "C" {
         poly: *mut fq_zech_poly_struct,
         ctx: *mut fq_zech_ctx_struct,
     ) -> c_int;
-    pub fn fq_zech_poly_is_one(
-        op: *mut fq_zech_poly_struct,
-        ctx: *mut fq_zech_ctx_struct,
-    ) -> c_int;
+    pub fn fq_zech_poly_is_one(op: *mut fq_zech_poly_struct, ctx: *mut fq_zech_ctx_struct)
+        -> c_int;
     pub fn fq_zech_poly_is_unit(
         op: *mut fq_zech_poly_struct,
         ctx: *mut fq_zech_ctx_struct,

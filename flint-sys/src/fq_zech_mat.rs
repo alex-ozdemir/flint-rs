@@ -2,12 +2,10 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_zech_mat.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
-use crate::fq_zech::{fq_zech_struct, fq_zech_ctx_struct};
+use crate::fq_zech::{fq_zech_ctx_struct, fq_zech_struct};
 use libc::{c_int, FILE};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash)]
@@ -53,10 +51,8 @@ extern "C" {
         mat2: *mut fq_zech_mat_struct,
         ctx: *mut fq_zech_ctx_struct,
     ) -> c_int;
-    pub fn fq_zech_mat_is_zero(
-        mat: *mut fq_zech_mat_struct,
-        ctx: *mut fq_zech_ctx_struct,
-    ) -> c_int;
+    pub fn fq_zech_mat_is_zero(mat: *mut fq_zech_mat_struct, ctx: *mut fq_zech_ctx_struct)
+        -> c_int;
     pub fn fq_zech_mat_is_empty(
         mat: *mut fq_zech_mat_struct,
         ctx: *mut fq_zech_ctx_struct,
@@ -142,10 +138,7 @@ extern "C" {
         mat: *mut fq_zech_mat_struct,
         ctx: *mut fq_zech_ctx_struct,
     ) -> c_int;
-    pub fn fq_zech_mat_print(
-        mat: *mut fq_zech_mat_struct,
-        ctx: *mut fq_zech_ctx_struct,
-    ) -> c_int;
+    pub fn fq_zech_mat_print(mat: *mut fq_zech_mat_struct, ctx: *mut fq_zech_ctx_struct) -> c_int;
     pub fn fq_zech_mat_print_pretty(
         mat: *mut fq_zech_mat_struct,
         ctx: *mut fq_zech_ctx_struct,

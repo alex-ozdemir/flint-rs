@@ -3,19 +3,17 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_zech_mpoly.html).
 
-
 use crate::deps::*;
-use crate::mpoly::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
 use crate::fmpz_mat::fmpz_mat_struct;
-use crate::nmod_vec::nmod_t;
-use crate::nmod_mpoly::{nmod_mpoly_struct, nmod_mpoly_ctx_struct};
-use crate::fq_nmod_mpoly::{fq_nmod_mpoly_struct, fq_nmod_mpoly_ctx_struct};
+use crate::fq_nmod_mpoly::{fq_nmod_mpoly_ctx_struct, fq_nmod_mpoly_struct};
 use crate::fq_zech::*;
 use crate::fq_zech_poly::fq_zech_poly_struct;
+use crate::mpoly::*;
+use crate::nmod_mpoly::{nmod_mpoly_ctx_struct, nmod_mpoly_struct};
+use crate::nmod_vec::nmod_t;
 use libc::FILE;
-
 
 extern "C" {
     pub fn fq_zech_ctx_mod(ctx: *mut fq_zech_ctx_struct) -> nmod_t;

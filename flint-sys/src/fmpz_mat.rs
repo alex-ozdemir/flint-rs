@@ -3,11 +3,10 @@
 
 //! See the [FLINT documentation](http://flintlib.org/doc/fmpz_mat.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
-use crate::fmpz::fmpz;
 use crate::fmpq::fmpq;
+use crate::fmpz::fmpz;
 use crate::fmpz_poly::fmpz_poly_struct;
 use libc::{c_int, FILE};
 
@@ -42,16 +41,10 @@ extern "C" {
     pub fn fmpz_mat_swap(mat1: *mut fmpz_mat_struct, mat2: *mut fmpz_mat_struct);
     pub fn fmpz_mat_set(mat1: *mut fmpz_mat_struct, mat2: *const fmpz_mat_struct);
     pub fn fmpz_mat_clear(mat: *mut fmpz_mat_struct);
-    pub fn fmpz_mat_equal(
-        mat1: *const fmpz_mat_struct,
-        mat2: *const fmpz_mat_struct,
-    ) -> c_int;
+    pub fn fmpz_mat_equal(mat1: *const fmpz_mat_struct, mat2: *const fmpz_mat_struct) -> c_int;
     pub fn fmpz_mat_is_zero(mat: *const fmpz_mat_struct) -> c_int;
     pub fn fmpz_mat_is_one(mat: *const fmpz_mat_struct) -> c_int;
-    pub fn fmpz_mat_is_zero_row(
-        mat: *const fmpz_mat_struct,
-        i: mp_limb_signed_t,
-    ) -> c_int;
+    pub fn fmpz_mat_is_zero_row(mat: *const fmpz_mat_struct, i: mp_limb_signed_t) -> c_int;
     pub fn fmpz_mat_col_equal(
         M: *const fmpz_mat_struct,
         m: mp_limb_signed_t,
@@ -86,16 +79,21 @@ extern "C" {
         mat2: *const fmpz_mat_struct,
     );
     pub fn fmpz_mat_fprint(file: *mut FILE, mat: *const fmpz_mat_struct) -> c_int;
-    pub fn fmpz_mat_fprint_pretty(
-        file: *mut FILE,
-        mat: *const fmpz_mat_struct,
-    ) -> c_int;
+    pub fn fmpz_mat_fprint_pretty(file: *mut FILE, mat: *const fmpz_mat_struct) -> c_int;
     pub fn fmpz_mat_print(mat: *const fmpz_mat_struct) -> c_int;
     pub fn fmpz_mat_print_pretty(mat: *const fmpz_mat_struct) -> c_int;
     pub fn fmpz_mat_fread(file: *const FILE, mat: *mut fmpz_mat_struct) -> c_int;
     pub fn fmpz_mat_read(mat: *mut fmpz_mat_struct) -> c_int;
-    pub fn fmpz_mat_randbits(mat: *mut fmpz_mat_struct, state: *const flint_rand_s, bits: mp_limb_t);
-    pub fn fmpz_mat_randtest(mat: *mut fmpz_mat_struct, state: *const flint_rand_s, bits: mp_limb_t);
+    pub fn fmpz_mat_randbits(
+        mat: *mut fmpz_mat_struct,
+        state: *const flint_rand_s,
+        bits: mp_limb_t,
+    );
+    pub fn fmpz_mat_randtest(
+        mat: *mut fmpz_mat_struct,
+        state: *const flint_rand_s,
+        bits: mp_limb_t,
+    );
     pub fn fmpz_mat_randtest_unsigned(
         mat: *mut fmpz_mat_struct,
         state: *const flint_rand_s,
@@ -131,7 +129,11 @@ extern "C" {
         rank: mp_limb_signed_t,
         bits: mp_limb_t,
     );
-    pub fn fmpz_mat_randdet(mat: *mut fmpz_mat_struct, state: *const flint_rand_s, det: *const fmpz);
+    pub fn fmpz_mat_randdet(
+        mat: *mut fmpz_mat_struct,
+        state: *const flint_rand_s,
+        det: *const fmpz,
+    );
     pub fn fmpz_mat_randops(
         mat: *mut fmpz_mat_struct,
         state: *const flint_rand_s,
@@ -145,10 +147,22 @@ extern "C" {
     ) -> c_int;
     pub fn fmpz_mat_max_bits(mat: *const fmpz_mat_struct) -> mp_limb_signed_t;
     pub fn fmpz_mat_transpose(B: *mut fmpz_mat_struct, A: *const fmpz_mat_struct);
-    pub fn fmpz_mat_add(C: *mut fmpz_mat_struct, A: *const fmpz_mat_struct, B: *const fmpz_mat_struct);
-    pub fn fmpz_mat_sub(C: *mut fmpz_mat_struct, A: *const fmpz_mat_struct, B: *const fmpz_mat_struct);
+    pub fn fmpz_mat_add(
+        C: *mut fmpz_mat_struct,
+        A: *const fmpz_mat_struct,
+        B: *const fmpz_mat_struct,
+    );
+    pub fn fmpz_mat_sub(
+        C: *mut fmpz_mat_struct,
+        A: *const fmpz_mat_struct,
+        B: *const fmpz_mat_struct,
+    );
     pub fn fmpz_mat_neg(B: *mut fmpz_mat_struct, A: *const fmpz_mat_struct);
-    pub fn fmpz_mat_scalar_mul_fmpz(B: *mut fmpz_mat_struct, A: *const fmpz_mat_struct, c: *const fmpz);
+    pub fn fmpz_mat_scalar_mul_fmpz(
+        B: *mut fmpz_mat_struct,
+        A: *const fmpz_mat_struct,
+        c: *const fmpz,
+    );
     pub fn fmpz_mat_scalar_mul_si(
         B: *mut fmpz_mat_struct,
         A: *const fmpz_mat_struct,
@@ -223,8 +237,16 @@ extern "C" {
         exp: mp_limb_t,
     );
     pub fn fmpz_mat_scalar_smod(B: *mut fmpz_mat_struct, A: *const fmpz_mat_struct, P: *const fmpz);
-    pub fn fmpz_mat_scalar_mod_fmpz(B: *mut fmpz_mat_struct, A: *const fmpz_mat_struct, m: *const fmpz);
-    pub fn fmpz_mat_mul(C: *mut fmpz_mat_struct, A: *const fmpz_mat_struct, B: *const fmpz_mat_struct);
+    pub fn fmpz_mat_scalar_mod_fmpz(
+        B: *mut fmpz_mat_struct,
+        A: *const fmpz_mat_struct,
+        m: *const fmpz,
+    );
+    pub fn fmpz_mat_mul(
+        C: *mut fmpz_mat_struct,
+        A: *const fmpz_mat_struct,
+        B: *const fmpz_mat_struct,
+    );
     pub fn fmpz_mat_mul_classical(
         C: *mut fmpz_mat_struct,
         A: *const fmpz_mat_struct,
@@ -319,17 +341,14 @@ extern "C" {
         A: *mut fmpz_mat_struct,
         p: *const fmpz,
     ) -> mp_limb_signed_t;
-    pub fn fmpz_mat_howell_form_mod(A: *mut fmpz_mat_struct, mod_: *const fmpz) -> mp_limb_signed_t;
+    pub fn fmpz_mat_howell_form_mod(A: *mut fmpz_mat_struct, mod_: *const fmpz)
+        -> mp_limb_signed_t;
     pub fn fmpz_mat_strong_echelon_form_mod(A: *mut fmpz_mat_struct, mod_: *const fmpz);
     pub fn fmpz_mat_trace(trace: *mut fmpz, mat: *const fmpz_mat_struct);
     pub fn fmpz_mat_det(det: *mut fmpz, A: *const fmpz_mat_struct);
     pub fn fmpz_mat_det_cofactor(det: *mut fmpz, A: *const fmpz_mat_struct);
     pub fn fmpz_mat_det_bareiss(det: *mut fmpz, A: *const fmpz_mat_struct);
-    pub fn fmpz_mat_det_modular(
-        det: *mut fmpz,
-        A: *const fmpz_mat_struct,
-        proved: c_int,
-    );
+    pub fn fmpz_mat_det_modular(det: *mut fmpz, A: *const fmpz_mat_struct, proved: c_int);
     pub fn fmpz_mat_det_modular_accelerated(
         det: *mut fmpz,
         A: *const fmpz_mat_struct,
@@ -351,7 +370,10 @@ extern "C" {
     pub fn fmpz_mat_charpoly_modular(cp: *mut fmpz_poly_struct, mat: *const fmpz_mat_struct);
     pub fn _fmpz_mat_charpoly(cp: *mut fmpz, mat: *const fmpz_mat_struct);
     pub fn fmpz_mat_charpoly(cp: *mut fmpz_poly_struct, mat: *const fmpz_mat_struct);
-    pub fn _fmpz_mat_minpoly_modular(rop: *mut fmpz, op: *const fmpz_mat_struct) -> mp_limb_signed_t;
+    pub fn _fmpz_mat_minpoly_modular(
+        rop: *mut fmpz,
+        op: *const fmpz_mat_struct,
+    ) -> mp_limb_signed_t;
     pub fn fmpz_mat_minpoly_modular(cp: *mut fmpz_poly_struct, mat: *const fmpz_mat_struct);
     pub fn _fmpz_mat_minpoly(cp: *mut fmpz, mat: *const fmpz_mat_struct) -> mp_limb_signed_t;
     pub fn fmpz_mat_minpoly(cp: *mut fmpz_poly_struct, mat: *const fmpz_mat_struct);
@@ -537,16 +559,8 @@ extern "C" {
     pub fn fmpz_mat_get_mpf_mat(B: *mut mpf_mat_struct, A: *mut fmpz_mat_struct);
     pub fn fmpz_mat_chol_d(R: *mut d_mat_struct, A: *mut fmpz_mat_struct);
     */
-    pub fn fmpz_mat_is_reduced(
-        A: *const fmpz_mat_struct,
-        delta: f64,
-        eta: f64,
-    ) -> c_int;
-    pub fn fmpz_mat_is_reduced_gram(
-        A: *const fmpz_mat_struct,
-        delta: f64,
-        eta: f64,
-    ) -> c_int;
+    pub fn fmpz_mat_is_reduced(A: *const fmpz_mat_struct, delta: f64, eta: f64) -> c_int;
+    pub fn fmpz_mat_is_reduced_gram(A: *const fmpz_mat_struct, delta: f64, eta: f64) -> c_int;
     pub fn fmpz_mat_is_reduced_with_removal(
         A: *const fmpz_mat_struct,
         delta: f64,

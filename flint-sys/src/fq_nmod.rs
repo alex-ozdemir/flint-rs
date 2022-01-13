@@ -2,13 +2,12 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_nmod.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
-use crate::nmod_vec::nmod_t;
 use crate::nmod_mat::nmod_mat_struct;
 use crate::nmod_poly::{nmod_poly_struct, nmod_poly_t};
+use crate::nmod_vec::nmod_t;
 use libc::{c_char, c_int, FILE};
 
 pub type fq_nmod_t = nmod_poly_t;
@@ -61,10 +60,7 @@ extern "C" {
     pub fn fq_nmod_ctx_modulus(ctx: *mut fq_nmod_ctx_struct) -> *const nmod_poly_struct;
     pub fn fq_nmod_ctx_degree(ctx: *mut fq_nmod_ctx_struct) -> mp_limb_signed_t;
     pub fn fq_nmod_ctx_order(f: *mut fmpz, ctx: *mut fq_nmod_ctx_struct);
-    pub fn fq_nmod_ctx_fprint(
-        file: *mut FILE,
-        ctx: *mut fq_nmod_ctx_struct,
-    ) -> c_int;
+    pub fn fq_nmod_ctx_fprint(file: *mut FILE, ctx: *mut fq_nmod_ctx_struct) -> c_int;
     pub fn fq_nmod_ctx_print(ctx: *mut fq_nmod_ctx_struct);
     pub fn fq_nmod_init(rop: *mut nmod_poly_struct, ctx: *mut fq_nmod_ctx_struct);
     pub fn fq_nmod_init2(rop: *mut nmod_poly_struct, ctx: *mut fq_nmod_ctx_struct);
@@ -166,10 +162,7 @@ extern "C" {
         op1: *mut nmod_poly_struct,
         ctx: *mut fq_nmod_ctx_struct,
     );
-    pub fn fq_nmod_is_square(
-        op: *mut nmod_poly_struct,
-        ctx: *mut fq_nmod_ctx_struct,
-    ) -> c_int;
+    pub fn fq_nmod_is_square(op: *mut nmod_poly_struct, ctx: *mut fq_nmod_ctx_struct) -> c_int;
     pub fn fq_nmod_randtest(
         rop: *mut nmod_poly_struct,
         state: *mut flint_rand_s,
@@ -200,14 +193,8 @@ extern "C" {
         op2: *mut nmod_poly_struct,
         ctx: *mut fq_nmod_ctx_struct,
     ) -> c_int;
-    pub fn fq_nmod_is_zero(
-        op: *mut nmod_poly_struct,
-        ctx: *mut fq_nmod_ctx_struct,
-    ) -> c_int;
-    pub fn fq_nmod_is_one(
-        op: *mut nmod_poly_struct,
-        ctx: *mut fq_nmod_ctx_struct,
-    ) -> c_int;
+    pub fn fq_nmod_is_zero(op: *mut nmod_poly_struct, ctx: *mut fq_nmod_ctx_struct) -> c_int;
+    pub fn fq_nmod_is_one(op: *mut nmod_poly_struct, ctx: *mut fq_nmod_ctx_struct) -> c_int;
     pub fn fq_nmod_cmp(
         a: *mut nmod_poly_struct,
         b: *mut nmod_poly_struct,
@@ -255,10 +242,7 @@ extern "C" {
         ctx: *mut fq_nmod_ctx_struct,
     ) -> c_int;
     pub fn fq_nmod_print_pretty(op: *mut nmod_poly_struct, ctx: *mut fq_nmod_ctx_struct);
-    pub fn fq_nmod_get_str(
-        op: *mut nmod_poly_struct,
-        ctx: *mut fq_nmod_ctx_struct,
-    ) -> *mut c_char;
+    pub fn fq_nmod_get_str(op: *mut nmod_poly_struct, ctx: *mut fq_nmod_ctx_struct) -> *mut c_char;
     pub fn fq_nmod_get_str_pretty(
         op: *mut nmod_poly_struct,
         ctx: *mut fq_nmod_ctx_struct,
@@ -309,10 +293,7 @@ extern "C" {
         op: *mut nmod_poly_struct,
         ctx: *mut fq_nmod_ctx_struct,
     );
-    pub fn fq_nmod_is_invertible(
-        op: *mut nmod_poly_struct,
-        ctx: *mut fq_nmod_ctx_struct,
-    ) -> c_int;
+    pub fn fq_nmod_is_invertible(op: *mut nmod_poly_struct, ctx: *mut fq_nmod_ctx_struct) -> c_int;
     pub fn fq_nmod_is_invertible_f(
         rop: *mut nmod_poly_struct,
         op: *mut nmod_poly_struct,
@@ -339,8 +320,5 @@ extern "C" {
         col: *mut nmod_mat_struct,
         ctx: *mut fq_nmod_ctx_struct,
     );
-    pub fn fq_nmod_is_primitive(
-        op: *mut nmod_poly_struct,
-        ctx: *mut fq_nmod_ctx_struct,
-    ) -> c_int;
+    pub fn fq_nmod_is_primitive(op: *mut nmod_poly_struct, ctx: *mut fq_nmod_ctx_struct) -> c_int;
 }

@@ -1,5 +1,5 @@
-use rug_polynomial::ModPoly;
 use rug::Integer;
+use rug_polynomial::ModPoly;
 use std::str::FromStr;
 use std::time::Instant;
 

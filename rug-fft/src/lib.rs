@@ -178,7 +178,11 @@ fn log2(x: usize) -> Option<usize> {
         t <<= 1;
         ct += 1;
     }
-    if t == x { Some(ct) } else { None }
+    if t == x {
+        Some(ct)
+    } else {
+        None
+    }
 }
 
 // Reverse the low-order n bits of x. Assumes x fits in n bits.
@@ -225,7 +229,7 @@ pub fn bit_rev_radix_2_ntt(xs: &mut [Integer], p: &Integer, w: &Integer) {
     assert!(n < u32::MAX as usize);
     let log_n = log2(n).expect("need a power of two length") as u32;
     if log_n == 0 {
-        return
+        return;
     }
 
     for i in 0..(n as u32) {
@@ -238,7 +242,10 @@ pub fn bit_rev_radix_2_ntt(xs: &mut [Integer], p: &Integer, w: &Integer) {
     let mut m = 1;
     for _ in 0..log_n {
         // Sweep the entries in 2*m-sized blocks
-        let w_m = w.clone().pow_mod(&Integer::from(n / (2*m)), p).expect("p not prime");
+        let w_m = w
+            .clone()
+            .pow_mod(&Integer::from(n / (2 * m)), p)
+            .expect("p not prime");
         let mut k = 0;
         while k < n {
             // The block starting at index k

@@ -3,18 +3,16 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_nmod_mpoly_factor.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
+use crate::fmpz::fmpz;
+use crate::fq_nmod::*;
+use crate::fq_nmod_mpoly::*;
+use crate::fq_nmod_poly::fq_nmod_poly_struct;
 use crate::mpoly::*;
 use crate::n_poly::*;
-use crate::fmpz::fmpz;
 use crate::nmod_poly::nmod_poly_struct;
-use crate::fq_nmod::*;
-use crate::fq_nmod_poly::fq_nmod_poly_struct;
-use crate::fq_nmod_mpoly::*;
-use libc::{c_char, c_uint, c_int};
-
+use libc::{c_char, c_int, c_uint};
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -272,10 +270,7 @@ extern "C" {
         var2: *const c_char,
         ctx: *mut fq_nmod_ctx_struct,
     );
-    pub fn n_polyu_fq_is_canonical(
-        A: *mut n_polyu_struct,
-        ctx: *mut fq_nmod_ctx_struct,
-    ) -> c_int;
+    pub fn n_polyu_fq_is_canonical(A: *mut n_polyu_struct, ctx: *mut fq_nmod_ctx_struct) -> c_int;
     pub fn n_polyu2n_fq_print_pretty(
         A: *mut n_polyun_struct,
         var0: *const c_char,
@@ -291,10 +286,8 @@ extern "C" {
         varlast: *const c_char,
         ctx: *mut fq_nmod_ctx_struct,
     );
-    pub fn n_polyun_fq_is_canonical(
-        A: *mut n_polyun_struct,
-        ctx: *mut fq_nmod_ctx_struct,
-    ) -> c_int;
+    pub fn n_polyun_fq_is_canonical(A: *mut n_polyun_struct, ctx: *mut fq_nmod_ctx_struct)
+        -> c_int;
     pub fn fq_nmod_mpolyv_init(A: *mut fq_nmod_mpolyv_struct, ctx: *mut fq_nmod_mpoly_ctx_struct);
     pub fn fq_nmod_mpolyv_swap(
         A: *mut fq_nmod_mpolyv_struct,

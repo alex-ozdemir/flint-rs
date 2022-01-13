@@ -2,13 +2,11 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fmpz_mod_mat.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::{fmpz, fmpz_t};
 use crate::fmpz_mat::fmpz_mat_t;
 use libc::c_int;
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

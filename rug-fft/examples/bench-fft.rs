@@ -25,7 +25,11 @@ fn main() {
         .take(1 << n)
         .collect::<Vec<_>>();
     let start = Instant::now();
-    match std::env::args().nth(2).expect("Provide an FFT name as the second arg").as_str() {
+    match std::env::args()
+        .nth(2)
+        .expect("Provide an FFT name as the second arg")
+        .as_str()
+    {
         "br" => bit_rev_radix_2_ntt(&mut ys, &p, &w),
         "ct" => cooley_tukey_radix_2_ntt(&mut ys, &p, &w),
         "naive" => naive_ntt(&mut ys, &p, &w),

@@ -3,11 +3,10 @@
 
 //! See the [FLINT documentation](http://flintlib.org/doc/fmpz_factor.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
-use libc::{c_uchar, c_int};
+use libc::{c_int, c_uchar};
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -184,5 +183,9 @@ extern "C" {
         state: *const flint_rand_s,
         n_in: *const fmpz,
     ) -> c_int;
-    pub fn fmpz_factor_get_fmpz(z: *mut fmpz, factor: *const fmpz_factor_struct, i: mp_limb_signed_t);
+    pub fn fmpz_factor_get_fmpz(
+        z: *mut fmpz,
+        factor: *const fmpz_factor_struct,
+        i: mp_limb_signed_t,
+    );
 }

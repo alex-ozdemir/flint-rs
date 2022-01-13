@@ -4,19 +4,16 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/mpoly.html).
 
-
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::{fmpz, fmpz_t};
 use crate::fmpz_mat::fmpz_mat_struct;
-use libc::{c_char, c_uchar, c_int, c_uint, c_void};
+use libc::{c_char, c_int, c_uchar, c_uint, c_void};
 
 pub type ordering_t = c_uint;
 pub const ordering_t_ORD_LEX: ordering_t = 0;
 pub const ordering_t_ORD_DEGLEX: ordering_t = 1;
 pub const ordering_t_ORD_DEGREVLEX: ordering_t = 2;
-
 
 extern "C" {
     pub fn mpoly_divide_threads(n: mp_limb_signed_t, la: f64, lb: f64) -> mp_limb_signed_t;
@@ -474,10 +471,7 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn mpoly_monomial_is_zero(
-        exp: *const mp_limb_t,
-        N: mp_limb_signed_t,
-    ) -> c_int;
+    pub fn mpoly_monomial_is_zero(exp: *const mp_limb_t, N: mp_limb_signed_t) -> c_int;
 }
 extern "C" {
     pub fn mpoly_monomial_equal(
@@ -496,25 +490,13 @@ extern "C" {
     ) -> c_int;
 }
 extern "C" {
-    pub fn mpoly_monomial_cmp1(
-        a: mp_limb_t,
-        b: mp_limb_t,
-        cmpmask: mp_limb_t,
-    ) -> c_int;
+    pub fn mpoly_monomial_cmp1(a: mp_limb_t, b: mp_limb_t, cmpmask: mp_limb_t) -> c_int;
 }
 extern "C" {
-    pub fn mpoly_monomial_gt1(
-        a: mp_limb_t,
-        b: mp_limb_t,
-        cmpmask: mp_limb_t,
-    ) -> c_int;
+    pub fn mpoly_monomial_gt1(a: mp_limb_t, b: mp_limb_t, cmpmask: mp_limb_t) -> c_int;
 }
 extern "C" {
-    pub fn mpoly_monomial_ge1(
-        a: mp_limb_t,
-        b: mp_limb_t,
-        cmpmask: mp_limb_t,
-    ) -> c_int;
+    pub fn mpoly_monomial_ge1(a: mp_limb_t, b: mp_limb_t, cmpmask: mp_limb_t) -> c_int;
 }
 extern "C" {
     pub fn mpoly_monomial_lt(
@@ -615,11 +597,7 @@ extern "C" {
     pub fn pack_exp3(e0: mp_limb_t, e1: mp_limb_t, e2: mp_limb_t) -> mp_limb_t;
 }
 extern "C" {
-    pub fn extract_exp(
-        e: mp_limb_t,
-        idx: c_int,
-        nvars: c_int,
-    ) -> mp_limb_t;
+    pub fn extract_exp(e: mp_limb_t, idx: c_int, nvars: c_int) -> mp_limb_t;
 }
 extern "C" {
     pub fn _mpoly_bidegree(
@@ -1695,63 +1673,24 @@ pub type mpoly_univar_t = [mpoly_univar_struct; 1usize];
 pub struct _bindgen_ty_22 {
     pub elem_size: mp_limb_signed_t,
     pub ctx: *const c_void,
-    pub init: ::std::option::Option<
-        unsafe extern "C" fn(
-            arg1: *mut c_void,
-            arg2: *const c_void,
-        ),
-    >,
-    pub clear: ::std::option::Option<
-        unsafe extern "C" fn(
-            arg1: *mut c_void,
-            arg2: *const c_void,
-        ),
-    >,
+    pub init: ::std::option::Option<unsafe extern "C" fn(arg1: *mut c_void, arg2: *const c_void)>,
+    pub clear: ::std::option::Option<unsafe extern "C" fn(arg1: *mut c_void, arg2: *const c_void)>,
     pub is_zero: ::std::option::Option<
-        unsafe extern "C" fn(
-            arg1: *const c_void,
-            arg2: *const c_void,
-        ) -> c_int,
+        unsafe extern "C" fn(arg1: *const c_void, arg2: *const c_void) -> c_int,
     >,
-    pub zero: ::std::option::Option<
-        unsafe extern "C" fn(
-            arg1: *mut c_void,
-            arg2: *const c_void,
-        ),
-    >,
-    pub one: ::std::option::Option<
-        unsafe extern "C" fn(
-            arg1: *mut c_void,
-            arg2: *const c_void,
-        ),
-    >,
+    pub zero: ::std::option::Option<unsafe extern "C" fn(arg1: *mut c_void, arg2: *const c_void)>,
+    pub one: ::std::option::Option<unsafe extern "C" fn(arg1: *mut c_void, arg2: *const c_void)>,
     pub set_fmpz: ::std::option::Option<
-        unsafe extern "C" fn(
-            arg1: *mut c_void,
-            arg2: *mut fmpz,
-            arg3: *const c_void,
-        ),
+        unsafe extern "C" fn(arg1: *mut c_void, arg2: *mut fmpz, arg3: *const c_void),
     >,
     pub set: ::std::option::Option<
-        unsafe extern "C" fn(
-            arg1: *mut c_void,
-            arg2: *const c_void,
-            arg3: *const c_void,
-        ),
+        unsafe extern "C" fn(arg1: *mut c_void, arg2: *const c_void, arg3: *const c_void),
     >,
     pub swap: ::std::option::Option<
-        unsafe extern "C" fn(
-            arg1: *mut c_void,
-            arg2: *mut c_void,
-            arg3: *const c_void,
-        ),
+        unsafe extern "C" fn(arg1: *mut c_void, arg2: *mut c_void, arg3: *const c_void),
     >,
     pub neg: ::std::option::Option<
-        unsafe extern "C" fn(
-            arg1: *mut c_void,
-            arg2: *const c_void,
-            arg3: *const c_void,
-        ),
+        unsafe extern "C" fn(arg1: *mut c_void, arg2: *const c_void, arg3: *const c_void),
     >,
     pub add: ::std::option::Option<
         unsafe extern "C" fn(
@@ -1810,10 +1749,7 @@ pub struct _bindgen_ty_22 {
         ) -> c_int,
     >,
     pub length: ::std::option::Option<
-        unsafe extern "C" fn(
-            arg1: *const c_void,
-            arg2: *const c_void,
-        ) -> mp_limb_signed_t,
+        unsafe extern "C" fn(arg1: *const c_void, arg2: *const c_void) -> mp_limb_signed_t,
     >,
 }
 pub type mpoly_void_ring_t = [_bindgen_ty_22; 1usize];
@@ -1899,11 +1835,7 @@ extern "C" {
     pub fn mpoly_parse_clear(E: *mut mpoly_parse_struct);
 }
 extern "C" {
-    pub fn mpoly_parse_add_terminal(
-        E: *mut mpoly_parse_struct,
-        s: *const c_char,
-        v: *const c_void,
-    );
+    pub fn mpoly_parse_add_terminal(E: *mut mpoly_parse_struct, s: *const c_char, v: *const c_void);
 }
 extern "C" {
     pub fn mpoly_parse_parse(

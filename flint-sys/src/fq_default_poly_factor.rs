@@ -2,15 +2,13 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fq_default_poly_factor.html).
 
-
 use crate::deps::*;
-use crate::fq_poly_factor::fq_poly_factor_t;
-use crate::fq_nmod_poly_factor::fq_nmod_poly_factor_t;
-use crate::fq_zech_poly_factor::fq_zech_poly_factor_t;
-use crate::fq_default::{fq_default_struct, fq_default_ctx_struct};
+use crate::fq_default::{fq_default_ctx_struct, fq_default_struct};
 use crate::fq_default_poly::fq_default_poly_struct;
+use crate::fq_nmod_poly_factor::fq_nmod_poly_factor_t;
+use crate::fq_poly_factor::fq_poly_factor_t;
+use crate::fq_zech_poly_factor::fq_zech_poly_factor_t;
 use libc::{c_char, c_int};
-
 
 #[repr(C)]
 #[derive(Copy, Clone)]

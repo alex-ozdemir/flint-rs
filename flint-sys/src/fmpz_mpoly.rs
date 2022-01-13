@@ -3,19 +3,17 @@
 
 //! *See the [FLINT documentation](http://flintlib.org/doc/fmpz_mpoly.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
-use crate::mpoly::*;
-use crate::fmpz::{fmpz, fmpz_t};
-use crate::fmpz_mod::fmpz_mod_ctx_struct;
-use crate::fmpz_mat::fmpz_mat_struct;
-use crate::fmpz_poly::fmpz_poly_struct;
 use crate::fmpq::{fmpq, fmpq_t};
 use crate::fmpq_poly::fmpq_poly_struct;
+use crate::fmpz::{fmpz, fmpz_t};
+use crate::fmpz_mat::fmpz_mat_struct;
+use crate::fmpz_mod::fmpz_mod_ctx_struct;
+use crate::fmpz_poly::fmpz_poly_struct;
+use crate::mpoly::*;
 use crate::nmod_vec::nmod_t;
 use libc::{c_char, c_int, FILE};
-
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -285,19 +283,13 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn _fmpz_mpoly_fits_small(
-        poly: *const fmpz,
-        len: mp_limb_signed_t,
-    ) -> c_int;
+    pub fn _fmpz_mpoly_fits_small(poly: *const fmpz, len: mp_limb_signed_t) -> c_int;
 }
 extern "C" {
     pub fn fmpz_mpoly_max_bits(A: *mut fmpz_mpoly_struct) -> mp_limb_signed_t;
 }
 extern "C" {
-    pub fn fmpz_mpoly_is_fmpz(
-        A: *mut fmpz_mpoly_struct,
-        ctx: *mut fmpz_mpoly_ctx_struct,
-    ) -> c_int;
+    pub fn fmpz_mpoly_is_fmpz(A: *mut fmpz_mpoly_struct, ctx: *mut fmpz_mpoly_ctx_struct) -> c_int;
 }
 extern "C" {
     pub fn fmpz_mpoly_get_fmpz(
@@ -355,16 +347,10 @@ extern "C" {
     ) -> c_int;
 }
 extern "C" {
-    pub fn fmpz_mpoly_is_zero(
-        A: *mut fmpz_mpoly_struct,
-        ctx: *mut fmpz_mpoly_ctx_struct,
-    ) -> c_int;
+    pub fn fmpz_mpoly_is_zero(A: *mut fmpz_mpoly_struct, ctx: *mut fmpz_mpoly_ctx_struct) -> c_int;
 }
 extern "C" {
-    pub fn fmpz_mpoly_is_one(
-        A: *mut fmpz_mpoly_struct,
-        ctx: *mut fmpz_mpoly_ctx_struct,
-    ) -> c_int;
+    pub fn fmpz_mpoly_is_one(A: *mut fmpz_mpoly_struct, ctx: *mut fmpz_mpoly_ctx_struct) -> c_int;
 }
 extern "C" {
     pub fn fmpz_mpoly_degrees_fit_si(
@@ -2693,10 +2679,7 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn fmpq_mpoly_is_fmpq(
-        A: *mut fmpq_mpoly_struct,
-        ctx: *mut fmpq_mpoly_ctx_struct,
-    ) -> c_int;
+    pub fn fmpq_mpoly_is_fmpq(A: *mut fmpq_mpoly_struct, ctx: *mut fmpq_mpoly_ctx_struct) -> c_int;
 }
 extern "C" {
     pub fn fmpq_mpoly_get_fmpq(
@@ -2768,16 +2751,10 @@ extern "C" {
     ) -> c_int;
 }
 extern "C" {
-    pub fn fmpq_mpoly_is_zero(
-        A: *mut fmpq_mpoly_struct,
-        ctx: *mut fmpq_mpoly_ctx_struct,
-    ) -> c_int;
+    pub fn fmpq_mpoly_is_zero(A: *mut fmpq_mpoly_struct, ctx: *mut fmpq_mpoly_ctx_struct) -> c_int;
 }
 extern "C" {
-    pub fn fmpq_mpoly_is_one(
-        A: *mut fmpq_mpoly_struct,
-        ctx: *mut fmpq_mpoly_ctx_struct,
-    ) -> c_int;
+    pub fn fmpq_mpoly_is_one(A: *mut fmpq_mpoly_struct, ctx: *mut fmpq_mpoly_ctx_struct) -> c_int;
 }
 extern "C" {
     pub fn fmpq_mpoly_degrees_fit_si(
@@ -2848,10 +2825,8 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn fmpq_mpoly_is_monic(
-        A: *mut fmpq_mpoly_struct,
-        ctx: *mut fmpq_mpoly_ctx_struct,
-    ) -> c_int;
+    pub fn fmpq_mpoly_is_monic(A: *mut fmpq_mpoly_struct, ctx: *mut fmpq_mpoly_ctx_struct)
+        -> c_int;
 }
 extern "C" {
     pub fn fmpq_mpoly_get_coeff_fmpq_monomial(

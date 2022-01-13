@@ -4,7 +4,6 @@
 
 //! See the [FLINT documentation](http://flintlib.org/doc/fmpz_lll.html).
 
-
 use crate::deps::*;
 use crate::flint::*;
 use crate::fmpz::fmpz;
@@ -227,10 +226,7 @@ extern "C" {
         gs_B: *const fmpz,
         fl: *const fmpz_lll_struct,
     ) -> c_int;
-    pub fn fmpz_lll_is_reduced_d(
-        B: *const fmpz_mat_struct,
-        fl: *const fmpz_lll_struct,
-    ) -> c_int;
+    pub fn fmpz_lll_is_reduced_d(B: *const fmpz_mat_struct, fl: *const fmpz_lll_struct) -> c_int;
     pub fn fmpz_lll_is_reduced_mpfr(
         B: *const fmpz_mat_struct,
         fl: *const fmpz_lll_struct,
