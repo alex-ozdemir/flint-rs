@@ -1,12 +1,9 @@
-// NOTE:
-// - flint doesn't support out-of-source builds so we resort to copying the entire source dir into
-// OUT_DIR and building there.
-// - we don't check for a local copy of flint - (I think) we need to build against the gmp/mpfr 
-// compiled by gmp-mpfr-sys in order to be compatible with the gmp/mpfr functions it provides and
-// avoid duplicate symbols etc.
-// - the flint build (static lib and headers) is cached in ~/.cache/flint-sys or similar, so we
-// avoid building more than once per flint-sys version
 
+#[cfg(all(feature = "use-system-libs", feature = "no-system-libs"))]
+compile_error!("Features `use-system-libs` and `no-system-libs` are mutually exclusive.");
+
+#[cfg(feature = "use-system-libs")]
+compile_error!("Feature `use-system-libs` is not yet implemented.");
 
 use std::{
     env,
@@ -430,12 +427,14 @@ fn make_and_check(_env: &Environment, build_dir: &Path) {
     let mut make = Command::new("make");
     make.current_dir(build_dir);
     execute(make);
-    
-    let mut make_check = Command::new("make");
-    make_check
-        .current_dir(build_dir)
-        .arg("check");
-    execute(make_check);
+
+    if !cfg!(feature = "disable-make-check") {
+        let mut make_check = Command::new("make");
+        make_check
+            .current_dir(build_dir)
+            .arg("check");
+        execute(make_check);
+    }
 }
 
 fn execute(mut command: Command) {
