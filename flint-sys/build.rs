@@ -1,8 +1,13 @@
+// NOTE:
+// - flint doesn't support out-of-source builds so we resort to copying the entire source dir into
+// OUT_DIR and building there.
+// - we don't check for a local copy of flint - (I think) we need to build against the gmp/mpfr 
+// compiled by gmp-mpfr-sys in order to be compatible with the gmp/mpfr functions it provides and
+// avoid duplicate symbols etc.
+// - the flint build (static lib and headers) is cached in ~/.cache/flint-sys or similar, so we
+// avoid building more than once per flint-sys version
 
-#[cfg(unix)]
-use std::os::unix::fs as unix_fs;
-#[cfg(windows)]
-use std::os::windows::fs as windows_fs;
+
 use std::{
     env,
     ffi::{OsStr, OsString},
@@ -13,7 +18,106 @@ use std::{
     str,
 };
 
-const FLINT_DIR: &str = "flint-c";
+const FLINT_DIR: &str = "flint-2.8.4-c";
+const FLINT_HEADERS: &[&str] = &[
+    "aprcl.h",
+    "arith.h",
+    "d_mat.h",
+    "double_extras.h",
+    "d_vec.h",
+    "exception.h",
+    "fft.h",
+    "fft_tuning.h",
+    "flint-config.h",
+    "flint.h",
+    "fmpq.h",
+    "fmpq_mat.h",
+    "fmpq_mpoly_factor.h",
+    "fmpq_mpoly.h",
+    "fmpq_poly.h",
+    "fmpq_vec.h",
+    "fmpz-conversions.h",
+    "fmpz_factor.h",
+    "fmpz.h",
+    "fmpz_lll.h",
+    "fmpz_mat.h",
+    "fmpz_mod.h",
+    "fmpz_mod_mat.h",
+    "fmpz_mod_mpoly_factor.h",
+    "fmpz_mod_mpoly.h",
+    "fmpz_mod_poly_factor.h",
+    "fmpz_mod_poly.h",
+    "fmpz_mod_vec.h",
+    "fmpz_mpoly_factor.h",
+    "fmpz_mpoly.h",
+    "fmpz_poly_factor.h",
+    "fmpz_poly.h",
+    "fmpz_poly_mat.h",
+    "fmpz_poly_q.h",
+    "fmpz_vec.h",
+    "fq_default.h",
+    "fq_default_mat.h",
+    "fq_default_poly_factor.h",
+    "fq_default_poly.h",
+    "fq_embed.h",
+    "fq_embed_templates.h",
+    "fq.h",
+    "fq_mat.h",
+    "fq_mat_templates.h",
+    "fq_nmod_embed.h",
+    "fq_nmod.h",
+    "fq_nmod_mat.h",
+    "fq_nmod_mpoly_factor.h",
+    "fq_nmod_mpoly.h",
+    "fq_nmod_poly_factor.h",
+    "fq_nmod_poly.h",
+    "fq_nmod_vec.h",
+    "fq_poly_factor.h",
+    "fq_poly_factor_templates.h",
+    "fq_poly.h",
+    "fq_poly_templates.h",
+    "fq_templates.h",
+    "fq_vec.h",
+    "fq_vec_templates.h",
+    "fq_zech_embed.h",
+    "fq_zech.h",
+    "fq_zech_mat.h",
+    "fq_zech_mpoly_factor.h",
+    "fq_zech_mpoly.h",
+    "fq_zech_poly_factor.h",
+    "fq_zech_poly.h",
+    "fq_zech_vec.h",
+    "gmpcompat.h",
+    "hashmap.h",
+    "long_extras.h",
+    "longlong.h",
+    "mpf_mat.h",
+    "mpfr_mat.h",
+    "mpfr_vec.h",
+    "mpf_vec.h",
+    "mpn_extras.h",
+    "mpoly.h",
+    "nmod_mat.h",
+    "nmod_mpoly_factor.h",
+    "nmod_mpoly.h",
+    "nmod_poly_factor.h",
+    "nmod_poly.h",
+    "nmod_poly_mat.h",
+    "nmod_vec.h",
+    "n_poly.h",
+    "NTL-interface.h",
+    "padic.h",
+    "padic_mat.h",
+    "padic_poly.h",
+    "perm.h",
+    "profiler.h",
+    "qadic.h",
+    "qsieve.h",
+    "templates.h",
+    "thread_pool.h",
+    "thread_support.h",
+    "ulong_extras.h"
+];
 
 #[derive(Clone, Copy, PartialEq)]
 enum Target {
@@ -24,6 +128,7 @@ enum Target {
 
 struct Environment {
     target: Target,
+    gmp_mpfr_dir: PathBuf,
     src_dir: PathBuf,
     out_dir: PathBuf,
     lib_dir: PathBuf,
@@ -54,6 +159,7 @@ fn main() {
         Target::Other
     };
 
+    let gmp_mpfr_dir = PathBuf::from(cargo_env("DEP_GMP_OUT_DIR"));
     let src_dir = PathBuf::from(cargo_env("CARGO_MANIFEST_DIR"));
     let out_dir = PathBuf::from(cargo_env("OUT_DIR"));
 
@@ -63,7 +169,7 @@ fn main() {
     let cache_dir = match env::var_os("FLINT_SYS_CACHE") {
         Some(ref c) if c.is_empty() || c == "_" => None,
         Some(c) => Some(PathBuf::from(c)),
-        None => system_cache_dir().map(|c| c.join("antic-sys")),
+        None => system_cache_dir().map(|c| c.join("flint-sys")),
     };
     let cache_dir = cache_dir
         .map(|cache| cache.join(&version_prefix))
@@ -74,6 +180,7 @@ fn main() {
 
     let env = Environment {
         target,
+        gmp_mpfr_dir,
         src_dir,
         out_dir: out_dir.clone(),
         lib_dir: out_dir.join("lib"),
@@ -92,21 +199,15 @@ fn main() {
 }
 
 fn compile(env: &Environment) {
-    let flint_ah = (
-        env.lib_dir.join("libflint.a"), 
-        env.include_dir.join("wrapper.h"), 
-        );
-    if need_compile(env, &flint_ah) {
+    if need_compile(env) {
         check_for_msvc(env);
         remove_dir_or_panic(&env.build_dir);
-        create_dir_or_panic(&env.build_dir);
-        link_dir(&env.src_dir.join(FLINT_DIR), &env.build_dir.join("flint-src"));
-        let (ref a, ref h) = flint_ah;
-        build(env, a, h);
+        copy_dir_or_panic(&env.src_dir.join(FLINT_DIR), &env.build_dir);
+        build(env);
         if !there_is_env("CARGO_FEATURE_CNODELETE") {
             remove_dir_or_panic(&env.build_dir);
         }
-        assert!(save_cache(env, &flint_ah));
+        assert!(save_cache(env));
     }
     write_link_info(env);
 }
@@ -132,28 +233,26 @@ fn get_version() -> (String, Option<u64>) {
     }
 }
 
-fn need_compile(
-    env: &Environment,
-    flint_ah: &(PathBuf, PathBuf),
-) -> bool {
-    let flint_fine = flint_ah.0.is_file() 
-        && flint_ah.1.is_file();
-    if flint_fine {
+fn need_compile(env: &Environment) -> bool {
+    let mut ok = env.lib_dir.join("libflint.a").is_file();
+
+    for h in FLINT_HEADERS {
+        ok = ok && env.include_dir.join(h).is_file();
+    }
+
+    if ok {
         if should_save_cache(env) {
-            assert!(save_cache(env, flint_ah));
+            assert!(save_cache(env));
         }
         return false;
-    } else if load_cache(env, flint_ah) {
+    } else if load_cache(env) {
         // if loading cache works, we're done
         return false;
     }
     true
 }
 
-fn save_cache(
-    env: &Environment,
-    flint_ah: &(PathBuf, PathBuf),
-) -> bool {
+fn save_cache(env: &Environment) -> bool {
     let cache_dir = match env.cache_dir {
         Some(ref s) => s,
         None => return false,
@@ -163,10 +262,11 @@ fn save_cache(
         Some(patch) => cache_dir.join(format!("{}.{}", env.version_prefix, patch)),
     };
     let mut ok = create_dir(&version_dir).is_ok();
-    let dir = version_dir;
-    let (ref a, ref h) = *flint_ah;
-    ok = ok && copy_file(a, &dir.join("libflint.a")).is_ok();
-    ok = ok && copy_file(h, &dir.join("wrapper.h")).is_ok();
+    ok = ok && copy_file(&env.lib_dir.join("libflint.a"), &version_dir.join("libflint.a")).is_ok();
+
+    for h in FLINT_HEADERS {
+        ok = ok && copy_file(&env.include_dir.join(h), &version_dir.join(h)).is_ok();
+    }
     ok
 }
 
@@ -212,10 +312,7 @@ fn cache_directories(env: &Environment, base: &Path) -> Vec<(PathBuf, Option<u64
     vec
 }
 
-fn load_cache(
-    env: &Environment,
-    flint_ah: &(PathBuf, PathBuf),
-) -> bool {
+fn load_cache(env: &Environment) -> bool {
     let cache_dir = match env.cache_dir {
         Some(ref s) => s,
         None => return false,
@@ -240,10 +337,11 @@ fn load_cache(
                 version_dir
             };
             let mut ok = true;
-            let (ref a, ref h) = *flint_ah;
-            ok = ok && copy_file(&dir.join("libflint.a"), a).is_ok();
-            let header = dir.join("wrapper.h");
-            ok = ok && copy_file(&header, h).is_ok();
+            ok = ok && copy_file(&dir.join("libflint.a"), &env.lib_dir.join("libflint.a")).is_ok();
+
+            for h in FLINT_HEADERS {
+                ok = ok && copy_file(&dir.join(h), &env.include_dir.join(h)).is_ok();
+            }
             if ok {
                 return true;
             }
@@ -277,7 +375,11 @@ fn should_save_cache(env: &Environment) -> bool {
             };
             let mut ok = true;
             ok = ok && dir.join("libflint.a").is_file();
-            ok = ok && dir.join("wrapper.h").is_file();
+
+            for h in FLINT_HEADERS {
+                ok = ok && dir.join(h).is_file();
+            }
+
             if ok {
                 return false;
             }
@@ -286,18 +388,25 @@ fn should_save_cache(env: &Environment) -> bool {
     true
 }
 
-fn build(env: &Environment, lib: &Path, h: &Path) {
-    let build_dir = env.build_dir.join("build");
-    create_dir_or_panic(&build_dir);
-    println!("$ cd {:?}", build_dir);
-    let conf = String::from("../flint-src/configure --disable-shared");
-    configure(&build_dir, &OsString::from(conf));
-    make_and_check(env, &build_dir);
+fn build(env: &Environment) {
+    println!("$ cd {:?}", &env.build_dir);
+    let conf = String::from(
+        format!(
+            "./configure --disable-shared --with-gmp={} --with-mpfr={}",
+            env.gmp_mpfr_dir.display(),
+            env.gmp_mpfr_dir.display(),
+            )
+        );
 
-    let build_lib = build_dir.join("libflint.a");
-    copy_file_or_panic(&build_lib, lib);
-    let build_h = build_dir.join("wrapper.h");
-    copy_file_or_panic(&build_h, h);
+    configure(&env.build_dir, &OsString::from(conf));
+    make_and_check(env, &env.build_dir);
+
+    let build_lib = &env.build_dir.join("libflint.a");
+    copy_file_or_panic(&build_lib, &env.lib_dir.join("libflint.a"));
+    
+    for h in FLINT_HEADERS {
+        copy_file_or_panic(&env.build_dir.join(h), &env.include_dir.join(h));
+    }
 }
 
 fn write_link_info(env: &Environment) {
@@ -367,6 +476,59 @@ fn create_dir_or_panic(dir: &Path) {
     create_dir(dir).unwrap_or_else(|_| panic!("Unable to create directory: {:?}", dir));
 }
 
+pub fn copy_dir(from: &Path, to: &Path) -> IoResult<()> {
+    let mut stack = Vec::new();
+    stack.push(PathBuf::from(from));
+
+    let output_root = PathBuf::from(to);
+    let input_root = PathBuf::from(from).components().count();
+
+    while let Some(working_path) = stack.pop() {
+        println!("process: {:?}", &working_path);
+
+        // Generate a relative path
+        let src: PathBuf = working_path.components().skip(input_root).collect();
+
+        // Create a destination if missing
+        let dest = if src.components().count() == 0 {
+            output_root.clone()
+        } else {
+            output_root.join(&src)
+        };
+        if fs::metadata(&dest).is_err() {
+            println!("$ mkdir {:?}", dest);
+            fs::create_dir_all(&dest)?;
+        }
+
+        for entry in fs::read_dir(working_path)? {
+            let entry = entry?;
+            let path = entry.path();
+            if path.is_dir() {
+                stack.push(path);
+            } else {
+                match path.file_name() {
+                    Some(filename) => {
+                        let dest_path = dest.join(filename);
+                        println!("  copy: {:?} -> {:?}", &path, &dest_path);
+                        fs::copy(&path, &dest_path)?;
+                    }
+                    None => {
+                        println!("failed: {:?}", path);
+                    }
+                }
+            }
+        }
+    }
+
+    Ok(())
+}
+
+fn copy_dir_or_panic(src: &Path, dst: &Path) {
+    copy_dir(src, dst).unwrap_or_else(|_| {
+        panic!("Unable to copy {:?} -> {:?}", src, dst);
+    });
+}
+
 fn copy_file(src: &Path, dst: &Path) -> IoResult<u64> {
     println!("$ cp {:?} {:?}", src, dst);
     fs::copy(src, dst)
@@ -394,26 +556,6 @@ fn make_and_check(_env: &Environment, build_dir: &Path) {
         .current_dir(build_dir)
         .arg("check");
     execute(make_check);
-}
-
-#[cfg(unix)]
-fn link_dir(src: &Path, dst: &Path) {
-    println!("$ ln -s {:?} {:?}", src, dst);
-    unix_fs::symlink(src, dst).unwrap_or_else(|_| {
-        panic!("Unable to symlink {:?} -> {:?}", src, dst);
-    });
-}
-
-#[cfg(windows)]
-fn link_dir(src: &Path, dst: &Path) {
-    println!("$ ln -s {:?} {:?}", src, dst);
-    if windows_fs::symlink_dir(src, dst).is_ok() {
-        return;
-    }
-    println!("symlink_dir: failed to create symbolic link, copying instead");
-    let mut c = Command::new("cp");
-    c.arg("-R").arg(src).arg(dst);
-    execute(c);
 }
 
 fn execute(mut command: Command) {
