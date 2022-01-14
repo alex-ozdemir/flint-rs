@@ -23,11 +23,10 @@ quickcheck = "0.9"
 quickcheck_macros = "0.9"
 
 [features]
-default = ["no-system-libs"]
+default = ["no-local-lib"]
 disable-make-check = []
-no-system-libs = ["gmp-mpfr-sys"]
-use-system-libs = []
-cnodelete = []
+no-local-lib = ["gmp-mpfr-sys"]
+use-local-lib = []
 
 [target.'cfg(target_os = "windows")'.build-dependencies.winapi]
 version = "0.3"

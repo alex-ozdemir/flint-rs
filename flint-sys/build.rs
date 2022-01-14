@@ -196,9 +196,7 @@ fn compile(env: &Environment) {
         remove_dir_or_panic(&env.build_dir);
         copy_dir_or_panic(&env.src_dir.join(FLINT_DIR), &env.build_dir);
         build(env);
-        if !there_is_env("CARGO_FEATURE_CNODELETE") {
-            remove_dir_or_panic(&env.build_dir);
-        }
+        remove_dir_or_panic(&env.build_dir);
         assert!(save_cache(env));
     }
     write_link_info(env);
@@ -319,10 +317,6 @@ fn write_link_info(env: &Environment) {
 fn cargo_env(name: &str) -> OsString {
     env::var_os(name)
         .unwrap_or_else(|| panic!("environment variable not found: {}, please use cargo", name))
-}
-
-fn there_is_env(name: &str) -> bool {
-    env::var_os(name).is_some()
 }
 
 fn check_for_msvc(env: &Environment) {
