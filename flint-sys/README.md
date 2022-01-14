@@ -17,7 +17,7 @@ flint-sys = "0.6"
 
   * `disable-make-check`: this can reduce compilation time significantly.
 
-  * `use-local-lib`: try to find a local copy of FLINT and avoid compilation (mutually exclusive with `no-local-lib`).
+  * `use-local-lib`: try to find a local copy of FLINT and avoid compilation (mutually exclusive with `no-local-lib`). Not yet implemented!
     
   * `no-local-lib`: no local copy of FLINT, it will be built automatically (mutually exclusive with `use-local-lib`). Enabled by default.
 
