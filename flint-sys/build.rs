@@ -1,10 +1,4 @@
 
-#[cfg(all(feature = "use-system-libs", feature = "no-system-libs"))]
-compile_error!("Features `use-system-libs` and `no-system-libs` are mutually exclusive.");
-
-#[cfg(feature = "use-system-libs")]
-compile_error!("Feature `use-system-libs` is not yet implemented.");
-
 use std::{
     env,
     ffi::{OsStr, OsString},
@@ -16,6 +10,7 @@ use std::{
 };
 
 const FLINT_DIR: &str = "flint-2.8.4-c";
+const FLINT_LIB: &str = "libflint.a";
 const FLINT_VER: &str = "2.8.4";
 const FLINT_HEADERS: &[&str] = &[
     "aprcl.h",
@@ -203,7 +198,7 @@ fn compile(env: &Environment) {
 }
 
 fn need_compile(env: &Environment) -> bool {
-    let mut ok = env.lib_dir.join("libflint.a").is_file();
+    let mut ok = env.lib_dir.join(FLINT_LIB).is_file();
 
     for h in FLINT_HEADERS {
         ok = ok && env.include_dir.join(h).is_file();
@@ -227,7 +222,7 @@ fn save_cache(env: &Environment) -> bool {
         None => return false,
     };
     let mut ok = create_dir(&cache_dir).is_ok();
-    ok = ok && copy_file(&env.lib_dir.join("libflint.a"), &cache_dir.join("libflint.a")).is_ok();
+    ok = ok && copy_file(&env.lib_dir.join(FLINT_LIB), &cache_dir.join(FLINT_LIB)).is_ok();
 
     for h in FLINT_HEADERS {
         ok = ok && copy_file(&env.include_dir.join(h), &cache_dir.join(h)).is_ok();
@@ -241,7 +236,7 @@ fn load_cache(env: &Environment) -> bool {
         None => return false,
     };
     let mut ok = true;
-    ok = ok && copy_file(&cache_dir.join("libflint.a"), &env.lib_dir.join("libflint.a")).is_ok();
+    ok = ok && copy_file(&cache_dir.join(FLINT_LIB), &env.lib_dir.join(FLINT_LIB)).is_ok();
 
     for h in FLINT_HEADERS {
         ok = ok && copy_file(&cache_dir.join(h), &env.include_dir.join(h)).is_ok();
@@ -255,7 +250,7 @@ fn should_save_cache(env: &Environment) -> bool {
         None => return false,
     };
     let mut ok = true;
-    ok = ok && cache_dir.join("libflint.a").is_file();
+    ok = ok && cache_dir.join(FLINT_LIB).is_file();
 
     for h in FLINT_HEADERS {
         ok = ok && cache_dir.join(h).is_file();
@@ -276,8 +271,8 @@ fn build(env: &Environment) {
     configure(&env.build_dir, &OsString::from(conf));
     make_and_check(env, &env.build_dir);
 
-    let build_lib = &env.build_dir.join("libflint.a");
-    copy_file_or_panic(&build_lib, &env.lib_dir.join("libflint.a"));
+    let build_lib = &env.build_dir.join(FLINT_LIB);
+    copy_file_or_panic(&build_lib, &env.lib_dir.join(FLINT_LIB));
     
     for h in FLINT_HEADERS {
         copy_file_or_panic(&env.build_dir.join(h), &env.include_dir.join(h));
