@@ -1,6 +1,6 @@
 # flint-sys
 
-Bindings to the [FLINT](http://flintlib.org/) library. 
+Rust bindings to the [FLINT](http://flintlib.org/) library. 
 
 FLINT (Fast Library for Number Theory) is a C library which provides a number
 of number theoretic and algebraic functions and types.
