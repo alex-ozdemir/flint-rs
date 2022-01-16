@@ -7,11 +7,7 @@ of number theoretic and algebraic functions and types.
 
 ## Usage
 
-See the [documentation](https://docs.rs/flint-sys/latest/flint_sys/). Add flint-sys as a dependency to your project with 
-```
-[dependencies]
-flint-sys = "0.6"
-```
+See the [documentation](https://docs.rs/flint-sys/latest/flint_sys/). This crate is available on [crates.io](https://crates.io/crates/flint-sys).
 
 ## Optional features
 
