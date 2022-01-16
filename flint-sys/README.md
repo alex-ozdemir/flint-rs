@@ -1,34 +1,20 @@
 # flint-sys
 
-Bindings to the [FLINT](http://flintlib.org/) library. 
+Rust bindings to the [FLINT](http://flintlib.org/) library. 
 
 FLINT (Fast Library for Number Theory) is a C library which provides a number
 of number theoretic and algebraic functions and types.
 
-## Binding Coverage
+## Usage
 
-Most of FLINT is covered with the exception of some functions not listed in the documentation (these are to come).
+See the [documentation](https://docs.rs/flint-sys/latest/flint_sys/). This crate is available on [crates.io](https://crates.io/crates/flint-sys).
 
-Internal crates marked with an asterisk in the documentation have functions which may require mutable borrows where const borrows will suffice (these need to be corrected but the bindings will still work as expected).
+## Optional features
 
-These bindings have been tested with FLINT 2.8.0. Feedback on other versions of FLINT is appreciated.
+  * `disable-make-check`: this can reduce compilation time significantly.
 
-## Dependencies
+## Notes
 
-You must install the following before installing this crate:
+  * As of version 0.6.0 the FLINT source files are now included and the library is compiled automatically. The files are cached to avoid unnecessary compilations.
 
-   * [FLINT](http://flintlib.org/) version 2.8 or greater
-
-### Arch Linux
-
-```
-pacman -S flint
-```
-
-### Ubuntu
-
-```
-apt install libflint-dev
-```
-
-Currently if FLINT is installed from source it must be located in `/usr/local/`.
+  * Some binding arguments may be marked mutable instead of `const`. These are being manually updated over time, but feel free to correct any bindings and make a pull request if you would like certain ones fixed right away.

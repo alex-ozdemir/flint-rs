@@ -1,6 +1,7 @@
 [package]
 name = "flint-sys"
-version = "0.5.1"
+version = "0.6.0"
+links = "flint"
 authors = ["Alex Ozdemir <aozdemir@hmc.edu>"]
 edition = "2018"
 description = "Bindings to the FLINT C library"
@@ -16,11 +17,15 @@ readme = "README.md"
 
 [dependencies]
 libc = "0.2"
+gmp-mpfr-sys = "1.4"
 
 [dev-dependencies]
 quickcheck = "0.9"
 quickcheck_macros = "0.9"
-gmp-mpfr-sys = "1.3.1"
 
-[build-dependencies]
-pkg-config = "0.3.19"
+[features]
+disable-make-check = []
+
+[target.'cfg(target_os = "windows")'.build-dependencies.winapi]
+version = "0.3"
+features = ["combaseapi", "knownfolders", "shlobj", "winbase", "winerror"]

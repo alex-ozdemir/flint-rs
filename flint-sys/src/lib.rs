@@ -86,11 +86,6 @@ mod tests {
     use std::mem::MaybeUninit;
 
     #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-
-    #[test]
     fn try_it() {
         let mut p: fmpz::fmpz = fmpz::fmpz::default();
         let mut ctx = MaybeUninit::uninit();
