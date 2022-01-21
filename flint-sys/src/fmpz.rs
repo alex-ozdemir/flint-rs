@@ -208,7 +208,7 @@ extern "C" {
     pub fn fmpz_root(r: *mut fmpz, f: *const fmpz, n: mp_limb_signed_t);
     pub fn fmpz_is_perfect_power(root: *mut fmpz, f: *const fmpz) -> c_int;
     pub fn fmpz_sqrtrem(f: *mut fmpz, r: *const fmpz, g: *const fmpz);
-    pub fn fmpz_fdiv_ui(g: *mut fmpz, h: mp_limb_t) -> mp_limb_t;
+    pub fn fmpz_fdiv_ui(g: *const fmpz, h: mp_limb_t) -> mp_limb_t;
     pub fn fmpz_mod_ui(f: *mut fmpz, g: *const fmpz, h: mp_limb_t) -> mp_limb_t;
     pub fn fmpz_mod(f: *mut fmpz, g: *const fmpz, h: *const fmpz);
     pub fn fmpz_smod(f: *mut fmpz, g: *const fmpz, h: *const fmpz);
