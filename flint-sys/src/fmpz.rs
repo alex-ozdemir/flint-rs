@@ -177,9 +177,9 @@ extern "C" {
     pub fn fmpz_add_si(f: *mut fmpz, g: *const fmpz, x: mp_limb_signed_t);
     pub fn fmpz_sub_si(f: *mut fmpz, g: *const fmpz, x: mp_limb_signed_t);
     pub fn fmpz_addmul_ui(f: *mut fmpz, g: *const fmpz, x: mp_limb_t);
-    pub fn fmpz_addmul_si(f: *mut fmpz, g: *mut fmpz, x: mp_limb_signed_t);
+    pub fn fmpz_addmul_si(f: *mut fmpz, g: *const fmpz, x: mp_limb_signed_t);
     pub fn fmpz_submul_ui(f: *mut fmpz, g: *const fmpz, x: mp_limb_t);
-    pub fn fmpz_submul_si(f: *mut fmpz, g: *mut fmpz, x: mp_limb_signed_t);
+    pub fn fmpz_submul_si(f: *mut fmpz, g: *const fmpz, x: mp_limb_signed_t);
     pub fn fmpz_addmul(f: *mut fmpz, g: *const fmpz, h: *const fmpz);
     pub fn fmpz_submul(f: *mut fmpz, g: *const fmpz, h: *const fmpz);
     pub fn fmpz_fmma(f: *mut fmpz, a: *const fmpz, b: *const fmpz, c: *const fmpz, d: *const fmpz);
@@ -217,6 +217,13 @@ extern "C" {
     pub fn fmpz_lcm(f: *mut fmpz, g: *const fmpz, h: *const fmpz);
     pub fn fmpz_gcdinv(d: *mut fmpz, a: *mut fmpz, f: *const fmpz, g: *const fmpz);
     pub fn fmpz_xgcd(d: *mut fmpz, a: *mut fmpz, b: *mut fmpz, f: *const fmpz, g: *const fmpz);
+    pub fn fmpz_xgcd_canonical_bezout(
+        d: *mut fmpz,
+        a: *mut fmpz,
+        b: *mut fmpz,
+        f: *const fmpz,
+        g: *const fmpz,
+    );
     pub fn fmpz_xgcd_partial(
         co2: *mut fmpz,
         co1: *mut fmpz,

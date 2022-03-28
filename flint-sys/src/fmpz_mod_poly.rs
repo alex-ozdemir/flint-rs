@@ -1005,9 +1005,9 @@ extern "C" {
     pub fn fmpz_mod_poly_gcd_f(
         f: *mut fmpz,
         G: *mut fmpz_mod_poly_struct,
-        A: *mut fmpz_mod_poly_struct,
-        B: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        A: *const fmpz_mod_poly_struct,
+        B: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_hgcd_recursive(
         M: *mut *mut fmpz,
@@ -1020,10 +1020,10 @@ extern "C" {
         lena: mp_limb_signed_t,
         b: *const fmpz,
         lenb: mp_limb_signed_t,
-        P: *mut fmpz,
-        mod_: *mut fmpz,
+        P: *const fmpz,
+        mod_: *const fmpz,
         flag: c_int,
-        res: *mut fmpz_mod_poly_res_struct,
+        res: *const fmpz_mod_poly_res_struct,
     ) -> mp_limb_signed_t;
     pub fn _fmpz_mod_poly_hgcd(
         M: *mut *mut fmpz,
@@ -1036,7 +1036,7 @@ extern "C" {
         lena: mp_limb_signed_t,
         b: *const fmpz,
         lenb: mp_limb_signed_t,
-        mod_: *mut fmpz,
+        mod_: *const fmpz,
     ) -> mp_limb_signed_t;
     pub fn _fmpz_mod_poly_gcd_hgcd(
         G: *mut fmpz,
@@ -1044,13 +1044,13 @@ extern "C" {
         lenA: mp_limb_signed_t,
         B: *const fmpz,
         lenB: mp_limb_signed_t,
-        mod_: *mut fmpz,
+        mod_: *const fmpz,
     ) -> mp_limb_signed_t;
     pub fn fmpz_mod_poly_gcd_hgcd(
         G: *mut fmpz_mod_poly_struct,
-        A: *mut fmpz_mod_poly_struct,
-        B: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        A: *const fmpz_mod_poly_struct,
+        B: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_gcd(
         G: *mut fmpz,
@@ -1058,14 +1058,14 @@ extern "C" {
         lenA: mp_limb_signed_t,
         B: *const fmpz,
         lenB: mp_limb_signed_t,
-        invB: *mut fmpz,
-        p: *mut fmpz,
+        invB: *const fmpz,
+        p: *const fmpz,
     ) -> mp_limb_signed_t;
     pub fn fmpz_mod_poly_gcd(
         G: *mut fmpz_mod_poly_struct,
-        A: *mut fmpz_mod_poly_struct,
-        B: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        A: *const fmpz_mod_poly_struct,
+        B: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_xgcd_euclidean(
         G: *mut fmpz,
@@ -1075,8 +1075,8 @@ extern "C" {
         lenA: mp_limb_signed_t,
         B: *const fmpz,
         lenB: mp_limb_signed_t,
-        invB: *mut fmpz,
-        p: *mut fmpz,
+        invB: *const fmpz,
+        p: *const fmpz,
     ) -> mp_limb_signed_t;
     pub fn _fmpz_mod_poly_xgcd_euclidean_f(
         f: *mut fmpz,
@@ -1087,25 +1087,25 @@ extern "C" {
         lenA: mp_limb_signed_t,
         B: *const fmpz,
         lenB: mp_limb_signed_t,
-        invB: *mut fmpz,
-        p: *mut fmpz,
+        invB: *const fmpz,
+        p: *const fmpz,
     ) -> mp_limb_signed_t;
     pub fn fmpz_mod_poly_xgcd_euclidean(
         G: *mut fmpz_mod_poly_struct,
         S: *mut fmpz_mod_poly_struct,
         T: *mut fmpz_mod_poly_struct,
-        A: *mut fmpz_mod_poly_struct,
-        B: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        A: *const fmpz_mod_poly_struct,
+        B: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_xgcd_euclidean_f(
         f: *mut fmpz,
         G: *mut fmpz_mod_poly_struct,
         S: *mut fmpz_mod_poly_struct,
         T: *mut fmpz_mod_poly_struct,
-        A: *mut fmpz_mod_poly_struct,
-        B: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        A: *const fmpz_mod_poly_struct,
+        B: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_xgcd_hgcd(
         G: *mut fmpz,
@@ -1115,15 +1115,15 @@ extern "C" {
         lenA: mp_limb_signed_t,
         B: *const fmpz,
         lenB: mp_limb_signed_t,
-        mod_: *mut fmpz,
+        mod_: *const fmpz,
     ) -> mp_limb_signed_t;
     pub fn fmpz_mod_poly_xgcd_hgcd(
         G: *mut fmpz_mod_poly_struct,
         S: *mut fmpz_mod_poly_struct,
         T: *mut fmpz_mod_poly_struct,
-        A: *mut fmpz_mod_poly_struct,
-        B: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        A: *const fmpz_mod_poly_struct,
+        B: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_xgcd(
         G: *mut fmpz,
@@ -1133,8 +1133,8 @@ extern "C" {
         lenA: mp_limb_signed_t,
         B: *const fmpz,
         lenB: mp_limb_signed_t,
-        invB: *mut fmpz,
-        p: *mut fmpz,
+        invB: *const fmpz,
+        p: *const fmpz,
     ) -> mp_limb_signed_t;
     pub fn _fmpz_mod_poly_xgcd_f(
         f: *mut fmpz,
@@ -1145,25 +1145,25 @@ extern "C" {
         lenA: mp_limb_signed_t,
         B: *const fmpz,
         lenB: mp_limb_signed_t,
-        invB: *mut fmpz,
-        p: *mut fmpz,
+        invB: *const fmpz,
+        p: *const fmpz,
     ) -> mp_limb_signed_t;
     pub fn fmpz_mod_poly_xgcd(
         G: *mut fmpz_mod_poly_struct,
         S: *mut fmpz_mod_poly_struct,
         T: *mut fmpz_mod_poly_struct,
-        A: *mut fmpz_mod_poly_struct,
-        B: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        A: *const fmpz_mod_poly_struct,
+        B: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_xgcd_f(
         f: *mut fmpz,
         G: *mut fmpz_mod_poly_struct,
         S: *mut fmpz_mod_poly_struct,
         T: *mut fmpz_mod_poly_struct,
-        A: *mut fmpz_mod_poly_struct,
-        B: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        A: *const fmpz_mod_poly_struct,
+        B: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_gcdinv_euclidean_f(
         f: *mut fmpz,
@@ -1173,16 +1173,16 @@ extern "C" {
         lenA: mp_limb_signed_t,
         B: *const fmpz,
         lenB: mp_limb_signed_t,
-        invA: *mut fmpz,
-        p: *mut fmpz,
+        invA: *const fmpz,
+        p: *const fmpz,
     ) -> mp_limb_signed_t;
     pub fn fmpz_mod_poly_gcdinv_euclidean_f(
         f: *mut fmpz,
         G: *mut fmpz_mod_poly_struct,
         S: *mut fmpz_mod_poly_struct,
-        A: *mut fmpz_mod_poly_struct,
-        B: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        A: *const fmpz_mod_poly_struct,
+        B: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_gcdinv_euclidean(
         G: *mut fmpz,
@@ -1191,15 +1191,15 @@ extern "C" {
         lenA: mp_limb_signed_t,
         B: *const fmpz,
         lenB: mp_limb_signed_t,
-        invA: *mut fmpz,
-        p: *mut fmpz,
+        invA: *const fmpz,
+        p: *const fmpz,
     ) -> mp_limb_signed_t;
     pub fn fmpz_mod_poly_gcdinv_euclidean(
         G: *mut fmpz_mod_poly_struct,
         S: *mut fmpz_mod_poly_struct,
-        A: *mut fmpz_mod_poly_struct,
-        B: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        A: *const fmpz_mod_poly_struct,
+        B: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_gcdinv(
         G: *mut fmpz,
@@ -1208,14 +1208,14 @@ extern "C" {
         lenA: mp_limb_signed_t,
         B: *const fmpz,
         lenB: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     ) -> mp_limb_signed_t;
     pub fn fmpz_mod_poly_gcdinv(
         G: *mut fmpz_mod_poly_struct,
         S: *mut fmpz_mod_poly_struct,
-        A: *mut fmpz_mod_poly_struct,
-        B: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        A: *const fmpz_mod_poly_struct,
+        B: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_gcdinv_f(
         f: *mut fmpz,
@@ -1225,15 +1225,15 @@ extern "C" {
         lenA: mp_limb_signed_t,
         B: *const fmpz,
         lenB: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     ) -> mp_limb_signed_t;
     pub fn fmpz_mod_poly_gcdinv_f(
         f: *mut fmpz,
         G: *mut fmpz_mod_poly_struct,
         S: *mut fmpz_mod_poly_struct,
-        A: *mut fmpz_mod_poly_struct,
-        B: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        A: *const fmpz_mod_poly_struct,
+        B: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_invmod(
         A: *mut fmpz,
@@ -1241,7 +1241,7 @@ extern "C" {
         lenB: mp_limb_signed_t,
         P: *const fmpz,
         lenP: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     ) -> c_int;
     pub fn _fmpz_mod_poly_invmod_f(
         f: *mut fmpz,
@@ -1250,56 +1250,56 @@ extern "C" {
         lenB: mp_limb_signed_t,
         P: *const fmpz,
         lenP: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     ) -> c_int;
     pub fn fmpz_mod_poly_invmod(
         A: *mut fmpz_mod_poly_struct,
-        B: *mut fmpz_mod_poly_struct,
-        P: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        B: *const fmpz_mod_poly_struct,
+        P: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     ) -> c_int;
     pub fn fmpz_mod_poly_invmod_f(
         f: *mut fmpz,
         A: *mut fmpz_mod_poly_struct,
-        B: *mut fmpz_mod_poly_struct,
-        P: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        B: *const fmpz_mod_poly_struct,
+        P: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     ) -> c_int;
     pub fn _fmpz_mod_poly_minpoly_bm(
         poly: *mut fmpz,
         seq: *const fmpz,
         len: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     ) -> mp_limb_signed_t;
     pub fn fmpz_mod_poly_minpoly_bm(
         poly: *mut fmpz_mod_poly_struct,
         seq: *const fmpz,
         len: mp_limb_signed_t,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_minpoly_hgcd(
         poly: *mut fmpz,
         seq: *const fmpz,
         len: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     ) -> mp_limb_signed_t;
     pub fn fmpz_mod_poly_minpoly_hgcd(
         poly: *mut fmpz_mod_poly_struct,
         seq: *const fmpz,
         len: mp_limb_signed_t,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_minpoly(
         poly: *mut fmpz,
         seq: *const fmpz,
         len: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     ) -> mp_limb_signed_t;
     pub fn fmpz_mod_poly_minpoly(
         poly: *mut fmpz_mod_poly_struct,
         seq: *const fmpz,
         len: mp_limb_signed_t,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_resultant_euclidean(
         res: *mut fmpz,
@@ -1307,13 +1307,13 @@ extern "C" {
         len1: mp_limb_signed_t,
         poly2: *const fmpz,
         len2: mp_limb_signed_t,
-        mod_: *mut fmpz,
+        mod_: *const fmpz,
     );
     pub fn fmpz_mod_poly_resultant_euclidean(
         r: *mut fmpz,
-        f: *mut fmpz_mod_poly_struct,
-        g: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        f: *const fmpz_mod_poly_struct,
+        g: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_resultant_hgcd(
         res: *mut fmpz,
@@ -1321,13 +1321,13 @@ extern "C" {
         lenA: mp_limb_signed_t,
         B: *const fmpz,
         lenB: mp_limb_signed_t,
-        mod_: *mut fmpz,
+        mod_: *const fmpz,
     );
     pub fn fmpz_mod_poly_resultant_hgcd(
         res: *mut fmpz,
-        A: *mut fmpz_mod_poly_struct,
-        B: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        A: *const fmpz_mod_poly_struct,
+        B: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_resultant(
         res: *mut fmpz,
@@ -1335,48 +1335,48 @@ extern "C" {
         len1: mp_limb_signed_t,
         poly2: *const fmpz,
         len2: mp_limb_signed_t,
-        mod_: *mut fmpz,
+        mod_: *const fmpz,
     );
     pub fn fmpz_mod_poly_resultant(
         res: *mut fmpz,
-        f: *mut fmpz_mod_poly_struct,
-        g: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        f: *const fmpz_mod_poly_struct,
+        g: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_discriminant(
         d: *mut fmpz,
         poly: *const fmpz,
         len: mp_limb_signed_t,
-        mod_: *mut fmpz,
+        mod_: *const fmpz,
     );
     pub fn fmpz_mod_poly_discriminant(
         d: *mut fmpz,
-        f: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        f: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_derivative(
         res: *mut fmpz,
         poly: *const fmpz,
         len: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     );
     pub fn fmpz_mod_poly_derivative(
         res: *mut fmpz_mod_poly_struct,
-        poly: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        poly: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_evaluate_fmpz(
         res: *mut fmpz,
         poly: *const fmpz,
         len: mp_limb_signed_t,
-        a: *mut fmpz,
-        p: *mut fmpz,
+        a: *const fmpz,
+        p: *const fmpz,
     );
     pub fn fmpz_mod_poly_evaluate_fmpz(
         res: *mut fmpz,
-        poly: *mut fmpz_mod_poly_struct,
-        a: *mut fmpz,
-        ctx: *mut fmpz_mod_ctx_struct,
+        poly: *const fmpz_mod_poly_struct,
+        a: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_tree_alloc(len: mp_limb_signed_t) -> *mut *mut fmpz_poly_struct;
     pub fn _fmpz_mod_poly_tree_free(tree: *mut *mut fmpz_poly_struct, len: mp_limb_signed_t);
@@ -1392,22 +1392,22 @@ extern "C" {
         len: mp_limb_signed_t,
         xs: *const fmpz,
         n: mp_limb_signed_t,
-        mod_: *mut fmpz,
+        mod_: *const fmpz,
     );
     pub fn fmpz_mod_poly_evaluate_fmpz_vec_iter(
         ys: *mut fmpz,
-        poly: *mut fmpz_mod_poly_struct,
+        poly: *const fmpz_mod_poly_struct,
         xs: *const fmpz,
         n: mp_limb_signed_t,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_evaluate_fmpz_vec_fast_precomp(
         vs: *mut fmpz,
         poly: *const fmpz,
         plen: mp_limb_signed_t,
-        tree: *const *mut fmpz_poly_struct,
+        tree: *const *const fmpz_poly_struct,
         len: mp_limb_signed_t,
-        mod_: *mut fmpz,
+        mod_: *const fmpz,
     );
     pub fn _fmpz_mod_poly_evaluate_fmpz_vec_fast(
         ys: *mut fmpz,
@@ -1415,14 +1415,14 @@ extern "C" {
         plen: mp_limb_signed_t,
         xs: *const fmpz,
         n: mp_limb_signed_t,
-        mod_: *mut fmpz,
+        mod_: *const fmpz,
     );
     pub fn fmpz_mod_poly_evaluate_fmpz_vec_fast(
         ys: *mut fmpz,
-        poly: *mut fmpz_mod_poly_struct,
+        poly: *const fmpz_mod_poly_struct,
         xs: *const fmpz,
         n: mp_limb_signed_t,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_evaluate_fmpz_vec(
         ys: *mut fmpz,
@@ -1430,14 +1430,14 @@ extern "C" {
         len: mp_limb_signed_t,
         xs: *const fmpz,
         n: mp_limb_signed_t,
-        mod_: *mut fmpz,
+        mod_: *const fmpz,
     );
     pub fn fmpz_mod_poly_evaluate_fmpz_vec(
         ys: *mut fmpz,
-        poly: *mut fmpz_mod_poly_struct,
+        poly: *const fmpz_mod_poly_struct,
         xs: *const fmpz,
         n: mp_limb_signed_t,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_compose_horner(
         res: *mut fmpz,
@@ -1445,13 +1445,13 @@ extern "C" {
         len1: mp_limb_signed_t,
         poly2: *const fmpz,
         len2: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     );
     pub fn fmpz_mod_poly_compose_horner(
         res: *mut fmpz_mod_poly_struct,
-        poly1: *mut fmpz_mod_poly_struct,
-        poly2: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        poly1: *const fmpz_mod_poly_struct,
+        poly2: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_compose_divconquer(
         res: *mut fmpz,
@@ -1459,13 +1459,13 @@ extern "C" {
         len1: mp_limb_signed_t,
         poly2: *const fmpz,
         len2: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     );
     pub fn fmpz_mod_poly_compose_divconquer(
         res: *mut fmpz_mod_poly_struct,
-        poly1: *mut fmpz_mod_poly_struct,
-        poly2: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        poly1: *const fmpz_mod_poly_struct,
+        poly2: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_compose(
         res: *mut fmpz,
@@ -1473,13 +1473,13 @@ extern "C" {
         len1: mp_limb_signed_t,
         poly2: *const fmpz,
         len2: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     );
     pub fn fmpz_mod_poly_compose(
         res: *mut fmpz_mod_poly_struct,
-        poly1: *mut fmpz_mod_poly_struct,
-        poly2: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        poly1: *const fmpz_mod_poly_struct,
+        poly2: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_compose_mod(
         res: *mut fmpz,
@@ -1488,14 +1488,14 @@ extern "C" {
         g: *const fmpz,
         h: *const fmpz,
         lenh: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     );
     pub fn fmpz_mod_poly_compose_mod(
         res: *mut fmpz_mod_poly_struct,
-        poly1: *mut fmpz_mod_poly_struct,
-        poly2: *mut fmpz_mod_poly_struct,
-        poly3: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        poly1: *const fmpz_mod_poly_struct,
+        poly2: *const fmpz_mod_poly_struct,
+        poly3: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_compose_mod_brent_kung(
         res: *mut fmpz,
@@ -1504,20 +1504,20 @@ extern "C" {
         poly2: *const fmpz,
         poly3: *const fmpz,
         len3: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     );
     pub fn fmpz_mod_poly_compose_mod_brent_kung(
         res: *mut fmpz_mod_poly_struct,
-        poly1: *mut fmpz_mod_poly_struct,
-        poly2: *mut fmpz_mod_poly_struct,
-        poly3: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        poly1: *const fmpz_mod_poly_struct,
+        poly2: *const fmpz_mod_poly_struct,
+        poly3: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_reduce_matrix_mod_poly(
         A: *mut fmpz_mat_struct,
-        B: *mut fmpz_mat_struct,
-        f: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        B: *const fmpz_mat_struct,
+        f: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_precompute_matrix(
         A: *mut fmpz_mat_struct,
@@ -1526,35 +1526,35 @@ extern "C" {
         len2: mp_limb_signed_t,
         poly2inv: *const fmpz,
         len2inv: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     );
     pub fn _fmpz_mod_poly_precompute_matrix_worker(arg_ptr: *mut c_void);
     pub fn fmpz_mod_poly_precompute_matrix(
         A: *mut fmpz_mat_struct,
-        poly1: *mut fmpz_mod_poly_struct,
-        poly2: *mut fmpz_mod_poly_struct,
-        poly2inv: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        poly1: *const fmpz_mod_poly_struct,
+        poly2: *const fmpz_mod_poly_struct,
+        poly2inv: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_compose_mod_brent_kung_precomp_preinv(
         res: *mut fmpz,
         poly1: *const fmpz,
         len1: mp_limb_signed_t,
-        A: *mut fmpz_mat_struct,
+        A: *const fmpz_mat_struct,
         poly3: *const fmpz,
         len3: mp_limb_signed_t,
         poly3inv: *const fmpz,
         len3inv: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     );
     pub fn _fmpz_mod_poly_compose_mod_brent_kung_precomp_preinv_worker(arg_ptr: *mut c_void);
     pub fn fmpz_mod_poly_compose_mod_brent_kung_precomp_preinv(
         res: *mut fmpz_mod_poly_struct,
-        poly1: *mut fmpz_mod_poly_struct,
-        A: *mut fmpz_mat_struct,
-        poly3: *mut fmpz_mod_poly_struct,
-        poly3inv: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        poly1: *const fmpz_mod_poly_struct,
+        A: *const fmpz_mat_struct,
+        poly3: *const fmpz_mod_poly_struct,
+        poly3inv: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_compose_mod_brent_kung_preinv(
         res: *mut fmpz,
@@ -1565,15 +1565,15 @@ extern "C" {
         len3: mp_limb_signed_t,
         poly3inv: *const fmpz,
         len3inv: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     );
     pub fn fmpz_mod_poly_compose_mod_brent_kung_preinv(
         res: *mut fmpz_mod_poly_struct,
-        poly1: *mut fmpz_mod_poly_struct,
-        poly2: *mut fmpz_mod_poly_struct,
-        poly3: *mut fmpz_mod_poly_struct,
-        poly3inv: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        poly1: *const fmpz_mod_poly_struct,
+        poly2: *const fmpz_mod_poly_struct,
+        poly3: *const fmpz_mod_poly_struct,
+        poly3inv: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_compose_mod_horner(
         res: *mut fmpz,
@@ -1582,14 +1582,14 @@ extern "C" {
         g: *const fmpz,
         h: *const fmpz,
         lenh: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     );
     pub fn fmpz_mod_poly_compose_mod_horner(
         res: *mut fmpz_mod_poly_struct,
-        poly1: *mut fmpz_mod_poly_struct,
-        poly2: *mut fmpz_mod_poly_struct,
-        poly3: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        poly1: *const fmpz_mod_poly_struct,
+        poly2: *const fmpz_mod_poly_struct,
+        poly3: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_compose_mod_brent_kung_vec_preinv(
         res: *mut fmpz_mod_poly_struct,
@@ -1602,17 +1602,17 @@ extern "C" {
         len: mp_limb_signed_t,
         polyinv: *const fmpz,
         leninv: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     );
     pub fn fmpz_mod_poly_compose_mod_brent_kung_vec_preinv(
         res: *mut fmpz_mod_poly_struct,
         polys: *const fmpz_mod_poly_struct,
         len1: mp_limb_signed_t,
         n: mp_limb_signed_t,
-        g: *mut fmpz_mod_poly_struct,
-        poly: *mut fmpz_mod_poly_struct,
-        polyinv: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        g: *const fmpz_mod_poly_struct,
+        poly: *const fmpz_mod_poly_struct,
+        polyinv: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_compose_mod_brent_kung_vec_preinv_threaded_pool(
         res: *mut fmpz_mod_poly_struct,
@@ -1625,8 +1625,8 @@ extern "C" {
         len: mp_limb_signed_t,
         polyinv: *const fmpz,
         leninv: mp_limb_signed_t,
-        p: *mut fmpz,
-        threads: *mut thread_pool_handle,
+        p: *const fmpz,
+        threads: *const thread_pool_handle,
         num_threads: mp_limb_signed_t,
     );
     pub fn fmpz_mod_poly_compose_mod_brent_kung_vec_preinv_threaded_pool(
@@ -1634,11 +1634,11 @@ extern "C" {
         polys: *const fmpz_mod_poly_struct,
         len1: mp_limb_signed_t,
         n: mp_limb_signed_t,
-        g: *mut fmpz_mod_poly_struct,
-        poly: *mut fmpz_mod_poly_struct,
-        polyinv: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
-        threads: *mut thread_pool_handle,
+        g: *const fmpz_mod_poly_struct,
+        poly: *const fmpz_mod_poly_struct,
+        polyinv: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
+        threads: *const thread_pool_handle,
         num_threads: mp_limb_signed_t,
     );
     pub fn fmpz_mod_poly_compose_mod_brent_kung_vec_preinv_threaded(
@@ -1646,25 +1646,25 @@ extern "C" {
         polys: *const fmpz_mod_poly_struct,
         len1: mp_limb_signed_t,
         n: mp_limb_signed_t,
-        g: *mut fmpz_mod_poly_struct,
-        poly: *mut fmpz_mod_poly_struct,
-        polyinv: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        g: *const fmpz_mod_poly_struct,
+        poly: *const fmpz_mod_poly_struct,
+        polyinv: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_radix_init(
         Rpow: *mut *mut fmpz,
-        Rinv: *mut *mut fmpz,
+        Rinv: *const *const fmpz,
         R: *const fmpz,
         lenR: mp_limb_signed_t,
         k: mp_limb_signed_t,
-        invL: *mut fmpz,
-        p: *mut fmpz,
+        invL: *const fmpz,
+        p: *const fmpz,
     );
     pub fn fmpz_mod_poly_radix_init(
         D: *mut fmpz_mod_poly_radix_struct,
         R: *mut fmpz_mod_poly_struct,
         degF: mp_limb_signed_t,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_radix_clear(D: *mut fmpz_mod_poly_radix_struct);
     pub fn _fmpz_mod_poly_radix(
@@ -1675,114 +1675,114 @@ extern "C" {
         degR: mp_limb_signed_t,
         k: mp_limb_signed_t,
         i: mp_limb_signed_t,
-        W: *mut fmpz,
-        p: *mut fmpz,
+        W: *const fmpz,
+        p: *const fmpz,
     );
     pub fn fmpz_mod_poly_radix(
         B: *mut *mut fmpz_mod_poly_struct,
-        F: *mut fmpz_mod_poly_struct,
-        D: *mut fmpz_mod_poly_radix_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        F: *const fmpz_mod_poly_struct,
+        D: *const fmpz_mod_poly_radix_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_poly_fprint(
         file: *mut FILE,
         poly: *const fmpz,
         len: mp_limb_signed_t,
-        p: *mut fmpz,
+        p: *const fmpz,
     ) -> c_int;
     pub fn fmpz_mod_poly_fprint(
         file: *mut FILE,
-        poly: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        poly: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     ) -> c_int;
     pub fn fmpz_mod_poly_fread(
         file: *mut FILE,
-        poly: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        poly: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     ) -> c_int;
     pub fn fmpz_mod_poly_fprint_pretty(
         file: *mut FILE,
-        poly: *mut fmpz_mod_poly_struct,
+        poly: *const fmpz_mod_poly_struct,
         x: *const c_char,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     ) -> c_int;
-    pub fn _fmpz_mod_poly_print(poly: *const fmpz, len: mp_limb_signed_t, p: *mut fmpz) -> c_int;
+    pub fn _fmpz_mod_poly_print(poly: *const fmpz, len: mp_limb_signed_t, p: *const fmpz) -> c_int;
     pub fn fmpz_mod_poly_print(
         poly: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     ) -> c_int;
     pub fn fmpz_mod_poly_print_pretty(
-        poly: *mut fmpz_mod_poly_struct,
+        poly: *const fmpz_mod_poly_struct,
         x: *const c_char,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     ) -> c_int;
     pub fn _fmpz_mod_poly_product_roots_fmpz_vec(
         poly: *mut fmpz,
         xs: *const fmpz,
         n: mp_limb_signed_t,
-        mod_: *mut fmpz,
+        mod_: *const fmpz,
     );
     pub fn fmpz_mod_poly_product_roots_fmpz_vec(
         poly: *mut fmpz_poly_struct,
         xs: *const fmpz,
         n: mp_limb_signed_t,
-        mod_: *mut fmpz,
+        mod_: *const fmpz,
     );
     pub fn fmpz_mod_poly_find_distinct_nonzero_roots(
-        roots: *mut fmpz,
-        P: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        roots: *const fmpz,
+        P: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     ) -> c_int;
     pub fn _fmpz_mod_poly_split_rabin(
         a: *mut fmpz_mod_poly_struct,
-        b: *mut fmpz_mod_poly_struct,
-        f: *mut fmpz_mod_poly_struct,
-        halfp: *mut fmpz,
-        t: *mut fmpz_mod_poly_struct,
-        t2: *mut fmpz_mod_poly_struct,
-        randstate: *mut flint_rand_s,
-        ctx: *mut fmpz_mod_ctx_struct,
+        b: *const fmpz_mod_poly_struct,
+        f: *const fmpz_mod_poly_struct,
+        halfp: *const fmpz,
+        t: *const fmpz_mod_poly_struct,
+        t2: *const fmpz_mod_poly_struct,
+        randstate: *const flint_rand_s,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_berlekamp_massey_init(
         B: *mut fmpz_mod_berlekamp_massey_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_berlekamp_massey_start_over(
-        B: *mut fmpz_mod_berlekamp_massey_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        B: *const fmpz_mod_berlekamp_massey_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_berlekamp_massey_clear(
-        B: *mut fmpz_mod_berlekamp_massey_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        B: *const fmpz_mod_berlekamp_massey_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_berlekamp_massey_print(
         B: *mut fmpz_mod_berlekamp_massey_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_berlekamp_massey_add_points(
         B: *mut fmpz_mod_berlekamp_massey_struct,
         a: *const fmpz,
         count: mp_limb_signed_t,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_berlekamp_massey_add_zeros(
         B: *mut fmpz_mod_berlekamp_massey_struct,
         count: mp_limb_signed_t,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_berlekamp_massey_add_point(
         B: *mut fmpz_mod_berlekamp_massey_struct,
-        a: *mut fmpz,
-        ctx: *mut fmpz_mod_ctx_struct,
+        a: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_berlekamp_massey_add_point_ui(
         B: *mut fmpz_mod_berlekamp_massey_struct,
         a: mp_limb_t,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_berlekamp_massey_reduce(
         B: *mut fmpz_mod_berlekamp_massey_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     ) -> c_int;
     pub fn fmpz_mod_berlekamp_massey_points(
         B: *mut fmpz_mod_berlekamp_massey_struct,
@@ -1798,38 +1798,38 @@ extern "C" {
     ) -> *const fmpz_mod_poly_struct;
     pub fn fmpz_mod_poly_add_si(
         res: *mut fmpz_mod_poly_struct,
-        poly: *mut fmpz_mod_poly_struct,
+        poly: *const fmpz_mod_poly_struct,
         c: mp_limb_signed_t,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_sub_si(
         res: *mut fmpz_mod_poly_struct,
-        poly: *mut fmpz_mod_poly_struct,
+        poly: *const fmpz_mod_poly_struct,
         c: mp_limb_signed_t,
-        ctx: *mut fmpz_mod_ctx_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_si_sub(
         res: *mut fmpz_mod_poly_struct,
         c: mp_limb_signed_t,
-        poly: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        poly: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_add_fmpz(
         res: *mut fmpz_mod_poly_struct,
-        poly: *mut fmpz_mod_poly_struct,
-        c: *mut fmpz,
-        ctx: *mut fmpz_mod_ctx_struct,
+        poly: *const fmpz_mod_poly_struct,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_sub_fmpz(
         res: *mut fmpz_mod_poly_struct,
-        poly: *mut fmpz_mod_poly_struct,
-        c: *mut fmpz,
-        ctx: *mut fmpz_mod_ctx_struct,
+        poly: *const fmpz_mod_poly_struct,
+        c: *const fmpz,
+        ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_fmpz_sub(
         res: *mut fmpz_mod_poly_struct,
-        c: *mut fmpz,
-        poly: *mut fmpz_mod_poly_struct,
-        ctx: *mut fmpz_mod_ctx_struct,
+        c: *const fmpz,
+        poly: *const fmpz_mod_poly_struct,
+        ctx: *const fmpz_mod_ctx_struct,
     );
 }
