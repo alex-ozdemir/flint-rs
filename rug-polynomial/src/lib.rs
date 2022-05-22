@@ -445,7 +445,10 @@ impl Clone for ModPoly {
 
 impl Drop for ModPoly {
     fn drop(&mut self) {
-        unsafe { fmpz_mod_poly_clear(&mut self.raw, &mut self.ctx) }
+        unsafe { 
+            fmpz_mod_poly_clear(&mut self.raw, &mut self.ctx);
+            fmpz_mod_ctx_clear(&mut self.ctx);
+        }
     }
 }
 
