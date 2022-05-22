@@ -19,7 +19,7 @@ pub type fmpz_mod_mat_t = [fmpz_mod_mat_struct; 1usize];
 
 extern "C" {
     pub fn fmpz_mod_mat_entry(
-        mat: *mut fmpz_mod_mat_struct,
+        mat: *const fmpz_mod_mat_struct,
         i: mp_limb_signed_t,
         j: mp_limb_signed_t,
     ) -> *const fmpz;
