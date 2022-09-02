@@ -9,9 +9,9 @@ use std::{
     str,
 };
 
-const FLINT_DIR: &str = "flint-2.8.4-c";
+const FLINT_DIR: &str = "flint-2.8.5-c";
 const FLINT_LIB: &str = "libflint.a";
-const FLINT_VER: &str = "2.8.4";
+const FLINT_VER: &str = "2.8.5";
 const FLINT_HEADERS: &[&str] = &[
     "aprcl.h",
     "arith.h",
@@ -155,10 +155,14 @@ fn main() {
     let out_dir = PathBuf::from(cargo_env("OUT_DIR"));
 
     println!("cargo:rerun-if-env-changed=FLINT_SYS_CACHE");
-    let cache_dir = match env::var_os("FLINT_SYS_CACHE") {
-        Some(ref c) if c.is_empty() || c == "_" => None,
-        Some(c) => Some(PathBuf::from(c)),
-        None => system_cache_dir().map(|c| c.join("flint-sys")),
+    let cache_dir = if env::var("DOCS_RS").is_ok() {
+         None
+    } else {
+        match env::var_os("FLINT_SYS_CACHE") {
+            Some(ref c) if c.is_empty() || c == "_" => None,
+            Some(c) => Some(PathBuf::from(c)),
+            None => system_cache_dir().map(|c| c.join("flint-sys")),
+        }
     };
     let cache_dir = cache_dir
         .map(|cache| cache.join(&FLINT_VER))
@@ -192,7 +196,7 @@ fn compile(env: &Environment) {
         copy_dir_or_panic(&env.src_dir.join(FLINT_DIR), &env.build_dir);
         build(env);
         remove_dir_or_panic(&env.build_dir);
-        assert!(save_cache(env));
+        save_cache(env);
     }
     write_link_info(env);
 }
@@ -206,7 +210,7 @@ fn need_compile(env: &Environment) -> bool {
 
     if ok {
         if should_save_cache(env) {
-            assert!(save_cache(env));
+            save_cache(env);
         }
         return false;
     } else if load_cache(env) {
