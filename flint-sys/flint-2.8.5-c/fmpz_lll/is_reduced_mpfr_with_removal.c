@@ -14,8 +14,9 @@
 #include "mpfr_mat.h"
 
 int
-fmpz_lll_is_reduced_mpfr(const fmpz_mat_t B, const fmpz_lll_t fl,
-                         flint_bitcnt_t prec)
+fmpz_lll_is_reduced_mpfr_with_removal(const fmpz_mat_t B, const fmpz_lll_t fl,
+                                      const fmpz_t gs_B, int newd,
+                                      flint_bitcnt_t prec)
 {
     if (fl->rt == Z_BASIS)
     {
@@ -24,7 +25,7 @@ fmpz_lll_is_reduced_mpfr(const fmpz_mat_t B, const fmpz_lll_t fl,
         mpfr_mat_t A, Q, R, V, Wu, Wd, bound, bound2, bound3, boundt, mm, rm,
             mn, rn, absR;
         flint_mpfr *du, *dd;
-        mpfr_t s, norm, ti, tj, tmp;
+        mpfr_t s, norm, ti, tj, tmp, mpfr_gs_B;
 
         if (B->r == 0 || B->r == 1)
             return 1;
@@ -461,20 +462,30 @@ fmpz_lll_is_reduced_mpfr(const fmpz_mat_t B, const fmpz_lll_t fl,
 
         mpfr_mat_clear(absR);
 
+        mpfr_init2(mpfr_gs_B, prec);
+        fmpz_get_mpfr(mpfr_gs_B, gs_B, MPFR_RNDN);
         for (i = 0; i < n - 1; i++)
         {
             mpfr_sub(tmp, mpfr_mat_entry(R, i, i), mpfr_mat_entry(bound, i, i),
                      MPFR_RNDD);
             mpfr_mul_d(ti, tmp, fl->eta, MPFR_RNDD);
+            mpfr_sqr(tmp, tmp, MPFR_RNDD);
+            if (i >= newd && mpfr_less_p(tmp, mpfr_gs_B))
+            {
+                mpfr_mat_clear(R);
+                mpfr_mat_clear(bound);
+                mpfr_clears(s, norm, ti, tj, tmp, mpfr_gs_B, NULL);
+                return 0;
+            }
             for (j = i + 1; j < n; j++)
             {
                 mpfr_abs(tmp, mpfr_mat_entry(R, i, j), MPFR_RNDU);
                 mpfr_add(tj, tmp, mpfr_mat_entry(bound, i, j), MPFR_RNDU);
-                if (mpfr_greater_p(tj, ti))
+                if (i < newd && mpfr_greater_p(tj, ti))
                 {
                     mpfr_mat_clear(R);
                     mpfr_mat_clear(bound);
-                    mpfr_clears(s, norm, ti, tj, tmp, NULL);
+                    mpfr_clears(s, norm, ti, tj, tmp, mpfr_gs_B, NULL);
                     return 0;
                 }
             }
@@ -490,18 +501,28 @@ fmpz_lll_is_reduced_mpfr(const fmpz_mat_t B, const fmpz_lll_t fl,
             mpfr_neg(s, s, MPFR_RNDD);
             mpfr_sqrt(tmp, s, MPFR_RNDU);
             mpfr_mul(s, tmp, ti, MPFR_RNDU);
-            if (mpfr_greater_p(s, tj))
+            if (i < newd && mpfr_greater_p(s, tj))
             {
                 mpfr_mat_clear(R);
                 mpfr_mat_clear(bound);
-                mpfr_clears(s, norm, ti, tj, tmp, NULL);
+                mpfr_clears(s, norm, ti, tj, tmp, mpfr_gs_B, NULL);
                 return 0;
             }
+        }
+        mpfr_sub(tmp, mpfr_mat_entry(R, i, i), mpfr_mat_entry(bound, i, i),
+                 MPFR_RNDD);
+        mpfr_sqr(tmp, tmp, MPFR_RNDD);
+        if (i >= newd && mpfr_less_p(tmp, mpfr_gs_B))
+        {
+            mpfr_mat_clear(R);
+            mpfr_mat_clear(bound);
+            mpfr_clears(s, norm, ti, tj, tmp, mpfr_gs_B, NULL);
+            return 0;
         }
 
         mpfr_mat_clear(R);
         mpfr_mat_clear(bound);
-        mpfr_clears(s, norm, ti, tj, tmp, NULL);
+        mpfr_clears(s, norm, ti, tj, tmp, mpfr_gs_B, NULL);
     }
     else
     {
@@ -509,7 +530,7 @@ fmpz_lll_is_reduced_mpfr(const fmpz_mat_t B, const fmpz_lll_t fl,
         mpfr_mat_t A, R, V, Wu, Wd, bound, bound2, bound3, boundt, mm, rm,
             mn, rn, absR;
         flint_mpfr *du, *dd;
-        mpfr_t s, norm, ti, tj, tmp;
+        mpfr_t s, norm, ti, tj, tmp, mpfr_gs_B;
 
         if (B->r == 0 || B->r == 1)
             return 1;
@@ -559,6 +580,16 @@ fmpz_lll_is_reduced_mpfr(const fmpz_mat_t B, const fmpz_lll_t fl,
                              tmp, MPFR_RNDN);
                 }
             }
+
+            if (mpfr_sgn(mpfr_mat_entry(R, j, j)) <= 0)
+            {
+                /* going to take sqrt and then divide by it */
+                mpfr_mat_clear(A);
+                mpfr_mat_clear(R);
+                mpfr_mat_clear(V);
+                return 0;
+            }
+
             mpfr_sqrt(mpfr_mat_entry(R, j, j), mpfr_mat_entry(R, j, j),
                       MPFR_RNDN);
         }
@@ -899,20 +930,30 @@ fmpz_lll_is_reduced_mpfr(const fmpz_mat_t B, const fmpz_lll_t fl,
 
         mpfr_mat_clear(absR);
 
+        mpfr_init2(mpfr_gs_B, prec);
+        fmpz_get_mpfr(mpfr_gs_B, gs_B, MPFR_RNDN);
         for (i = 0; i < n - 1; i++)
         {
             mpfr_sub(tmp, mpfr_mat_entry(R, i, i), mpfr_mat_entry(bound, i, i),
                      MPFR_RNDD);
             mpfr_mul_d(ti, tmp, fl->eta, MPFR_RNDD);
+            mpfr_sqr(tmp, tmp, MPFR_RNDD);
+            if (i >= newd && mpfr_less_p(tmp, mpfr_gs_B))
+            {
+                mpfr_mat_clear(R);
+                mpfr_mat_clear(bound);
+                mpfr_clears(s, norm, ti, tj, tmp, mpfr_gs_B, NULL);
+                return 0;
+            }
             for (j = i + 1; j < n; j++)
             {
                 mpfr_abs(tmp, mpfr_mat_entry(R, i, j), MPFR_RNDU);
                 mpfr_add(tj, tmp, mpfr_mat_entry(bound, i, j), MPFR_RNDU);
-                if (mpfr_greater_p(tj, ti))
+                if (i < newd && mpfr_greater_p(tj, ti))
                 {
                     mpfr_mat_clear(R);
                     mpfr_mat_clear(bound);
-                    mpfr_clears(s, norm, ti, tj, tmp, NULL);
+                    mpfr_clears(s, norm, ti, tj, tmp, mpfr_gs_B, NULL);
                     return 0;
                 }
             }
@@ -928,18 +969,28 @@ fmpz_lll_is_reduced_mpfr(const fmpz_mat_t B, const fmpz_lll_t fl,
             mpfr_neg(s, s, MPFR_RNDD);
             mpfr_sqrt(tmp, s, MPFR_RNDU);
             mpfr_mul(s, tmp, ti, MPFR_RNDU);
-            if (mpfr_greater_p(s, tj))
+            if (i < newd && mpfr_greater_p(s, tj))
             {
                 mpfr_mat_clear(R);
                 mpfr_mat_clear(bound);
-                mpfr_clears(s, norm, ti, tj, tmp, NULL);
+                mpfr_clears(s, norm, ti, tj, tmp, mpfr_gs_B, NULL);
                 return 0;
             }
+        }
+        mpfr_sub(tmp, mpfr_mat_entry(R, i, i), mpfr_mat_entry(bound, i, i),
+                 MPFR_RNDD);
+        mpfr_sqr(tmp, tmp, MPFR_RNDD);
+        if (i >= newd && mpfr_less_p(tmp, mpfr_gs_B))
+        {
+            mpfr_mat_clear(R);
+            mpfr_mat_clear(bound);
+            mpfr_clears(s, norm, ti, tj, tmp, mpfr_gs_B, NULL);
+            return 0;
         }
 
         mpfr_mat_clear(R);
         mpfr_mat_clear(bound);
-        mpfr_clears(s, norm, ti, tj, tmp, NULL);
+        mpfr_clears(s, norm, ti, tj, tmp, mpfr_gs_B, NULL);
     }
     return 1;
 }
