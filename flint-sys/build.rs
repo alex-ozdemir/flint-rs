@@ -128,6 +128,7 @@ struct Environment {
     include_dir: PathBuf,
     build_dir: PathBuf,
     cache_dir: Option<PathBuf>,
+    jobs: OsString
 }
 
 fn main() {
@@ -180,6 +181,7 @@ fn main() {
         include_dir: out_dir.join("include"),
         build_dir: out_dir.join("build"),
         cache_dir,
+        jobs: cargo_env("NUM_JOBS"),
     };
        
     // make sure we have target directories
@@ -416,15 +418,17 @@ fn configure(build_dir: &Path, conf_line: &OsStr) {
     execute(conf);
 }
 
-fn make_and_check(_env: &Environment, build_dir: &Path) {
+fn make_and_check(env: &Environment, build_dir: &Path) {
     let mut make = Command::new("make");
-    make.current_dir(build_dir);
+    make.current_dir(build_dir).arg("-j").arg(&env.jobs); 
     execute(make);
 
     if !cfg!(feature = "disable-make-check") {
         let mut make_check = Command::new("make");
         make_check
             .current_dir(build_dir)
+            .arg("-j")
+            .arg(&env.jobs)
             .arg("check");
         execute(make_check);
     }
