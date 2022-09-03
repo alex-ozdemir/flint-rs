@@ -1,7 +1,6 @@
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
 
-//! We avoid a gmp-mpfr-sys dependency by defining the GMP and MPFR types used by FLINT.
 
 use libc::{c_int, c_long, c_uint, c_ulong, c_void, size_t};
 
