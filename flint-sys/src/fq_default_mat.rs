@@ -15,8 +15,8 @@ use crate::nmod_mat::nmod_mat_struct;
 use libc::{c_int, FILE};
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash)]
-pub struct fq_default_mat_struct {
+#[derive(Copy, Clone)]
+pub union fq_default_mat_struct {
     pub fq: fq_mat_t,
     pub fq_nmod: fq_nmod_mat_t,
     pub fq_zech: fq_zech_mat_t,
