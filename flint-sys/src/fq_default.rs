@@ -15,8 +15,8 @@ use crate::nmod_poly::nmod_poly_struct;
 use libc::{c_char, c_int, FILE};
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone, Hash)]
-pub struct fq_default_struct {
+#[derive(Copy, Clone)]
+pub union fq_default_struct {
     pub fq: fq_t,
     pub fq_nmod: fq_nmod_t,
     pub fq_zech: fq_zech_t,
@@ -25,15 +25,15 @@ pub struct fq_default_struct {
 pub type fq_default_t = [fq_default_struct; 1usize];
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+#[derive(Copy, Clone)]
 pub struct fq_default_ctx_struct {
     pub type_: c_int,
     pub ctx: fq_default_ctx_struct_ctx,
 }
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct fq_default_ctx_struct_ctx {
+#[derive(Copy, Clone)]
+pub union fq_default_ctx_struct_ctx {
     pub fq: fq_ctx_t,
     pub fq_nmod: fq_nmod_ctx_t,
     pub fq_zech: fq_zech_ctx_t,
