@@ -427,6 +427,38 @@ impl ModPoly {
             fmpz_mod_poly_sqr(&mut self.raw, &mut self.raw, &mut self.ctx);
         }
     }
+
+    /// From `(a, b)`, returns `(g, s, t)` such that `g | a`, `g | b` and `g = a*s + b*t`.
+    pub fn xgcd(&self, other: &Self) -> (Self, Self, Self) {
+        assert_eq!(self.modulus, other.modulus);
+        let mut g = ModPoly::new(self.modulus.clone());
+        let mut s = ModPoly::new(self.modulus.clone());
+        let mut t = ModPoly::new(self.modulus.clone());
+        unsafe {
+            fmpz_mod_poly_xgcd(
+                &mut g.raw,
+                &mut s.raw,
+                &mut t.raw,
+                &self.raw as *const _ as *mut _,
+                &other.raw as *const _ as *mut _,
+                &self.ctx as *const _ as *mut _,
+            );
+        }
+        (g, s, t)
+    }
+
+    /// Give the formal derivative of `self`.
+    pub fn derivative(&self) -> Self {
+        let mut d_self = ModPoly::new(self.modulus.clone());
+        unsafe {
+            fmpz_mod_poly_derivative(
+                &mut d_self.raw,
+                &self.raw as *const _ as *mut _,
+                &self.ctx as *const _ as *mut _,
+            );
+        }
+        d_self
+    }
 }
 
 impl Clone for ModPoly {
@@ -445,7 +477,7 @@ impl Clone for ModPoly {
 
 impl Drop for ModPoly {
     fn drop(&mut self) {
-        unsafe { 
+        unsafe {
             fmpz_mod_poly_clear(&mut self.raw, &mut self.ctx);
             fmpz_mod_ctx_clear(&mut self.ctx);
         }
@@ -914,5 +946,43 @@ mod test {
         let p = ModPoly::interpolate_from_mul_subgroup(ys.clone(), m.clone(), &w);
         let ys2 = p.evaluate_over_mul_subgroup(&w, 16);
         ys == ys2
+    }
+
+    fn test_derivative_xgcd(roots: Vec<isize>, m: Integer) {
+        let p = ModPoly::with_roots(roots.into_iter().map(Integer::from), &m);
+        let dp = p.derivative();
+        let (g, s, t) = p.xgcd(&dp);
+        assert_eq!(g.len(), 1);
+        assert_eq!(g, p * s + dp * t);
+    }
+
+    #[test]
+    fn test_xgcd() {
+        test_derivative_xgcd(vec![0], Integer::from(17));
+        test_derivative_xgcd(vec![0, 1], Integer::from(17));
+        test_derivative_xgcd(vec![0, 1, 2], Integer::from(17));
+        test_derivative_xgcd(vec![0, 4, 5], Integer::from(17));
+    }
+
+    #[test]
+    #[ignore]
+    fn bench_xgcd() {
+        let bls_12_381_r = Integer::from_str_radix(
+            "52435875175126190479447740508185965837690552500527637822603658699938581184513",
+            10,
+        )
+        .unwrap();
+        for log_n in 4..16 {
+            let n = 1 << log_n;
+            let roots: Vec<usize> = (0..n).collect();
+            let p = ModPoly::with_roots(roots.into_iter().map(Integer::from), &bls_12_381_r);
+            let dp = p.derivative();
+            let start = std::time::Instant::now();
+            let (g, _s, _t) = p.xgcd(&dp);
+            let duration = start.elapsed();
+            let nanos_per = duration.as_nanos() / n as u128;
+            println!("{log_n:>2}: {n:>8}: {duration:>8.1?} {nanos_per}ns/deg");
+            assert_eq!(g.len(), 1);
+        }
     }
 }

@@ -289,7 +289,10 @@ extern "C" {
     pub fn fmpz_mpoly_max_bits(A: *const fmpz_mpoly_struct) -> mp_limb_signed_t;
 }
 extern "C" {
-    pub fn fmpz_mpoly_is_fmpz(A: *const fmpz_mpoly_struct, ctx: *const fmpz_mpoly_ctx_struct) -> c_int;
+    pub fn fmpz_mpoly_is_fmpz(
+        A: *const fmpz_mpoly_struct,
+        ctx: *const fmpz_mpoly_ctx_struct,
+    ) -> c_int;
 }
 extern "C" {
     pub fn fmpz_mpoly_get_fmpz(
@@ -347,10 +350,16 @@ extern "C" {
     ) -> c_int;
 }
 extern "C" {
-    pub fn fmpz_mpoly_is_zero(A: *const fmpz_mpoly_struct, ctx: *const fmpz_mpoly_ctx_struct) -> c_int;
+    pub fn fmpz_mpoly_is_zero(
+        A: *const fmpz_mpoly_struct,
+        ctx: *const fmpz_mpoly_ctx_struct,
+    ) -> c_int;
 }
 extern "C" {
-    pub fn fmpz_mpoly_is_one(A: *const fmpz_mpoly_struct, ctx: *const fmpz_mpoly_ctx_struct) -> c_int;
+    pub fn fmpz_mpoly_is_one(
+        A: *const fmpz_mpoly_struct,
+        ctx: *const fmpz_mpoly_ctx_struct,
+    ) -> c_int;
 }
 extern "C" {
     pub fn fmpz_mpoly_degrees_fit_si(
@@ -795,7 +804,10 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn fmpz_mpoly_assert_canonical(A: *mut fmpz_mpoly_struct, ctx: *const fmpz_mpoly_ctx_struct);
+    pub fn fmpz_mpoly_assert_canonical(
+        A: *mut fmpz_mpoly_struct,
+        ctx: *const fmpz_mpoly_ctx_struct,
+    );
 }
 extern "C" {
     pub fn _fmpz_mpoly_radix_sort1(

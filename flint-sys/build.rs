@@ -1,9 +1,8 @@
-
 use std::{
     env,
     ffi::{OsStr, OsString},
-    fs::self,
-    io::{Result as IoResult},
+    fs,
+    io::Result as IoResult,
     path::{Path, PathBuf},
     process::Command,
     str,
@@ -109,7 +108,7 @@ const FLINT_HEADERS: &[&str] = &[
     "templates.h",
     "thread_pool.h",
     "thread_support.h",
-    "ulong_extras.h"
+    "ulong_extras.h",
 ];
 
 #[derive(Clone, Copy, PartialEq)]
@@ -128,7 +127,7 @@ struct Environment {
     include_dir: PathBuf,
     build_dir: PathBuf,
     cache_dir: Option<PathBuf>,
-    jobs: OsString
+    jobs: OsString,
 }
 
 fn main() {
@@ -157,7 +156,7 @@ fn main() {
 
     println!("cargo:rerun-if-env-changed=FLINT_SYS_CACHE");
     let cache_dir = if env::var("DOCS_RS").is_ok() {
-         None
+        None
     } else {
         match env::var_os("FLINT_SYS_CACHE") {
             Some(ref c) if c.is_empty() || c == "_" => None,
@@ -183,7 +182,7 @@ fn main() {
         cache_dir,
         jobs: cargo_env("NUM_JOBS"),
     };
-       
+
     // make sure we have target directories
     create_dir_or_panic(&env.lib_dir);
     create_dir_or_panic(&env.include_dir);
@@ -266,20 +265,18 @@ fn should_save_cache(env: &Environment) -> bool {
 
 fn build(env: &Environment) {
     println!("$ cd {:?}", &env.build_dir);
-    let conf = String::from(
-        format!(
-            "./configure --disable-shared --with-gmp={} --with-mpfr={}",
-            env.gmp_mpfr_dir.display(),
-            env.gmp_mpfr_dir.display(),
-            )
-        );
+    let conf = String::from(format!(
+        "./configure --disable-shared --with-gmp={} --with-mpfr={}",
+        env.gmp_mpfr_dir.display(),
+        env.gmp_mpfr_dir.display(),
+    ));
 
     configure(&env.build_dir, &OsString::from(conf));
     make_and_check(env, &env.build_dir);
 
     let build_lib = &env.build_dir.join(FLINT_LIB);
     copy_file_or_panic(&build_lib, &env.lib_dir.join(FLINT_LIB));
-    
+
     for h in FLINT_HEADERS {
         copy_file_or_panic(&env.build_dir.join(h), &env.include_dir.join(h));
     }
@@ -313,7 +310,6 @@ fn write_link_info(env: &Environment) {
     println!("cargo:rustc-link-lib=static=gmp");
     println!("cargo:rustc-link-lib=static=flint");
 }
-
 
 fn cargo_env(name: &str) -> OsString {
     env::var_os(name)
@@ -420,7 +416,7 @@ fn configure(build_dir: &Path, conf_line: &OsStr) {
 
 fn make_and_check(env: &Environment, build_dir: &Path) {
     let mut make = Command::new("make");
-    make.current_dir(build_dir).arg("-j").arg(&env.jobs); 
+    make.current_dir(build_dir).arg("-j").arg(&env.jobs);
     execute(make);
 
     if !cfg!(feature = "disable-make-check") {
@@ -491,4 +487,3 @@ fn system_cache_dir() -> Option<PathBuf> {
             })
     }
 }
-

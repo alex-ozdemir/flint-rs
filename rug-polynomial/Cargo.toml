@@ -19,7 +19,7 @@ flint-sys = "0.5.0"
 #flint-sys = { path = "../flint-sys" }
 rug-fft = "0.1.0"
 gmp-mpfr-sys = "~1.4"
-rug = { version = "~1.13", features = ["serde"] }
+rug = { version = "1.13", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
 
 [dev-dependencies]
