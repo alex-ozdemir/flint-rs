@@ -1,6 +1,6 @@
 [package]
 name = "rug-polynomial"
-version = "0.2.4"
+version = "0.2.5"
 authors = ["Alex Ozdemir <aozdemir@hmc.edu>"]
 edition = "2018"
 description = "Polynomial arithmetic, built on Rug & FLINT"
@@ -15,7 +15,7 @@ readme = "README.md"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-flint-sys = "0.5.0"
+flint-sys = "0.7.3"
 #flint-sys = { path = "../flint-sys" }
 rug-fft = "0.1.0"
 gmp-mpfr-sys = "~1.4"

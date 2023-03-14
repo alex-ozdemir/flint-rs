@@ -1,3 +1,0 @@
-[workspace]
-
-members = ["flint-sys", "flint-sys/flint-bindgen", "rug-polynomial", "rug-fft"]
