@@ -5,8 +5,6 @@
 
 use crate::deps::*;
 use crate::flint::*;
-use crate::fmpq::{fmpq, fmpq_t};
-use crate::fmpq_poly::fmpq_poly_struct;
 use crate::fmpz::{fmpz, fmpz_t};
 use crate::fmpz_mat::fmpz_mat_struct;
 use crate::fmpz_mod::fmpz_mod_ctx_struct;
@@ -170,7 +168,7 @@ extern "C" {
     pub fn fmpz_mpoly_set_str_pretty(
         A: *mut fmpz_mpoly_struct,
         str_: *const c_char,
-        x: *mut *const c_char,
+        x: *const *const c_char,
         ctx: *const fmpz_mpoly_ctx_struct,
     ) -> c_int;
 }
