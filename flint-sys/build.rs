@@ -227,7 +227,7 @@ fn main() {
         }
     };
     let cache_dir = cache_dir
-        .map(|cache| cache.join(&FLINT_VER))
+        .map(|cache| cache.join(FLINT_VER))
         .map(|cache| match cc_cache_dir {
             Some(dir) => cache.join(dir),
             None => cache,
@@ -268,7 +268,7 @@ fn need_compile(env: &Environment) -> bool {
     let mut ok = env.lib_dir.join(FLINT_LIB).is_file();
 
     for h in FLINT_HEADERS {
-        ok = ok && env.include_dir.join(h).is_file();
+        ok &= env.include_dir.join(h).is_file();
     }
 
     if ok {
@@ -288,11 +288,11 @@ fn save_cache(env: &Environment) -> bool {
         Some(ref s) => s,
         None => return false,
     };
-    let mut ok = create_dir(&cache_dir).is_ok();
-    ok = ok && copy_file(&env.lib_dir.join(FLINT_LIB), &cache_dir.join(FLINT_LIB)).is_ok();
+    let mut ok = create_dir(cache_dir).is_ok();
+    ok &= copy_file(&env.lib_dir.join(FLINT_LIB), &cache_dir.join(FLINT_LIB)).is_ok();
 
     for h in FLINT_HEADERS {
-        ok = ok && copy_file(&env.include_dir.join(h), &cache_dir.join(h)).is_ok();
+        ok &= copy_file(&env.include_dir.join(h), &cache_dir.join(h)).is_ok();
     }
     ok
 }
@@ -327,18 +327,18 @@ fn should_save_cache(env: &Environment) -> bool {
 
 fn build(env: &Environment) {
     println!("$ cd {:?}", &env.build_dir);
-    let conf = String::from(format!(
+    let conf = format!(
         "./configure --disable-shared --with-gmp={} --with-mpfr={}",
         env.gmp_mpfr_dir.display(),
         env.gmp_mpfr_dir.display(),
-    ));
+    );
 
     reconfigure(&env.build_dir);
     configure(&env.build_dir, &OsString::from(conf));
     make_and_check(env, &env.build_dir);
 
     let build_lib = &env.build_dir.join(FLINT_LIB);
-    copy_file_or_panic(&build_lib, &env.lib_dir.join(FLINT_LIB));
+    copy_file_or_panic(build_lib, &env.lib_dir.join(FLINT_LIB));
 
     for h in FLINT_HEADERS {
         copy_file_or_panic(&env.build_dir.join("src").join(h), &env.include_dir.join(h));
@@ -481,7 +481,7 @@ fn reconfigure(build_dir: &Path) {
 }
 fn configure(build_dir: &Path, conf_line: &OsStr) {
     let mut conf = Command::new("sh");
-    conf.current_dir(&build_dir).arg("-c").arg(conf_line);
+    conf.current_dir(build_dir).arg("-c").arg(conf_line);
     execute(conf);
 }
 
