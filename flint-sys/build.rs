@@ -341,7 +341,7 @@ fn build(env: &Environment) {
     copy_file_or_panic(&build_lib, &env.lib_dir.join(FLINT_LIB));
 
     for h in FLINT_HEADERS {
-        copy_file_or_panic(&env.build_dir.join(h), &env.include_dir.join(h));
+        copy_file_or_panic(&env.build_dir.join("src").join(h), &env.include_dir.join(h));
     }
 }
 
