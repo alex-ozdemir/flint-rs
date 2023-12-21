@@ -8,7 +8,7 @@ use std::{
     str,
 };
 
-const FLINT_DIR: &str = "flint-3.0.1";
+const FLINT_DIR: &str = "flint-3.0.1-c";
 const FLINT_LIB: &str = "libflint.a";
 const FLINT_VER: &str = "3.0.1";
 const FLINT_HEADERS: &[&str] = &[
