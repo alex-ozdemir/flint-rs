@@ -94,13 +94,6 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn fmpz_mod_mpoly_realloc(
-        A: *mut fmpz_mod_mpoly_struct,
-        alloc: mp_limb_signed_t,
-        ctx: *mut fmpz_mod_mpoly_ctx_struct,
-    );
-}
-extern "C" {
     pub fn fmpz_mod_mpoly_fit_length(
         A: *mut fmpz_mod_mpoly_struct,
         length: mp_limb_signed_t,
