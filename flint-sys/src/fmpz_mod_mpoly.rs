@@ -94,13 +94,6 @@ extern "C" {
     );
 }
 extern "C" {
-    pub fn fmpz_mod_mpoly_realloc(
-        A: *mut fmpz_mod_mpoly_struct,
-        alloc: mp_limb_signed_t,
-        ctx: *mut fmpz_mod_mpoly_ctx_struct,
-    );
-}
-extern "C" {
     pub fn fmpz_mod_mpoly_fit_length(
         A: *mut fmpz_mod_mpoly_struct,
         length: mp_limb_signed_t,
@@ -175,6 +168,14 @@ extern "C" {
     ) -> ::std::os::raw::c_int;
 }
 extern "C" {
+    pub fn fmpz_mod_mpoly_swap(
+        A: *mut fmpz_mod_mpoly_struct,
+        B: *mut fmpz_mod_mpoly_struct,
+        ctx: *mut fmpz_mod_mpoly_ctx_struct,
+    ) -> ::std::os::raw::c_int;
+}
+
+extern "C" {
     pub fn fmpz_mod_mpoly_is_fmpz(
         A: *mut fmpz_mod_mpoly_struct,
         ctx: *mut fmpz_mod_mpoly_ctx_struct,
@@ -204,7 +205,7 @@ extern "C" {
 extern "C" {
     pub fn fmpz_mod_mpoly_set_ui(
         A: *mut fmpz_mod_mpoly_struct,
-        c: mp_limb_signed_t,
+        c: mp_limb_t,
         ctx: *mut fmpz_mod_mpoly_ctx_struct,
     );
 }
@@ -214,6 +215,12 @@ extern "C" {
         c: mp_limb_signed_t,
         ctx: *mut fmpz_mod_mpoly_ctx_struct,
     );
+}
+extern "C" {
+    pub fn fmpz_mod_mpoly_zero(A: *mut fmpz_mod_mpoly_struct, ctx: *mut fmpz_mod_mpoly_ctx_struct);
+}
+extern "C" {
+    pub fn fmpz_mod_mpoly_one(A: *mut fmpz_mod_mpoly_struct, ctx: *mut fmpz_mod_mpoly_ctx_struct);
 }
 extern "C" {
     pub fn fmpz_mod_mpoly_equal_fmpz(
@@ -226,6 +233,18 @@ extern "C" {
     pub fn fmpz_mod_mpoly_equal_ui(
         A: *mut fmpz_mod_mpoly_struct,
         c: mp_limb_t,
+        ctx: *mut fmpz_mod_mpoly_ctx_struct,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn fmpz_mod_mpoly_is_zero(
+        A: *mut fmpz_mod_mpoly_struct,
+        ctx: *mut fmpz_mod_mpoly_ctx_struct,
+    ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn fmpz_mod_mpoly_is_one(
+        A: *mut fmpz_mod_mpoly_struct,
         ctx: *mut fmpz_mod_mpoly_ctx_struct,
     ) -> ::std::os::raw::c_int;
 }
@@ -379,6 +398,12 @@ extern "C" {
         A: *mut fmpz_mod_mpoly_struct,
         ctx: *mut fmpz_mod_mpoly_ctx_struct,
     ) -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn fmpz_mod_mpoly_length(
+        A: *mut fmpz_mod_mpoly_struct,
+        ctx: *mut fmpz_mod_mpoly_ctx_struct,
+    ) -> mp_limb_signed_t;
 }
 extern "C" {
     pub fn fmpz_mod_mpoly_resize(

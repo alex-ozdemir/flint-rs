@@ -8,102 +8,164 @@ use std::{
     str,
 };
 
-const FLINT_DIR: &str = "flint-2.8.5-c";
+const FLINT_DIR: &str = "flint-3.0.1-c";
 const FLINT_LIB: &str = "libflint.a";
-const FLINT_VER: &str = "2.8.5";
+const FLINT_VER: &str = "3.0.1";
 const FLINT_HEADERS: &[&str] = &[
+    "NTL-interface.h",
+    "acb.h",
+    "acb_calc.h",
+    "acb_dft.h",
+    "acb_dirichlet.h",
+    "acb_elliptic.h",
+    "acb_hypgeom.h",
+    "acb_mat.h",
+    "acb_modular.h",
+    "acb_poly.h",
+    "acb_types.h",
+    "acf.h",
+    "acf_types.h",
     "aprcl.h",
+    "arb.h",
+    "arb_calc.h",
+    "arb_fmpz_poly.h",
+    "arb_fpwrap.h",
+    "arb_hypgeom.h",
+    "arb_mat.h",
+    "arb_poly.h",
+    "arb_types.h",
+    "arf.h",
+    "arf_types.h",
     "arith.h",
+    "bernoulli.h",
+    "bool_mat.h",
+    "ca.h",
+    "ca_ext.h",
+    "ca_field.h",
+    "ca_mat.h",
+    "ca_poly.h",
+    "ca_vec.h",
+    "calcium.h",
     "d_mat.h",
-    "double_extras.h",
     "d_vec.h",
+    "dirichlet.h",
+    "dlog.h",
+    "double_extras.h",
     "exception.h",
+    "fexpr.h",
+    "fexpr_builtin.h",
     "fft.h",
+    "fft_small.h",
     "fft_tuning.h",
     "flint-config.h",
     "flint.h",
     "fmpq.h",
     "fmpq_mat.h",
-    "fmpq_mpoly_factor.h",
     "fmpq_mpoly.h",
+    "fmpq_mpoly_factor.h",
     "fmpq_poly.h",
+    "fmpq_types.h",
     "fmpq_vec.h",
-    "fmpz-conversions.h",
-    "fmpz_factor.h",
     "fmpz.h",
+    "fmpz_extras.h",
+    "fmpz_factor.h",
     "fmpz_lll.h",
     "fmpz_mat.h",
     "fmpz_mod.h",
     "fmpz_mod_mat.h",
-    "fmpz_mod_mpoly_factor.h",
     "fmpz_mod_mpoly.h",
-    "fmpz_mod_poly_factor.h",
+    "fmpz_mod_mpoly_factor.h",
     "fmpz_mod_poly.h",
+    "fmpz_mod_poly_factor.h",
+    "fmpz_mod_types.h",
     "fmpz_mod_vec.h",
-    "fmpz_mpoly_factor.h",
     "fmpz_mpoly.h",
-    "fmpz_poly_factor.h",
+    "fmpz_mpoly_factor.h",
+    "fmpz_mpoly_q.h",
     "fmpz_poly.h",
+    "fmpz_poly_factor.h",
     "fmpz_poly_mat.h",
     "fmpz_poly_q.h",
+    "fmpz_types.h",
     "fmpz_vec.h",
+    "fmpzi.h",
+    "fq.h",
     "fq_default.h",
     "fq_default_mat.h",
-    "fq_default_poly_factor.h",
     "fq_default_poly.h",
+    "fq_default_poly_factor.h",
     "fq_embed.h",
     "fq_embed_templates.h",
-    "fq.h",
     "fq_mat.h",
     "fq_mat_templates.h",
-    "fq_nmod_embed.h",
     "fq_nmod.h",
+    "fq_nmod_embed.h",
     "fq_nmod_mat.h",
-    "fq_nmod_mpoly_factor.h",
     "fq_nmod_mpoly.h",
-    "fq_nmod_poly_factor.h",
+    "fq_nmod_mpoly_factor.h",
     "fq_nmod_poly.h",
+    "fq_nmod_poly_factor.h",
+    "fq_nmod_types.h",
     "fq_nmod_vec.h",
+    "fq_poly.h",
     "fq_poly_factor.h",
     "fq_poly_factor_templates.h",
-    "fq_poly.h",
     "fq_poly_templates.h",
     "fq_templates.h",
+    "fq_types.h",
     "fq_vec.h",
     "fq_vec_templates.h",
-    "fq_zech_embed.h",
     "fq_zech.h",
+    "fq_zech_embed.h",
     "fq_zech_mat.h",
-    "fq_zech_mpoly_factor.h",
     "fq_zech_mpoly.h",
-    "fq_zech_poly_factor.h",
+    "fq_zech_mpoly_factor.h",
     "fq_zech_poly.h",
+    "fq_zech_poly_factor.h",
+    "fq_zech_types.h",
     "fq_zech_vec.h",
     "gmpcompat.h",
+    "gr.h",
+    "gr_generic.h",
+    "gr_mat.h",
+    "gr_mpoly.h",
+    "gr_poly.h",
+    "gr_special.h",
+    "gr_vec.h",
     "hashmap.h",
+    "hypgeom.h",
+    "limb_types.h",
     "long_extras.h",
     "longlong.h",
+    "mag.h",
     "mpf_mat.h",
+    "mpf_vec.h",
     "mpfr_mat.h",
     "mpfr_vec.h",
-    "mpf_vec.h",
     "mpn_extras.h",
     "mpoly.h",
-    "nmod_mat.h",
-    "nmod_mpoly_factor.h",
-    "nmod_mpoly.h",
-    "nmod_poly_factor.h",
-    "nmod_poly.h",
-    "nmod_poly_mat.h",
-    "nmod_vec.h",
+    "mpoly_types.h",
     "n_poly.h",
-    "NTL-interface.h",
+    "nf.h",
+    "nf_elem.h",
+    "nmod.h",
+    "nmod_mat.h",
+    "nmod_mpoly.h",
+    "nmod_mpoly_factor.h",
+    "nmod_poly.h",
+    "nmod_poly_factor.h",
+    "nmod_poly_mat.h",
+    "nmod_types.h",
+    "nmod_vec.h",
     "padic.h",
     "padic_mat.h",
     "padic_poly.h",
+    "partitions.h",
     "perm.h",
     "profiler.h",
     "qadic.h",
+    "qfb.h",
+    "qqbar.h",
     "qsieve.h",
     "templates.h",
     "thread_pool.h",
@@ -165,7 +227,7 @@ fn main() {
         }
     };
     let cache_dir = cache_dir
-        .map(|cache| cache.join(&FLINT_VER))
+        .map(|cache| cache.join(FLINT_VER))
         .map(|cache| match cc_cache_dir {
             Some(dir) => cache.join(dir),
             None => cache,
@@ -206,7 +268,7 @@ fn need_compile(env: &Environment) -> bool {
     let mut ok = env.lib_dir.join(FLINT_LIB).is_file();
 
     for h in FLINT_HEADERS {
-        ok = ok && env.include_dir.join(h).is_file();
+        ok &= env.include_dir.join(h).is_file();
     }
 
     if ok {
@@ -226,11 +288,11 @@ fn save_cache(env: &Environment) -> bool {
         Some(ref s) => s,
         None => return false,
     };
-    let mut ok = create_dir(&cache_dir).is_ok();
-    ok = ok && copy_file(&env.lib_dir.join(FLINT_LIB), &cache_dir.join(FLINT_LIB)).is_ok();
+    let mut ok = create_dir(cache_dir).is_ok();
+    ok &= copy_file(&env.lib_dir.join(FLINT_LIB), &cache_dir.join(FLINT_LIB)).is_ok();
 
     for h in FLINT_HEADERS {
-        ok = ok && copy_file(&env.include_dir.join(h), &cache_dir.join(h)).is_ok();
+        ok &= copy_file(&env.include_dir.join(h), &cache_dir.join(h)).is_ok();
     }
     ok
 }
@@ -265,20 +327,21 @@ fn should_save_cache(env: &Environment) -> bool {
 
 fn build(env: &Environment) {
     println!("$ cd {:?}", &env.build_dir);
-    let conf = String::from(format!(
+    let conf = format!(
         "./configure --disable-shared --with-gmp={} --with-mpfr={}",
         env.gmp_mpfr_dir.display(),
         env.gmp_mpfr_dir.display(),
-    ));
+    );
 
+    reconfigure(&env.build_dir);
     configure(&env.build_dir, &OsString::from(conf));
     make_and_check(env, &env.build_dir);
 
     let build_lib = &env.build_dir.join(FLINT_LIB);
-    copy_file_or_panic(&build_lib, &env.lib_dir.join(FLINT_LIB));
+    copy_file_or_panic(build_lib, &env.lib_dir.join(FLINT_LIB));
 
     for h in FLINT_HEADERS {
-        copy_file_or_panic(&env.build_dir.join(h), &env.include_dir.join(h));
+        copy_file_or_panic(&env.build_dir.join("src").join(h), &env.include_dir.join(h));
     }
 }
 
@@ -408,9 +471,17 @@ fn copy_file_or_panic(src: &Path, dst: &Path) {
     });
 }
 
+fn reconfigure(build_dir: &Path) {
+    let mut reconf = Command::new("sh");
+    reconf
+        .current_dir(build_dir)
+        .arg("-c")
+        .arg(&OsString::from("./bootstrap.sh"));
+    execute(reconf);
+}
 fn configure(build_dir: &Path, conf_line: &OsStr) {
     let mut conf = Command::new("sh");
-    conf.current_dir(&build_dir).arg("-c").arg(conf_line);
+    conf.current_dir(build_dir).arg("-c").arg(conf_line);
     execute(conf);
 }
 

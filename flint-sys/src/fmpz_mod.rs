@@ -4,7 +4,7 @@
 
 use crate::deps::*;
 use crate::flint::*;
-use crate::fmpz::{fmpz, fmpz_t};
+use crate::fmpz::{fmpz, fmpz_preinvn_struct, fmpz_t};
 use crate::nmod_vec::nmod_t;
 
 #[repr(C)]
@@ -38,6 +38,7 @@ pub struct fmpz_mod_ctx {
     pub mod_: nmod_t,
     pub n_limbs: [mp_limb_t; 3usize],
     pub ninv_limbs: [mp_limb_t; 3usize],
+    pub ninv_hug: *mut fmpz_preinvn_struct,
 }
 pub type fmpz_mod_ctx_struct = fmpz_mod_ctx;
 pub type fmpz_mod_ctx_t = [fmpz_mod_ctx_struct; 1usize];

@@ -29,6 +29,7 @@ pub mod fmpq_mpoly_factor;
 pub mod fmpq_poly;
 pub mod fmpq_vec;
 pub mod fmpz_poly_q;
+pub mod fmpz_mpoly_q;
 
 pub mod fmpz_mod;
 pub mod fmpz_mod_mat;
