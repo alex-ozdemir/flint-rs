@@ -1,0 +1,41 @@
+Instructions on installing FLINT
+----------------------------------
+
+Building FLINT requires:
+
+* GMP (https://gmplib.org/)
+* MPFR (https://mpfr.org/)
+* Either of the following build systems:
+  * GNU Make together with GNU Autotools
+  * CMake
+
+On a typical Linux or Unix-like system where Autotools is available,
+FLINT can be built and installed as follows:
+
+.. code-block:: bash
+
+    ./bootstrap.sh
+    ./configure --disable-static
+    make -j
+    make install
+
+We also recommend that you run ``make check`` before installing.
+
+For a complete list of build settings, write
+
+    ./configure --help
+
+An example of a custom configuration command would be
+
+    ./configure                                         \
+        --enable-assert                                 \
+        --enable-avx2                                   \
+        --disable-static                                \
+        --with-gmp-include=/home/user1/builds/includes/ \
+        --with-gmp-lib=/home/user1/builds/lib/          \
+        --with-mpfr=/usr                                \
+        --prefix=/home/user1/installations/             \
+        CC=clang                                        \
+        CFLAGS="-Wall -O3 -march=alderlake"
+
+For more information, see the FLINT documentation.
