@@ -4,7 +4,7 @@
 
 use crate::acb::{acb_srcptr, acb_struct};
 use crate::arb::*;
-use crate::arf_types::arf_struct;
+use crate::arf::arf_struct;
 use crate::mag::mag_struct;
 use crate::deps::*;
 use crate::flint::*;

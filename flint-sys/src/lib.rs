@@ -135,10 +135,7 @@ pub mod ulong_extras;
 
 
 pub mod mag;
-
 pub mod arf;
-pub mod arf_types;
-
 
 pub mod arb;
 pub mod arb_calc;
@@ -213,9 +210,6 @@ pub const FMPZ_MOD_POLY_HGCD_CUTOFF: u32 = 128;
 pub const FMPZ_MOD_POLY_GCD_CUTOFF: u32 = 256;
 pub const FMPZ_MOD_POLY_INV_NEWTON_CUTOFF: u32 = 64;
 pub const FMPZ_MOD_POLY_EVALUATE_FMPZ_VEC: u32 = 32;
-pub const NMOD_POLY_HGCD_CUTOFF: u32 = 100;
-pub const NMOD_POLY_GCD_CUTOFF: u32 = 340;
-pub const NMOD_POLY_SMALL_GCD_CUTOFF: u32 = 200;
 pub const GR_SUCCESS: u32 = 0;
 pub const GR_DOMAIN: u32 = 1;
 pub const GR_UNABLE: u32 = 2;
@@ -228,10 +222,6 @@ pub const FQ_DEFAULT_FQ_NMOD: u32 = 2;
 pub const FQ_DEFAULT_FQ: u32 = 3;
 pub const FQ_DEFAULT_NMOD: u32 = 4;
 pub const FQ_DEFAULT_FMPZ_MOD: u32 = 5;
-pub const NMOD_MAT_MUL_TRANSPOSE_CUTOFF: u32 = 20;
-pub const NMOD_MAT_SOLVE_TRI_ROWS_CUTOFF: u32 = 64;
-pub const NMOD_MAT_SOLVE_TRI_COLS_CUTOFF: u32 = 64;
-pub const NMOD_MAT_OPTIMAL_MODULUS_BITS: u32 = 59;
 pub const FQ_MAT_SOLVE_TRI_ROWS_CUTOFF: u32 = 64;
 pub const FQ_MAT_SOLVE_TRI_COLS_CUTOFF: u32 = 64;
 pub const FQ_MAT_LU_RECURSIVE_CUTOFF: u32 = 4;

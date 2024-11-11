@@ -3,7 +3,7 @@
 //! *See the [Arb documentation](https://arblib.org/).
 
 use crate::arb::arb_struct;
-use crate::arf_types::arf_struct;
+use crate::arf::arf_struct;
 use crate::deps::*;
 use crate::fmpz::fmpz;
 

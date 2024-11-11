@@ -5,7 +5,7 @@
 use crate::deps::*;
 use crate::acb::{acb_ptr, acb_struct};
 use crate::arb::arb_struct;
-use crate::arf_types::arf_struct;
+use crate::arf::arf_struct;
 use crate::mag::mag_struct;
 use libc::{c_int, c_void};
 

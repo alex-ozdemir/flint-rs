@@ -47,9 +47,55 @@ extern "C" {
     pub fn flint_realloc(ptr: *mut c_void, size: size_t) -> *mut c_void;
     pub fn flint_calloc(num: size_t, size: size_t) -> *mut c_void;
     pub fn flint_free(ptr: *mut c_void);
+    pub fn flint_aligned_alloc(alignment: usize, size: usize) -> *mut c_void;
+    pub fn flint_aligned_free(ptr: *mut c_void);
     pub fn flint_register_cleanup_function(cleanup_function: flint_cleanup_function_t);
     pub fn flint_cleanup();
     pub fn flint_cleanup_master();
+    pub fn __flint_set_all_memory_functions(
+        alloc_func: ::std::option::Option<
+            unsafe extern "C" fn(arg1: usize) -> *mut ::std::os::raw::c_void,
+        >,
+        calloc_func: ::std::option::Option<
+            unsafe extern "C" fn(arg1: usize, arg2: usize) -> *mut ::std::os::raw::c_void,
+        >,
+        realloc_func: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: *mut ::std::os::raw::c_void,
+                arg2: usize,
+            ) -> *mut ::std::os::raw::c_void,
+        >,
+        free_func: ::std::option::Option<unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void)>,
+        aligned_alloc_func: ::std::option::Option<
+            unsafe extern "C" fn(arg1: usize, arg2: usize) -> *mut ::std::os::raw::c_void,
+        >,
+        aligned_free_func: ::std::option::Option<
+            unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void),
+        >,
+    );
+    pub fn __flint_get_all_memory_functions(
+        alloc_func: *mut ::std::option::Option<
+            unsafe extern "C" fn(arg1: usize) -> *mut ::std::os::raw::c_void,
+        >,
+        calloc_func: *mut ::std::option::Option<
+            unsafe extern "C" fn(arg1: usize, arg2: usize) -> *mut ::std::os::raw::c_void,
+        >,
+        realloc_func: *mut ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: *mut ::std::os::raw::c_void,
+                arg2: usize,
+            ) -> *mut ::std::os::raw::c_void,
+        >,
+        free_func: *mut ::std::option::Option<
+            unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void),
+        >,
+        aligned_alloc_func: *mut ::std::option::Option<
+            unsafe extern "C" fn(arg1: usize, arg2: usize) -> *mut ::std::os::raw::c_void,
+        >,
+        aligned_free_func: *mut ::std::option::Option<
+            unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void),
+        >,
+    );
     pub fn __flint_set_memory_functions(
         alloc_func: ::std::option::Option<unsafe extern "C" fn(arg1: size_t) -> *mut c_void>,
         calloc_func: ::std::option::Option<
@@ -60,7 +106,25 @@ extern "C" {
         >,
         free_func: ::std::option::Option<unsafe extern "C" fn(arg1: *mut c_void)>,
     );
+    pub fn __flint_get_memory_functions(
+        alloc_func: *mut ::std::option::Option<
+            unsafe extern "C" fn(arg1: usize) -> *mut ::std::os::raw::c_void,
+        >,
+        calloc_func: *mut ::std::option::Option<
+            unsafe extern "C" fn(arg1: usize, arg2: usize) -> *mut ::std::os::raw::c_void,
+        >,
+        realloc_func: *mut ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: *mut ::std::os::raw::c_void,
+                arg2: usize,
+            ) -> *mut ::std::os::raw::c_void,
+        >,
+        free_func: *mut ::std::option::Option<
+            unsafe extern "C" fn(arg1: *mut ::std::os::raw::c_void),
+        >,
+    );
     pub fn flint_abort();
+    pub fn flint_set_abort(func: ::std::option::Option<unsafe extern "C" fn()>);
     pub fn flint_get_num_threads() -> c_int;
     pub fn flint_set_num_threads(num_threads: c_int);
     pub fn _flint_set_num_workers(num_workers: c_int);
@@ -69,6 +133,9 @@ extern "C" {
     pub fn flint_set_thread_affinity(cpus: *mut c_int, length: mp_limb_signed_t) -> c_int;
     pub fn flint_restore_thread_affinity() -> c_int;
     pub fn flint_test_multiplier() -> c_int;
+    pub fn n_randint(arg1: *mut flint_rand_s, arg2: mp_limb_t) -> mp_limb_t;
+    pub fn n_randtest(arg1: *mut flint_rand_s) -> mp_limb_t;
+    pub fn n_randtest_not_zero(arg1: *mut flint_rand_s) -> mp_limb_t;
     pub fn flint_randinit(state: *mut flint_rand_s);
     pub fn flint_randseed(state: *mut flint_rand_s, seed1: mp_limb_t, seed2: mp_limb_t);
     pub fn flint_get_randseed(
@@ -88,5 +155,10 @@ extern "C" {
     pub fn flint_scanf(str_: *const c_char, ...) -> c_int;
     pub fn flint_fscanf(f: *mut FILE, str_: *const c_char, ...) -> c_int;
     pub fn flint_sscanf(s: *const c_char, str_: *const c_char, ...) -> c_int;
+    pub fn flint_vfprintf(
+        f: *mut FILE,
+        str_: *const ::std::os::raw::c_char,
+        ap: *mut __va_list_tag,
+    ) -> ::std::os::raw::c_int;
     pub fn flint_mul_sizes(x: mp_limb_signed_t, y: mp_limb_signed_t) -> mp_limb_signed_t;
 }

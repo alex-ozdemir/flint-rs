@@ -3,7 +3,7 @@
 //! *See the [Arb documentation](https://arblib.org/).
 
 use crate::arb::{arb_ptr, arb_struct};
-use crate::arf_types::{arf_srcptr, arf_struct};
+use crate::arf::{arf_srcptr, arf_struct};
 use crate::mag::{mag_srcptr, mag_struct};
 use crate::deps::*;
 use crate::flint::*;

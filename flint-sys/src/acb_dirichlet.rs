@@ -6,7 +6,7 @@
 use crate::acb::{acb_ptr, acb_srcptr, acb_struct, acb_t};
 use crate::acb_poly::acb_poly_struct;
 use crate::arb::{arb_ptr, arb_srcptr, arb_struct};
-use crate::arf_types::arf_struct;
+use crate::arf::arf_struct;
 use crate::dirichlet::{dirichlet_char_struct, dirichlet_group_struct};
 use crate::mag::mag_struct;
 use crate::deps::*;

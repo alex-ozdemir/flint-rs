@@ -4,7 +4,7 @@
 
 use crate::deps::*;
 use crate::arb::{arb_ptr, arb_struct};
-use crate::arf_types::arf_struct;
+use crate::arf::arf_struct;
 use libc::{c_int, c_void};
 
 pub type arb_calc_func_t = ::std::option::Option<
