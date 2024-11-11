@@ -23,7 +23,7 @@ fn main() {
         .blocklist_item("FP_ZERO")
         .blocklist_item("FP_SUBNORMAL")
         .blocklist_item("FP_NORMAL")
-        .layout_tests(false)
+        //.layout_tests(false)
         //.generate_inline_functions(true)
         .generate()
         .expect("Unable to generate bindings");

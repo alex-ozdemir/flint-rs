@@ -327,10 +327,13 @@ fn should_save_cache(env: &Environment) -> bool {
 fn build(env: &Environment) {
     println!("$ cd {:?}", &env.build_dir);
     let conf = String::from(format!(
-        "./configure --disable-shared --with-gmp={} --with-mpfr={}",
+        r#"./configure --disable-shared --with-mpfr={} --with-gmp={} CFLAGS="-fPIC""#,
+        //"./configure --disable-shared --with-gmp={} --with-mpfr={}",
         env.gmp_mpfr_dir.display(),
         env.gmp_mpfr_dir.display(),
     ));
+
+    println!("cargo::warning={:?}", conf);
 
     configure(&env.build_dir, &OsString::from(conf));
     make_and_check(env, &env.build_dir);
@@ -368,9 +371,9 @@ fn write_link_info(env: &Environment) {
     println!("cargo:lib_dir={}", lib_str);
     println!("cargo:include_dir={}", include_str);
     println!("cargo:rustc-link-search=native={}", lib_str);
+    println!("cargo:rustc-link-lib=static=flint");
     println!("cargo:rustc-link-lib=static=mpfr");
     println!("cargo:rustc-link-lib=static=gmp");
-    println!("cargo:rustc-link-lib=static=flint");
 }
 
 fn cargo_env(name: &str) -> OsString {
