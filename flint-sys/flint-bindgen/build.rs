@@ -178,7 +178,8 @@ fn generate_bindings(header: &str, include_path: &PathBuf, out_path: &PathBuf) -
     let bindings = bindgen::Builder::default()
         .header(include_fp.to_string_lossy())
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
-        .wrap_static_fns(true)
+        //.wrap_static_fns(true)
+        .generate_inline_functions(true)
         .allowlist_file(include_fp.to_string_lossy())
         .allowlist_recursively(false)
         .clang_args([include_arg])
@@ -219,26 +220,3 @@ fn main() {
         panic!("Error generating bindings!")
     }
 }
-
-fn remove_dir(dir: &Path) -> IoResult<()> {
-    if !dir.exists() {
-        return Ok(());
-    }
-    assert!(dir.is_dir(), "Not a directory: {:?}", dir);
-    println!("$ rm -r {:?}", dir);
-    fs::remove_dir_all(dir)
-}
-
-fn remove_dir_or_panic(dir: &Path) {
-    remove_dir(dir).unwrap_or_else(|_| panic!("Unable to remove directory: {:?}", dir));
-}
-
-fn create_dir(dir: &Path) -> IoResult<()> {
-    println!("$ mkdir -p {:?}", dir);
-    fs::create_dir_all(dir)
-}
-
-fn create_dir_or_panic(dir: &Path) {
-    create_dir(dir).unwrap_or_else(|_| panic!("Unable to create directory: {:?}", dir));
-}
-
