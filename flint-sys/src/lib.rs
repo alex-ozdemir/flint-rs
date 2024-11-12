@@ -1,134 +1,153 @@
 
 #![allow(non_camel_case_types)]
-
-use libc::{c_int, c_ulong};
-
-/// Bindings for the [FLINT](http://flintlib.org/sphinx/index.html) library.
-
-//pub mod fmpr;?
+#![allow(non_snake_case)]
+#![allow(non_upper_case_globals)]
+#![allow(unused_imports)] // remove
 
 pub mod deps;
 pub mod flint;
 
+pub mod fmpz_types;
 pub mod fmpz;
-//pub mod fmpz_types;
-//pub mod fmpz_extras;
-//pub mod fmpzi;
+pub mod fmpz_extras;
+pub mod fmpzi;
 pub mod fmpz_factor;
 pub mod fmpz_lll;
-pub mod fmpz_mat;
 pub mod fmpz_poly;
 pub mod fmpz_poly_factor;
 pub mod fmpz_poly_mat;
 pub mod fmpz_poly_q;
-pub mod fmpz_mpoly;
-pub mod fmpz_mpoly_factor;
-//pub mod fmpz_mpoly_q;
+pub mod fmpz_mat;
 pub mod fmpz_vec;
 
+pub mod fmpq_types;
+pub mod fmpq;
+pub mod fmpq_poly;
+pub mod fmpq_mat;
+pub mod fmpq_vec;
+
+pub mod nmod_types;
+pub mod nmod;
+pub mod nmod_poly;
+pub mod nmod_mat;
+pub mod nmod_poly_factor;
+pub mod nmod_poly_mat;
+pub mod nmod_vec;
+
+pub mod fmpz_mod_types;
 pub mod fmpz_mod;
 pub mod fmpz_mod_mat;
 pub mod fmpz_mod_poly;
 pub mod fmpz_mod_poly_factor;
-pub mod fmpz_mod_mpoly;
-pub mod fmpz_mod_mpoly_factor;
-//pub mod fmpz_mod_types;
 pub mod fmpz_mod_vec;
 
-pub mod fmpq;
-pub mod fmpq_mat;
-pub mod fmpq_poly;
-pub mod fmpq_mpoly;
-pub mod fmpq_mpoly_factor;
-pub mod fmpq_vec;
-
-//pub mod nmod;
-//pub mod nmod_types;
-pub mod nmod_mat;
-pub mod nmod_poly;
-pub mod nmod_poly_factor;
-pub mod nmod_poly_mat;
-pub mod nmod_mpoly;
-pub mod nmod_mpoly_factor;
-pub mod nmod_vec;
-
-
+pub mod fq_types;
 pub mod fq;
-//pub mod fq_types;
 pub mod fq_embed;
-//pub mod fq_embed_templates;
 pub mod fq_mat;
-//pub mod fq_mat_templates;
 pub mod fq_poly;
 pub mod fq_poly_factor;
-//pub mod fq_poly_factor_templates;
-//pub mod fq_poly_templates;
-//pub mod fq_templates;
-pub mod fq_vec;
-//pub mod fq_vec_templates;
+
+pub mod fq_nmod_types;
+pub mod fq_nmod;
+pub mod fq_nmod_embed;
+pub mod fq_nmod_mat;
+pub mod fq_nmod_poly;
+pub mod fq_nmod_poly_factor;
+
+pub mod fq_zech_types;
+pub mod fq_zech;
+pub mod fq_zech_embed;
+pub mod fq_zech_mat;
+pub mod fq_zech_poly;
+pub mod fq_zech_poly_factor;
 
 pub mod fq_default;
 pub mod fq_default_mat;
 pub mod fq_default_poly;
 pub mod fq_default_poly_factor;
 
-pub mod fq_nmod;
-//pub mod fq_nmod_types;
-pub mod fq_nmod_embed;
-pub mod fq_nmod_mat;
-pub mod fq_nmod_poly;
-pub mod fq_nmod_poly_factor;
-pub mod fq_nmod_mpoly;
-pub mod fq_nmod_mpoly_factor;
-pub mod fq_nmod_vec;
-
-pub mod fq_zech;
-pub mod fq_zech_embed;
-pub mod fq_zech_mat;
-//pub mod fq_zech_mpoly;
-//pub mod fq_zech_mpoly_factor;
-pub mod fq_zech_poly;
-pub mod fq_zech_poly_factor;
-//pub mod fq_zech_types;
-pub mod fq_zech_vec;
-
-pub mod padic;
+//pub mod padic;
 //pub mod padic_types;
-pub mod padic_mat;
-pub mod padic_poly;
-pub mod qadic;
+//pub mod padic_mat;
+//pub mod padic_poly;
+//pub mod qadic;
 
-/*
 pub mod gr;
 pub mod gr_generic;
-pub mod gr_mat;
-pub mod gr_mpoly;
 pub mod gr_poly;
+pub mod gr_mat;
 pub mod gr_special;
 pub mod gr_vec;
-*/
 
+//pub mod mpoly_types;
+//pub mod mpoly;
+//pub mod fmpz_mpoly;
+//pub mod fmpz_mpoly_factor;
+//pub mod fmpz_mpoly_q;
+//pub mod nmod_mpoly;
+//pub mod nmod_mpoly_factor;
+//pub mod fmpz_mod_mpoly;
+//pub mod fmpz_mod_mpoly_factor;
+//pub mod fmpq_mpoly;
+//pub mod fmpq_mpoly_factor;
+//pub mod fq_nmod_mpoly;
+//pub mod fq_nmod_mpoly_factor;
+//pub mod fq_zech_mpoly;
+//pub mod fq_zech_mpoly_factor;
+//pub mod gr_mpoly;
+
+pub mod n_poly_types;
+//pub mod n_poly; needs fq_nmod
+
+pub mod d_mat;
+pub mod mpf_impl;
+pub mod limb_types;
 pub mod arith;
 pub mod fft;
-//pub mod fft_tuning;
-//pub mod gmpcompat;
-pub mod mpoly;
-//pub mod mpoly_types;
-pub mod n_poly;
-//pub mod n_poly_types;
+pub mod fft_tuning;
 pub mod perm;
-pub mod qsieve;
-pub mod long_extras;
-pub mod ulong_extras;
+//pub mod qsieve;
+//pub mod long_extras;
+//pub mod ulong_extras;
 
 //pub mod profiler;
 //pub mod templates;
 //pub mod thread_pool;
 //pub mod thread_support;
-//pub mod mpf-impl;
 //pub mod mpfr_mat;
 //pub mod mpfr_vec;
 //pub mod mpn_extras;
+
+
+
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::mem::MaybeUninit;
+    
+    #[test]
+    fn test_fmpz() { 
+        let mut p: fmpz::fmpz = fmpz::fmpz::default();
+        unsafe{
+            fmpz::fmpz_init(&mut p);
+            fmpz::fmpz_set_ui(&mut p, 17);
+            debug_assert!(fmpz::fmpz_print(&mut p) > 0);            
+            fmpz::fmpz_clear(&mut p);
+        }
+    }
+}
+
+/*
+use libc::{c_int, c_ulong};
+
+/// Bindings for the [FLINT](http://flintlib.org/sphinx/index.html) library.
+
+
+
+
+
 
 
 // Arb //
@@ -588,3 +607,4 @@ mod tests {
         }
     }*/
 }
+*/

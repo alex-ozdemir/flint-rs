@@ -164,6 +164,10 @@ const FLINT_HEADERS: &[&str] = &[
     "ulong_extras.h",
 ];
 
+const COMMON: &str = 
+    "#![allow(non_camel_case_types)]\n\
+    use crate::deps::*;\n\
+    use libc::{c_char, c_int, c_uint, c_void, size_t, FILE};\n";
 
 fn generate_bindings(header: &str, include_path: &PathBuf, out_path: &PathBuf) -> Result<(), bindgen::BindgenError> {
     let include_arg = format!("-I{}", include_path.display());
@@ -176,6 +180,7 @@ fn generate_bindings(header: &str, include_path: &PathBuf, out_path: &PathBuf) -
         .allowlist_file(include_fp.to_string_lossy())
         .allowlist_recursively(false)
         .clang_args([include_arg])
+        .raw_line(COMMON)
         .generate_cstr(true)
         .derive_debug(true)
         .derive_copy(true)
