@@ -10,6 +10,7 @@ use crate::nmod_types::*;
 
 pub const WEAK_CANONICALISE_CUTOFF: u32 = 25600;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpq_poly_powers_precomp_struct {
     pub powers: *mut fmpq_poly_struct,
     pub len: mp_limb_signed_t,

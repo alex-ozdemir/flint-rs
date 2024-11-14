@@ -10,6 +10,7 @@ use crate::nmod_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_mpoly_factor_struct {
     pub constant: fq_nmod_t,
     pub poly: *mut fq_nmod_mpoly_struct,
@@ -45,6 +46,7 @@ impl Default for fq_nmod_mpoly_factor_struct {
 }
 pub type fq_nmod_mpoly_factor_t = [fq_nmod_mpoly_factor_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_mpolyv_struct {
     pub coeffs: *mut fq_nmod_mpoly_struct,
     pub alloc: mp_limb_signed_t,
@@ -73,6 +75,7 @@ impl Default for fq_nmod_mpolyv_struct {
 }
 pub type fq_nmod_mpolyv_t = [fq_nmod_mpolyv_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_mpoly_pfrac_struct {
     pub bits: mp_limb_t,
     pub w: mp_limb_signed_t,

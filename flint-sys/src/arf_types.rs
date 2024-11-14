@@ -7,6 +7,7 @@ use crate::flint::*;
 
 pub const ARF_NOPTR_LIMBS: u32 = 2;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mantissa_noptr_struct {
     pub d: [mp_limb_t; 2usize],
 }
@@ -28,6 +29,7 @@ impl Default for mantissa_noptr_struct {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mantissa_ptr_struct {
     pub alloc: mp_size_t,
     pub d: mp_ptr,
@@ -51,6 +53,7 @@ impl Default for mantissa_ptr_struct {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mantissa_struct {
     pub noptr: __BindgenUnionField<mantissa_noptr_struct>,
     pub ptr: __BindgenUnionField<mantissa_ptr_struct>,
@@ -75,6 +78,7 @@ impl Default for mantissa_struct {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct arf_struct {
     pub exp: fmpz,
     pub size: mp_size_t,
@@ -101,6 +105,7 @@ pub type arf_t = [arf_struct; 1usize];
 pub type arf_ptr = *mut arf_struct;
 pub type arf_srcptr = *const arf_struct;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct arf_interval_struct {
     pub a: arf_struct,
     pub b: arf_struct,

@@ -7,6 +7,7 @@ use crate::mpoly_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct gr_mpoly_struct {
     pub coeffs: gr_ptr,
     pub exps: *mut mp_limb_t,

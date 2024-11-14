@@ -7,6 +7,7 @@ use crate::fmpz_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct bool_mat_struct {
     pub entries: *mut libc::c_int,
     pub r: mp_limb_signed_t,

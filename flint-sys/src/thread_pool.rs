@@ -6,6 +6,7 @@ use crate::flint::*;
 
 
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct thread_pool_entry_struct {
     pub pth: pthread_t,
     pub mutex: pthread_mutex_t,
@@ -59,6 +60,7 @@ impl Default for thread_pool_entry_struct {
 }
 pub type thread_pool_entry_t = [thread_pool_entry_struct; 1usize];
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct thread_pool_struct {
     pub original_affinity: *mut libc::c_void,
     pub mutex: pthread_mutex_t,

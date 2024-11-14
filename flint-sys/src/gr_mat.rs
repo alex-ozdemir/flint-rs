@@ -9,6 +9,7 @@ use crate::gr_poly::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct gr_mat_struct {
     pub entries: gr_ptr,
     pub r: mp_limb_signed_t,

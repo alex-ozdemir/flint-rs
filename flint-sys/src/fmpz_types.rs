@@ -5,6 +5,7 @@ use crate::flint::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_factor_struct {
     pub sign: libc::c_int,
     pub p: *mut fmpz,
@@ -38,6 +39,7 @@ impl Default for fmpz_factor_struct {
 }
 pub type fmpz_factor_t = [fmpz_factor_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_preinvn_struct {
     pub dinv: mp_ptr,
     pub n: mp_limb_signed_t,
@@ -65,6 +67,7 @@ impl Default for fmpz_preinvn_struct {
 }
 pub type fmpz_preinvn_t = [fmpz_preinvn_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_poly_struct {
     pub coeffs: *mut fmpz,
     pub alloc: mp_limb_signed_t,
@@ -92,6 +95,7 @@ impl Default for fmpz_poly_struct {
 }
 pub type fmpz_poly_t = [fmpz_poly_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_poly_factor_struct {
     pub c: fmpz,
     pub p: *mut fmpz_poly_struct,
@@ -126,6 +130,7 @@ impl Default for fmpz_poly_factor_struct {
 }
 pub type fmpz_poly_factor_t = [fmpz_poly_factor_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mat_struct {
     pub entries: *mut fmpz,
     pub r: mp_limb_signed_t,
@@ -154,6 +159,7 @@ impl Default for fmpz_mat_struct {
 }
 pub type fmpz_mat_t = [fmpz_mat_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_poly_mat_struct {
     pub entries: *mut fmpz_poly_struct,
     pub r: mp_limb_signed_t,
@@ -184,6 +190,7 @@ impl Default for fmpz_poly_mat_struct {
 }
 pub type fmpz_poly_mat_t = [fmpz_poly_mat_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mpoly_struct {
     pub coeffs: *mut fmpz,
     pub exps: *mut mp_limb_t,
@@ -217,6 +224,7 @@ impl Default for fmpz_mpoly_struct {
 }
 pub type fmpz_mpoly_t = [fmpz_mpoly_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mpoly_factor_struct {
     pub constant: fmpz_t,
     pub constant_den: fmpz_t,
@@ -280,6 +288,7 @@ impl Default for fmpz_poly_q_struct {
 }
 pub type fmpz_poly_q_t = [fmpz_poly_q_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mpoly_q_struct {
     pub num: fmpz_mpoly_struct,
     pub den: fmpz_mpoly_struct,
@@ -304,6 +313,7 @@ impl Default for fmpz_mpoly_q_struct {
 }
 pub type fmpz_mpoly_q_t = [fmpz_mpoly_q_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpzi_struct {
     pub a: fmpz,
     pub b: fmpz,

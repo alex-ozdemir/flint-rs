@@ -14,6 +14,7 @@ pub const N_FQ_LAZY_ITCH: u32 = 6;
 pub const N_FQ_INV_ITCH: u32 = 1;
 pub const N_FQ_POLY_DIVREM_DIVCONQUER_CUTOFF: u32 = 20;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct n_polyun_stack_struct {
     pub array: *mut *mut n_polyun_struct,
     pub alloc: mp_limb_signed_t,
@@ -42,6 +43,7 @@ impl Default for n_polyun_stack_struct {
 }
 pub type n_polyun_stack_t = [n_polyun_stack_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct n_poly_polyun_stack_struct {
     pub poly_stack: n_poly_stack_t,
     pub polyun_stack: n_polyun_stack_t,

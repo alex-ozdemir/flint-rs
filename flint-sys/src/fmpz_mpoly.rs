@@ -9,6 +9,7 @@ use crate::mpoly_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mpoly_univar_struct {
     pub coeffs: *mut fmpz_mpoly_struct,
     pub exps: *mut fmpz,
@@ -41,6 +42,7 @@ impl Default for fmpz_mpoly_univar_struct {
 }
 pub type fmpz_mpoly_univar_t = [fmpz_mpoly_univar_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mpolyd_struct {
     pub nvars: mp_limb_signed_t,
     pub degb_alloc: mp_limb_signed_t,
@@ -77,6 +79,7 @@ impl Default for fmpz_mpolyd_struct {
 }
 pub type fmpz_mpolyd_t = [fmpz_mpolyd_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mpoly_vec_struct {
     pub p: *mut fmpz_mpoly_struct,
     pub alloc: mp_limb_signed_t,
@@ -105,6 +108,7 @@ impl Default for fmpz_mpoly_vec_struct {
 }
 pub type fmpz_mpoly_vec_t = [fmpz_mpoly_vec_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _fmpz_mpoly_stripe_struct {
     pub big_mem: *mut libc::c_char,
     pub big_mem_alloc: mp_limb_signed_t,
@@ -162,6 +166,7 @@ impl Default for _fmpz_mpoly_stripe_struct {
 pub type fmpz_mpoly_stripe_struct = _fmpz_mpoly_stripe_struct;
 pub type fmpz_mpoly_stripe_t = [fmpz_mpoly_stripe_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mpolyd_ctx_struct {
     pub nvars: mp_limb_signed_t,
     pub perm: *mut mp_limb_signed_t,
@@ -187,6 +192,7 @@ impl Default for fmpz_mpolyd_ctx_struct {
 }
 pub type fmpz_mpolyd_ctx_t = [fmpz_mpolyd_ctx_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _bindgen_ty_3 {
     pub powers: *mut fmpz,
     pub length: mp_limb_signed_t,
@@ -216,6 +222,7 @@ impl Default for _bindgen_ty_3 {
 }
 pub type fmpz_pow_cache_t = [_bindgen_ty_3; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mpoly_geobucket {
     pub polys: [fmpz_mpoly_struct; 32usize],
     pub temps: [fmpz_mpoly_struct; 32usize],

@@ -10,6 +10,7 @@ use crate::gr::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct ca_poly_struct {
     pub coeffs: *mut ca_struct,
     pub alloc: mp_limb_signed_t,
@@ -37,6 +38,7 @@ impl Default for ca_poly_struct {
 }
 pub type ca_poly_t = [ca_poly_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct ca_poly_vec_struct {
     pub entries: *mut ca_poly_struct,
     pub length: mp_limb_signed_t,

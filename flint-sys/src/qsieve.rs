@@ -10,6 +10,7 @@ pub const QS_DEBUG: u32 = 0;
 pub const BITS_ADJUST: u32 = 25;
 pub const BLOCK_SIZE: u32 = 262144;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct prime_t {
     pub pinv: mp_limb_t,
     pub p: libc::c_int,
@@ -33,6 +34,7 @@ impl Default for prime_t {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fac_t {
     pub ind: mp_limb_signed_t,
     pub exp: mp_limb_signed_t,
@@ -54,6 +56,7 @@ impl Default for fac_t {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct la_col_t {
     pub data: *mut mp_limb_signed_t,
     pub weight: mp_limb_signed_t,
@@ -77,6 +80,7 @@ impl Default for la_col_t {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct hash_t {
     pub prime: mp_limb_t,
     pub next: mp_limb_t,
@@ -100,6 +104,7 @@ impl Default for hash_t {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct relation_t {
     pub lp: mp_limb_t,
     pub num_factors: mp_limb_signed_t,
@@ -131,6 +136,7 @@ impl Default for relation_t {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct qs_poly_s {
     pub B: fmpz_t,
     pub soln1: *mut libc::c_int,
@@ -166,6 +172,7 @@ impl Default for qs_poly_s {
 }
 pub type qs_poly_t = [qs_poly_s; 1usize];
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct qs_s {
     pub index_j: mp_limb_signed_t,
     pub mutex: pthread_mutex_t,

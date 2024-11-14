@@ -6,6 +6,7 @@ use crate::fmpz_mod_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_discrete_log_pohlig_hellman_table_entry_struct {
     pub gammapow: fmpz_t,
     pub cm: mp_limb_t,
@@ -38,6 +39,7 @@ impl Default for fmpz_mod_discrete_log_pohlig_hellman_table_entry_struct {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_discrete_log_pohlig_hellman_entry_struct {
     pub exp: mp_limb_signed_t,
     pub prime: mp_limb_t,
@@ -105,6 +107,7 @@ impl Default for fmpz_mod_discrete_log_pohlig_hellman_entry_struct {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_discrete_log_pohlig_hellman_struct {
     pub fpctx: fmpz_mod_ctx_t,
     pub pm1: fmpz_t,

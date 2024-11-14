@@ -11,6 +11,7 @@ use crate::nmod_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct lnf_elem_struct {
     pub num: fmpz_t,
     pub den: fmpz_t,
@@ -35,6 +36,7 @@ impl Default for lnf_elem_struct {
 }
 pub type lnf_elem_t = [lnf_elem_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct qnf_elem_struct {
     pub num: [fmpz; 3usize],
     pub den: fmpz_t,
@@ -59,6 +61,7 @@ impl Default for qnf_elem_struct {
 }
 pub type qnf_elem_t = [qnf_elem_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nf_elem_struct {
     pub elem: __BindgenUnionField<fmpq_poly_t>,
     pub lelem: __BindgenUnionField<lnf_elem_t>,

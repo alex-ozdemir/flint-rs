@@ -5,6 +5,7 @@ use crate::flint::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct d_mat_struct {
     pub entries: *mut f64,
     pub r: mp_limb_signed_t,

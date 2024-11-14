@@ -7,6 +7,7 @@ use crate::fmpz_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct ecm_s {
     pub t: mp_ptr,
     pub u: mp_ptr,

@@ -11,6 +11,7 @@ use crate::limb_types::*;
 pub const CRT_MAX: u32 = 15;
 pub const DFT_VERB: u32 = 0;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct crt_struct {
     pub num: libc::c_int,
     pub n: nmod_t,
@@ -40,6 +41,7 @@ impl Default for crt_struct {
 pub type crt_t = [crt_struct; 1usize];
 pub type acb_dft_step_ptr = *mut acb_dft_step_struct;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_dft_cyc_struct {
     pub n: mp_limb_signed_t,
     pub z: acb_ptr,
@@ -73,6 +75,7 @@ impl Default for acb_dft_cyc_struct {
 }
 pub type acb_dft_cyc_t = [acb_dft_cyc_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_dft_rad2_struct {
     pub e: libc::c_int,
     pub n: mp_limb_signed_t,
@@ -106,6 +109,7 @@ impl Default for acb_dft_rad2_struct {
 }
 pub type acb_dft_rad2_t = [acb_dft_rad2_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_dft_bluestein_struct {
     pub n: mp_limb_signed_t,
     pub dv: mp_limb_signed_t,
@@ -141,6 +145,7 @@ impl Default for acb_dft_bluestein_struct {
 }
 pub type acb_dft_bluestein_t = [acb_dft_bluestein_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_dft_prod_struct {
     pub n: mp_limb_signed_t,
     pub num: mp_limb_signed_t,
@@ -168,6 +173,7 @@ impl Default for acb_dft_prod_struct {
 }
 pub type acb_dft_prod_t = [acb_dft_prod_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_dft_crt_struct {
     pub n: mp_limb_signed_t,
     pub c: crt_t,
@@ -198,6 +204,7 @@ impl Default for acb_dft_crt_struct {
 }
 pub type acb_dft_crt_t = [acb_dft_crt_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_dft_naive_struct {
     pub n: mp_limb_signed_t,
     pub dv: mp_limb_signed_t,
@@ -231,12 +238,14 @@ impl Default for acb_dft_naive_struct {
 }
 pub type acb_dft_naive_t = [acb_dft_naive_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_dft_pre_struct {
     pub n: mp_limb_signed_t,
     pub type_: libc::c_int,
     pub t: acb_dft_pre_struct__bindgen_ty_1,
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_dft_pre_struct__bindgen_ty_1 {
     pub rad2: __BindgenUnionField<acb_dft_rad2_t>,
     pub cyc: __BindgenUnionField<acb_dft_cyc_t>,
@@ -296,6 +305,7 @@ impl Default for acb_dft_pre_struct {
 }
 pub type acb_dft_pre_t = [acb_dft_pre_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_dft_step_struct {
     pub m: mp_limb_signed_t,
     pub M: mp_limb_signed_t,

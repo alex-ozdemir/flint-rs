@@ -5,6 +5,7 @@ use crate::flint::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct qfb {
     pub a: fmpz_t,
     pub b: fmpz_t,
@@ -29,6 +30,7 @@ impl Default for qfb {
 }
 pub type qfb_t = [qfb; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct qfb_hash_t {
     pub q: qfb_t,
     pub q2: qfb_t,

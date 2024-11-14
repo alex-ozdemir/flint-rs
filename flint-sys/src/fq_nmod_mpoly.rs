@@ -11,6 +11,7 @@ use crate::nmod_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_mpoly_univar_struct {
     pub coeffs: *mut fq_nmod_mpoly_struct,
     pub exps: *mut fmpz,
@@ -43,6 +44,7 @@ impl Default for fq_nmod_mpoly_univar_struct {
 }
 pub type fq_nmod_mpoly_univar_t = [fq_nmod_mpoly_univar_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_mpolyu_struct {
     pub coeffs: *mut fq_nmod_mpoly_struct,
     pub exps: *mut mp_limb_t,
@@ -77,6 +79,7 @@ impl Default for fq_nmod_mpolyu_struct {
 }
 pub type fq_nmod_mpolyu_t = [fq_nmod_mpolyu_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_mpolyn_struct {
     pub coeffs: *mut n_fq_poly_struct,
     pub exps: *mut mp_limb_t,
@@ -111,6 +114,7 @@ impl Default for fq_nmod_mpolyn_struct {
 }
 pub type fq_nmod_mpolyn_t = [fq_nmod_mpolyn_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_mpolyun_struct {
     pub coeffs: *mut fq_nmod_mpolyn_struct,
     pub exps: *mut mp_limb_t,
@@ -145,6 +149,7 @@ impl Default for fq_nmod_mpolyun_struct {
 }
 pub type fq_nmod_mpolyun_t = [fq_nmod_mpolyun_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct bad_fq_nmod_embed {
     pub smctx: *const fq_nmod_ctx_struct,
     pub phi_sm: fq_nmod_poly_t,
@@ -191,6 +196,7 @@ impl Default for bad_fq_nmod_embed {
 pub type bad_fq_nmod_embed_struct = bad_fq_nmod_embed;
 pub type bad_fq_nmod_embed_t = [bad_fq_nmod_embed_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct bad_fq_nmod_mpoly_embed_chooser {
     pub embed: *mut bad_fq_nmod_embed_struct,
     pub m: mp_limb_signed_t,
@@ -227,6 +233,7 @@ impl Default for bad_fq_nmod_mpoly_embed_chooser {
 pub type bad_fq_nmod_mpoly_embed_chooser_struct = bad_fq_nmod_mpoly_embed_chooser;
 pub type bad_fq_nmod_mpoly_embed_chooser_t = [bad_fq_nmod_mpoly_embed_chooser_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_mpoly_geobucket {
     pub polys: [fq_nmod_mpoly_struct; 32usize],
     pub temps: [fq_nmod_mpoly_struct; 32usize],

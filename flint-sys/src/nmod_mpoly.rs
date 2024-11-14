@@ -10,6 +10,7 @@ use crate::nmod_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_mpoly_univar_struct {
     pub coeffs: *mut nmod_mpoly_struct,
     pub exps: *mut fmpz,
@@ -42,6 +43,7 @@ impl Default for nmod_mpoly_univar_struct {
 }
 pub type nmod_mpoly_univar_t = [nmod_mpoly_univar_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_mpolyu_struct {
     pub coeffs: *mut nmod_mpoly_struct,
     pub exps: *mut mp_limb_t,
@@ -75,6 +77,7 @@ impl Default for nmod_mpolyu_struct {
 }
 pub type nmod_mpolyu_t = [nmod_mpolyu_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_mpolyd_struct {
     pub nvars: mp_limb_signed_t,
     pub degb_alloc: mp_limb_signed_t,
@@ -108,6 +111,7 @@ impl Default for nmod_mpolyd_struct {
 }
 pub type nmod_mpolyd_t = [nmod_mpolyd_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_poly_stack_struct {
     pub poly_array: *mut *mut n_poly_struct,
     pub poly_alloc: mp_limb_signed_t,
@@ -160,6 +164,7 @@ impl Default for nmod_poly_stack_struct {
 }
 pub type nmod_poly_stack_t = [nmod_poly_stack_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_mpolyd_ctx_struct {
     pub nvars: mp_limb_signed_t,
     pub perm: *mut mp_limb_signed_t,
@@ -185,6 +190,7 @@ impl Default for nmod_mpolyd_ctx_struct {
 }
 pub type nmod_mpolyd_ctx_t = [nmod_mpolyd_ctx_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _nmod_mpoly_stripe_struct {
     pub big_mem: *mut libc::c_char,
     pub big_mem_alloc: mp_limb_signed_t,
@@ -245,6 +251,7 @@ impl Default for _nmod_mpoly_stripe_struct {
 pub type nmod_mpoly_stripe_struct = _nmod_mpoly_stripe_struct;
 pub type nmod_mpoly_stripe_t = [nmod_mpoly_stripe_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_mpoly_geobucket {
     pub polys: [nmod_mpoly_struct; 32usize],
     pub temps: [nmod_mpoly_struct; 32usize],

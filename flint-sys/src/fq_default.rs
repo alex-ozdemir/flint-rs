@@ -19,6 +19,7 @@ pub const FQ_DEFAULT_FQ: u32 = 3;
 pub const FQ_DEFAULT_NMOD: u32 = 4;
 pub const FQ_DEFAULT_FMPZ_MOD: u32 = 5;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_default_struct {
     pub fq: __BindgenUnionField<fq_t>,
     pub fq_nmod: __BindgenUnionField<fq_nmod_t>,
@@ -55,6 +56,7 @@ pub type fq_default_t = [fq_default_struct; 1usize];
 pub type fq_default_ctx_struct = gr_ctx_struct;
 pub type fq_default_ctx_t = [fq_default_ctx_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _gr_fmpz_mod_ctx_struct {
     pub ctx: *mut fmpz_mod_ctx_struct,
     pub is_prime: truth_t,
@@ -82,6 +84,7 @@ impl Default for _gr_fmpz_mod_ctx_struct {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _gr_nmod_ctx_struct {
     pub nmod: nmod_t,
     pub a: mp_limb_t,

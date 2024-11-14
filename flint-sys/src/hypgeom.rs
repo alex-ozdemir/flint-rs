@@ -6,6 +6,7 @@ use crate::fmpz_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct hypgeom_struct {
     pub A: fmpz_poly_t,
     pub B: fmpz_poly_t,

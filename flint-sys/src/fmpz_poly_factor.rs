@@ -7,6 +7,7 @@ use crate::nmod_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct zassenhaus_prune_struct {
     pub deg: mp_limb_signed_t,
     pub pos_degs: *mut libc::c_uchar,

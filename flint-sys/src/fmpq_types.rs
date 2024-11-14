@@ -6,6 +6,7 @@ use crate::fmpz_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpq_mat_struct {
     pub entries: *mut fmpq,
     pub r: mp_limb_signed_t,
@@ -34,6 +35,7 @@ impl Default for fmpq_mat_struct {
 }
 pub type fmpq_mat_t = [fmpq_mat_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpq_poly_struct {
     pub coeffs: *mut fmpz,
     pub alloc: mp_limb_signed_t,
@@ -64,6 +66,7 @@ impl Default for fmpq_poly_struct {
 }
 pub type fmpq_poly_t = [fmpq_poly_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpq_mpoly_struct {
     pub content: fmpq_t,
     pub zpoly: fmpz_mpoly_t,
@@ -88,6 +91,7 @@ impl Default for fmpq_mpoly_struct {
 }
 pub type fmpq_mpoly_t = [fmpq_mpoly_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpq_mpoly_factor_struct {
     pub constant: fmpq_t,
     pub poly: *mut fmpq_mpoly_struct,

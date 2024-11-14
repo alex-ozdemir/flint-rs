@@ -6,6 +6,7 @@ use crate::flint::*;
 
 pub type mpf = __mpf_struct;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mpf_mat_struct {
     pub entries: *mut mpf,
     pub r: mp_limb_signed_t,

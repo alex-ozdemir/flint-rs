@@ -10,6 +10,7 @@ pub const BELL_NUMBER_TAB_SIZE: u32 = 26;
 pub const SMALL_EULER_LIMIT: u32 = 25;
 pub const BERNOULLI_SMALL_NUMER_LIMIT: u32 = 35;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct trig_prod_struct {
     pub n: libc::c_int,
     pub prefactor: libc::c_int,

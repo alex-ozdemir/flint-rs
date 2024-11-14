@@ -15,6 +15,7 @@ use crate::nmod_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_default_poly_struct {
     pub fq: __BindgenUnionField<fq_poly_t>,
     pub fq_nmod: __BindgenUnionField<fq_nmod_poly_t>,

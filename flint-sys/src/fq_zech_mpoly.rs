@@ -11,6 +11,7 @@ use crate::nmod_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_mpoly_ctx_struct {
     pub minfo: mpoly_ctx_t,
     pub fqctx: fq_zech_ctx_t,
@@ -37,6 +38,7 @@ impl Default for fq_zech_mpoly_ctx_struct {
 }
 pub type fq_zech_mpoly_ctx_t = [fq_zech_mpoly_ctx_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_mpoly_struct {
     pub coeffs: *mut fq_zech_struct,
     pub exps: *mut mp_limb_t,
@@ -70,6 +72,7 @@ impl Default for fq_zech_mpoly_struct {
 }
 pub type fq_zech_mpoly_t = [fq_zech_mpoly_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_mpoly_univar_struct {
     pub coeffs: *mut fq_zech_mpoly_struct,
     pub exps: *mut fmpz,
@@ -102,6 +105,7 @@ impl Default for fq_zech_mpoly_univar_struct {
 }
 pub type fq_zech_mpoly_univar_t = [fq_zech_mpoly_univar_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_mpolyu_struct {
     pub coeffs: *mut fq_zech_mpoly_struct,
     pub exps: *mut mp_limb_t,
@@ -136,6 +140,7 @@ impl Default for fq_zech_mpolyu_struct {
 }
 pub type fq_zech_mpolyu_t = [fq_zech_mpolyu_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_mpolyn_struct {
     pub coeffs: *mut fq_zech_poly_struct,
     pub exps: *mut mp_limb_t,
@@ -170,6 +175,7 @@ impl Default for fq_zech_mpolyn_struct {
 }
 pub type fq_zech_mpolyn_t = [fq_zech_mpolyn_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_mpolyun_struct {
     pub coeffs: *mut fq_zech_mpolyn_struct,
     pub exps: *mut mp_limb_t,
@@ -204,6 +210,7 @@ impl Default for fq_zech_mpolyun_struct {
 }
 pub type fq_zech_mpolyun_t = [fq_zech_mpolyun_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_mpoly_geobucket {
     pub polys: [fq_zech_mpoly_struct; 32usize],
     pub length: mp_limb_signed_t,

@@ -9,6 +9,7 @@ use crate::nmod_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_mpolyv_struct {
     pub coeffs: *mut nmod_mpoly_struct,
     pub alloc: mp_limb_signed_t,
@@ -36,6 +37,7 @@ impl Default for nmod_mpolyv_struct {
 }
 pub type nmod_mpolyv_t = [nmod_mpolyv_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_mpoly_pfrac_struct {
     pub bits: mp_limb_t,
     pub w: mp_limb_signed_t,

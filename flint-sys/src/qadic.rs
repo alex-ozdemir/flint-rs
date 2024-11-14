@@ -10,6 +10,7 @@ use crate::padic_types::*;
 pub type qadic_t = padic_poly_t;
 pub type qadic_struct = padic_poly_struct;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct qadic_ctx_struct {
     pub pctx: padic_ctx_struct,
     pub a: *mut fmpz,

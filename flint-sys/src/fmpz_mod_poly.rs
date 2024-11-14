@@ -13,6 +13,7 @@ pub const FMPZ_MOD_POLY_GCD_CUTOFF: u32 = 256;
 pub const FMPZ_MOD_POLY_INV_NEWTON_CUTOFF: u32 = 64;
 pub const FMPZ_MOD_POLY_EVALUATE_FMPZ_VEC: u32 = 32;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_poly_res_struct {
     pub res: fmpz_t,
     pub lc: fmpz_t,
@@ -48,6 +49,7 @@ impl Default for fmpz_mod_poly_res_struct {
 }
 pub type fmpz_mod_poly_res_t = [fmpz_mod_poly_res_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_poly_frobenius_powers_2exp_struct {
     pub pow: *mut fmpz_mod_poly_struct,
     pub len: mp_limb_signed_t,
@@ -75,6 +77,7 @@ impl Default for fmpz_mod_poly_frobenius_powers_2exp_struct {
 pub type fmpz_mod_poly_frobenius_powers_2exp_t =
     [fmpz_mod_poly_frobenius_powers_2exp_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_poly_frobenius_powers_struct {
     pub pow: *mut fmpz_mod_poly_struct,
     pub len: mp_limb_signed_t,
@@ -176,6 +179,7 @@ impl Default for fmpz_mod_poly_compose_mod_precomp_preinv_arg_t {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_poly_radix_struct {
     pub V: *mut fmpz,
     pub W: *mut fmpz,
@@ -217,6 +221,7 @@ impl Default for fmpz_mod_poly_radix_struct {
 }
 pub type fmpz_mod_poly_radix_t = [fmpz_mod_poly_radix_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_berlekamp_massey_struct {
     pub npoints: mp_limb_signed_t,
     pub R0: fmpz_mod_poly_t,

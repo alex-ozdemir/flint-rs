@@ -16,6 +16,7 @@ pub const FLINT_FACTOR_TRIAL_PRIMES: u32 = 3000;
 pub const FLINT_FACTOR_SQUFOF_ITERS: u32 = 50000;
 pub const FLINT_FACTOR_ONE_LINE_ITERS: u32 = 40000;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct n_ecm_s {
     pub x: mp_limb_t,
     pub z: mp_limb_t,

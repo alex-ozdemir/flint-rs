@@ -6,6 +6,7 @@ use crate::fmpz_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct padic_struct {
     pub u: fmpz,
     pub v: mp_limb_signed_t,
@@ -34,6 +35,7 @@ pub const padic_print_mode_PADIC_SERIES: padic_print_mode = 1;
 pub const padic_print_mode_PADIC_VAL_UNIT: padic_print_mode = 2;
 pub type padic_print_mode = libc::c_uint;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct padic_ctx_struct {
     pub p: fmpz_t,
     pub pinv: f64,
@@ -69,6 +71,7 @@ impl Default for padic_ctx_struct {
 }
 pub type padic_ctx_t = [padic_ctx_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct padic_inv_struct {
     pub n: mp_limb_signed_t,
     pub pow: *mut fmpz,
@@ -92,6 +95,7 @@ impl Default for padic_inv_struct {
 }
 pub type padic_inv_t = [padic_inv_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct padic_mat_struct {
     pub mat: fmpz_mat_struct,
     pub val: mp_limb_signed_t,
@@ -118,6 +122,7 @@ impl Default for padic_mat_struct {
 }
 pub type padic_mat_t = [padic_mat_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct padic_poly_struct {
     pub coeffs: *mut fmpz,
     pub alloc: mp_limb_signed_t,

@@ -18,6 +18,7 @@ pub const truth_t_T_UNKNOWN: truth_t = 2;
 pub type truth_t = libc::c_uint;
 pub type gr_funcptr = ::std::option::Option<unsafe extern "C" fn() -> libc::c_int>;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct gr_stream_struct {
     pub fp: *mut FLINT_FILE,
     pub s: *mut libc::c_char,
@@ -50,6 +51,7 @@ pub type gr_ptr = *mut libc::c_void;
 pub type gr_srcptr = *const libc::c_void;
 pub type gr_ctx_ptr = *mut libc::c_void;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct gr_vec_struct {
     pub entries: gr_ptr,
     pub alloc: mp_limb_signed_t,

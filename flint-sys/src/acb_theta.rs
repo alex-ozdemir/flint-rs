@@ -11,6 +11,7 @@ use crate::fmpz_types::*;
 pub const ACB_THETA_LOW_PREC: u32 = 32;
 pub const ACB_THETA_G2_COV_NB: u32 = 26;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_theta_eld_struct {
     pub dim: mp_limb_signed_t,
     pub ambient_dim: mp_limb_signed_t,

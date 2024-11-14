@@ -11,6 +11,7 @@ use crate::fq_zech_types::*;
 use crate::nmod_types::*;
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_default_poly_factor_struct {
     pub fq: __BindgenUnionField<fq_poly_factor_t>,
     pub fq_nmod: __BindgenUnionField<fq_nmod_poly_factor_t>,

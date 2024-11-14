@@ -9,6 +9,7 @@ use crate::limb_types::*;
 
 pub const SQUARING_SPACE: u32 = 70;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _aprcl_config {
     pub R: mp_limb_t,
     pub s: fmpz_t,
@@ -38,6 +39,7 @@ impl Default for _aprcl_config {
 }
 pub type aprcl_config = [_aprcl_config; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _unity_zpq {
     pub polys: *mut fmpz_mod_poly_t,
     pub p: mp_limb_t,
@@ -64,6 +66,7 @@ impl Default for _unity_zpq {
 }
 pub type unity_zpq = [_unity_zpq; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _unity_zp {
     pub poly: fmpz_mod_poly_t,
     pub p: mp_limb_t,

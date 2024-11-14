@@ -7,6 +7,7 @@ use crate::flint::*;
 
 pub const MAX_FACTORS: u32 = 15;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct dirichlet_prime_group_struct {
     pub p: mp_limb_t,
     pub e: libc::c_int,
@@ -44,6 +45,7 @@ impl Default for dirichlet_prime_group_struct {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct dirichlet_group_struct {
     pub q: mp_limb_t,
     pub q_even: mp_limb_t,
@@ -96,6 +98,7 @@ impl Default for dirichlet_group_struct {
 }
 pub type dirichlet_group_t = [dirichlet_group_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct dirichlet_char_struct {
     pub n: mp_limb_t,
     pub log: *mut mp_limb_t,

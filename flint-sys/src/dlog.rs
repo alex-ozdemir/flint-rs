@@ -25,6 +25,7 @@ pub const DLOG_TABLE: c_uint = 4;
 pub const DLOG_23: c_uint = 5;
 pub type dlog_precomp_ptr = *mut dlog_precomp_struct;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct dlog_1modpe_struct {
     pub inv1p: mp_limb_t,
     pub invloga1: mp_limb_t,
@@ -49,6 +50,7 @@ impl Default for dlog_1modpe_struct {
 }
 pub type dlog_1modpe_t = [dlog_1modpe_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct dlog_modpe_struct {
     pub p: mp_limb_t,
     pub e: mp_limb_t,
@@ -88,6 +90,7 @@ impl Default for dlog_modpe_struct {
 }
 pub type dlog_modpe_t = [dlog_modpe_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct dlog_table_struct {
     pub mod_: mp_limb_t,
     pub table: *mut mp_limb_t,
@@ -112,6 +115,7 @@ impl Default for dlog_table_struct {
 }
 pub type dlog_table_t = [dlog_table_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct apow {
     pub k: mp_limb_t,
     pub ak: mp_limb_t,
@@ -134,6 +138,7 @@ impl Default for apow {
 }
 pub type apow_t = apow;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct dlog_bsgs_struct {
     pub mod_: nmod_t,
     pub m: mp_limb_t,
@@ -165,6 +170,7 @@ impl Default for dlog_bsgs_struct {
 }
 pub type dlog_bsgs_t = [dlog_bsgs_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct dlog_rho_struct {
     pub a: mp_limb_t,
     pub n: nmod_t,
@@ -193,6 +199,7 @@ impl Default for dlog_rho_struct {
 }
 pub type dlog_rho_t = [dlog_rho_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct dlog_crt_struct {
     pub mod_: nmod_t,
     pub n: nmod_t,
@@ -228,6 +235,7 @@ impl Default for dlog_crt_struct {
 }
 pub type dlog_crt_t = [dlog_crt_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct dlog_power_struct {
     pub mod_: nmod_t,
     pub p: mp_limb_t,
@@ -262,12 +270,14 @@ impl Default for dlog_power_struct {
 pub type dlog_power_t = [dlog_power_struct; 1usize];
 pub type dlog_order23_t = [mp_limb_t; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct dlog_precomp_struct {
     pub type_: libc::c_int,
     pub cost: mp_limb_t,
     pub t: dlog_precomp_struct__bindgen_ty_1,
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct dlog_precomp_struct__bindgen_ty_1 {
     pub table: __BindgenUnionField<dlog_table_t>,
     pub bsgs: __BindgenUnionField<dlog_bsgs_t>,

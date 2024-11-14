@@ -9,6 +9,7 @@ use crate::fmpz_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct psl2z_struct {
     pub a: fmpz,
     pub b: fmpz,

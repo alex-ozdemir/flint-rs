@@ -9,6 +9,7 @@ use crate::flint::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_dirichlet_hurwitz_precomp_struct {
     pub s: acb_struct,
     pub err: mag_struct,
@@ -50,6 +51,7 @@ impl Default for acb_dirichlet_hurwitz_precomp_struct {
 }
 pub type acb_dirichlet_hurwitz_precomp_t = [acb_dirichlet_hurwitz_precomp_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_dirichlet_roots_struct {
     pub order: mp_limb_t,
     pub reduced_order: mp_limb_t,
@@ -91,6 +93,7 @@ impl Default for acb_dirichlet_roots_struct {
 }
 pub type acb_dirichlet_roots_t = [acb_dirichlet_roots_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_dirichlet_platt_c_precomp_struct {
     pub len: mp_limb_signed_t,
     pub p: arb_ptr,
@@ -123,6 +126,7 @@ impl Default for acb_dirichlet_platt_c_precomp_struct {
 }
 pub type acb_dirichlet_platt_c_precomp_t = [acb_dirichlet_platt_c_precomp_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_dirichlet_platt_i_precomp_struct {
     pub c1: arb_struct,
     pub c2: arb_struct,
@@ -149,6 +153,7 @@ impl Default for acb_dirichlet_platt_i_precomp_struct {
 }
 pub type acb_dirichlet_platt_i_precomp_t = [acb_dirichlet_platt_i_precomp_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_dirichlet_platt_ws_precomp_struct {
     pub pre_c: acb_dirichlet_platt_c_precomp_struct,
     pub pre_i: acb_dirichlet_platt_i_precomp_struct,

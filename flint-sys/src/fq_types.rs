@@ -9,6 +9,7 @@ use crate::fmpz_types::*;
 pub type fq_t = fmpz_poly_t;
 pub type fq_struct = fmpz_poly_struct;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_ctx_struct {
     pub ctxp: fmpz_mod_ctx_t,
     pub sparse_modulus: libc::c_int,
@@ -48,6 +49,7 @@ impl Default for fq_ctx_struct {
 }
 pub type fq_ctx_t = [fq_ctx_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_mat_struct {
     pub entries: *mut fq_struct,
     pub r: mp_limb_signed_t,
@@ -75,6 +77,7 @@ impl Default for fq_mat_struct {
 }
 pub type fq_mat_t = [fq_mat_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_poly_struct {
     pub coeffs: *mut fq_struct,
     pub alloc: mp_limb_signed_t,
@@ -102,6 +105,7 @@ impl Default for fq_poly_struct {
 }
 pub type fq_poly_t = [fq_poly_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_poly_factor_struct {
     pub poly: *mut fq_poly_struct,
     pub exp: *mut mp_limb_signed_t,

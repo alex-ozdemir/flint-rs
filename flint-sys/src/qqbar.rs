@@ -13,6 +13,7 @@ pub const QQBAR_DEFAULT_PREC: u32 = 128;
 pub const QQBAR_ROOTS_IRREDUCIBLE: u32 = 1;
 pub const QQBAR_ROOTS_UNSORTED: u32 = 2;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct qqbar_struct {
     pub poly: fmpz_poly_struct,
     pub enclosure: acb_struct,

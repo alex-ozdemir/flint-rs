@@ -11,6 +11,7 @@ use crate::nmod_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mpolyv_struct {
     pub coeffs: *mut fmpz_mpoly_struct,
     pub alloc: mp_limb_signed_t,
@@ -38,6 +39,7 @@ impl Default for fmpz_mpolyv_struct {
 }
 pub type fmpz_mpolyv_t = [fmpz_mpolyv_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_poly_pfrac_struct {
     pub r: mp_limb_signed_t,
     pub bits: *mut mp_limb_t,
@@ -117,6 +119,7 @@ impl Default for fmpz_poly_pfrac_struct {
 }
 pub type fmpz_poly_pfrac_t = [fmpz_poly_pfrac_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mpoly_pfrac_struct {
     pub bits: mp_limb_t,
     pub w: mp_limb_signed_t,
@@ -188,6 +191,7 @@ impl Default for fmpz_mpoly_pfrac_struct {
 }
 pub type fmpz_mpoly_pfrac_t = [fmpz_mpoly_pfrac_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_bpoly_struct {
     pub coeffs: *mut fmpz_poly_struct,
     pub alloc: mp_limb_signed_t,
@@ -215,6 +219,7 @@ impl Default for fmpz_bpoly_struct {
 }
 pub type fmpz_bpoly_t = [fmpz_bpoly_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_tpoly_struct {
     pub coeffs: *mut fmpz_bpoly_struct,
     pub alloc: mp_limb_signed_t,

@@ -10,6 +10,7 @@ pub const NMOD_POLY_HGCD_CUTOFF: u32 = 100;
 pub const NMOD_POLY_GCD_CUTOFF: u32 = 340;
 pub const NMOD_POLY_SMALL_GCD_CUTOFF: u32 = 200;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_poly_res_struct {
     pub res: mp_limb_t,
     pub lc: mp_limb_t,
@@ -110,6 +111,7 @@ impl Default for nmod_poly_compose_mod_precomp_preinv_arg_t {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _nmod_poly_multi_crt_prog_instr {
     pub a_idx: mp_limb_signed_t,
     pub b_idx: mp_limb_signed_t,
@@ -144,6 +146,7 @@ impl Default for _nmod_poly_multi_crt_prog_instr {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_poly_multi_crt_struct {
     pub prog: *mut _nmod_poly_multi_crt_prog_instr,
     pub length: mp_limb_signed_t,
@@ -185,6 +188,7 @@ impl Default for nmod_poly_multi_crt_struct {
 }
 pub type nmod_poly_multi_crt_t = [nmod_poly_multi_crt_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_berlekamp_massey_struct {
     pub npoints: mp_limb_signed_t,
     pub R0: nmod_poly_t,

@@ -7,6 +7,7 @@ use crate::fmpz_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_poly_interval_poly_arg_t {
     pub baby: *mut fmpz_mod_poly_struct,
     pub res: *mut fmpz_mod_poly_struct,

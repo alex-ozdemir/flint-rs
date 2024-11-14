@@ -11,6 +11,7 @@ pub const FMPZ_POLY_INV_NEWTON_CUTOFF: u32 = 32;
 pub const FMPZ_POLY_SQRT_DIVCONQUER_CUTOFF: u32 = 16;
 pub const FMPZ_POLY_SQRTREM_DIVCONQUER_CUTOFF: u32 = 16;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_poly_powers_precomp_struct {
     pub powers: *mut *mut fmpz,
     pub len: mp_limb_signed_t,
@@ -37,6 +38,7 @@ impl Default for fmpz_poly_powers_precomp_struct {
 }
 pub type fmpz_poly_powers_precomp_t = [fmpz_poly_powers_precomp_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_poly_mul_precache_struct {
     pub jj: *mut *mut mp_limb_t,
     pub n: mp_limb_signed_t,

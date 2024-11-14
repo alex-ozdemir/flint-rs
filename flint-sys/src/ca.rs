@@ -30,6 +30,7 @@ pub const CA_FACTOR_POLY_CONTENT: u32 = 64;
 pub const CA_FACTOR_POLY_SQF: u32 = 128;
 pub const CA_FACTOR_POLY_FULL: u32 = 256;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct ca_elem_struct {
     pub q: __BindgenUnionField<fmpq>,
     pub nf: __BindgenUnionField<nf_elem_struct>,
@@ -55,6 +56,7 @@ impl Default for ca_elem_struct {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct ca_struct {
     pub field: mp_limb_t,
     pub elem: ca_elem_struct,
@@ -79,6 +81,7 @@ pub type ca_t = [ca_struct; 1usize];
 pub type ca_ptr = *mut ca_struct;
 pub type ca_srcptr = *const ca_struct;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct ca_ext_qqbar {
     pub x: qqbar_struct,
     pub nf: *mut nf_struct,
@@ -100,6 +103,7 @@ impl Default for ca_ext_qqbar {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct ca_ext_func_data {
     pub args: *mut ca_struct,
     pub nargs: mp_limb_signed_t,
@@ -132,6 +136,7 @@ impl Default for ca_ext_func_data {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct ca_ext_struct {
     pub head: calcium_func_code,
     pub hash: mp_limb_t,
@@ -139,6 +144,7 @@ pub struct ca_ext_struct {
     pub data: ca_ext_struct__bindgen_ty_1,
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct ca_ext_struct__bindgen_ty_1 {
     pub qqbar: __BindgenUnionField<ca_ext_qqbar>,
     pub func_data: __BindgenUnionField<ca_ext_func_data>,
@@ -187,6 +193,7 @@ pub type ca_ext_t = [ca_ext_struct; 1usize];
 pub type ca_ext_ptr = *mut ca_ext_struct;
 pub type ca_ext_srcptr = *const ca_ext_struct;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct ca_ext_cache_struct {
     pub items: *mut *mut ca_ext_struct,
     pub length: mp_limb_signed_t,
@@ -220,6 +227,7 @@ impl Default for ca_ext_cache_struct {
 }
 pub type ca_ext_cache_t = [ca_ext_cache_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct ca_field_struct {
     pub length: mp_limb_signed_t,
     pub ext: *mut *mut ca_ext_struct,
@@ -252,6 +260,7 @@ pub type ca_field_t = [ca_field_struct; 1usize];
 pub type ca_field_ptr = *mut ca_field_struct;
 pub type ca_field_srcptr = *const ca_field_struct;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct ca_field_cache_struct {
     pub items: *mut *mut ca_field_struct,
     pub length: mp_limb_signed_t,

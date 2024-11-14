@@ -8,6 +8,7 @@ use crate::gr::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct gr_poly_struct {
     pub coeffs: gr_ptr,
     pub alloc: mp_limb_signed_t,

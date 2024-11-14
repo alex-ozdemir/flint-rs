@@ -7,6 +7,7 @@ use crate::nmod_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_poly_interval_poly_arg_t {
     pub baby: *mut nmod_poly_struct,
     pub res: *mut nmod_poly_struct,

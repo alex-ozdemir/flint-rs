@@ -10,6 +10,7 @@ use crate::nmod_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_mpoly_univar_struct {
     pub coeffs: *mut fmpz_mod_mpoly_struct,
     pub exps: *mut fmpz,
@@ -42,6 +43,7 @@ impl Default for fmpz_mod_mpoly_univar_struct {
 }
 pub type fmpz_mod_mpoly_univar_t = [fmpz_mod_mpoly_univar_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_mpoly_geobucket {
     pub polys: [fmpz_mod_mpoly_struct; 32usize],
     pub temps: [fmpz_mod_mpoly_struct; 32usize],

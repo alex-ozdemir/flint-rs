@@ -32,6 +32,7 @@ pub type FLINT_FILE = __FLINT_FILE;
 pub type flint_cleanup_function_t = ::std::option::Option<unsafe extern "C" fn()>;
 pub type thread_pool_handle = libc::c_int;
 #[repr(C)]
+#[derive(Copy, Clone)]
 pub struct flint_rand_s {
     pub gmp_state: gmp_randstate_t,
     pub gmp_init: libc::c_int,
@@ -71,6 +72,7 @@ pub const flint_err_t_FLINT_INEXACT: flint_err_t = 6;
 pub const flint_err_t_FLINT_TEST_FAIL: flint_err_t = 7;
 pub type flint_err_t = libc::c_uint;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_t {
     pub n: mp_limb_t,
     pub ninv: mp_limb_t,
@@ -96,6 +98,7 @@ impl Default for nmod_t {
 pub type fmpz = mp_limb_signed_t;
 pub type fmpz_t = [fmpz; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpq {
     pub num: fmpz,
     pub den: fmpz,

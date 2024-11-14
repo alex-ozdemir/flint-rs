@@ -8,6 +8,7 @@ use crate::gr::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct calcium_stream_struct {
     pub fp: *mut FLINT_FILE,
     pub s: *mut libc::c_char,

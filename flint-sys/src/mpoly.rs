@@ -17,6 +17,7 @@ pub const MPOLY_FACTOR_USE_WANG: u32 = 2;
 pub const MPOLY_FACTOR_USE_ZIP: u32 = 4;
 pub const MPOLY_FACTOR_USE_ALL: u32 = 7;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mpoly_heap_t {
     pub i: mp_limb_t,
     pub j: mp_limb_t,
@@ -40,6 +41,7 @@ impl Default for mpoly_heap_t {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mpoly_nheap_t {
     pub i: mp_limb_t,
     pub j: mp_limb_t,
@@ -65,6 +67,7 @@ impl Default for mpoly_nheap_t {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mpoly_heap1_s {
     pub exp: mp_limb_t,
     pub next: *mut libc::c_void,
@@ -108,6 +111,7 @@ impl Default for mpoly_heap_s {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mpoly_rbnode_ui_struct {
     pub key: mp_limb_t,
     pub up: mp_limb_signed_t,
@@ -141,6 +145,7 @@ impl Default for mpoly_rbnode_ui_struct {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mpoly_rbtree_ui_struct {
     pub length: mp_limb_signed_t,
     pub nodes: *mut mpoly_rbnode_ui_struct,
@@ -178,6 +183,7 @@ impl Default for mpoly_rbtree_ui_struct {
 }
 pub type mpoly_rbtree_ui_t = [mpoly_rbtree_ui_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mpoly_rbnode_fmpz_struct {
     pub key: fmpz_t,
     pub up: mp_limb_signed_t,
@@ -212,6 +218,7 @@ impl Default for mpoly_rbnode_fmpz_struct {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mpoly_rbtree_fmpz_struct {
     pub length: mp_limb_signed_t,
     pub nodes: *mut mpoly_rbnode_fmpz_struct,
@@ -250,6 +257,7 @@ impl Default for mpoly_rbtree_fmpz_struct {
 }
 pub type mpoly_rbtree_fmpz_t = [mpoly_rbtree_fmpz_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mpoly_univar_struct {
     pub coeffs: *mut libc::c_char,
     pub exps: *mut fmpz,
@@ -280,6 +288,7 @@ impl Default for mpoly_univar_struct {
 }
 pub type mpoly_univar_t = [mpoly_univar_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct string_with_length_struct {
     pub str_: *mut libc::c_char,
     pub str_len: mp_limb_signed_t,
@@ -305,6 +314,7 @@ impl Default for string_with_length_struct {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mpoly_parse_struct {
     pub R: mpoly_void_ring_t,
     pub stack: *mut mp_limb_signed_t,

@@ -16,6 +16,7 @@ pub const NF_LINEAR: u32 = 2;
 pub const NF_QUADRATIC: u32 = 4;
 pub const NF_GAUSSIAN: u32 = 8;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nf_struct {
     pub pol: fmpq_poly_t,
     pub pinv: nf_struct__bindgen_ty_1,
@@ -24,6 +25,7 @@ pub struct nf_struct {
     pub flag: mp_limb_t,
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nf_struct__bindgen_ty_1 {
     pub qq: __BindgenUnionField<fmpz_preinvn_t>,
     pub bindgen_union_field: [u64; 3usize],
@@ -46,6 +48,7 @@ impl Default for nf_struct__bindgen_ty_1 {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nf_struct__bindgen_ty_2 {
     pub qq: __BindgenUnionField<fmpq_poly_powers_precomp_t>,
     pub zz: __BindgenUnionField<fmpz_poly_powers_precomp_t>,

@@ -8,6 +8,7 @@ use crate::flint::*;
 pub const FMPQ_RECONSTRUCT_HGCD_CUTOFF: u32 = 500;
 #[doc = " 2x2 integer matrix"]
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _fmpz_mat22_struct {
     pub _11: fmpz_t,
     pub _12: fmpz_t,
@@ -41,6 +42,7 @@ impl Default for _fmpz_mat22_struct {
 }
 pub type _fmpz_mat22_t = [_fmpz_mat22_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _ui_mat22_struct {
     pub _11: mp_limb_t,
     pub _12: mp_limb_t,
@@ -75,6 +77,7 @@ impl Default for _ui_mat22_struct {
 pub type _ui_mat22_t = [_ui_mat22_struct; 1usize];
 #[doc = " resizable integer vector specific to cfrac functionality"]
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _fmpq_cfrac_list_struct {
     pub array: *mut fmpz,
     pub length: mp_limb_signed_t,
@@ -113,6 +116,7 @@ impl Default for _fmpq_cfrac_list_struct {
 pub type _fmpq_cfrac_list_t = [_fmpq_cfrac_list_struct; 1usize];
 #[doc = " ball for closed interval [left, right]"]
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _fmpq_ball_struct {
     pub left_num: fmpz_t,
     pub left_den: fmpz_t,

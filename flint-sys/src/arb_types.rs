@@ -6,6 +6,7 @@ use crate::flint::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mag_struct {
     pub exp: fmpz,
     pub man: mp_limb_t,
@@ -30,6 +31,7 @@ pub type mag_t = [mag_struct; 1usize];
 pub type mag_ptr = *mut mag_struct;
 pub type mag_srcptr = *const mag_struct;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct arb_struct {
     pub mid: arf_struct,
     pub rad: mag_struct,
@@ -54,6 +56,7 @@ pub type arb_t = [arb_struct; 1usize];
 pub type arb_ptr = *mut arb_struct;
 pub type arb_srcptr = *const arb_struct;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct arb_mat_struct {
     pub entries: arb_ptr,
     pub r: mp_limb_signed_t,
@@ -82,6 +85,7 @@ impl Default for arb_mat_struct {
 }
 pub type arb_mat_t = [arb_mat_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct arb_poly_struct {
     pub coeffs: arb_ptr,
     pub alloc: mp_limb_signed_t,

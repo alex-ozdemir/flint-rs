@@ -8,6 +8,7 @@ use crate::nmod_types::*;
 pub type fq_nmod_t = nmod_poly_t;
 pub type fq_nmod_struct = nmod_poly_struct;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_ctx_struct {
     pub mod_: nmod_t,
     pub sparse_modulus: libc::c_int,
@@ -53,6 +54,7 @@ impl Default for fq_nmod_ctx_struct {
 }
 pub type fq_nmod_ctx_t = [fq_nmod_ctx_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_mat_struct {
     pub entries: *mut fq_nmod_struct,
     pub r: mp_limb_signed_t,
@@ -83,6 +85,7 @@ impl Default for fq_nmod_mat_struct {
 }
 pub type fq_nmod_mat_t = [fq_nmod_mat_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_poly_struct {
     pub coeffs: *mut fq_nmod_struct,
     pub alloc: mp_limb_signed_t,
@@ -110,6 +113,7 @@ impl Default for fq_nmod_poly_struct {
 }
 pub type fq_nmod_poly_t = [fq_nmod_poly_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_poly_factor_struct {
     pub poly: *mut fq_nmod_poly_struct,
     pub exp: *mut mp_limb_signed_t,
@@ -142,6 +146,7 @@ impl Default for fq_nmod_poly_factor_struct {
 }
 pub type fq_nmod_poly_factor_t = [fq_nmod_poly_factor_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_mpoly_struct {
     pub coeffs: *mut mp_limb_t,
     pub exps: *mut mp_limb_t,

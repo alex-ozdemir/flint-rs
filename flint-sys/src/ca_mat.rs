@@ -11,6 +11,7 @@ use crate::gr::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct ca_mat_struct {
     pub entries: ca_ptr,
     pub r: mp_limb_signed_t,

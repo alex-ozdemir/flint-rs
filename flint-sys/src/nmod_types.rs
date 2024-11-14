@@ -5,6 +5,7 @@ use crate::flint::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_mat_struct {
     pub entries: *mut mp_limb_t,
     pub r: mp_limb_signed_t,
@@ -36,6 +37,7 @@ impl Default for nmod_mat_struct {
 }
 pub type nmod_mat_t = [nmod_mat_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_poly_struct {
     pub coeffs: mp_ptr,
     pub alloc: mp_limb_signed_t,
@@ -66,6 +68,7 @@ impl Default for nmod_poly_struct {
 }
 pub type nmod_poly_t = [nmod_poly_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_poly_factor_struct {
     pub p: *mut nmod_poly_struct,
     pub exp: *mut mp_limb_signed_t,
@@ -97,6 +100,7 @@ impl Default for nmod_poly_factor_struct {
 }
 pub type nmod_poly_factor_t = [nmod_poly_factor_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_poly_mat_struct {
     pub entries: *mut nmod_poly_struct,
     pub r: mp_limb_signed_t,
@@ -130,6 +134,7 @@ impl Default for nmod_poly_mat_struct {
 }
 pub type nmod_poly_mat_t = [nmod_poly_mat_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_mpoly_struct {
     pub coeffs: *mut mp_limb_t,
     pub exps: *mut mp_limb_t,
@@ -166,6 +171,7 @@ impl Default for nmod_mpoly_struct {
 }
 pub type nmod_mpoly_t = [nmod_mpoly_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_mpoly_factor_struct {
     pub constant: mp_limb_t,
     pub poly: *mut nmod_mpoly_struct,

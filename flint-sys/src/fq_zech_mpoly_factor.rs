@@ -7,6 +7,7 @@ use crate::fq_zech_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_bpoly_struct {
     pub coeffs: *mut fq_zech_poly_struct,
     pub alloc: mp_limb_signed_t,
@@ -34,6 +35,7 @@ impl Default for fq_zech_bpoly_struct {
 }
 pub type fq_zech_bpoly_t = [fq_zech_bpoly_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_tpoly_struct {
     pub coeffs: *mut fq_zech_bpoly_struct,
     pub alloc: mp_limb_signed_t,
@@ -61,6 +63,7 @@ impl Default for fq_zech_tpoly_struct {
 }
 pub type fq_zech_tpoly_t = [fq_zech_tpoly_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_polyu_struct {
     pub exps: *mut mp_limb_t,
     pub coeffs: *mut fq_zech_struct,
@@ -91,6 +94,7 @@ impl Default for fq_zech_polyu_struct {
 }
 pub type fq_zech_polyu_t = [fq_zech_polyu_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_polyun_struct {
     pub coeffs: *mut fq_zech_poly_struct,
     pub exps: *mut mp_limb_t,
@@ -122,6 +126,7 @@ impl Default for fq_zech_polyun_struct {
 }
 pub type fq_zech_polyun_t = [fq_zech_polyun_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_mpoly_factor_struct {
     pub constant: fq_zech_t,
     pub poly: *mut fq_zech_mpoly_struct,
@@ -157,6 +162,7 @@ impl Default for fq_zech_mpoly_factor_struct {
 }
 pub type fq_zech_mpoly_factor_t = [fq_zech_mpoly_factor_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_mpolyv_struct {
     pub coeffs: *mut fq_zech_mpoly_struct,
     pub alloc: mp_limb_signed_t,
@@ -185,6 +191,7 @@ impl Default for fq_zech_mpolyv_struct {
 }
 pub type fq_zech_mpolyv_t = [fq_zech_mpolyv_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_mpoly_pfrac_struct {
     pub bits: mp_limb_t,
     pub w: mp_limb_signed_t,

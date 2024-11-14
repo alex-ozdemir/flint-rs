@@ -5,6 +5,7 @@ use crate::flint::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_discrete_log_pohlig_hellman_table_entry_struct {
     pub gammapow: mp_limb_t,
     pub cm: mp_limb_t,
@@ -32,6 +33,7 @@ impl Default for nmod_discrete_log_pohlig_hellman_table_entry_struct {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_discrete_log_pohlig_hellman_entry_struct {
     pub exp: mp_limb_signed_t,
     pub prime: mp_limb_t,
@@ -88,6 +90,7 @@ impl Default for nmod_discrete_log_pohlig_hellman_entry_struct {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_discrete_log_pohlig_hellman_struct {
     pub mod_: nmod_t,
     pub alpha: mp_limb_t,

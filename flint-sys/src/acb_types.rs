@@ -5,6 +5,7 @@ use crate::arb_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_struct {
     pub real: arb_struct,
     pub imag: arb_struct,
@@ -29,6 +30,7 @@ pub type acb_t = [acb_struct; 1usize];
 pub type acb_ptr = *mut acb_struct;
 pub type acb_srcptr = *const acb_struct;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_mat_struct {
     pub entries: acb_ptr,
     pub r: mp_limb_signed_t,
@@ -57,6 +59,7 @@ impl Default for acb_mat_struct {
 }
 pub type acb_mat_t = [acb_mat_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_poly_struct {
     pub coeffs: acb_ptr,
     pub alloc: mp_limb_signed_t,

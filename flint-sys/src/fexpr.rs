@@ -13,6 +13,7 @@ pub const FEXPR_SMALL_SYMBOL_LEN: u32 = 7;
 pub const FEXPR_LATEX_SMALL: u32 = 1;
 pub const FEXPR_LATEX_LOGIC: u32 = 2;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fexpr_struct {
     pub data: *mut mp_limb_t,
     pub alloc: mp_limb_signed_t,
@@ -37,6 +38,7 @@ pub type fexpr_t = [fexpr_struct; 1usize];
 pub type fexpr_ptr = *mut fexpr_struct;
 pub type fexpr_srcptr = *const fexpr_struct;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fexpr_vec_struct {
     pub entries: *mut fexpr_struct,
     pub alloc: mp_limb_signed_t,

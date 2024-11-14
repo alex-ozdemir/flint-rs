@@ -7,6 +7,7 @@ use crate::fmpz_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _fmpz_multi_CRT_instr {
     pub a_idx: mp_limb_signed_t,
     pub b_idx: mp_limb_signed_t,
@@ -40,6 +41,7 @@ impl Default for _fmpz_multi_CRT_instr {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_multi_CRT_struct {
     pub prog: *mut _fmpz_multi_CRT_instr,
     pub moduli: *mut fmpz,
@@ -101,6 +103,7 @@ impl Default for fmpz_multi_CRT_struct {
 }
 pub type fmpz_multi_CRT_t = [fmpz_multi_CRT_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _fmpz_multi_mod_instr {
     pub in_idx: mp_limb_signed_t,
     pub out_idx: mp_limb_signed_t,
@@ -128,6 +131,7 @@ impl Default for _fmpz_multi_mod_instr {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_multi_mod_struct {
     pub prog: *mut _fmpz_multi_mod_instr,
     pub moduli: *mut fmpz,
@@ -174,6 +178,7 @@ impl Default for fmpz_multi_mod_struct {
 }
 pub type fmpz_multi_mod_t = [fmpz_multi_mod_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct crt_lut_entry {
     pub mod_: nmod_t,
     pub i0: mp_limb_t,
@@ -199,6 +204,7 @@ impl Default for crt_lut_entry {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mod_lut_entry {
     pub mod_: nmod_t,
     pub mod0: nmod_t,
@@ -224,6 +230,7 @@ impl Default for mod_lut_entry {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_comb_struct {
     pub crt_P: fmpz_multi_CRT_t,
     pub mod_P: fmpz_multi_mod_t,
@@ -287,6 +294,7 @@ impl Default for fmpz_comb_struct {
 }
 pub type fmpz_comb_t = [fmpz_comb_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_comb_temp_struct {
     pub Alen: mp_limb_signed_t,
     pub Tlen: mp_limb_signed_t,

@@ -46,6 +46,7 @@ impl Default for fmpz_lll_struct {
 }
 pub type fmpz_lll_t = [fmpz_lll_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_gram_union {
     pub appSP: __BindgenUnionField<d_mat_t>,
     pub appSP2: __BindgenUnionField<mpf_mat_t>,

@@ -13,6 +13,7 @@ pub const ordering_t_ORD_DEGLEX: ordering_t = 1;
 pub const ordering_t_ORD_DEGREVLEX: ordering_t = 2;
 pub type ordering_t = libc::c_uint;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mpoly_ctx_struct {
     pub nvars: mp_limb_signed_t,
     pub nfields: mp_limb_signed_t,
@@ -52,6 +53,7 @@ impl Default for mpoly_ctx_struct {
 }
 pub type mpoly_ctx_t = [mpoly_ctx_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_mpoly_ctx_struct {
     pub minfo: mpoly_ctx_t,
     pub mod_: nmod_t,
@@ -77,6 +79,7 @@ impl Default for nmod_mpoly_ctx_struct {
 }
 pub type nmod_mpoly_ctx_t = [nmod_mpoly_ctx_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mpoly_ctx_struct {
     pub minfo: mpoly_ctx_t,
 }
@@ -99,6 +102,7 @@ impl Default for fmpz_mpoly_ctx_struct {
 }
 pub type fmpz_mpoly_ctx_t = [fmpz_mpoly_ctx_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpq_mpoly_ctx_struct {
     pub zctx: fmpz_mpoly_ctx_t,
 }
@@ -121,6 +125,7 @@ impl Default for fmpq_mpoly_ctx_struct {
 }
 pub type fmpq_mpoly_ctx_t = [fmpq_mpoly_ctx_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_mpoly_ctx_struct {
     pub minfo: mpoly_ctx_t,
     pub ffinfo: fmpz_mod_ctx_t,
@@ -147,6 +152,7 @@ impl Default for fmpz_mod_mpoly_ctx_struct {
 }
 pub type fmpz_mod_mpoly_ctx_t = [fmpz_mod_mpoly_ctx_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_mpoly_ctx_struct {
     pub minfo: mpoly_ctx_t,
     pub fqctx: fq_nmod_ctx_t,
@@ -173,6 +179,7 @@ impl Default for fq_nmod_mpoly_ctx_struct {
 }
 pub type fq_nmod_mpoly_ctx_t = [fq_nmod_mpoly_ctx_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _bindgen_ty_2 {
     pub elem_size: mp_limb_signed_t,
     pub ctx: *const libc::c_void,
@@ -322,6 +329,7 @@ impl Default for _bindgen_ty_2 {
 }
 pub type mpoly_void_ring_t = [_bindgen_ty_2; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mpoly_gcd_info_struct {
     pub Amax_exp: *mut mp_limb_t,
     pub Amin_exp: *mut mp_limb_t,
@@ -452,6 +460,7 @@ impl Default for mpoly_gcd_info_struct {
 }
 pub type mpoly_gcd_info_t = [mpoly_gcd_info_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct mpoly_compression_struct {
     pub mvars: mp_limb_signed_t,
     pub nvars: mp_limb_signed_t,
@@ -508,6 +517,7 @@ impl Default for mpoly_compression_struct {
 }
 pub type mpoly_compression_t = [mpoly_compression_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_mpolyn_struct {
     pub coeffs: *mut n_poly_struct,
     pub exps: *mut mp_limb_t,
@@ -541,6 +551,7 @@ impl Default for nmod_mpolyn_struct {
 }
 pub type nmod_mpolyn_t = [nmod_mpolyn_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct nmod_mpolyun_struct {
     pub coeffs: *mut nmod_mpolyn_struct,
     pub exps: *mut mp_limb_t,

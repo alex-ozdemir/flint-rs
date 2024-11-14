@@ -16,6 +16,7 @@ pub type acb_calc_func_t = ::std::option::Option<
     ) -> libc::c_int,
 >;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct acb_calc_integrate_opt_struct {
     pub deg_limit: mp_limb_signed_t,
     pub eval_limit: mp_limb_signed_t,

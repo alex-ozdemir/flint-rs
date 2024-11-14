@@ -7,6 +7,7 @@ use crate::gr::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct ca_vec_struct {
     pub entries: ca_ptr,
     pub alloc: mp_limb_signed_t,

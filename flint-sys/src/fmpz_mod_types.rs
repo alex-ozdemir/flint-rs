@@ -6,6 +6,7 @@ use crate::fmpz_types::*;
 
 
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_ctx {
     pub n: fmpz_t,
     pub add_fxn: ::std::option::Option<
@@ -70,6 +71,7 @@ pub type fmpz_mod_ctx_t = [fmpz_mod_ctx_struct; 1usize];
 pub type fmpz_mod_mat_struct = fmpz_mat_struct;
 pub type fmpz_mod_mat_t = [fmpz_mod_mat_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_poly_struct {
     pub coeffs: *mut fmpz,
     pub alloc: mp_limb_signed_t,
@@ -97,6 +99,7 @@ impl Default for fmpz_mod_poly_struct {
 }
 pub type fmpz_mod_poly_t = [fmpz_mod_poly_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_poly_factor_struct {
     pub poly: *mut fmpz_mod_poly_struct,
     pub exp: *mut mp_limb_signed_t,
@@ -129,6 +132,7 @@ impl Default for fmpz_mod_poly_factor_struct {
 }
 pub type fmpz_mod_poly_factor_t = [fmpz_mod_poly_factor_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_mpoly_struct {
     pub coeffs: *mut fmpz,
     pub exps: *mut mp_limb_t,
@@ -166,6 +170,7 @@ impl Default for fmpz_mod_mpoly_struct {
 }
 pub type fmpz_mod_mpoly_t = [fmpz_mod_mpoly_struct; 1usize];
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_mpoly_factor_struct {
     pub constant: fmpz_t,
     pub poly: *mut fmpz_mod_mpoly_struct,

@@ -7,6 +7,7 @@ use crate::flint::*;
 
 pub const BERNOULLI_REV_MIN: u32 = 32;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct bernoulli_rev_struct {
     pub alloc: mp_limb_signed_t,
     pub prec: mp_limb_signed_t,
