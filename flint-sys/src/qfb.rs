@@ -59,12 +59,12 @@ extern "C" {
     #[link_name = "qfb_clear__extern"]
     pub fn qfb_clear(q: *mut qfb);
     #[link_name = "qfb_equal__extern"]
-    pub fn qfb_equal(f: *mut qfb, g: *mut qfb) -> libc::c_int;
+    pub fn qfb_equal(f: *const qfb, g: *const qfb) -> libc::c_int;
     #[link_name = "qfb_set__extern"]
-    pub fn qfb_set(f: *mut qfb, g: *mut qfb);
+    pub fn qfb_set(f: *mut qfb, g: *const qfb);
     #[link_name = "qfb_discriminant__extern"]
     pub fn qfb_discriminant(D: *mut fmpz, f: *mut qfb);
-    pub fn qfb_print(q: *mut qfb);
+    pub fn qfb_print(q: *const qfb);
     #[link_name = "qfb_array_clear__extern"]
     pub fn qfb_array_clear(forms: *mut *mut qfb, num: mp_limb_signed_t);
     pub fn qfb_hash_init(depth: mp_limb_signed_t) -> *mut qfb_hash_t;
