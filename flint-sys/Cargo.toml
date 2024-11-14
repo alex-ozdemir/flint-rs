@@ -3,7 +3,7 @@ name = "flint-sys"
 version = "0.8.0"
 links = "flint"
 authors = ["Alex Ozdemir <aozdemir@hmc.edu>", "William Youmans <youmansw@fau.edu>"]
-edition = "2018"
+edition = "2021"
 description = "Bindings to the FLINT C library"
 homepage = "https://github.com/alex-ozdemir/flint-rs/tree/master/flint-sys"
 repository = "https://github.com/alex-ozdemir/flint-rs"
@@ -16,11 +16,6 @@ readme = "README.md"
 [dependencies]
 libc = "0.2"
 gmp-mpfr-sys = "1.6.4"
-derivative = "2.2"
-
-[dev-dependencies]
-quickcheck = "1"
-quickcheck_macros = "1"
 
 [features]
 default = ["disable-make-check"]
@@ -29,3 +24,6 @@ disable-make-check = []
 [target.'cfg(target_os = "windows")'.build-dependencies.winapi]
 version = "0.3"
 features = ["combaseapi", "knownfolders", "shlobj", "winbase", "winerror"]
+
+[profile.release]
+lto = "thin"

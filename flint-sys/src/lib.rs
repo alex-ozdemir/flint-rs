@@ -135,7 +135,6 @@ pub mod mag;
 pub mod mpf_impl;
 pub mod mpfr_mat;
 pub mod mpfr_vec;
-//pub mod mpn_extras;
 pub mod mpoly;
 pub mod mpoly_types;
 pub mod n_poly;
@@ -181,55 +180,7 @@ mod tests {
             fmpz::fmpz_clear(&mut p);
         }
     }
-}
 
-/*
-
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::mem::MaybeUninit;
-    
-    #[test]
-    fn test_fmpz() {
-        let mut p: fmpz::fmpz = fmpz::fmpz::default();
-        unsafe{
-            fmpz::fmpz_init(&mut p);
-            fmpz::fmpz_set_ui(&mut p, 17);
-            debug_assert!(fmpz::fmpz_print(&mut p) > 0);            
-            fmpz::fmpz_clear(&mut p);
-        }
-    }
-
-    /*
-    #[test]
-    fn test_fmpz_mod_poly() {
-        let mut p: fmpz::fmpz = fmpz::fmpz::default();
-        let mut ctx = MaybeUninit::uninit();
-        unsafe {
-            fmpz::fmpz_init(&mut p);
-            fmpz::fmpz_set_ui(&mut p, 17);
-            debug_assert!(fmpz::fmpz_print(&mut p) > 0);
-            let mut f = MaybeUninit::uninit();
-            fmpz_mod::fmpz_mod_ctx_init(ctx.as_mut_ptr(), &p);
-            let mut ctx = ctx.assume_init();
-            fmpz_mod_poly::fmpz_mod_poly_init(f.as_mut_ptr(), &mut ctx);
-            let mut f = f.assume_init();
-            fmpz_mod_poly::fmpz_mod_poly_set_coeff_ui(&mut f, 1, 5, &mut ctx);
-            fmpz_mod_poly::fmpz_mod_poly_set_coeff_ui(&mut f, 0, 5, &mut ctx);
-            let x = std::ffi::CString::new("x").unwrap();
-            debug_assert!(
-                fmpz_mod_poly::fmpz_mod_poly_print_pretty(&mut f, x.as_ptr(), &mut ctx) > 0
-            );
-            fmpz_mod_poly::fmpz_mod_poly_clear(&mut f, &mut ctx);
-            fmpz_mod::fmpz_mod_ctx_clear(&mut ctx);
-            fmpz::fmpz_clear(&mut p);
-        }
-    }*/
-
-    
     // Checks the norm of the element 2*x^2 - 1 of Q(x)/f where f = x^4 + 1
     #[test]
     fn test_antic() {
@@ -277,6 +228,52 @@ mod tests {
             nf::nf_clear(&mut nf);
         }
     }
+}
+
+/*
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::mem::MaybeUninit;
+    
+    #[test]
+    fn test_fmpz() {
+        let mut p: fmpz::fmpz = fmpz::fmpz::default();
+        unsafe{
+            fmpz::fmpz_init(&mut p);
+            fmpz::fmpz_set_ui(&mut p, 17);
+            debug_assert!(fmpz::fmpz_print(&mut p) > 0);            
+            fmpz::fmpz_clear(&mut p);
+        }
+    }
+
+    /*
+    #[test]
+    fn test_fmpz_mod_poly() {
+        let mut p: fmpz::fmpz = fmpz::fmpz::default();
+        let mut ctx = MaybeUninit::uninit();
+        unsafe {
+            fmpz::fmpz_init(&mut p);
+            fmpz::fmpz_set_ui(&mut p, 17);
+            debug_assert!(fmpz::fmpz_print(&mut p) > 0);
+            let mut f = MaybeUninit::uninit();
+            fmpz_mod::fmpz_mod_ctx_init(ctx.as_mut_ptr(), &p);
+            let mut ctx = ctx.assume_init();
+            fmpz_mod_poly::fmpz_mod_poly_init(f.as_mut_ptr(), &mut ctx);
+            let mut f = f.assume_init();
+            fmpz_mod_poly::fmpz_mod_poly_set_coeff_ui(&mut f, 1, 5, &mut ctx);
+            fmpz_mod_poly::fmpz_mod_poly_set_coeff_ui(&mut f, 0, 5, &mut ctx);
+            let x = std::ffi::CString::new("x").unwrap();
+            debug_assert!(
+                fmpz_mod_poly::fmpz_mod_poly_print_pretty(&mut f, x.as_ptr(), &mut ctx) > 0
+            );
+            fmpz_mod_poly::fmpz_mod_poly_clear(&mut f, &mut ctx);
+            fmpz_mod::fmpz_mod_ctx_clear(&mut ctx);
+            fmpz::fmpz_clear(&mut p);
+        }
+    }*/
+
+    
 
     /*
     mod random {

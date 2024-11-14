@@ -345,9 +345,9 @@ extern "C" {
     pub fn _fmpq_set_si(rnum: *mut fmpz, rden: *mut fmpz, p: mp_limb_signed_t, q: mp_limb_t);
     pub fn fmpq_set_si(res: *mut fmpq, p: mp_limb_signed_t, q: mp_limb_t);
     #[link_name = "fmpq_equal_ui__extern"]
-    pub fn fmpq_equal_ui(q: *mut fmpq, n: mp_limb_t) -> libc::c_int;
+    pub fn fmpq_equal_ui(q: *const fmpq, n: mp_limb_t) -> libc::c_int;
     #[link_name = "fmpq_equal_si__extern"]
-    pub fn fmpq_equal_si(q: *mut fmpq, n: mp_limb_signed_t) -> libc::c_int;
+    pub fn fmpq_equal_si(q: *const fmpq, n: mp_limb_signed_t) -> libc::c_int;
     #[link_name = "fmpq_set_fmpz__extern"]
     pub fn fmpq_set_fmpz(q: *mut fmpq, n: *const fmpz);
     pub fn fmpq_set_fmpz_frac(res: *mut fmpq, p: *const fmpz, q: *const fmpz);
