@@ -1,3 +1,7 @@
+// Adapted from https://gitlab.com/tspiteri/gmp-mpfr-sys/-/blob/master/build.rs
+// Also see https://github.com/rust-lang/rust-bindgen/discussions/2405
+
+
 use std::{
     env,
     ffi::{OsStr, OsString},
@@ -135,11 +139,12 @@ const FLINT_HEADERS: &[&str] = &[
     "limb_types.h",
     "long_extras.h",
     "longlong.h",
+    "longlong_asm_clang.h",
+    "longlong_div_gnu.h",
     "mag.h",
     "mpf-impl.h",
     "mpfr_mat.h",
     "mpfr_vec.h",
-    "mpn_extras.h",
     "mpoly.h",
     "mpoly_types.h",
     "n_poly.h",
@@ -161,7 +166,6 @@ const FLINT_HEADERS: &[&str] = &[
     "padic_types.h",
     "partitions.h",
     "perm.h",
-    "profiler.h",
     "qadic.h",
     "qfb.h",
     "qqbar.h",
@@ -257,6 +261,7 @@ fn compile(env: &Environment) {
         remove_dir_or_panic(&env.build_dir);
         copy_dir_or_panic(&env.src_dir.join(FLINT_DIR), &env.build_dir);
         build(env);
+        build_extern(env);
         remove_dir_or_panic(&env.build_dir);
         save_cache(env);
     }
@@ -265,6 +270,7 @@ fn compile(env: &Environment) {
 
 fn need_compile(env: &Environment) -> bool {
     let mut ok = env.lib_dir.join(FLINT_LIB).is_file();
+    ok = ok && env.lib_dir.join("libextern.a").is_file();
 
     for h in FLINT_HEADERS {
         ok = ok && env.include_dir.join(h).is_file();
@@ -288,10 +294,14 @@ fn save_cache(env: &Environment) -> bool {
         None => return false,
     };
     let mut ok = create_dir(&cache_dir).is_ok();
+    ok = ok && create_dir(&cache_dir.join("lib")).is_ok();
+    ok = ok && create_dir(&cache_dir.join("include")).is_ok();
+
     ok = ok && copy_file(&env.lib_dir.join(FLINT_LIB), &cache_dir.join(FLINT_LIB)).is_ok();
+    ok = ok && copy_file(&env.lib_dir.join("libextern.a"), &cache_dir.join("lib").join("libextern.a")).is_ok();
 
     for h in FLINT_HEADERS {
-        ok = ok && copy_file(&env.include_dir.join(h), &cache_dir.join(h)).is_ok();
+        ok = ok && copy_file(&env.include_dir.join(h), &cache_dir.join("include").join(h)).is_ok();
     }
     ok
 }
@@ -303,9 +313,10 @@ fn load_cache(env: &Environment) -> bool {
     };
     let mut ok = true;
     ok = ok && copy_file(&cache_dir.join(FLINT_LIB), &env.lib_dir.join(FLINT_LIB)).is_ok();
+    ok = ok && copy_file(&cache_dir.join("lib").join("libextern.a"), &env.lib_dir.join("libextern.a")).is_ok();
 
     for h in FLINT_HEADERS {
-        ok = ok && copy_file(&cache_dir.join(h), &env.include_dir.join(h)).is_ok();
+        ok = ok && copy_file(&cache_dir.join("include").join(h), &env.include_dir.join(h)).is_ok();
     }
     ok
 }
@@ -317,9 +328,10 @@ fn should_save_cache(env: &Environment) -> bool {
     };
     let mut ok = true;
     ok = ok && cache_dir.join(FLINT_LIB).is_file();
+    ok = ok && cache_dir.join("lib").join("libextern.a").is_file();
 
     for h in FLINT_HEADERS {
-        ok = ok && cache_dir.join(h).is_file();
+        ok = ok && cache_dir.join("include").join(h).is_file();
     }
     !ok
 }
@@ -328,12 +340,9 @@ fn build(env: &Environment) {
     println!("$ cd {:?}", &env.build_dir);
     let conf = String::from(format!(
         r#"./configure --disable-shared --with-mpfr={} --with-gmp={} CFLAGS="-fPIC""#,
-        //"./configure --disable-shared --with-gmp={} --with-mpfr={}",
         env.gmp_mpfr_dir.display(),
         env.gmp_mpfr_dir.display(),
     ));
-
-    println!("cargo::warning={:?}", conf);
 
     configure(&env.build_dir, &OsString::from(conf));
     make_and_check(env, &env.build_dir);
@@ -346,6 +355,57 @@ fn build(env: &Environment) {
         copy_file_or_panic(&src.join(h), &env.include_dir.join(h));
     }
 }
+
+fn build_extern(env: &Environment) {
+    // compile wrapped static inlined functions
+    let obj_path = &env.build_dir.join("extern.o");
+    // This is the path to the static library file.
+    let lib_path = &env.lib_dir.join("libextern.a");
+
+    // Compile the generated wrappers into an object file.
+    let clang_output = std::process::Command::new("clang")
+        .arg("-flto=thin")
+        .arg("-O")
+        .arg("-c")
+        .arg("-o")
+        .arg(&obj_path)
+        .arg(env.src_dir.join("C").join("extern.c"))
+        .arg(format!("-I{}", env.gmp_mpfr_dir.join("include").display()))
+        .arg(format!("-I{}", env.include_dir.display()))
+        .arg("-fPIC")
+        .output()
+        .expect("Could not compile object file.");
+    
+    if !clang_output.status.success() {
+        panic!(
+            "Could not compile object file:\n{}",
+            String::from_utf8_lossy(&clang_output.stderr)
+        );
+    }
+    
+    // Turn the object file into a static library
+    #[cfg(not(target_os = "windows"))]
+    let lib_output = Command::new("ar")
+        .arg("crus")
+        .arg(&lib_path)
+        .arg(obj_path)
+        .output()
+        .expect("Could not build static library extern.");
+    #[cfg(target_os = "windows")]
+    let lib_output = Command::new("LIB")
+        .arg(obj_path)
+        .arg(format!("/OUT:{}", env.lib_dir.join("libextern.a").display()))
+        .output()
+        .expect("Could not build static library extern.");
+    if !lib_output.status.success() {
+        panic!(
+            "Could not emit library file:\n{}",
+            String::from_utf8_lossy(&lib_output.stderr)
+        );
+    }
+}
+
+
 
 fn write_link_info(env: &Environment) {
     let out_str = env.out_dir.to_str().unwrap_or_else(|| {
@@ -371,6 +431,7 @@ fn write_link_info(env: &Environment) {
     println!("cargo:lib_dir={}", lib_str);
     println!("cargo:include_dir={}", include_str);
     println!("cargo:rustc-link-search=native={}", lib_str);
+    println!("cargo:rustc-link-lib=static=extern");
     println!("cargo:rustc-link-lib=static=flint");
     println!("cargo:rustc-link-lib=static=mpfr");
     println!("cargo:rustc-link-lib=static=gmp");
