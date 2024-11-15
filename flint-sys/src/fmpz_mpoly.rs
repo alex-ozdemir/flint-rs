@@ -335,20 +335,20 @@ extern "C" {
     pub fn fmpz_mpoly_set_str_pretty(
         A: *mut fmpz_mpoly_struct,
         str_: *const libc::c_char,
-        x: *mut *const libc::c_char,
+        x: *const *const libc::c_char,
         ctx: *const fmpz_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn _fmpz_mpoly_get_str_pretty(
         poly: *const fmpz,
         exps: *const mp_limb_t,
         len: mp_limb_signed_t,
-        x: *mut *const libc::c_char,
+        x: *const *const libc::c_char,
         bits: mp_limb_signed_t,
         mctx: *const mpoly_ctx_struct,
     ) -> *mut libc::c_char;
     pub fn fmpz_mpoly_get_str_pretty(
         A: *const fmpz_mpoly_struct,
-        x: *mut *const libc::c_char,
+        x: *const *const libc::c_char,
         ctx: *const fmpz_mpoly_ctx_struct,
     ) -> *mut libc::c_char;
     pub fn _fmpz_mpoly_fprint_pretty(
@@ -356,27 +356,27 @@ extern "C" {
         poly: *const fmpz,
         exps: *const mp_limb_t,
         len: mp_limb_signed_t,
-        x_in: *mut *const libc::c_char,
+        x_in: *const *const libc::c_char,
         bits: mp_limb_t,
         mctx: *const mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpz_mpoly_fprint_pretty(
         file: *mut FILE,
         A: *const fmpz_mpoly_struct,
-        x: *mut *const libc::c_char,
+        x: *const *const libc::c_char,
         ctx: *const fmpz_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn _fmpz_mpoly_print_pretty(
         poly: *const fmpz,
         exps: *const mp_limb_t,
         len: mp_limb_signed_t,
-        x: *mut *const libc::c_char,
+        x: *const *const libc::c_char,
         bits: mp_limb_signed_t,
         mctx: *const mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpz_mpoly_print_pretty(
         A: *const fmpz_mpoly_struct,
-        x: *mut *const libc::c_char,
+        x: *const *const libc::c_char,
         ctx: *const fmpz_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpz_mpoly_gen(
