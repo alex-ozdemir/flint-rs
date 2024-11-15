@@ -242,8 +242,8 @@ extern "C" {
     #[link_name = "fq_default_div__extern"]
     pub fn fq_default_div(
         rop: *mut fq_default_struct,
-        op1: *mut fq_default_struct,
-        op2: *mut fq_default_struct,
+        op1: *const fq_default_struct,
+        op2: *const fq_default_struct,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_pow__extern"]
@@ -394,7 +394,7 @@ extern "C" {
     #[link_name = "fq_default_get_coeff_fmpz__extern"]
     pub fn fq_default_get_coeff_fmpz(
         c: *mut fmpz,
-        op: *mut fq_default_struct,
+        op: *const fq_default_struct,
         n: mp_limb_signed_t,
         ctx: *const fq_default_ctx_struct,
     );

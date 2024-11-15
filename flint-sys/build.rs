@@ -364,7 +364,10 @@ fn build_extern(env: &Environment) {
 
     // Compile the generated wrappers into an object file.
     let clang_output = std::process::Command::new("clang")
-        .arg("-flto=thin")
+        // TODO: -flto=thin causes a lot of problems, needs lld linker isntead of ld for some 
+        // reason and setting this in .cargo/config doesn't seem to be respected by cargo test, so 
+        // tests break. See https://github.com/rust-lang/rust-bindgen/discussions/2405
+        //.arg("-flto=thin")
         .arg("-O")
         .arg("-c")
         .arg("-o")
