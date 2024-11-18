@@ -676,6 +676,7 @@ pub const gr_which_structure_GR_CTX_UNKNOWN_DOMAIN: gr_which_structure = 36;
 pub const gr_which_structure_GR_CTX_WHICH_STRUCTURE_TAB_SIZE: gr_which_structure = 37;
 pub type gr_which_structure = libc::c_uint;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct gr_ctx_struct {
     pub data: [libc::c_char; 48usize],
     pub which_ring: mp_limb_t,
@@ -1290,6 +1291,7 @@ pub type _gr_method_get_si_op = ::std::option::Option<
     unsafe extern "C" fn(arg1: gr_srcptr, arg2: gr_ctx_ptr) -> mp_limb_signed_t,
 >;
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct polynomial_ctx_t {
     pub base_ring: *mut gr_ctx_struct,
     pub degree_limit: mp_limb_signed_t,
@@ -1316,6 +1318,7 @@ impl Default for polynomial_ctx_t {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct vector_ctx_t {
     pub base_ring: *mut gr_ctx_struct,
     pub all_sizes: libc::c_int,
@@ -1341,6 +1344,7 @@ impl Default for vector_ctx_t {
     }
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct matrix_ctx_t {
     pub base_ring: *mut gr_ctx_struct,
     pub all_sizes: libc::c_int,
@@ -1447,482 +1451,482 @@ extern "C" {
     #[link_name = "_gr_ctx_get_real_prec__extern"]
     pub fn _gr_ctx_get_real_prec(ctx: *mut gr_ctx_struct) -> mp_limb_signed_t;
     #[link_name = "gr_init__extern"]
-    pub fn gr_init(res: gr_ptr, ctx: *mut gr_ctx_struct);
+    pub fn gr_init(res: gr_ptr, ctx: *const gr_ctx_struct);
     #[link_name = "gr_clear__extern"]
-    pub fn gr_clear(res: gr_ptr, ctx: *mut gr_ctx_struct);
+    pub fn gr_clear(res: gr_ptr, ctx: *const gr_ctx_struct);
     #[link_name = "gr_swap__extern"]
-    pub fn gr_swap(x: gr_ptr, y: gr_ptr, ctx: *mut gr_ctx_struct);
+    pub fn gr_swap(x: gr_ptr, y: gr_ptr, ctx: *const gr_ctx_struct);
     #[link_name = "gr_set_shallow__extern"]
-    pub fn gr_set_shallow(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct);
+    pub fn gr_set_shallow(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct);
     #[link_name = "_gr_length__extern"]
-    pub fn _gr_length(x: gr_srcptr, ctx: *mut gr_ctx_struct);
+    pub fn _gr_length(x: gr_srcptr, ctx: *const gr_ctx_struct);
     #[link_name = "gr_randtest__extern"]
-    pub fn gr_randtest(x: gr_ptr, state: *mut flint_rand_s, ctx: *mut gr_ctx_struct)
+    pub fn gr_randtest(x: gr_ptr, state: *mut flint_rand_s, ctx: *const gr_ctx_struct)
         -> libc::c_int;
     #[link_name = "gr_randtest_not_zero__extern"]
     pub fn gr_randtest_not_zero(
         x: gr_ptr,
         state: *mut flint_rand_s,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_randtest_small__extern"]
     pub fn gr_randtest_small(
         x: gr_ptr,
         state: *mut flint_rand_s,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_write__extern"]
     pub fn gr_write(
         out: *mut gr_stream_struct,
         x: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_write_n__extern"]
     pub fn gr_write_n(
         out: *mut gr_stream_struct,
         x: gr_srcptr,
         n: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_zero__extern"]
-    pub fn gr_zero(res: gr_ptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_zero(res: gr_ptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_one__extern"]
-    pub fn gr_one(res: gr_ptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_one(res: gr_ptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_neg_one__extern"]
-    pub fn gr_neg_one(res: gr_ptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_neg_one(res: gr_ptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_set__extern"]
-    pub fn gr_set(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_set(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_set_si__extern"]
-    pub fn gr_set_si(res: gr_ptr, x: mp_limb_signed_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_set_si(res: gr_ptr, x: mp_limb_signed_t, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_set_ui__extern"]
-    pub fn gr_set_ui(res: gr_ptr, x: mp_limb_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_set_ui(res: gr_ptr, x: mp_limb_t, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_set_fmpz__extern"]
-    pub fn gr_set_fmpz(res: gr_ptr, x: *const fmpz, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_set_fmpz(res: gr_ptr, x: *const fmpz, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_set_fmpq__extern"]
-    pub fn gr_set_fmpq(res: gr_ptr, x: *const fmpq, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_set_fmpq(res: gr_ptr, x: *const fmpq, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_set_d__extern"]
-    pub fn gr_set_d(res: gr_ptr, x: f64, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_set_d(res: gr_ptr, x: f64, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_set_other__extern"]
     pub fn gr_set_other(
         res: gr_ptr,
         x: gr_srcptr,
-        x_ctx: *mut gr_ctx_struct,
-        ctx: *mut gr_ctx_struct,
+        x_ctx: *const gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_set_str__extern"]
-    pub fn gr_set_str(res: gr_ptr, x: *const libc::c_char, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_set_str(res: gr_ptr, x: *const libc::c_char, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_get_si__extern"]
     pub fn gr_get_si(
         res: *mut mp_limb_signed_t,
         x: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_get_ui__extern"]
-    pub fn gr_get_ui(res: *mut mp_limb_t, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_get_ui(res: *mut mp_limb_t, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_get_fmpz__extern"]
-    pub fn gr_get_fmpz(res: *mut fmpz, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_get_fmpz(res: *mut fmpz, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_get_fmpq__extern"]
-    pub fn gr_get_fmpq(res: *mut fmpq, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_get_fmpq(res: *mut fmpq, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_get_d__extern"]
-    pub fn gr_get_d(res: *mut f64, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_get_d(res: *mut f64, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_is_zero__extern"]
-    pub fn gr_is_zero(x: gr_srcptr, ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_is_zero(x: gr_srcptr, ctx: *const gr_ctx_struct) -> truth_t;
     #[link_name = "gr_is_one__extern"]
-    pub fn gr_is_one(x: gr_srcptr, ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_is_one(x: gr_srcptr, ctx: *const gr_ctx_struct) -> truth_t;
     #[link_name = "gr_is_neg_one__extern"]
-    pub fn gr_is_neg_one(x: gr_srcptr, ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_is_neg_one(x: gr_srcptr, ctx: *const gr_ctx_struct) -> truth_t;
     #[link_name = "gr_equal__extern"]
-    pub fn gr_equal(x: gr_srcptr, y: gr_srcptr, ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_equal(x: gr_srcptr, y: gr_srcptr, ctx: *const gr_ctx_struct) -> truth_t;
     #[link_name = "gr_not_equal__extern"]
-    pub fn gr_not_equal(x: gr_srcptr, y: gr_srcptr, ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_not_equal(x: gr_srcptr, y: gr_srcptr, ctx: *const gr_ctx_struct) -> truth_t;
     #[link_name = "gr_neg__extern"]
-    pub fn gr_neg(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_neg(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_add__extern"]
-    pub fn gr_add(res: gr_ptr, x: gr_srcptr, y: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_add(res: gr_ptr, x: gr_srcptr, y: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_add_ui__extern"]
     pub fn gr_add_ui(
         res: gr_ptr,
         x: gr_srcptr,
         y: mp_limb_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_add_si__extern"]
     pub fn gr_add_si(
         res: gr_ptr,
         x: gr_srcptr,
         y: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_add_fmpz__extern"]
     pub fn gr_add_fmpz(
         res: gr_ptr,
         x: gr_srcptr,
         y: *const fmpz,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_add_fmpq__extern"]
     pub fn gr_add_fmpq(
         res: gr_ptr,
         x: gr_srcptr,
         y: *const fmpq,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_add_other__extern"]
     pub fn gr_add_other(
         res: gr_ptr,
         x: gr_srcptr,
         y: gr_srcptr,
-        y_ctx: *mut gr_ctx_struct,
-        ctx: *mut gr_ctx_struct,
+        y_ctx: *const gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_other_add__extern"]
     pub fn gr_other_add(
         res: gr_ptr,
         x: gr_srcptr,
-        x_ctx: *mut gr_ctx_struct,
+        x_ctx: *const gr_ctx_struct,
         y: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_sub__extern"]
-    pub fn gr_sub(res: gr_ptr, x: gr_srcptr, y: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_sub(res: gr_ptr, x: gr_srcptr, y: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_sub_ui__extern"]
     pub fn gr_sub_ui(
         res: gr_ptr,
         x: gr_srcptr,
         y: mp_limb_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_sub_si__extern"]
     pub fn gr_sub_si(
         res: gr_ptr,
         x: gr_srcptr,
         y: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_sub_fmpz__extern"]
     pub fn gr_sub_fmpz(
         res: gr_ptr,
         x: gr_srcptr,
         y: *const fmpz,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_sub_fmpq__extern"]
     pub fn gr_sub_fmpq(
         res: gr_ptr,
         x: gr_srcptr,
         y: *const fmpq,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_sub_other__extern"]
     pub fn gr_sub_other(
         res: gr_ptr,
         x: gr_srcptr,
         y: gr_srcptr,
-        y_ctx: *mut gr_ctx_struct,
-        ctx: *mut gr_ctx_struct,
+        y_ctx: *const gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_other_sub__extern"]
     pub fn gr_other_sub(
         res: gr_ptr,
         x: gr_srcptr,
-        x_ctx: *mut gr_ctx_struct,
+        x_ctx: *const gr_ctx_struct,
         y: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_mul__extern"]
-    pub fn gr_mul(res: gr_ptr, x: gr_srcptr, y: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_mul(res: gr_ptr, x: gr_srcptr, y: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_mul_ui__extern"]
     pub fn gr_mul_ui(
         res: gr_ptr,
         x: gr_srcptr,
         y: mp_limb_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_mul_si__extern"]
     pub fn gr_mul_si(
         res: gr_ptr,
         x: gr_srcptr,
         y: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_mul_fmpz__extern"]
     pub fn gr_mul_fmpz(
         res: gr_ptr,
         x: gr_srcptr,
         y: *const fmpz,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_mul_fmpq__extern"]
     pub fn gr_mul_fmpq(
         res: gr_ptr,
         x: gr_srcptr,
         y: *const fmpq,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_mul_other__extern"]
     pub fn gr_mul_other(
         res: gr_ptr,
         x: gr_srcptr,
         y: gr_srcptr,
-        y_ctx: *mut gr_ctx_struct,
-        ctx: *mut gr_ctx_struct,
+        y_ctx: *const gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_other_mul__extern"]
     pub fn gr_other_mul(
         res: gr_ptr,
         x: gr_srcptr,
-        x_ctx: *mut gr_ctx_struct,
+        x_ctx: *const gr_ctx_struct,
         y: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_addmul__extern"]
     pub fn gr_addmul(
         res: gr_ptr,
         x: gr_srcptr,
         y: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_addmul_ui__extern"]
     pub fn gr_addmul_ui(
         res: gr_ptr,
         x: gr_srcptr,
         y: mp_limb_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_addmul_si__extern"]
     pub fn gr_addmul_si(
         res: gr_ptr,
         x: gr_srcptr,
         y: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_addmul_fmpz__extern"]
     pub fn gr_addmul_fmpz(
         res: gr_ptr,
         x: gr_srcptr,
         y: *const fmpz,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_addmul_fmpq__extern"]
     pub fn gr_addmul_fmpq(
         res: gr_ptr,
         x: gr_srcptr,
         y: *const fmpq,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_addmul_other__extern"]
     pub fn gr_addmul_other(
         res: gr_ptr,
         x: gr_srcptr,
         y: gr_srcptr,
-        y_ctx: *mut gr_ctx_struct,
-        ctx: *mut gr_ctx_struct,
+        y_ctx: *const gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_submul__extern"]
     pub fn gr_submul(
         res: gr_ptr,
         x: gr_srcptr,
         y: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_submul_ui__extern"]
     pub fn gr_submul_ui(
         res: gr_ptr,
         x: gr_srcptr,
         y: mp_limb_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_submul_si__extern"]
     pub fn gr_submul_si(
         res: gr_ptr,
         x: gr_srcptr,
         y: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_submul_fmpz__extern"]
     pub fn gr_submul_fmpz(
         res: gr_ptr,
         x: gr_srcptr,
         y: *const fmpz,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_submul_fmpq__extern"]
     pub fn gr_submul_fmpq(
         res: gr_ptr,
         x: gr_srcptr,
         y: *const fmpq,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_submul_other__extern"]
     pub fn gr_submul_other(
         res: gr_ptr,
         x: gr_srcptr,
         y: gr_srcptr,
-        y_ctx: *mut gr_ctx_struct,
-        ctx: *mut gr_ctx_struct,
+        y_ctx: *const gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_mul_two__extern"]
-    pub fn gr_mul_two(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_mul_two(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_sqr__extern"]
-    pub fn gr_sqr(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_sqr(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_mul_2exp_si__extern"]
     pub fn gr_mul_2exp_si(
         res: gr_ptr,
         x: gr_srcptr,
         y: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_mul_2exp_fmpz__extern"]
     pub fn gr_mul_2exp_fmpz(
         res: gr_ptr,
         x: gr_srcptr,
         y: *const fmpz,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_set_fmpz_2exp_fmpz__extern"]
     pub fn gr_set_fmpz_2exp_fmpz(
         res: gr_ptr,
         x: *const fmpz,
         y: *const fmpz,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_get_fmpz_2exp_fmpz__extern"]
     pub fn gr_get_fmpz_2exp_fmpz(
         res1: *mut fmpz,
         res2: *mut fmpz,
         x: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_set_fmpz_10exp_fmpz__extern"]
     pub fn gr_set_fmpz_10exp_fmpz(
         res: gr_ptr,
         x: *const fmpz,
         y: *const fmpz,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_inv__extern"]
-    pub fn gr_inv(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_inv(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_is_invertible__extern"]
-    pub fn gr_is_invertible(x: gr_srcptr, ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_is_invertible(x: gr_srcptr, ctx: *const gr_ctx_struct) -> truth_t;
     #[link_name = "gr_div__extern"]
-    pub fn gr_div(res: gr_ptr, x: gr_srcptr, y: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_div(res: gr_ptr, x: gr_srcptr, y: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_div_ui__extern"]
     pub fn gr_div_ui(
         res: gr_ptr,
         x: gr_srcptr,
         y: mp_limb_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_div_si__extern"]
     pub fn gr_div_si(
         res: gr_ptr,
         x: gr_srcptr,
         y: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_div_fmpz__extern"]
     pub fn gr_div_fmpz(
         res: gr_ptr,
         x: gr_srcptr,
         y: *const fmpz,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_div_fmpq__extern"]
     pub fn gr_div_fmpq(
         res: gr_ptr,
         x: gr_srcptr,
         y: *const fmpq,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_div_other__extern"]
     pub fn gr_div_other(
         res: gr_ptr,
         x: gr_srcptr,
         y: gr_srcptr,
-        y_ctx: *mut gr_ctx_struct,
-        ctx: *mut gr_ctx_struct,
+        y_ctx: *const gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_other_div__extern"]
     pub fn gr_other_div(
         res: gr_ptr,
         x: gr_srcptr,
-        x_ctx: *mut gr_ctx_struct,
+        x_ctx: *const gr_ctx_struct,
         y: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_div_nonunique__extern"]
     pub fn gr_div_nonunique(
         res: gr_ptr,
         x: gr_srcptr,
         y: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_divides__extern"]
-    pub fn gr_divides(x: gr_srcptr, y: gr_srcptr, ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_divides(x: gr_srcptr, y: gr_srcptr, ctx: *const gr_ctx_struct) -> truth_t;
     #[link_name = "gr_divexact__extern"]
     pub fn gr_divexact(
         res: gr_ptr,
         x: gr_srcptr,
         y: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_divexact_ui__extern"]
     pub fn gr_divexact_ui(
         res: gr_ptr,
         x: gr_srcptr,
         y: mp_limb_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_divexact_si__extern"]
     pub fn gr_divexact_si(
         res: gr_ptr,
         x: gr_srcptr,
         y: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_divexact_fmpz__extern"]
     pub fn gr_divexact_fmpz(
         res: gr_ptr,
         x: gr_srcptr,
         y: *const fmpz,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_divexact_fmpq__extern"]
     pub fn gr_divexact_fmpq(
         res: gr_ptr,
         x: gr_srcptr,
         y: *const fmpq,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_divexact_other__extern"]
     pub fn gr_divexact_other(
         res: gr_ptr,
         x: gr_srcptr,
         y: gr_srcptr,
-        y_ctx: *mut gr_ctx_struct,
-        ctx: *mut gr_ctx_struct,
+        y_ctx: *const gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_other_divexact__extern"]
     pub fn gr_other_divexact(
         res: gr_ptr,
         x: gr_srcptr,
-        x_ctx: *mut gr_ctx_struct,
+        x_ctx: *const gr_ctx_struct,
         y: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_euclidean_div__extern"]
     pub fn gr_euclidean_div(
         res: gr_ptr,
         x: gr_srcptr,
         y: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_euclidean_rem__extern"]
     pub fn gr_euclidean_rem(
         res: gr_ptr,
         x: gr_srcptr,
         y: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_euclidean_divrem__extern"]
     pub fn gr_euclidean_divrem(
@@ -1930,16 +1934,16 @@ extern "C" {
         res2: gr_ptr,
         x: gr_srcptr,
         y: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_gcd__extern"]
-    pub fn gr_gcd(res: gr_ptr, x: gr_srcptr, y: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_gcd(res: gr_ptr, x: gr_srcptr, y: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_lcm__extern"]
-    pub fn gr_lcm(res: gr_ptr, x: gr_srcptr, y: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_lcm(res: gr_ptr, x: gr_srcptr, y: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_numerator__extern"]
-    pub fn gr_numerator(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_numerator(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_denominator__extern"]
-    pub fn gr_denominator(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_denominator(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_factor__extern"]
     pub fn gr_factor(
         c: gr_ptr,
@@ -1947,197 +1951,197 @@ extern "C" {
         exponents: *mut gr_vec_struct,
         x: gr_srcptr,
         flags: libc::c_int,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_pow__extern"]
-    pub fn gr_pow(res: gr_ptr, x: gr_srcptr, y: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_pow(res: gr_ptr, x: gr_srcptr, y: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_pow_ui__extern"]
     pub fn gr_pow_ui(
         res: gr_ptr,
         x: gr_srcptr,
         y: mp_limb_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_pow_si__extern"]
     pub fn gr_pow_si(
         res: gr_ptr,
         x: gr_srcptr,
         y: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_pow_fmpz__extern"]
     pub fn gr_pow_fmpz(
         res: gr_ptr,
         x: gr_srcptr,
         y: *const fmpz,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_pow_fmpq__extern"]
     pub fn gr_pow_fmpq(
         res: gr_ptr,
         x: gr_srcptr,
         y: *const fmpq,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_pow_other__extern"]
     pub fn gr_pow_other(
         res: gr_ptr,
         x: gr_srcptr,
         y: gr_srcptr,
-        y_ctx: *mut gr_ctx_struct,
-        ctx: *mut gr_ctx_struct,
+        y_ctx: *const gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_other_pow__extern"]
     pub fn gr_other_pow(
         res: gr_ptr,
         x: gr_srcptr,
-        x_ctx: *mut gr_ctx_struct,
+        x_ctx: *const gr_ctx_struct,
         y: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_sqrt__extern"]
-    pub fn gr_sqrt(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_sqrt(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_rsqrt__extern"]
-    pub fn gr_rsqrt(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_rsqrt(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_is_square__extern"]
-    pub fn gr_is_square(x: gr_srcptr, ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_is_square(x: gr_srcptr, ctx: *const gr_ctx_struct) -> truth_t;
     #[link_name = "gr_floor__extern"]
-    pub fn gr_floor(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_floor(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_ceil__extern"]
-    pub fn gr_ceil(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_ceil(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_trunc__extern"]
-    pub fn gr_trunc(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_trunc(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_nint__extern"]
-    pub fn gr_nint(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_nint(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_abs__extern"]
-    pub fn gr_abs(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_abs(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_i__extern"]
-    pub fn gr_i(res: gr_ptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_i(res: gr_ptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_conj__extern"]
-    pub fn gr_conj(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_conj(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_re__extern"]
-    pub fn gr_re(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_re(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_im__extern"]
-    pub fn gr_im(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_im(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_sgn__extern"]
-    pub fn gr_sgn(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_sgn(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_csgn__extern"]
-    pub fn gr_csgn(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_csgn(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_arg__extern"]
-    pub fn gr_arg(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_arg(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_pos_inf__extern"]
-    pub fn gr_pos_inf(res: gr_ptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_pos_inf(res: gr_ptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_neg_inf__extern"]
-    pub fn gr_neg_inf(res: gr_ptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_neg_inf(res: gr_ptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_uinf__extern"]
-    pub fn gr_uinf(res: gr_ptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_uinf(res: gr_ptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_undefined__extern"]
-    pub fn gr_undefined(res: gr_ptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_undefined(res: gr_ptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_unknown__extern"]
-    pub fn gr_unknown(res: gr_ptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_unknown(res: gr_ptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_cmp__extern"]
     pub fn gr_cmp(
         res: *mut libc::c_int,
         x: gr_srcptr,
         y: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_cmpabs__extern"]
     pub fn gr_cmpabs(
         res: *mut libc::c_int,
         x: gr_srcptr,
         y: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_cmp_other__extern"]
     pub fn gr_cmp_other(
         res: *mut libc::c_int,
         x: gr_srcptr,
         y: gr_srcptr,
-        y_ctx: *mut gr_ctx_struct,
-        ctx: *mut gr_ctx_struct,
+        y_ctx: *const gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_cmpabs_other__extern"]
     pub fn gr_cmpabs_other(
         res: *mut libc::c_int,
         x: gr_srcptr,
         y: gr_srcptr,
-        y_ctx: *mut gr_ctx_struct,
-        ctx: *mut gr_ctx_struct,
+        y_ctx: *const gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_gen__extern"]
-    pub fn gr_gen(res: gr_ptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_gen(res: gr_ptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_gens__extern"]
-    pub fn gr_gens(res: *mut gr_vec_struct, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_gens(res: *mut gr_vec_struct, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_gens_recursive__extern"]
-    pub fn gr_gens_recursive(res: *mut gr_vec_struct, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_gens_recursive(res: *mut gr_vec_struct, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_ctx_fq_prime__extern"]
-    pub fn gr_ctx_fq_prime(res: *mut fmpz, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_ctx_fq_prime(res: *mut fmpz, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_ctx_fq_degree__extern"]
-    pub fn gr_ctx_fq_degree(res: *mut mp_limb_signed_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_ctx_fq_degree(res: *mut mp_limb_signed_t, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_ctx_fq_order__extern"]
-    pub fn gr_ctx_fq_order(res: *mut fmpz, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_ctx_fq_order(res: *mut fmpz, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_fq_frobenius__extern"]
     pub fn gr_fq_frobenius(
         res: gr_ptr,
         x: gr_srcptr,
         e: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_fq_multiplicative_order__extern"]
     pub fn gr_fq_multiplicative_order(
         res: *mut fmpz,
         x: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_fq_norm__extern"]
-    pub fn gr_fq_norm(res: *mut fmpz, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_fq_norm(res: *mut fmpz, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_fq_trace__extern"]
-    pub fn gr_fq_trace(res: *mut fmpz, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_fq_trace(res: *mut fmpz, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_fq_is_primitive__extern"]
-    pub fn gr_fq_is_primitive(x: gr_srcptr, ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_fq_is_primitive(x: gr_srcptr, ctx: *const gr_ctx_struct) -> truth_t;
     #[link_name = "gr_fq_pth_root__extern"]
-    pub fn gr_fq_pth_root(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_fq_pth_root(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_set_interval_mid_rad__extern"]
     pub fn gr_set_interval_mid_rad(
         res: gr_ptr,
         m: gr_srcptr,
         r: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_init__extern"]
-    pub fn _gr_vec_init(vec: gr_ptr, len: mp_limb_signed_t, ctx: *mut gr_ctx_struct);
+    pub fn _gr_vec_init(vec: gr_ptr, len: mp_limb_signed_t, ctx: *const gr_ctx_struct);
     #[link_name = "_gr_vec_clear__extern"]
-    pub fn _gr_vec_clear(vec: gr_ptr, len: mp_limb_signed_t, ctx: *mut gr_ctx_struct);
+    pub fn _gr_vec_clear(vec: gr_ptr, len: mp_limb_signed_t, ctx: *const gr_ctx_struct);
     #[link_name = "_gr_vec_swap__extern"]
-    pub fn _gr_vec_swap(vec1: gr_ptr, vec2: gr_ptr, len: mp_limb_signed_t, ctx: *mut gr_ctx_struct);
-    pub fn gr_ctx_print(ctx: *mut gr_ctx_struct) -> libc::c_int;
-    pub fn gr_ctx_println(ctx: *mut gr_ctx_struct) -> libc::c_int;
-    pub fn gr_print(x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
-    pub fn gr_println(x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
-    pub fn gr_ctx_get_str(s: *mut *mut libc::c_char, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn _gr_vec_swap(vec1: gr_ptr, vec2: gr_ptr, len: mp_limb_signed_t, ctx: *const gr_ctx_struct);
+    pub fn gr_ctx_print(ctx: *const gr_ctx_struct) -> libc::c_int;
+    pub fn gr_ctx_println(ctx: *const gr_ctx_struct) -> libc::c_int;
+    pub fn gr_print(x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
+    pub fn gr_println(x: gr_srcptr, ctx: *const gr_ctx_struct) -> libc::c_int;
+    pub fn gr_ctx_get_str(s: *mut *mut libc::c_char, ctx: *const gr_ctx_struct) -> libc::c_int;
     pub fn gr_get_str(
         s: *mut *mut libc::c_char,
         x: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_get_str_n(
         s: *mut *mut libc::c_char,
         x: gr_srcptr,
         n: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
+        ctx: *const gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_heap_init__extern"]
-    pub fn gr_heap_init(ctx: *mut gr_ctx_struct) -> gr_ptr;
+    pub fn gr_heap_init(ctx: *const gr_ctx_struct) -> gr_ptr;
     #[link_name = "gr_heap_clear__extern"]
-    pub fn gr_heap_clear(x: gr_ptr, ctx: *mut gr_ctx_struct);
+    pub fn gr_heap_clear(x: gr_ptr, ctx: *const gr_ctx_struct);
     #[link_name = "gr_heap_init_vec__extern"]
-    pub fn gr_heap_init_vec(len: mp_limb_signed_t, ctx: *mut gr_ctx_struct) -> gr_ptr;
+    pub fn gr_heap_init_vec(len: mp_limb_signed_t, ctx: *const gr_ctx_struct) -> gr_ptr;
     #[link_name = "gr_heap_clear_vec__extern"]
-    pub fn gr_heap_clear_vec(x: gr_ptr, len: mp_limb_signed_t, ctx: *mut gr_ctx_struct);
-    pub fn gr_generic_ctx_predicate(ctx: *mut gr_ctx_struct) -> truth_t;
-    pub fn gr_generic_ctx_predicate_true(ctx: *mut gr_ctx_struct) -> truth_t;
-    pub fn gr_generic_ctx_predicate_false(ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_heap_clear_vec(x: gr_ptr, len: mp_limb_signed_t, ctx: *const gr_ctx_struct);
+    pub fn gr_generic_ctx_predicate(ctx: *const gr_ctx_struct) -> truth_t;
+    pub fn gr_generic_ctx_predicate_true(ctx: *const gr_ctx_struct) -> truth_t;
+    pub fn gr_generic_ctx_predicate_false(ctx: *const gr_ctx_struct) -> truth_t;
     pub fn gr_ctx_init_random(ctx: *mut gr_ctx_struct, state: *mut flint_rand_s);
     pub fn gr_ctx_init_fmpz(ctx: *mut gr_ctx_struct);
     pub fn gr_ctx_init_fmpq(ctx: *mut gr_ctx_struct);

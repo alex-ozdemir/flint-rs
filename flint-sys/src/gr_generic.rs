@@ -9,9 +9,9 @@ pub const GR_GENERIC_DEBUG_RINGS: u32 = 0;
 pub const GR_PARSE_BALANCE_ADDITIONS: u32 = 1;
 pub const GR_PARSE_RING_EXPONENTS: u32 = 2;
 extern "C" {
-    pub fn gr_generic_ctx_predicate(ctx: *mut gr_ctx_struct) -> truth_t;
-    pub fn gr_generic_ctx_predicate_true(ctx: *mut gr_ctx_struct) -> truth_t;
-    pub fn gr_generic_ctx_predicate_false(ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_generic_ctx_predicate(ctx: *const gr_ctx_struct) -> truth_t;
+    pub fn gr_generic_ctx_predicate_true(ctx: *const gr_ctx_struct) -> truth_t;
+    pub fn gr_generic_ctx_predicate_false(ctx: *const gr_ctx_struct) -> truth_t;
     pub fn gr_generic_ctx_clear(ctx: *mut gr_ctx_struct) -> libc::c_int;
     pub fn gr_generic_set_shallow(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct);
     pub fn gr_generic_write_n(
