@@ -296,16 +296,16 @@ extern "C" {
     pub fn fmpz_poly_add_fmpz(
         res: *mut fmpz_poly_struct,
         poly: *const fmpz_poly_struct,
-        c: *mut fmpz,
+        c: *const fmpz,
     );
     pub fn fmpz_poly_sub_fmpz(
         res: *mut fmpz_poly_struct,
         poly: *const fmpz_poly_struct,
-        c: *mut fmpz,
+        c: *const fmpz,
     );
     pub fn fmpz_poly_fmpz_sub(
         res: *mut fmpz_poly_struct,
-        c: *mut fmpz,
+        c: *const fmpz,
         poly: *const fmpz_poly_struct,
     );
     pub fn fmpz_poly_scalar_abs(res: *mut fmpz_poly_struct, poly: *const fmpz_poly_struct);

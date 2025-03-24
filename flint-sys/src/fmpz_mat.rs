@@ -360,12 +360,12 @@ extern "C" {
     #[link_name = "fmpz_mat_swap_rows__extern"]
     pub fn fmpz_mat_swap_rows(
         mat: *mut fmpz_mat_struct,
-        perm: *mut mp_limb_signed_t,
+        perm: *const mp_limb_signed_t,
         r: mp_limb_signed_t,
         s: mp_limb_signed_t,
     );
-    pub fn fmpz_mat_invert_rows(mat: *mut fmpz_mat_struct, perm: *mut mp_limb_signed_t);
-    pub fn fmpz_mat_invert_cols(mat: *mut fmpz_mat_struct, perm: *mut mp_limb_signed_t);
+    pub fn fmpz_mat_invert_rows(mat: *mut fmpz_mat_struct, perm: *const mp_limb_signed_t);
+    pub fn fmpz_mat_invert_cols(mat: *mut fmpz_mat_struct, perm: *const mp_limb_signed_t);
     pub fn fmpz_mat_find_pivot_any(
         mat: *const fmpz_mat_struct,
         start_row: mp_limb_signed_t,
@@ -381,7 +381,7 @@ extern "C" {
     pub fn fmpz_mat_fflu(
         B: *mut fmpz_mat_struct,
         den: *mut fmpz,
-        perm: *mut mp_limb_signed_t,
+        perm: *const mp_limb_signed_t,
         A: *const fmpz_mat_struct,
         rank_check: libc::c_int,
     ) -> mp_limb_signed_t;
@@ -428,7 +428,7 @@ extern "C" {
     pub fn fmpz_mat_det_bound(bound: *mut fmpz, A: *const fmpz_mat_struct);
     pub fn fmpz_mat_det_bound_nonzero(bound: *mut fmpz, A: *const fmpz_mat_struct);
     pub fn fmpz_mat_det_divisor(d: *mut fmpz, A: *const fmpz_mat_struct);
-    pub fn fmpz_mat_similarity(A: *mut fmpz_mat_struct, r: mp_limb_signed_t, d: *mut fmpz);
+    pub fn fmpz_mat_similarity(A: *mut fmpz_mat_struct, r: mp_limb_signed_t, d: *const fmpz);
     pub fn _fmpz_mat_charpoly_berkowitz(rop: *mut fmpz, op: *const fmpz_mat_struct);
     pub fn fmpz_mat_charpoly_berkowitz(cp: *mut fmpz_poly_struct, mat: *const fmpz_mat_struct);
     pub fn _fmpz_mat_charpoly_modular(rop: *mut fmpz, op: *const fmpz_mat_struct);
