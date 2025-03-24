@@ -26,4 +26,7 @@ $HOME/.cache/gmp-mpfr-sys
   * Windows: inside {FOLDERID_LocalAppData}\gmp-mpfr-sys
 
 ## Notes
+
+  * WSL users may need to install clang.
+ 
   * As of version 0.6.0 the FLINT source files are now included and the library is compiled automatically. The files are cached to avoid unnecessary compilations.
