@@ -1,6 +1,6 @@
 [package]
 name = "rug-polynomial"
-version = "0.2.5"
+version = "0.2.6"
 authors = ["Alex Ozdemir <aozdemir@hmc.edu>"]
 edition = "2018"
 description = "Polynomial arithmetic, built on Rug & FLINT"
@@ -18,7 +18,7 @@ readme = "README.md"
 flint-sys = "0.7.3"
 #flint-sys = { path = "../flint-sys" }
 rug-fft = "0.1.0"
-gmp-mpfr-sys = "~1.4"
+gmp-mpfr-sys = "~1.6"
 rug = { version = "1.13", features = ["serde"] }
 serde = { version = "1.0", features = ["derive"] }
 
