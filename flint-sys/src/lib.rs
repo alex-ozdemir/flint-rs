@@ -3,7 +3,7 @@
 #![allow(non_upper_case_globals)]
 //#![allow(unused_imports)] // remove
 
-/// Bindings for the [FLINT](http://flintlib.org/sphinx/index.html) library.
+//! Bindings for the [FLINT](https://flintlib.org/doc/#) library.
 
 pub mod bindgen;
 pub mod deps;
