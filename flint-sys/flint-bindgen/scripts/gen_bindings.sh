@@ -24,7 +24,7 @@ mkdir -p flint-bindgen/flint-out
 pushd flint-bindgen/flint-build
 
 echo "  Running configure..."
-../../flint-3.1.2/configure --disable-shared \
+../../flint-3.4.0/configure --disable-shared \
     --with-mpfr=${gmp_mpfr_dir}/out \
     --with-gmp=${gmp_mpfr_dir}/out \
     CFLAGS="-fPIC" \

@@ -12,9 +12,9 @@ use std::{
     str,
 };
 
-const FLINT_DIR: &str = "flint-3.1.2";
+const FLINT_DIR: &str = "flint-3.4.0";
 const FLINT_LIB: &str = "libflint.a";
-const FLINT_VER: &str = "3.1.2";
+const FLINT_VER: &str = "3.4.0";
 
 include!("flint-bindgen/scripts/build_headers.rs");
 
