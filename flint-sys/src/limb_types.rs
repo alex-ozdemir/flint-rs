@@ -5,11 +5,10 @@ use crate::deps::*;
 
 pub const FLINT_MAX_FACTORS_IN_LIMB: u32 = 15;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct n_factor_t {
     pub num: libc::c_int,
     pub exp: [libc::c_int; 15usize],
-    pub p: [mp_limb_t; 15usize],
+    pub p: [ulong; 15usize],
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -29,15 +28,14 @@ impl Default for n_factor_t {
     }
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct n_primes_struct {
-    pub small_i: mp_limb_signed_t,
-    pub small_num: mp_limb_signed_t,
+    pub small_i: slong,
+    pub small_num: slong,
     pub small_primes: *mut libc::c_uint,
-    pub sieve_a: mp_limb_t,
-    pub sieve_b: mp_limb_t,
-    pub sieve_i: mp_limb_signed_t,
-    pub sieve_num: mp_limb_signed_t,
+    pub sieve_a: ulong,
+    pub sieve_b: ulong,
+    pub sieve_i: slong,
+    pub sieve_num: slong,
     pub sieve: *mut libc::c_char,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]

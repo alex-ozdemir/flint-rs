@@ -7,13 +7,12 @@ use crate::flint::*;
 
 pub const MAX_FACTORS: u32 = 15;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct dirichlet_prime_group_struct {
-    pub p: mp_limb_t,
+    pub p: ulong,
     pub e: libc::c_int,
     pub pe: nmod_t,
     pub phi: nmod_t,
-    pub g: mp_limb_t,
+    pub g: ulong,
     pub dlog: *mut dlog_precomp_struct,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -45,19 +44,18 @@ impl Default for dirichlet_prime_group_struct {
     }
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct dirichlet_group_struct {
-    pub q: mp_limb_t,
-    pub q_even: mp_limb_t,
+    pub q: ulong,
+    pub q_even: ulong,
     pub mod_: nmod_t,
-    pub rad_q: mp_limb_t,
-    pub phi_q: mp_limb_t,
-    pub neven: mp_limb_signed_t,
-    pub num: mp_limb_signed_t,
-    pub expo: mp_limb_t,
+    pub rad_q: ulong,
+    pub phi_q: ulong,
+    pub neven: slong,
+    pub num: slong,
+    pub expo: ulong,
     pub P: *mut dirichlet_prime_group_struct,
-    pub generators: *mut mp_limb_t,
-    pub PHI: *mut mp_limb_t,
+    pub generators: *mut ulong,
+    pub PHI: *mut ulong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -98,10 +96,9 @@ impl Default for dirichlet_group_struct {
 }
 pub type dirichlet_group_t = [dirichlet_group_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct dirichlet_char_struct {
-    pub n: mp_limb_t,
-    pub log: *mut mp_limb_t,
+    pub n: ulong,
+    pub log: *mut ulong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -125,20 +122,20 @@ impl Default for dirichlet_char_struct {
 pub type dirichlet_char_t = [dirichlet_char_struct; 1usize];
 extern "C" {
     #[link_name = "dirichlet_group_size__extern"]
-    pub fn dirichlet_group_size(G: *const dirichlet_group_struct) -> mp_limb_t;
-    pub fn dirichlet_group_num_primitive(G: *const dirichlet_group_struct) -> mp_limb_t;
-    pub fn dirichlet_group_init(G: *mut dirichlet_group_struct, q: mp_limb_t) -> libc::c_int;
+    pub fn dirichlet_group_size(G: *const dirichlet_group_struct) -> ulong;
+    pub fn dirichlet_group_num_primitive(G: *const dirichlet_group_struct) -> ulong;
+    pub fn dirichlet_group_init(G: *mut dirichlet_group_struct, q: ulong) -> libc::c_int;
     pub fn dirichlet_subgroup_init(
         H: *mut dirichlet_group_struct,
         G: *const dirichlet_group_struct,
-        h: mp_limb_t,
+        h: ulong,
     );
     pub fn dirichlet_group_clear(G: *mut dirichlet_group_struct);
-    pub fn dirichlet_group_dlog_precompute(G: *mut dirichlet_group_struct, num: mp_limb_t);
+    pub fn dirichlet_group_dlog_precompute(G: *mut dirichlet_group_struct, num: ulong);
     pub fn dirichlet_group_dlog_clear(G: *mut dirichlet_group_struct);
-    pub fn dirichlet_conductor_ui(G: *const dirichlet_group_struct, a: mp_limb_t) -> mp_limb_t;
-    pub fn dirichlet_parity_ui(G: *const dirichlet_group_struct, a: mp_limb_t) -> libc::c_int;
-    pub fn dirichlet_order_ui(G: *const dirichlet_group_struct, a: mp_limb_t) -> mp_limb_t;
+    pub fn dirichlet_conductor_ui(G: *const dirichlet_group_struct, a: ulong) -> ulong;
+    pub fn dirichlet_parity_ui(G: *const dirichlet_group_struct, a: ulong) -> libc::c_int;
+    pub fn dirichlet_order_ui(G: *const dirichlet_group_struct, a: ulong) -> ulong;
     pub fn dirichlet_char_init(x: *mut dirichlet_char_struct, G: *const dirichlet_group_struct);
     pub fn dirichlet_char_clear(x: *mut dirichlet_char_struct);
     pub fn dirichlet_char_print(G: *const dirichlet_group_struct, x: *const dirichlet_char_struct);
@@ -165,34 +162,34 @@ extern "C" {
     pub fn dirichlet_conductor_char(
         G: *const dirichlet_group_struct,
         x: *const dirichlet_char_struct,
-    ) -> mp_limb_t;
+    ) -> ulong;
     pub fn dirichlet_order_char(
         G: *const dirichlet_group_struct,
         x: *const dirichlet_char_struct,
-    ) -> mp_limb_t;
+    ) -> ulong;
     pub fn dirichlet_char_log(
         x: *mut dirichlet_char_struct,
         G: *const dirichlet_group_struct,
-        m: mp_limb_t,
+        m: ulong,
     );
     #[link_name = "dirichlet_char_exp__extern"]
     pub fn dirichlet_char_exp(
         G: *const dirichlet_group_struct,
         x: *const dirichlet_char_struct,
-    ) -> mp_limb_t;
+    ) -> ulong;
     pub fn _dirichlet_char_exp(
         x: *mut dirichlet_char_struct,
         G: *const dirichlet_group_struct,
-    ) -> mp_limb_t;
+    ) -> ulong;
     pub fn dirichlet_char_index(
         x: *mut dirichlet_char_struct,
         G: *const dirichlet_group_struct,
-        j: mp_limb_t,
+        j: ulong,
     );
     pub fn dirichlet_index_char(
         G: *const dirichlet_group_struct,
         x: *const dirichlet_char_struct,
-    ) -> mp_limb_t;
+    ) -> ulong;
     pub fn dirichlet_char_one(x: *mut dirichlet_char_struct, G: *const dirichlet_group_struct);
     pub fn dirichlet_char_first_primitive(
         x: *mut dirichlet_char_struct,
@@ -216,7 +213,7 @@ extern "C" {
         c: *mut dirichlet_char_struct,
         G: *const dirichlet_group_struct,
         a: *const dirichlet_char_struct,
-        n: mp_limb_t,
+        n: ulong,
     );
     pub fn dirichlet_char_lower(
         y: *mut dirichlet_char_struct,
@@ -230,16 +227,12 @@ extern "C" {
         x: *const dirichlet_char_struct,
         H: *const dirichlet_group_struct,
     );
-    pub fn dirichlet_pairing(
-        G: *const dirichlet_group_struct,
-        m: mp_limb_t,
-        n: mp_limb_t,
-    ) -> mp_limb_t;
+    pub fn dirichlet_pairing(G: *const dirichlet_group_struct, m: ulong, n: ulong) -> ulong;
     pub fn dirichlet_pairing_char(
         G: *const dirichlet_group_struct,
         a: *const dirichlet_char_struct,
         b: *const dirichlet_char_struct,
-    ) -> mp_limb_t;
+    ) -> ulong;
     #[link_name = "dirichlet_char_is_principal__extern"]
     pub fn dirichlet_char_is_principal(
         G: *const dirichlet_group_struct,
@@ -258,50 +251,46 @@ extern "C" {
     pub fn dirichlet_chi(
         G: *const dirichlet_group_struct,
         chi: *const dirichlet_char_struct,
-        n: mp_limb_t,
-    ) -> mp_limb_t;
-    pub fn dirichlet_vec_set_null(
-        v: *mut mp_limb_t,
-        G: *const dirichlet_group_struct,
-        nv: mp_limb_signed_t,
-    );
+        n: ulong,
+    ) -> ulong;
+    pub fn dirichlet_vec_set_null(v: *mut ulong, G: *const dirichlet_group_struct, nv: slong);
     pub fn dirichlet_chi_vec_loop(
-        v: *mut mp_limb_t,
+        v: *mut ulong,
         G: *const dirichlet_group_struct,
         chi: *const dirichlet_char_struct,
-        nv: mp_limb_signed_t,
+        nv: slong,
     );
     pub fn dirichlet_chi_vec_primeloop(
-        v: *mut mp_limb_t,
+        v: *mut ulong,
         G: *const dirichlet_group_struct,
         chi: *const dirichlet_char_struct,
-        nv: mp_limb_signed_t,
+        nv: slong,
     );
     pub fn dirichlet_chi_vec(
-        v: *mut mp_limb_t,
+        v: *mut ulong,
         G: *const dirichlet_group_struct,
         chi: *const dirichlet_char_struct,
-        nv: mp_limb_signed_t,
+        nv: slong,
     );
     pub fn dirichlet_chi_vec_loop_order(
-        v: *mut mp_limb_t,
+        v: *mut ulong,
         G: *const dirichlet_group_struct,
         chi: *const dirichlet_char_struct,
-        order: mp_limb_t,
-        nv: mp_limb_signed_t,
+        order: ulong,
+        nv: slong,
     );
     pub fn dirichlet_chi_vec_primeloop_order(
-        v: *mut mp_limb_t,
+        v: *mut ulong,
         G: *const dirichlet_group_struct,
         chi: *const dirichlet_char_struct,
-        order: mp_limb_t,
-        nv: mp_limb_signed_t,
+        order: ulong,
+        nv: slong,
     );
     pub fn dirichlet_chi_vec_order(
-        v: *mut mp_limb_t,
+        v: *mut ulong,
         G: *const dirichlet_group_struct,
         chi: *const dirichlet_char_struct,
-        order: mp_limb_t,
-        nv: mp_limb_signed_t,
+        order: ulong,
+        nv: slong,
     );
 }

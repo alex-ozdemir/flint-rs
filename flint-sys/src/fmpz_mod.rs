@@ -6,10 +6,9 @@ use crate::fmpz_mod_types::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_discrete_log_pohlig_hellman_table_entry_struct {
     pub gammapow: fmpz_t,
-    pub cm: mp_limb_t,
+    pub cm: ulong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -39,18 +38,17 @@ impl Default for fmpz_mod_discrete_log_pohlig_hellman_table_entry_struct {
     }
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_discrete_log_pohlig_hellman_entry_struct {
-    pub exp: mp_limb_signed_t,
-    pub prime: mp_limb_t,
+    pub exp: slong,
+    pub prime: ulong,
     pub gamma: fmpz_t,
     pub gammainv: fmpz_t,
     pub startingbeta: fmpz_t,
     pub co: fmpz_t,
     pub startinge: fmpz_t,
     pub idem: fmpz_t,
-    pub cbound: mp_limb_t,
-    pub dbound: mp_limb_t,
+    pub cbound: ulong,
+    pub dbound: ulong,
     pub table: *mut fmpz_mod_discrete_log_pohlig_hellman_table_entry_struct,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -107,13 +105,12 @@ impl Default for fmpz_mod_discrete_log_pohlig_hellman_entry_struct {
     }
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_discrete_log_pohlig_hellman_struct {
     pub fpctx: fmpz_mod_ctx_t,
     pub pm1: fmpz_t,
     pub alpha: fmpz_t,
     pub alphainv: fmpz_t,
-    pub num_factors: mp_limb_signed_t,
+    pub num_factors: slong,
     pub entries: *mut fmpz_mod_discrete_log_pohlig_hellman_entry_struct,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -150,22 +147,22 @@ pub type fmpz_mod_discrete_log_pohlig_hellman_t =
     [fmpz_mod_discrete_log_pohlig_hellman_struct; 1usize];
 extern "C" {
     pub fn fmpz_mod_ctx_init(ctx: *mut fmpz_mod_ctx_struct, n: *const fmpz);
-    pub fn fmpz_mod_ctx_init_ui(ctx: *mut fmpz_mod_ctx_struct, n: mp_limb_t);
+    pub fn fmpz_mod_ctx_init_ui(ctx: *mut fmpz_mod_ctx_struct, n: ulong);
     pub fn fmpz_mod_ctx_init_rand_bits(
         ctx: *mut fmpz_mod_ctx_struct,
-        state: *mut flint_rand_s,
-        max_bits: mp_limb_t,
+        state: *mut flint_rand_struct,
+        max_bits: flint_bitcnt_t,
     );
     pub fn fmpz_mod_ctx_init_rand_bits_prime(
         ctx: *mut fmpz_mod_ctx_struct,
-        state: *mut flint_rand_s,
-        max_bits: mp_limb_t,
+        state: *mut flint_rand_struct,
+        max_bits: flint_bitcnt_t,
     );
     pub fn fmpz_mod_ctx_clear(ctx: *mut fmpz_mod_ctx_struct);
     #[link_name = "fmpz_mod_ctx_modulus__extern"]
     pub fn fmpz_mod_ctx_modulus(ctx: *const fmpz_mod_ctx_struct) -> *const fmpz;
     pub fn fmpz_mod_ctx_set_modulus(ctx: *mut fmpz_mod_ctx_struct, n: *const fmpz);
-    pub fn fmpz_mod_ctx_set_modulus_ui(ctx: *mut fmpz_mod_ctx_struct, n: mp_limb_t);
+    pub fn fmpz_mod_ctx_set_modulus_ui(ctx: *mut fmpz_mod_ctx_struct, n: ulong);
     pub fn fmpz_mod_is_canonical(a: *const fmpz, ctx: *const fmpz_mod_ctx_struct) -> libc::c_int;
     pub fn fmpz_mod_assert_canonical(a: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
     pub fn fmpz_mod_is_one(a: *const fmpz, ctx: *const fmpz_mod_ctx_struct) -> libc::c_int;
@@ -176,12 +173,12 @@ extern "C" {
     ) -> libc::c_int;
     pub fn fmpz_mod_equal_si(
         a: *const fmpz,
-        b: mp_limb_signed_t,
+        b: slong,
         ctx: *const fmpz_mod_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpz_mod_set_fmpz(a: *mut fmpz, b: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
-    pub fn fmpz_mod_set_ui(a: *mut fmpz, b: mp_limb_t, ctx: *const fmpz_mod_ctx_struct);
-    pub fn fmpz_mod_set_si(a: *mut fmpz, b: mp_limb_signed_t, ctx: *const fmpz_mod_ctx_struct);
+    pub fn fmpz_mod_set_ui(a: *mut fmpz, b: ulong, ctx: *const fmpz_mod_ctx_struct);
+    pub fn fmpz_mod_set_si(a: *mut fmpz, b: slong, ctx: *const fmpz_mod_ctx_struct);
     pub fn _fmpz_mod_add1(
         a: *mut fmpz,
         b: *const fmpz,
@@ -192,7 +189,7 @@ extern "C" {
         a: *mut fmpz,
         b: *const fmpz,
         c: *const fmpz,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_add2(
         a: *mut fmpz,
@@ -219,18 +216,8 @@ extern "C" {
         c: *const fmpz,
         ctx: *const fmpz_mod_ctx_struct,
     );
-    pub fn fmpz_mod_add_ui(
-        a: *mut fmpz,
-        b: *const fmpz,
-        c: mp_limb_t,
-        ctx: *const fmpz_mod_ctx_struct,
-    );
-    pub fn fmpz_mod_add_si(
-        a: *mut fmpz,
-        b: *const fmpz,
-        c: mp_limb_signed_t,
-        ctx: *const fmpz_mod_ctx_struct,
-    );
+    pub fn fmpz_mod_add_ui(a: *mut fmpz, b: *const fmpz, c: ulong, ctx: *const fmpz_mod_ctx_struct);
+    pub fn fmpz_mod_add_si(a: *mut fmpz, b: *const fmpz, c: slong, ctx: *const fmpz_mod_ctx_struct);
     pub fn _fmpz_mod_sub1(
         a: *mut fmpz,
         b: *const fmpz,
@@ -241,7 +228,7 @@ extern "C" {
         a: *mut fmpz,
         b: *const fmpz,
         c: *const fmpz,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_sub2(
         a: *mut fmpz,
@@ -268,36 +255,16 @@ extern "C" {
         c: *const fmpz,
         ctx: *const fmpz_mod_ctx_struct,
     );
-    pub fn fmpz_mod_sub_ui(
-        a: *mut fmpz,
-        b: *const fmpz,
-        c: mp_limb_t,
-        ctx: *const fmpz_mod_ctx_struct,
-    );
-    pub fn fmpz_mod_sub_si(
-        a: *mut fmpz,
-        b: *const fmpz,
-        c: mp_limb_signed_t,
-        ctx: *const fmpz_mod_ctx_struct,
-    );
+    pub fn fmpz_mod_sub_ui(a: *mut fmpz, b: *const fmpz, c: ulong, ctx: *const fmpz_mod_ctx_struct);
+    pub fn fmpz_mod_sub_si(a: *mut fmpz, b: *const fmpz, c: slong, ctx: *const fmpz_mod_ctx_struct);
     pub fn fmpz_mod_fmpz_sub(
         a: *mut fmpz,
         b: *const fmpz,
         c: *const fmpz,
         ctx: *const fmpz_mod_ctx_struct,
     );
-    pub fn fmpz_mod_ui_sub(
-        a: *mut fmpz,
-        b: mp_limb_t,
-        c: *const fmpz,
-        ctx: *const fmpz_mod_ctx_struct,
-    );
-    pub fn fmpz_mod_si_sub(
-        a: *mut fmpz,
-        b: mp_limb_signed_t,
-        c: *const fmpz,
-        ctx: *const fmpz_mod_ctx_struct,
-    );
+    pub fn fmpz_mod_ui_sub(a: *mut fmpz, b: ulong, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
+    pub fn fmpz_mod_si_sub(a: *mut fmpz, b: slong, c: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
     pub fn fmpz_mod_neg(a: *mut fmpz, b: *const fmpz, ctx: *const fmpz_mod_ctx_struct);
     pub fn _fmpz_mod_mul1(
         a: *mut fmpz,
@@ -309,7 +276,7 @@ extern "C" {
         a: *mut fmpz,
         b: *const fmpz,
         c: *const fmpz,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_mul2(
         a: *mut fmpz,
@@ -336,18 +303,8 @@ extern "C" {
         c: *const fmpz,
         ctx: *const fmpz_mod_ctx_struct,
     );
-    pub fn fmpz_mod_mul_ui(
-        a: *mut fmpz,
-        b: *const fmpz,
-        c: mp_limb_t,
-        ctx: *const fmpz_mod_ctx_struct,
-    );
-    pub fn fmpz_mod_mul_si(
-        a: *mut fmpz,
-        b: *const fmpz,
-        c: mp_limb_signed_t,
-        ctx: *const fmpz_mod_ctx_struct,
-    );
+    pub fn fmpz_mod_mul_ui(a: *mut fmpz, b: *const fmpz, c: ulong, ctx: *const fmpz_mod_ctx_struct);
+    pub fn fmpz_mod_mul_si(a: *mut fmpz, b: *const fmpz, c: slong, ctx: *const fmpz_mod_ctx_struct);
     pub fn fmpz_mod_addmul(
         a: *mut fmpz,
         b: *const fmpz,
@@ -366,7 +323,7 @@ extern "C" {
     pub fn fmpz_mod_pow_ui(
         a: *mut fmpz,
         b: *const fmpz,
-        pow: mp_limb_t,
+        pow: ulong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_pow_fmpz(
@@ -375,10 +332,14 @@ extern "C" {
         pow: *const fmpz,
         ctx: *const fmpz_mod_ctx_struct,
     ) -> libc::c_int;
-    pub fn fmpz_mod_rand(a: *mut fmpz, state: *mut flint_rand_s, ctx: *const fmpz_mod_ctx_struct);
+    pub fn fmpz_mod_rand(
+        a: *mut fmpz,
+        state: *mut flint_rand_struct,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
     pub fn fmpz_mod_rand_not_zero(
         a: *mut fmpz,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_discrete_log_pohlig_hellman_init(

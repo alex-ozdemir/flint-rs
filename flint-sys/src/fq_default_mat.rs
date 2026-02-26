@@ -2,7 +2,6 @@
 
 use libc::*;
 use crate::deps::*;
-use crate::bindgen::*;
 use crate::flint::*;
 use crate::fmpz_mod_types::*;
 use crate::fmpz_types::*;
@@ -14,7 +13,49 @@ use crate::nmod_types::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+pub struct __BindgenUnionField<T>(::std::marker::PhantomData<T>);
+impl<T> __BindgenUnionField<T> {
+    #[inline]
+    pub const fn new() -> Self {
+        __BindgenUnionField(::std::marker::PhantomData)
+    }
+    #[inline]
+    pub unsafe fn as_ref(&self) -> &T {
+        ::std::mem::transmute(self)
+    }
+    #[inline]
+    pub unsafe fn as_mut(&mut self) -> &mut T {
+        ::std::mem::transmute(self)
+    }
+}
+impl<T> ::std::default::Default for __BindgenUnionField<T> {
+    #[inline]
+    fn default() -> Self {
+        Self::new()
+    }
+}
+impl<T> ::std::clone::Clone for __BindgenUnionField<T> {
+    #[inline]
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+impl<T> ::std::marker::Copy for __BindgenUnionField<T> {}
+impl<T> ::std::fmt::Debug for __BindgenUnionField<T> {
+    fn fmt(&self, fmt: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        fmt.write_str("__BindgenUnionField")
+    }
+}
+impl<T> ::std::hash::Hash for __BindgenUnionField<T> {
+    fn hash<H: ::std::hash::Hasher>(&self, _state: &mut H) {}
+}
+impl<T> ::std::cmp::PartialEq for __BindgenUnionField<T> {
+    fn eq(&self, _other: &__BindgenUnionField<T>) -> bool {
+        true
+    }
+}
+impl<T> ::std::cmp::Eq for __BindgenUnionField<T> {}
+#[repr(C)]
 pub struct fq_default_mat_struct {
     pub fq: __BindgenUnionField<fq_mat_t>,
     pub fq_nmod: __BindgenUnionField<fq_nmod_mat_t>,
@@ -53,8 +94,8 @@ extern "C" {
     #[link_name = "fq_default_mat_init__extern"]
     pub fn fq_default_mat_init(
         mat: *mut fq_default_mat_struct,
-        rows: mp_limb_signed_t,
-        cols: mp_limb_signed_t,
+        rows: slong,
+        cols: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_mat_init_set__extern"]
@@ -103,27 +144,33 @@ extern "C" {
         mat: *const fq_default_mat_struct,
         ctx: *const fq_default_ctx_struct,
     ) -> libc::c_int;
+    #[link_name = "fq_default_mat_transpose__extern"]
+    pub fn fq_default_mat_transpose(
+        B: *mut fq_default_mat_struct,
+        A: *const fq_default_mat_struct,
+        ctx: *const fq_default_ctx_struct,
+    );
     #[link_name = "fq_default_mat_entry__extern"]
     pub fn fq_default_mat_entry(
         val: *mut fq_default_struct,
         mat: *const fq_default_mat_struct,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
+        i: slong,
+        j: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_mat_entry_set__extern"]
     pub fn fq_default_mat_entry_set(
         mat: *mut fq_default_mat_struct,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
+        i: slong,
+        j: slong,
         x: *const fq_default_struct,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_mat_entry_set_fmpz__extern"]
     pub fn fq_default_mat_entry_set_fmpz(
         mat: *mut fq_default_mat_struct,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
+        i: slong,
+        j: slong,
         x: *const fmpz,
         ctx: *const fq_default_ctx_struct,
     );
@@ -131,38 +178,38 @@ extern "C" {
     pub fn fq_default_mat_nrows(
         mat: *const fq_default_mat_struct,
         ctx: *const fq_default_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     #[link_name = "fq_default_mat_ncols__extern"]
     pub fn fq_default_mat_ncols(
         mat: *const fq_default_mat_struct,
         ctx: *const fq_default_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     #[link_name = "fq_default_mat_swap_rows__extern"]
     pub fn fq_default_mat_swap_rows(
         mat: *mut fq_default_mat_struct,
-        perm: *mut mp_limb_signed_t,
-        r: mp_limb_signed_t,
-        s: mp_limb_signed_t,
+        perm: *mut slong,
+        r: slong,
+        s: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_mat_invert_rows__extern"]
     pub fn fq_default_mat_invert_rows(
         mat: *mut fq_default_mat_struct,
-        perm: *mut mp_limb_signed_t,
+        perm: *mut slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_mat_swap_cols__extern"]
     pub fn fq_default_mat_swap_cols(
         mat: *mut fq_default_mat_struct,
-        perm: *mut mp_limb_signed_t,
-        r: mp_limb_signed_t,
-        s: mp_limb_signed_t,
+        perm: *mut slong,
+        r: slong,
+        s: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_mat_invert_cols__extern"]
     pub fn fq_default_mat_invert_cols(
         mat: *mut fq_default_mat_struct,
-        perm: *mut mp_limb_signed_t,
+        perm: *mut slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_mat_zero__extern"]
@@ -191,10 +238,10 @@ extern "C" {
     pub fn fq_default_mat_window_init(
         window: *mut fq_default_mat_struct,
         mat: *const fq_default_mat_struct,
-        r1: mp_limb_signed_t,
-        c1: mp_limb_signed_t,
-        r2: mp_limb_signed_t,
-        c2: mp_limb_signed_t,
+        r1: slong,
+        c1: slong,
+        r2: slong,
+        c2: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_mat_window_clear__extern"]
@@ -237,34 +284,34 @@ extern "C" {
     #[link_name = "fq_default_mat_randtest__extern"]
     pub fn fq_default_mat_randtest(
         mat: *mut fq_default_mat_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_mat_randrank__extern"]
     pub fn fq_default_mat_randrank(
         mat: *mut fq_default_mat_struct,
-        state: *mut flint_rand_s,
-        rank: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        rank: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_mat_randops__extern"]
     pub fn fq_default_mat_randops(
         mat: *mut fq_default_mat_struct,
-        state: *mut flint_rand_s,
-        count: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        count: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_mat_randtril__extern"]
     pub fn fq_default_mat_randtril(
         mat: *mut fq_default_mat_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         unit: libc::c_int,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_mat_randtriu__extern"]
     pub fn fq_default_mat_randtriu(
         mat: *mut fq_default_mat_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         unit: libc::c_int,
         ctx: *const fq_default_ctx_struct,
     );
@@ -305,11 +352,11 @@ extern "C" {
     );
     #[link_name = "fq_default_mat_lu__extern"]
     pub fn fq_default_mat_lu(
-        P: *mut mp_limb_signed_t,
+        P: *mut slong,
         A: *mut fq_default_mat_struct,
         rank_check: libc::c_int,
         ctx: *const fq_default_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     #[link_name = "fq_default_mat_inv__extern"]
     pub fn fq_default_mat_inv(
         B: *mut fq_default_mat_struct,
@@ -321,18 +368,18 @@ extern "C" {
         B: *mut fq_default_mat_struct,
         A: *const fq_default_mat_struct,
         ctx: *const fq_default_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     #[link_name = "fq_default_mat_nullspace__extern"]
     pub fn fq_default_mat_nullspace(
         X: *mut fq_default_mat_struct,
         A: *const fq_default_mat_struct,
         ctx: *const fq_default_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     #[link_name = "fq_default_mat_rank__extern"]
     pub fn fq_default_mat_rank(
         A: *const fq_default_mat_struct,
         ctx: *const fq_default_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     #[link_name = "fq_default_mat_solve_tril__extern"]
     pub fn fq_default_mat_solve_tril(
         X: *mut fq_default_mat_struct,
@@ -366,7 +413,7 @@ extern "C" {
     #[link_name = "fq_default_mat_similarity__extern"]
     pub fn fq_default_mat_similarity(
         A: *mut fq_default_mat_struct,
-        r: mp_limb_signed_t,
+        r: slong,
         d: *mut fq_default_struct,
         ctx: *const fq_default_ctx_struct,
     );

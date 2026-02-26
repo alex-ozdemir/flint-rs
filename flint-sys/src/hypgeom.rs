@@ -6,17 +6,16 @@ use crate::fmpz_types::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct hypgeom_struct {
     pub A: fmpz_poly_t,
     pub B: fmpz_poly_t,
     pub P: fmpz_poly_t,
     pub Q: fmpz_poly_t,
     pub have_precomputed: libc::c_int,
-    pub r: mp_limb_signed_t,
-    pub boundC: mp_limb_signed_t,
-    pub boundD: mp_limb_signed_t,
-    pub boundK: mp_limb_signed_t,
+    pub r: slong,
+    pub boundC: slong,
+    pub boundD: slong,
+    pub boundK: slong,
     pub MK: mag_t,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -52,33 +51,29 @@ extern "C" {
     pub fn hypgeom_init(hyp: *mut hypgeom_struct);
     pub fn hypgeom_clear(hyp: *mut hypgeom_struct);
     pub fn hypgeom_precompute(hyp: *mut hypgeom_struct);
-    pub fn hypgeom_estimate_terms(
-        z: *const mag_struct,
-        r: libc::c_int,
-        prec: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
+    pub fn hypgeom_estimate_terms(z: *const mag_struct, r: libc::c_int, prec: slong) -> slong;
     pub fn hypgeom_bound(
         error: *mut mag_struct,
         r: libc::c_int,
-        C: mp_limb_signed_t,
-        D: mp_limb_signed_t,
-        K: mp_limb_signed_t,
+        C: slong,
+        D: slong,
+        K: slong,
         TK: *const mag_struct,
         z: *const mag_struct,
-        prec: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
+        prec: slong,
+    ) -> slong;
     pub fn arb_hypgeom_sum(
         P: *mut arb_struct,
         Q: *mut arb_struct,
         hyp: *const hypgeom_struct,
-        n: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        n: slong,
+        prec: slong,
     );
     pub fn arb_hypgeom_infsum(
         P: *mut arb_struct,
         Q: *mut arb_struct,
         hyp: *mut hypgeom_struct,
-        target_prec: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        target_prec: slong,
+        prec: slong,
     );
 }

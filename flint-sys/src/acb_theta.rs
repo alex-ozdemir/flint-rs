@@ -9,23 +9,21 @@ use crate::fmpz_types::*;
 
 
 pub const ACB_THETA_LOW_PREC: u32 = 32;
-pub const ACB_THETA_G2_COV_NB: u32 = 26;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct acb_theta_eld_struct {
-    pub dim: mp_limb_signed_t,
-    pub ambient_dim: mp_limb_signed_t,
-    pub last_coords: *mut mp_limb_signed_t,
-    pub min: mp_limb_signed_t,
-    pub mid: mp_limb_signed_t,
-    pub max: mp_limb_signed_t,
-    pub nr: mp_limb_signed_t,
-    pub nl: mp_limb_signed_t,
+    pub dim: slong,
+    pub ambient_dim: slong,
+    pub last_coords: *mut slong,
+    pub min: slong,
+    pub mid: slong,
+    pub max: slong,
+    pub nr: slong,
+    pub nl: slong,
     pub rchildren: *mut acb_theta_eld_struct,
     pub lchildren: *mut acb_theta_eld_struct,
-    pub nb_pts: mp_limb_signed_t,
-    pub nb_border: mp_limb_signed_t,
-    pub box_: *mut mp_limb_signed_t,
+    pub nb_pts: slong,
+    pub nb_border: slong,
+    pub box_: *mut slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -68,36 +66,129 @@ impl Default for acb_theta_eld_struct {
     }
 }
 pub type acb_theta_eld_t = [acb_theta_eld_struct; 1usize];
-pub type acb_theta_naive_worker_t = ::std::option::Option<
+#[repr(C)]
+pub struct acb_theta_ctx_tau_struct {
+    pub g: slong,
+    pub allow_shift: libc::c_int,
+    pub yinv: arb_mat_struct,
+    pub cho: arb_mat_struct,
+    pub exp_tau_div_4: acb_mat_t,
+    pub exp_tau_div_2: acb_mat_t,
+    pub exp_tau: acb_mat_t,
+    pub exp_tau_div_4_inv: acb_mat_t,
+    pub exp_tau_div_2_inv: acb_mat_t,
+    pub exp_tau_inv: acb_mat_t,
+    pub exp_tau_a: acb_ptr,
+    pub exp_tau_a_inv: acb_ptr,
+    pub exp_a_tau_a_div_4: acb_ptr,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of acb_theta_ctx_tau_struct"]
+        [::std::mem::size_of::<acb_theta_ctx_tau_struct>() - 296usize];
+    ["Alignment of acb_theta_ctx_tau_struct"]
+        [::std::mem::align_of::<acb_theta_ctx_tau_struct>() - 8usize];
+    ["Offset of field: acb_theta_ctx_tau_struct::g"]
+        [::std::mem::offset_of!(acb_theta_ctx_tau_struct, g) - 0usize];
+    ["Offset of field: acb_theta_ctx_tau_struct::allow_shift"]
+        [::std::mem::offset_of!(acb_theta_ctx_tau_struct, allow_shift) - 8usize];
+    ["Offset of field: acb_theta_ctx_tau_struct::yinv"]
+        [::std::mem::offset_of!(acb_theta_ctx_tau_struct, yinv) - 16usize];
+    ["Offset of field: acb_theta_ctx_tau_struct::cho"]
+        [::std::mem::offset_of!(acb_theta_ctx_tau_struct, cho) - 48usize];
+    ["Offset of field: acb_theta_ctx_tau_struct::exp_tau_div_4"]
+        [::std::mem::offset_of!(acb_theta_ctx_tau_struct, exp_tau_div_4) - 80usize];
+    ["Offset of field: acb_theta_ctx_tau_struct::exp_tau_div_2"]
+        [::std::mem::offset_of!(acb_theta_ctx_tau_struct, exp_tau_div_2) - 112usize];
+    ["Offset of field: acb_theta_ctx_tau_struct::exp_tau"]
+        [::std::mem::offset_of!(acb_theta_ctx_tau_struct, exp_tau) - 144usize];
+    ["Offset of field: acb_theta_ctx_tau_struct::exp_tau_div_4_inv"]
+        [::std::mem::offset_of!(acb_theta_ctx_tau_struct, exp_tau_div_4_inv) - 176usize];
+    ["Offset of field: acb_theta_ctx_tau_struct::exp_tau_div_2_inv"]
+        [::std::mem::offset_of!(acb_theta_ctx_tau_struct, exp_tau_div_2_inv) - 208usize];
+    ["Offset of field: acb_theta_ctx_tau_struct::exp_tau_inv"]
+        [::std::mem::offset_of!(acb_theta_ctx_tau_struct, exp_tau_inv) - 240usize];
+    ["Offset of field: acb_theta_ctx_tau_struct::exp_tau_a"]
+        [::std::mem::offset_of!(acb_theta_ctx_tau_struct, exp_tau_a) - 272usize];
+    ["Offset of field: acb_theta_ctx_tau_struct::exp_tau_a_inv"]
+        [::std::mem::offset_of!(acb_theta_ctx_tau_struct, exp_tau_a_inv) - 280usize];
+    ["Offset of field: acb_theta_ctx_tau_struct::exp_a_tau_a_div_4"]
+        [::std::mem::offset_of!(acb_theta_ctx_tau_struct, exp_a_tau_a_div_4) - 288usize];
+};
+impl Default for acb_theta_ctx_tau_struct {
+    fn default() -> Self {
+        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+pub type acb_theta_ctx_tau_t = [acb_theta_ctx_tau_struct; 1usize];
+#[repr(C)]
+pub struct acb_theta_ctx_z_struct {
+    pub g: slong,
+    pub exp_z: acb_ptr,
+    pub exp_2z: acb_ptr,
+    pub exp_z_inv: acb_ptr,
+    pub exp_2z_inv: acb_ptr,
+    pub v: arb_ptr,
+    pub u: arb_struct,
+    pub uinv: arb_struct,
+    pub is_real: libc::c_int,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of acb_theta_ctx_z_struct"][::std::mem::size_of::<acb_theta_ctx_z_struct>() - 152usize];
+    ["Alignment of acb_theta_ctx_z_struct"]
+        [::std::mem::align_of::<acb_theta_ctx_z_struct>() - 8usize];
+    ["Offset of field: acb_theta_ctx_z_struct::g"]
+        [::std::mem::offset_of!(acb_theta_ctx_z_struct, g) - 0usize];
+    ["Offset of field: acb_theta_ctx_z_struct::exp_z"]
+        [::std::mem::offset_of!(acb_theta_ctx_z_struct, exp_z) - 8usize];
+    ["Offset of field: acb_theta_ctx_z_struct::exp_2z"]
+        [::std::mem::offset_of!(acb_theta_ctx_z_struct, exp_2z) - 16usize];
+    ["Offset of field: acb_theta_ctx_z_struct::exp_z_inv"]
+        [::std::mem::offset_of!(acb_theta_ctx_z_struct, exp_z_inv) - 24usize];
+    ["Offset of field: acb_theta_ctx_z_struct::exp_2z_inv"]
+        [::std::mem::offset_of!(acb_theta_ctx_z_struct, exp_2z_inv) - 32usize];
+    ["Offset of field: acb_theta_ctx_z_struct::v"]
+        [::std::mem::offset_of!(acb_theta_ctx_z_struct, v) - 40usize];
+    ["Offset of field: acb_theta_ctx_z_struct::u"]
+        [::std::mem::offset_of!(acb_theta_ctx_z_struct, u) - 48usize];
+    ["Offset of field: acb_theta_ctx_z_struct::uinv"]
+        [::std::mem::offset_of!(acb_theta_ctx_z_struct, uinv) - 96usize];
+    ["Offset of field: acb_theta_ctx_z_struct::is_real"]
+        [::std::mem::offset_of!(acb_theta_ctx_z_struct, is_real) - 144usize];
+};
+impl Default for acb_theta_ctx_z_struct {
+    fn default() -> Self {
+        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+pub type acb_theta_ctx_z_t = [acb_theta_ctx_z_struct; 1usize];
+pub type acb_theta_sum_worker_t = ::std::option::Option<
     unsafe extern "C" fn(
         arg1: acb_ptr,
         arg2: acb_srcptr,
         arg3: acb_srcptr,
-        arg4: *const mp_limb_signed_t,
-        arg5: mp_limb_signed_t,
+        arg4: *const slong,
+        arg5: slong,
         arg6: *const acb_struct,
-        arg7: *const mp_limb_signed_t,
-        arg8: mp_limb_signed_t,
-        arg9: mp_limb_signed_t,
-        arg10: mp_limb_signed_t,
-        arg11: mp_limb_signed_t,
+        arg7: *const slong,
+        arg8: slong,
+        arg9: slong,
+        arg10: slong,
+        arg11: slong,
     ),
->;
-pub type acb_theta_ql_worker_t = ::std::option::Option<
-    unsafe extern "C" fn(
-        arg1: acb_ptr,
-        arg2: acb_srcptr,
-        arg3: acb_srcptr,
-        arg4: arb_srcptr,
-        arg5: arb_srcptr,
-        arg6: *const acb_mat_struct,
-        arg7: mp_limb_signed_t,
-        arg8: mp_limb_signed_t,
-    ) -> libc::c_int,
 >;
 extern "C" {
     #[link_name = "sp2gz_dim__extern"]
-    pub fn sp2gz_dim(mat: *const fmpz_mat_struct) -> mp_limb_signed_t;
+    pub fn sp2gz_dim(mat: *const fmpz_mat_struct) -> slong;
     pub fn sp2gz_set_blocks(
         mat: *mut fmpz_mat_struct,
         alpha: *const fmpz_mat_struct,
@@ -110,8 +201,9 @@ extern "C" {
     pub fn sp2gz_trig(mat: *mut fmpz_mat_struct, S: *const fmpz_mat_struct);
     pub fn sp2gz_embed(res: *mut fmpz_mat_struct, mat: *const fmpz_mat_struct);
     pub fn sp2gz_restrict(res: *mut fmpz_mat_struct, mat: *const fmpz_mat_struct);
-    pub fn sp2gz_nb_fundamental(g: mp_limb_signed_t) -> mp_limb_signed_t;
-    pub fn sp2gz_fundamental(mat: *mut fmpz_mat_struct, j: mp_limb_signed_t);
+    #[link_name = "sp2gz_nb_fundamental__extern"]
+    pub fn sp2gz_nb_fundamental(g: slong) -> slong;
+    pub fn sp2gz_fundamental(mat: *mut fmpz_mat_struct, j: slong);
     pub fn sp2gz_is_correct(mat: *const fmpz_mat_struct) -> libc::c_int;
     pub fn sp2gz_is_j(mat: *const fmpz_mat_struct) -> libc::c_int;
     pub fn sp2gz_is_block_diag(mat: *const fmpz_mat_struct) -> libc::c_int;
@@ -119,20 +211,13 @@ extern "C" {
     pub fn sp2gz_is_embedded(res: *mut fmpz_mat_struct, mat: *const fmpz_mat_struct)
         -> libc::c_int;
     pub fn sp2gz_inv(inv: *mut fmpz_mat_struct, mat: *const fmpz_mat_struct);
-    pub fn sp2gz_decompose(
-        nb: *mut mp_limb_signed_t,
-        mat: *const fmpz_mat_struct,
-    ) -> *mut fmpz_mat_struct;
-    pub fn sp2gz_randtest(
-        mat: *mut fmpz_mat_struct,
-        state: *mut flint_rand_s,
-        bits: mp_limb_signed_t,
-    );
+    pub fn sp2gz_decompose(nb: *mut slong, mat: *const fmpz_mat_struct) -> *mut fmpz_mat_struct;
+    pub fn sp2gz_randtest(mat: *mut fmpz_mat_struct, state: *mut flint_rand_struct, bits: slong);
     pub fn acb_siegel_cocycle(
         c: *mut acb_mat_struct,
         mat: *const fmpz_mat_struct,
         tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     );
     pub fn acb_siegel_transform_cocycle_inv(
         w: *mut acb_mat_struct,
@@ -140,96 +225,117 @@ extern "C" {
         cinv: *mut acb_mat_struct,
         mat: *const fmpz_mat_struct,
         tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     );
     pub fn acb_siegel_transform(
         w: *mut acb_mat_struct,
         mat: *const fmpz_mat_struct,
         tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     );
-    pub fn acb_siegel_transform_z(
-        r: acb_ptr,
-        w: *mut acb_mat_struct,
-        mat: *const fmpz_mat_struct,
-        z: acb_srcptr,
+    pub fn acb_siegel_cho_yinv(
+        cho: *mut arb_mat_struct,
+        yinv: *mut arb_mat_struct,
         tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     );
-    pub fn acb_siegel_cho(
-        C: *mut arb_mat_struct,
-        tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_siegel_yinv(
-        Yinv: *mut arb_mat_struct,
-        tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_siegel_reduce(
-        mat: *mut fmpz_mat_struct,
-        tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
-    );
+    pub fn acb_siegel_reduce(mat: *mut fmpz_mat_struct, tau: *const acb_mat_struct, prec: slong);
     pub fn acb_siegel_is_reduced(
         tau: *const acb_mat_struct,
-        tol_exp: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        tol_exp: slong,
+        prec: slong,
     ) -> libc::c_int;
+    pub fn acb_siegel_kappa(
+        sqrtdet: *mut acb_struct,
+        mat: *const fmpz_mat_struct,
+        tau: *const acb_mat_struct,
+        sqr: libc::c_int,
+        prec: slong,
+    ) -> slong;
+    pub fn acb_siegel_kappa2(mat: *const fmpz_mat_struct) -> slong;
     pub fn acb_siegel_randtest(
         tau: *mut acb_mat_struct,
-        state: *mut flint_rand_s,
-        prec: mp_limb_signed_t,
-        mag_bits: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        prec: slong,
+        mag_bits: slong,
     );
     pub fn acb_siegel_randtest_reduced(
         tau: *mut acb_mat_struct,
-        state: *mut flint_rand_s,
-        prec: mp_limb_signed_t,
-        mag_bits: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        prec: slong,
+        mag_bits: slong,
+    );
+    pub fn acb_siegel_randtest_compact(
+        tau: *mut acb_mat_struct,
+        state: *mut flint_rand_struct,
+        exact: libc::c_int,
+        prec: slong,
     );
     pub fn acb_siegel_randtest_vec(
         z: acb_ptr,
-        state: *mut flint_rand_s,
-        g: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        g: slong,
+        prec: slong,
     );
-    pub fn acb_theta_char_get_slong(n: *mut mp_limb_signed_t, a: mp_limb_t, g: mp_limb_signed_t);
-    pub fn acb_theta_char_get_a(n: *const mp_limb_signed_t, g: mp_limb_signed_t) -> mp_limb_t;
-    pub fn acb_theta_char_get_arb(v: arb_ptr, a: mp_limb_t, g: mp_limb_signed_t);
-    pub fn acb_theta_char_get_acb(v: acb_ptr, a: mp_limb_t, g: mp_limb_signed_t);
-    pub fn acb_theta_char_dot(a: mp_limb_t, b: mp_limb_t, g: mp_limb_signed_t) -> mp_limb_signed_t;
-    pub fn acb_theta_char_dot_slong(
-        a: mp_limb_t,
-        n: *const mp_limb_signed_t,
-        g: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
-    pub fn acb_theta_char_dot_acb(
-        x: *mut acb_struct,
-        a: mp_limb_t,
+    pub fn acb_siegel_randtest_vec_reduced(
+        zs: acb_ptr,
+        state: *mut flint_rand_struct,
+        nb: slong,
+        tau: *const acb_mat_struct,
+        exact: libc::c_int,
+        prec: slong,
+    );
+    #[link_name = "acb_theta_char_bit__extern"]
+    pub fn acb_theta_char_bit(ch: ulong, j: slong, n: slong) -> libc::c_int;
+    pub fn acb_theta_char_get_arb(v: arb_ptr, a: ulong, g: slong);
+    pub fn acb_theta_char_get_acb(v: acb_ptr, a: ulong, g: slong);
+    pub fn acb_theta_char_set_slong_vec(vec: *const slong, len: slong) -> ulong;
+    pub fn acb_theta_char_dot(a: ulong, b: ulong, g: slong) -> slong;
+    pub fn acb_theta_char_dot_slong(a: ulong, n: *const slong, g: slong) -> slong;
+    #[link_name = "acb_theta_char_is_even__extern"]
+    pub fn acb_theta_char_is_even(ab: ulong, g: slong) -> libc::c_int;
+    pub fn acb_theta_char_table(
+        ch: *mut ulong,
+        e: *mut slong,
+        mat: *const fmpz_mat_struct,
+        ab: ulong,
+        all: libc::c_int,
+    );
+    pub fn acb_theta_char_shuffle(
+        res: acb_ptr,
+        mat: *const fmpz_mat_struct,
+        th: acb_srcptr,
+        sqr: libc::c_int,
+        prec: slong,
+    );
+    pub fn acb_theta_jet_nb(ord: slong, g: slong) -> slong;
+    pub fn acb_theta_jet_total_order(tup: *const slong, g: slong) -> slong;
+    pub fn acb_theta_jet_tuples(tups: *mut slong, ord: slong, g: slong);
+    pub fn acb_theta_jet_index(tup: *const slong, g: slong) -> slong;
+    pub fn acb_theta_jet_mul(
+        res: acb_ptr,
+        v1: acb_srcptr,
+        v2: acb_srcptr,
+        ord: slong,
+        g: slong,
+        prec: slong,
+    );
+    pub fn acb_theta_jet_compose(
+        res: acb_ptr,
+        v: acb_srcptr,
+        N: *const acb_mat_struct,
+        ord: slong,
+        prec: slong,
+    );
+    pub fn acb_theta_jet_exp_pi_i(res: acb_ptr, a: arb_srcptr, ord: slong, g: slong, prec: slong);
+    pub fn acb_theta_jet_exp_qf(
+        res: acb_ptr,
         z: acb_srcptr,
-        g: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        N: *const acb_mat_struct,
+        ord: slong,
+        prec: slong,
     );
-    pub fn acb_theta_char_is_even(ab: mp_limb_t, g: mp_limb_signed_t) -> libc::c_int;
-    pub fn acb_theta_char_is_goepel(
-        ch1: mp_limb_t,
-        ch2: mp_limb_t,
-        ch3: mp_limb_t,
-        ch4: mp_limb_t,
-        g: mp_limb_signed_t,
-    ) -> libc::c_int;
-    pub fn acb_theta_char_is_syzygous(
-        ch1: mp_limb_t,
-        ch2: mp_limb_t,
-        ch3: mp_limb_t,
-        g: mp_limb_signed_t,
-    ) -> libc::c_int;
-    pub fn acb_theta_eld_init(
-        E: *mut acb_theta_eld_struct,
-        d: mp_limb_signed_t,
-        g: mp_limb_signed_t,
-    );
+    pub fn acb_theta_eld_init(E: *mut acb_theta_eld_struct, d: slong, g: slong);
     pub fn acb_theta_eld_clear(E: *mut acb_theta_eld_struct);
     pub fn acb_theta_eld_set(
         E: *mut acb_theta_eld_struct,
@@ -237,200 +343,158 @@ extern "C" {
         R2: *const arf_struct,
         v: arb_srcptr,
     ) -> libc::c_int;
-    pub fn acb_theta_eld_points(pts: *mut mp_limb_signed_t, E: *const acb_theta_eld_struct);
-    pub fn acb_theta_eld_border(pts: *mut mp_limb_signed_t, E: *const acb_theta_eld_struct);
-    pub fn acb_theta_eld_contains(
-        E: *const acb_theta_eld_struct,
-        pt: *const mp_limb_signed_t,
-    ) -> libc::c_int;
+    #[link_name = "acb_theta_eld_nb_pts__extern"]
+    pub fn acb_theta_eld_nb_pts(E: *const acb_theta_eld_struct) -> slong;
+    pub fn acb_theta_eld_points(pts: *mut slong, E: *const acb_theta_eld_struct);
+    #[link_name = "acb_theta_eld_box__extern"]
+    pub fn acb_theta_eld_box(E: *const acb_theta_eld_struct, j: slong) -> slong;
+    #[link_name = "acb_theta_eld_nb_border__extern"]
+    pub fn acb_theta_eld_nb_border(E: *const acb_theta_eld_struct) -> slong;
+    pub fn acb_theta_eld_border(pts: *mut slong, E: *const acb_theta_eld_struct);
+    pub fn acb_theta_eld_contains(E: *const acb_theta_eld_struct, pt: *const slong) -> libc::c_int;
     pub fn acb_theta_eld_print(E: *const acb_theta_eld_struct);
-    pub fn acb_theta_naive_radius(
+    pub fn acb_theta_eld_distances(
+        ds: arb_ptr,
+        zs: acb_srcptr,
+        nb: slong,
+        tau: *const acb_mat_struct,
+        prec: slong,
+    );
+    pub fn acb_theta_sum_radius(
         R2: *mut arf_struct,
         eps: *mut arf_struct,
-        C: *const arb_mat_struct,
-        ord: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        cho: *const arb_mat_struct,
+        ord: slong,
+        prec: slong,
     );
-    pub fn acb_theta_naive_reduce(
-        v: arb_ptr,
-        new_zs: acb_ptr,
-        as_: arb_ptr,
-        cs: acb_ptr,
-        us: arb_ptr,
-        zs: acb_srcptr,
-        nb: mp_limb_signed_t,
-        tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
+    pub fn acb_theta_sum_jet_radius(
+        R2: *mut arf_struct,
+        eps: *mut arf_struct,
+        cho: *const arb_mat_struct,
+        v: arb_srcptr,
+        ord: slong,
+        prec: slong,
     );
-    pub fn acb_theta_naive_term(
+    pub fn acb_theta_sum_term(
         res: *mut acb_struct,
         z: acb_srcptr,
         tau: *const acb_mat_struct,
-        tup: *const mp_limb_signed_t,
-        n: *const mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        tup: *const slong,
+        n: *const slong,
+        prec: slong,
     );
-    pub fn acb_theta_naive_worker(
-        th: acb_ptr,
-        len: mp_limb_signed_t,
-        zs: acb_srcptr,
-        nb: mp_limb_signed_t,
+    pub fn acb_theta_sum_addprec(d: *const arb_struct) -> slong;
+    pub fn acb_theta_ctx_tau_init(
+        ctx: *mut acb_theta_ctx_tau_struct,
+        allow_shift: libc::c_int,
+        g: slong,
+    );
+    pub fn acb_theta_ctx_tau_clear(ctx: *mut acb_theta_ctx_tau_struct);
+    pub fn acb_theta_ctx_z_init(ctx: *mut acb_theta_ctx_z_struct, g: slong);
+    pub fn acb_theta_ctx_z_clear(ctx: *mut acb_theta_ctx_z_struct);
+    pub fn acb_theta_ctx_z_vec_init(nb: slong, g: slong) -> *mut acb_theta_ctx_z_struct;
+    pub fn acb_theta_ctx_z_vec_clear(vec: *mut acb_theta_ctx_z_struct, nb: slong);
+    pub fn acb_theta_ctx_exp_inv(
+        exp_inv: *mut acb_struct,
+        exp: *const acb_struct,
+        x: *const acb_struct,
+        is_real: libc::c_int,
+        prec: slong,
+    );
+    pub fn acb_theta_ctx_sqr_inv(
+        sqr_inv: *mut acb_struct,
+        inv: *const acb_struct,
+        sqr: *const acb_struct,
+        is_real: libc::c_int,
+        prec: slong,
+    );
+    pub fn acb_theta_ctx_tau_set(
+        ctx: *mut acb_theta_ctx_tau_struct,
         tau: *const acb_mat_struct,
+        prec: slong,
+    );
+    pub fn acb_theta_ctx_tau_dupl(ctx: *mut acb_theta_ctx_tau_struct, prec: slong);
+    pub fn acb_theta_ctx_tau_overlaps(
+        ctx1: *const acb_theta_ctx_tau_struct,
+        ctx2: *const acb_theta_ctx_tau_struct,
+    ) -> libc::c_int;
+    pub fn acb_theta_ctx_z_set(
+        ctx: *mut acb_theta_ctx_z_struct,
+        z: acb_srcptr,
+        ctx_tau: *const acb_theta_ctx_tau_struct,
+        prec: slong,
+    );
+    pub fn acb_theta_ctx_z_dupl(ctx: *mut acb_theta_ctx_z_struct, prec: slong);
+    pub fn acb_theta_ctx_z_add_real(
+        res: *mut acb_theta_ctx_z_struct,
+        ctx: *const acb_theta_ctx_z_struct,
+        ctx_real: *const acb_theta_ctx_z_struct,
+        prec: slong,
+    );
+    pub fn acb_theta_ctx_z_common_v(
+        v: arb_ptr,
+        vec: *const acb_theta_ctx_z_struct,
+        nb: slong,
+        prec: slong,
+    );
+    pub fn acb_theta_ctx_z_overlaps(
+        ctx1: *const acb_theta_ctx_z_struct,
+        ctx2: *const acb_theta_ctx_z_struct,
+    ) -> libc::c_int;
+    pub fn acb_theta_sum_sqr_pow(
+        sqr_pow: *mut acb_ptr,
+        exp_tau: *const acb_mat_struct,
         E: *const acb_theta_eld_struct,
-        ord: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-        worker: acb_theta_naive_worker_t,
+        prec: slong,
     );
-    pub fn acb_theta_naive_00(
+    pub fn acb_theta_sum_work(
         th: acb_ptr,
-        zs: acb_srcptr,
-        nb: mp_limb_signed_t,
-        tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
+        len: slong,
+        exp_z: acb_srcptr,
+        exp_z_inv: acb_srcptr,
+        exp_tau: *const acb_mat_struct,
+        exp_tau_inv: *const acb_mat_struct,
+        sqr_pow: *const acb_ptr,
+        E: *const acb_theta_eld_struct,
+        ord: slong,
+        prec: slong,
+        worker: acb_theta_sum_worker_t,
     );
-    pub fn acb_theta_naive_0b(
+    pub fn acb_theta_sum(
         th: acb_ptr,
-        zs: acb_srcptr,
-        nb: mp_limb_signed_t,
-        tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
+        vec: *const acb_theta_ctx_z_struct,
+        nb: slong,
+        ctx_tau: *const acb_theta_ctx_tau_struct,
+        distances: arb_srcptr,
+        all_a: libc::c_int,
+        all_b: libc::c_int,
+        tilde: libc::c_int,
+        prec: slong,
     );
-    pub fn acb_theta_naive_fixed_ab(
+    pub fn acb_theta_sum_jet(
         th: acb_ptr,
-        ab: mp_limb_t,
-        zs: acb_srcptr,
-        nb: mp_limb_signed_t,
-        tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_naive_fixed_a(
-        th: acb_ptr,
-        a: mp_limb_t,
-        zs: acb_srcptr,
-        nb: mp_limb_signed_t,
-        tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_naive_all(
-        th: acb_ptr,
-        zs: acb_srcptr,
-        nb: mp_limb_signed_t,
-        tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_jet_nb(ord: mp_limb_signed_t, g: mp_limb_signed_t) -> mp_limb_signed_t;
-    pub fn acb_theta_jet_total_order(
-        tup: *const mp_limb_signed_t,
-        g: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
-    pub fn acb_theta_jet_tuples(
-        tups: *mut mp_limb_signed_t,
-        ord: mp_limb_signed_t,
-        g: mp_limb_signed_t,
-    );
-    pub fn acb_theta_jet_index(
-        tup: *const mp_limb_signed_t,
-        g: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
-    pub fn acb_theta_jet_mul(
-        res: acb_ptr,
-        v1: acb_srcptr,
-        v2: acb_srcptr,
-        ord: mp_limb_signed_t,
-        g: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_jet_compose(
-        res: acb_ptr,
-        v: acb_srcptr,
-        N: *const acb_mat_struct,
-        ord: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_jet_exp_pi_i(
-        res: acb_ptr,
-        a: arb_srcptr,
-        ord: mp_limb_signed_t,
-        g: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_jet_naive_radius(
-        R2: *mut arf_struct,
-        eps: *mut arf_struct,
-        C: *const arb_mat_struct,
-        v: arb_srcptr,
-        ord: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_jet_naive_00(
-        dth: acb_ptr,
-        z: acb_srcptr,
-        tau: *const acb_mat_struct,
-        ord: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_jet_naive_fixed_ab(
-        dth: acb_ptr,
-        ab: mp_limb_t,
-        z: acb_srcptr,
-        tau: *const acb_mat_struct,
-        ord: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_jet_naive_all(
-        dth: acb_ptr,
-        z: acb_srcptr,
-        tau: *const acb_mat_struct,
-        ord: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_jet_error_bounds(
-        err: arb_ptr,
-        z: acb_srcptr,
-        tau: *const acb_mat_struct,
-        dth: acb_srcptr,
-        ord: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_dist_pt(
-        d: *mut arb_struct,
-        v: arb_srcptr,
-        C: *const arb_mat_struct,
-        n: *const mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_dist_lat(
-        d: *mut arb_struct,
-        v: arb_srcptr,
-        C: *const arb_mat_struct,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_dist_a0(
-        d: arb_ptr,
-        z: acb_srcptr,
-        tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_dist_addprec(d: *const arb_struct) -> mp_limb_signed_t;
-    pub fn acb_theta_agm_hadamard(
-        res: acb_ptr,
-        a: acb_srcptr,
-        g: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        vec: *const acb_theta_ctx_z_struct,
+        nb: slong,
+        ctx_tau: *const acb_theta_ctx_tau_struct,
+        ord: slong,
+        all_a: libc::c_int,
+        all_b: libc::c_int,
+        prec: slong,
     );
     pub fn acb_theta_agm_sqrt(
         res: acb_ptr,
         a: acb_srcptr,
         roots: acb_srcptr,
-        nb: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        nb: slong,
+        prec: slong,
     );
     pub fn acb_theta_agm_mul(
         res: acb_ptr,
         a1: acb_srcptr,
         a2: acb_srcptr,
-        g: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        g: slong,
+        all: libc::c_int,
+        prec: slong,
     );
     pub fn acb_theta_agm_mul_tight(
         res: acb_ptr,
@@ -438,203 +502,200 @@ extern "C" {
         a: acb_srcptr,
         d0: arb_srcptr,
         d: arb_srcptr,
-        g: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        g: slong,
+        all: libc::c_int,
+        prec: slong,
     );
-    pub fn acb_theta_ql_a0_naive(
-        th: acb_ptr,
-        t: acb_srcptr,
-        z: acb_srcptr,
-        d0: arb_srcptr,
-        d: arb_srcptr,
+    pub fn acb_theta_ql_nb_steps(
+        pattern: *mut slong,
         tau: *const acb_mat_struct,
-        guard: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        cst: libc::c_int,
+        prec: slong,
     ) -> libc::c_int;
-    pub fn acb_theta_ql_a0_split(
-        th: acb_ptr,
-        t: acb_srcptr,
+    pub fn acb_theta_ql_lower_dim(
+        new_zs: *mut acb_ptr,
+        cofactors: *mut acb_ptr,
+        pts: *mut *mut slong,
+        nb: *mut slong,
+        err: *mut arf_struct,
+        fullprec: *mut slong,
         z: acb_srcptr,
-        d: arb_srcptr,
         tau: *const acb_mat_struct,
-        s: mp_limb_signed_t,
-        guard: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-        worker: acb_theta_ql_worker_t,
+        distances: arb_srcptr,
+        s: slong,
+        a: ulong,
+        prec: slong,
     ) -> libc::c_int;
-    pub fn acb_theta_ql_a0_steps(
+    pub fn acb_theta_ql_recombine(
         th: acb_ptr,
-        t: acb_srcptr,
-        z: acb_srcptr,
-        d0: arb_srcptr,
-        d: arb_srcptr,
-        tau: *const acb_mat_struct,
-        nb_steps: mp_limb_signed_t,
-        s: mp_limb_signed_t,
-        guard: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-        worker: acb_theta_ql_worker_t,
-    ) -> libc::c_int;
-    pub fn acb_theta_ql_a0_nb_steps(
-        C: *const arb_mat_struct,
-        s: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
-    pub fn acb_theta_ql_a0(
-        th: acb_ptr,
-        t: acb_srcptr,
-        z: acb_srcptr,
-        d0: arb_srcptr,
-        d: arb_srcptr,
-        tau: *const acb_mat_struct,
-        guard: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    ) -> libc::c_int;
-    pub fn acb_theta_ql_reduce(
-        x: acb_ptr,
-        c: *mut acb_struct,
-        u: *mut arb_struct,
-        n1: *mut mp_limb_signed_t,
-        z: acb_srcptr,
-        tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
-    pub fn acb_theta_ql_all(
-        th: acb_ptr,
-        z: acb_srcptr,
-        tau: *const acb_mat_struct,
-        sqr: libc::c_int,
-        prec: mp_limb_signed_t,
+        th0: acb_srcptr,
+        cofactors: acb_srcptr,
+        pts: *const slong,
+        nb: slong,
+        err: *const arf_struct,
+        fullprec: slong,
+        s: slong,
+        a: ulong,
+        all: libc::c_int,
+        g: slong,
+        prec: slong,
     );
-    pub fn acb_theta_jet_ql_bounds(
+    pub fn acb_theta_ql_setup(
+        rts: acb_ptr,
+        rts_all: acb_ptr,
+        t: acb_ptr,
+        guard: *mut slong,
+        easy_steps: *mut slong,
+        zs: acb_srcptr,
+        nb: slong,
+        tau: *const acb_mat_struct,
+        distances: arb_srcptr,
+        nb_steps: slong,
+        all: libc::c_int,
+        prec: slong,
+    ) -> libc::c_int;
+    pub fn acb_theta_ql_exact(
+        th: acb_ptr,
+        zs: acb_srcptr,
+        nb: slong,
+        tau: *const acb_mat_struct,
+        pattern: *const slong,
+        all: libc::c_int,
+        shifted_prec: libc::c_int,
+        prec: slong,
+    );
+    pub fn acb_theta_ql_local_bound(
         c: *mut arb_struct,
         rho: *mut arb_struct,
         z: acb_srcptr,
         tau: *const acb_mat_struct,
-        ord: mp_limb_signed_t,
+        ord: slong,
     );
-    pub fn acb_theta_jet_ql_radius(
-        eps: *mut arf_struct,
-        err: *mut arf_struct,
-        c: *const arb_struct,
-        rho: *const arb_struct,
-        ord: mp_limb_signed_t,
-        g: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_jet_ql_finite_diff(
-        dth: acb_ptr,
-        eps: *const arf_struct,
-        err: *const arf_struct,
-        rho: *const arb_struct,
-        val: acb_srcptr,
-        ord: mp_limb_signed_t,
-        g: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_jet_ql_all(
-        dth: acb_ptr,
+    pub fn acb_theta_ql_jet_error(
+        err: arb_ptr,
         z: acb_srcptr,
         tau: *const acb_mat_struct,
-        ord: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        dth: acb_srcptr,
+        ord: slong,
+        prec: slong,
     );
-    pub fn acb_theta_transform_char(
-        e: *mut mp_limb_signed_t,
-        mat: *const fmpz_mat_struct,
-        ab: mp_limb_t,
-    ) -> mp_limb_t;
-    pub fn acb_theta_transform_sqrtdet(
-        res: *mut acb_struct,
+    pub fn acb_theta_ql_jet_fd(
+        th: acb_ptr,
+        zs: acb_srcptr,
+        nb: slong,
         tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
+        ord: slong,
+        all: libc::c_int,
+        prec: slong,
     );
-    pub fn acb_theta_transform_kappa(
-        sqrtdet: *mut acb_struct,
-        mat: *const fmpz_mat_struct,
+    pub fn acb_theta_ql_jet(
+        th: acb_ptr,
+        zs: acb_srcptr,
+        nb: slong,
         tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
-    pub fn acb_theta_transform_kappa2(mat: *const fmpz_mat_struct) -> mp_limb_signed_t;
-    pub fn acb_theta_transform_proj(
-        res: acb_ptr,
-        mat: *const fmpz_mat_struct,
-        th: acb_srcptr,
+        ord: slong,
+        all: libc::c_int,
+        prec: slong,
+    );
+    pub fn acb_theta_jet_notransform(
+        th: acb_ptr,
+        zs: acb_srcptr,
+        nb: slong,
+        tau: *const acb_mat_struct,
+        ord: slong,
+        ab: ulong,
+        all: libc::c_int,
         sqr: libc::c_int,
-        prec: mp_limb_signed_t,
+        prec: slong,
     );
+    pub fn acb_theta_reduce_tau(
+        new_zs: acb_ptr,
+        new_tau: *mut acb_mat_struct,
+        mat: *mut fmpz_mat_struct,
+        N: *mut acb_mat_struct,
+        ct: *mut acb_mat_struct,
+        exps: acb_ptr,
+        zs: acb_srcptr,
+        nb: slong,
+        tau: *const acb_mat_struct,
+        prec: slong,
+    ) -> libc::c_int;
+    pub fn acb_theta_reduce_z(
+        new_zs: acb_ptr,
+        rs: arb_ptr,
+        cs: acb_ptr,
+        zs: acb_srcptr,
+        nb: slong,
+        tau: *const acb_mat_struct,
+        prec: slong,
+    ) -> libc::c_int;
+    pub fn acb_theta_jet(
+        th: acb_ptr,
+        zs: acb_srcptr,
+        nb: slong,
+        tau: *const acb_mat_struct,
+        ord: slong,
+        ab: ulong,
+        all: libc::c_int,
+        sqr: libc::c_int,
+        prec: slong,
+    );
+    #[link_name = "acb_theta_one__extern"]
+    pub fn acb_theta_one(
+        th: acb_ptr,
+        z: acb_srcptr,
+        tau: *const acb_mat_struct,
+        ab: ulong,
+        prec: slong,
+    );
+    #[link_name = "acb_theta_all__extern"]
     pub fn acb_theta_all(
         th: acb_ptr,
         z: acb_srcptr,
         tau: *const acb_mat_struct,
         sqr: libc::c_int,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_jet_all(
-        dth: acb_ptr,
-        z: acb_srcptr,
-        tau: *const acb_mat_struct,
-        ord: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_g2_jet_naive_1(
-        dth: acb_ptr,
-        tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     );
     pub fn acb_theta_g2_detk_symj(
         res: *mut acb_poly_struct,
         m: *const acb_mat_struct,
         f: *const acb_poly_struct,
-        k: mp_limb_signed_t,
-        j: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        k: slong,
+        j: slong,
+        prec: slong,
     );
     pub fn acb_theta_g2_transvectant(
         res: *mut acb_poly_struct,
         g: *const acb_poly_struct,
         h: *const acb_poly_struct,
-        m: mp_limb_signed_t,
-        n: mp_limb_signed_t,
-        k: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        m: slong,
+        n: slong,
+        k: slong,
+        lead: libc::c_int,
+        prec: slong,
     );
-    pub fn acb_theta_g2_transvectant_lead(
-        r: *mut acb_struct,
-        g: *const acb_poly_struct,
-        h: *const acb_poly_struct,
-        m: mp_limb_signed_t,
-        n: mp_limb_signed_t,
-        k: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+    pub fn acb_theta_g2_character(mat: *const fmpz_mat_struct) -> slong;
+    pub fn acb_theta_g2_even_weight(
+        psi4: *mut acb_struct,
+        psi6: *mut acb_struct,
+        chi10: *mut acb_struct,
+        chi12: *mut acb_struct,
+        th2: acb_srcptr,
+        prec: slong,
     );
-    pub fn acb_theta_g2_character(mat: *const fmpz_mat_struct) -> mp_limb_signed_t;
-    pub fn acb_theta_g2_psi4(res: *mut acb_struct, th2: acb_srcptr, prec: mp_limb_signed_t);
-    pub fn acb_theta_g2_psi6(res: *mut acb_struct, th2: acb_srcptr, prec: mp_limb_signed_t);
-    pub fn acb_theta_g2_chi10(res: *mut acb_struct, th2: acb_srcptr, prec: mp_limb_signed_t);
-    pub fn acb_theta_g2_chi12(res: *mut acb_struct, th2: acb_srcptr, prec: mp_limb_signed_t);
-    pub fn acb_theta_g2_chi5(res: *mut acb_struct, th: acb_srcptr, prec: mp_limb_signed_t);
-    pub fn acb_theta_g2_chi35(res: *mut acb_struct, th: acb_srcptr, prec: mp_limb_signed_t);
-    pub fn acb_theta_g2_chi3_6(res: *mut acb_poly_struct, dth: acb_srcptr, prec: mp_limb_signed_t);
-    pub fn acb_theta_g2_sextic(
-        res: *mut acb_poly_struct,
-        tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
-    );
+    pub fn acb_theta_g2_chi5(res: *mut acb_struct, th: acb_srcptr, prec: slong);
+    pub fn acb_theta_g2_chi35(res: *mut acb_struct, th: acb_srcptr, prec: slong);
+    pub fn acb_theta_g2_chi3_6(res: *mut acb_poly_struct, dth: acb_srcptr, prec: slong);
     pub fn acb_theta_g2_sextic_chi5(
-        res: *mut acb_poly_struct,
+        f: *mut acb_poly_struct,
         chi5: *mut acb_struct,
         tau: *const acb_mat_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     );
     pub fn acb_theta_g2_covariants(
         res: *mut acb_poly_struct,
         f: *const acb_poly_struct,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_theta_g2_covariants_lead(
-        res: acb_ptr,
-        f: *const acb_poly_struct,
-        prec: mp_limb_signed_t,
+        lead: libc::c_int,
+        prec: slong,
     );
 }

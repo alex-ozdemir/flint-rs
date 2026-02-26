@@ -5,7 +5,6 @@ use crate::flint::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct qfb {
     pub a: fmpz_t,
     pub b: fmpz_t,
@@ -30,11 +29,10 @@ impl Default for qfb {
 }
 pub type qfb_t = [qfb; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct qfb_hash_t {
     pub q: qfb_t,
     pub q2: qfb_t,
-    pub iter: mp_limb_signed_t,
+    pub iter: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -59,35 +57,31 @@ extern "C" {
     #[link_name = "qfb_clear__extern"]
     pub fn qfb_clear(q: *mut qfb);
     #[link_name = "qfb_equal__extern"]
-    pub fn qfb_equal(f: *const qfb, g: *const qfb) -> libc::c_int;
+    pub fn qfb_equal(f: *mut qfb, g: *mut qfb) -> libc::c_int;
     #[link_name = "qfb_set__extern"]
-    pub fn qfb_set(f: *mut qfb, g: *const qfb);
+    pub fn qfb_set(f: *mut qfb, g: *mut qfb);
     #[link_name = "qfb_discriminant__extern"]
     pub fn qfb_discriminant(D: *mut fmpz, f: *mut qfb);
-    pub fn qfb_print(q: *const qfb);
+    pub fn qfb_print(q: *mut qfb);
     #[link_name = "qfb_array_clear__extern"]
-    pub fn qfb_array_clear(forms: *mut *mut qfb, num: mp_limb_signed_t);
-    pub fn qfb_hash_init(depth: mp_limb_signed_t) -> *mut qfb_hash_t;
-    pub fn qfb_hash_clear(qhash: *mut qfb_hash_t, depth: mp_limb_signed_t);
+    pub fn qfb_array_clear(forms: *mut *mut qfb, num: slong);
+    pub fn qfb_hash_init(depth: slong) -> *mut qfb_hash_t;
+    pub fn qfb_hash_clear(qhash: *mut qfb_hash_t, depth: slong);
     pub fn qfb_hash_insert(
         qhash: *mut qfb_hash_t,
         q: *mut qfb,
         q2: *mut qfb,
-        iter: mp_limb_signed_t,
-        depth: mp_limb_signed_t,
+        iter: slong,
+        depth: slong,
     );
-    pub fn qfb_hash_find(
-        qhash: *mut qfb_hash_t,
-        q: *mut qfb,
-        depth: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
+    pub fn qfb_hash_find(qhash: *mut qfb_hash_t, q: *mut qfb, depth: slong) -> slong;
     pub fn qfb_reduce(r: *mut qfb, f: *mut qfb, D: *mut fmpz);
     pub fn qfb_is_reduced(r: *mut qfb) -> libc::c_int;
-    pub fn qfb_reduced_forms(forms: *mut *mut qfb, d: mp_limb_signed_t) -> mp_limb_signed_t;
-    pub fn qfb_reduced_forms_large(forms: *mut *mut qfb, d: mp_limb_signed_t) -> mp_limb_signed_t;
+    pub fn qfb_reduced_forms(forms: *mut *mut qfb, d: slong) -> slong;
+    pub fn qfb_reduced_forms_large(forms: *mut *mut qfb, d: slong) -> slong;
     pub fn qfb_nucomp(r: *mut qfb, f: *const qfb, g: *const qfb, D: *mut fmpz, L: *mut fmpz);
     pub fn qfb_nudupl(r: *mut qfb, f: *const qfb, D: *mut fmpz, L: *mut fmpz);
-    pub fn qfb_pow_ui(r: *mut qfb, f: *mut qfb, D: *mut fmpz, exp: mp_limb_t);
+    pub fn qfb_pow_ui(r: *mut qfb, f: *mut qfb, D: *mut fmpz, exp: ulong);
     pub fn qfb_pow(r: *mut qfb, f: *mut qfb, D: *mut fmpz, exp: *mut fmpz);
     pub fn qfb_pow_with_root(r: *mut qfb, f: *mut qfb, D: *mut fmpz, e: *mut fmpz, L: *mut fmpz);
     #[link_name = "qfb_inverse__extern"]
@@ -103,20 +97,20 @@ extern "C" {
         exponent: *mut fmpz,
         f: *mut qfb,
         n: *mut fmpz,
-        B1: mp_limb_t,
-        B2_sqrt: mp_limb_t,
+        B1: ulong,
+        B2_sqrt: ulong,
     ) -> libc::c_int;
     pub fn qfb_exponent(
         exponent: *mut fmpz,
         n: *mut fmpz,
-        B1: mp_limb_t,
-        B2_sqrt: mp_limb_t,
-        c: mp_limb_signed_t,
+        B1: ulong,
+        B2_sqrt: ulong,
+        c: slong,
     ) -> libc::c_int;
     pub fn qfb_exponent_grh(
         exponent: *mut fmpz,
         n: *mut fmpz,
-        B1: mp_limb_t,
-        B2_sqrt: mp_limb_t,
+        B1: ulong,
+        B2_sqrt: ulong,
     ) -> libc::c_int;
 }

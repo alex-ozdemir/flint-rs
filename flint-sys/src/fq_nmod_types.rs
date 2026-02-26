@@ -8,14 +8,13 @@ use crate::nmod_types::*;
 pub type fq_nmod_t = nmod_poly_t;
 pub type fq_nmod_struct = nmod_poly_struct;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_ctx_struct {
     pub mod_: nmod_t,
     pub sparse_modulus: libc::c_int,
     pub is_conway: libc::c_int,
-    pub a: *mut mp_limb_t,
-    pub j: *mut mp_limb_signed_t,
-    pub len: mp_limb_signed_t,
+    pub a: *mut ulong,
+    pub j: *mut slong,
+    pub len: slong,
     pub modulus: nmod_poly_t,
     pub inv: nmod_poly_t,
     pub var: *mut libc::c_char,
@@ -54,12 +53,11 @@ impl Default for fq_nmod_ctx_struct {
 }
 pub type fq_nmod_ctx_t = [fq_nmod_ctx_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_mat_struct {
     pub entries: *mut fq_nmod_struct,
-    pub r: mp_limb_signed_t,
-    pub c: mp_limb_signed_t,
-    pub rows: *mut *mut fq_nmod_struct,
+    pub r: slong,
+    pub c: slong,
+    pub stride: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -71,8 +69,8 @@ const _: () = {
         [::std::mem::offset_of!(fq_nmod_mat_struct, r) - 8usize];
     ["Offset of field: fq_nmod_mat_struct::c"]
         [::std::mem::offset_of!(fq_nmod_mat_struct, c) - 16usize];
-    ["Offset of field: fq_nmod_mat_struct::rows"]
-        [::std::mem::offset_of!(fq_nmod_mat_struct, rows) - 24usize];
+    ["Offset of field: fq_nmod_mat_struct::stride"]
+        [::std::mem::offset_of!(fq_nmod_mat_struct, stride) - 24usize];
 };
 impl Default for fq_nmod_mat_struct {
     fn default() -> Self {
@@ -85,11 +83,10 @@ impl Default for fq_nmod_mat_struct {
 }
 pub type fq_nmod_mat_t = [fq_nmod_mat_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_poly_struct {
     pub coeffs: *mut fq_nmod_struct,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
+    pub alloc: slong,
+    pub length: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -113,12 +110,11 @@ impl Default for fq_nmod_poly_struct {
 }
 pub type fq_nmod_poly_t = [fq_nmod_poly_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_poly_factor_struct {
     pub poly: *mut fq_nmod_poly_struct,
-    pub exp: *mut mp_limb_signed_t,
-    pub num: mp_limb_signed_t,
-    pub alloc: mp_limb_signed_t,
+    pub exp: *mut slong,
+    pub num: slong,
+    pub alloc: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -146,14 +142,13 @@ impl Default for fq_nmod_poly_factor_struct {
 }
 pub type fq_nmod_poly_factor_t = [fq_nmod_poly_factor_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_mpoly_struct {
-    pub coeffs: *mut mp_limb_t,
-    pub exps: *mut mp_limb_t,
-    pub length: mp_limb_signed_t,
-    pub bits: mp_limb_t,
-    pub coeffs_alloc: mp_limb_signed_t,
-    pub exps_alloc: mp_limb_signed_t,
+    pub coeffs: *mut ulong,
+    pub exps: *mut ulong,
+    pub length: slong,
+    pub bits: flint_bitcnt_t,
+    pub coeffs_alloc: slong,
+    pub exps_alloc: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {

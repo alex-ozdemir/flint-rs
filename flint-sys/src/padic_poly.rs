@@ -10,56 +10,43 @@ use crate::padic_types::*;
 
 extern "C" {
     #[link_name = "_fmpz_vec_ord_p__extern"]
-    pub fn _fmpz_vec_ord_p(
-        vec: *const fmpz,
-        len: mp_limb_signed_t,
-        p: *const fmpz,
-    ) -> mp_limb_signed_t;
+    pub fn _fmpz_vec_ord_p(vec: *const fmpz, len: slong, p: *const fmpz) -> slong;
     pub fn padic_poly_init(poly: *mut padic_poly_struct);
-    pub fn padic_poly_init2(
-        poly: *mut padic_poly_struct,
-        alloc: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    );
+    pub fn padic_poly_init2(poly: *mut padic_poly_struct, alloc: slong, prec: slong);
     pub fn padic_poly_clear(poly: *mut padic_poly_struct);
-    pub fn padic_poly_realloc(f: *mut padic_poly_struct, alloc: mp_limb_signed_t, p: *const fmpz);
-    pub fn padic_poly_fit_length(f: *mut padic_poly_struct, len: mp_limb_signed_t);
+    pub fn padic_poly_realloc(f: *mut padic_poly_struct, alloc: slong, p: *const fmpz);
+    pub fn padic_poly_fit_length(f: *mut padic_poly_struct, len: slong);
     #[link_name = "_padic_poly_set_length__extern"]
-    pub fn _padic_poly_set_length(poly: *mut padic_poly_struct, len: mp_limb_signed_t);
+    pub fn _padic_poly_set_length(poly: *mut padic_poly_struct, len: slong);
     pub fn _padic_poly_normalise(f: *mut padic_poly_struct);
-    pub fn _padic_poly_canonicalise(
-        poly: *mut fmpz,
-        v: *mut mp_limb_signed_t,
-        len: mp_limb_signed_t,
-        p: *const fmpz,
-    );
+    pub fn _padic_poly_canonicalise(poly: *mut fmpz, v: *mut slong, len: slong, p: *const fmpz);
     pub fn padic_poly_canonicalise(poly: *mut padic_poly_struct, p: *const fmpz);
     pub fn padic_poly_reduce(f: *mut padic_poly_struct, ctx: *const padic_ctx_struct);
     #[link_name = "padic_poly_truncate__extern"]
-    pub fn padic_poly_truncate(poly: *mut padic_poly_struct, n: mp_limb_signed_t, p: *const fmpz);
+    pub fn padic_poly_truncate(poly: *mut padic_poly_struct, n: slong, p: *const fmpz);
     #[link_name = "padic_poly_degree__extern"]
-    pub fn padic_poly_degree(poly: *const padic_poly_struct) -> mp_limb_signed_t;
+    pub fn padic_poly_degree(poly: *const padic_poly_struct) -> slong;
     #[link_name = "padic_poly_length__extern"]
-    pub fn padic_poly_length(poly: *const padic_poly_struct) -> mp_limb_signed_t;
+    pub fn padic_poly_length(poly: *const padic_poly_struct) -> slong;
     #[link_name = "padic_poly_val__extern"]
-    pub fn padic_poly_val(poly: *const padic_poly_struct) -> mp_limb_signed_t;
+    pub fn padic_poly_val(poly: *const padic_poly_struct) -> slong;
     pub fn padic_poly_randtest(
         f: *mut padic_poly_struct,
-        state: *mut flint_rand_s,
-        len: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        len: slong,
         ctx: *const padic_ctx_struct,
     );
     pub fn padic_poly_randtest_not_zero(
         f: *mut padic_poly_struct,
-        state: *mut flint_rand_s,
-        len: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        len: slong,
         ctx: *const padic_ctx_struct,
     );
     pub fn padic_poly_randtest_val(
         f: *mut padic_poly_struct,
-        state: *mut flint_rand_s,
-        val: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        val: slong,
+        len: slong,
         ctx: *const padic_ctx_struct,
     );
     pub fn padic_poly_set(
@@ -72,16 +59,8 @@ extern "C" {
         x: *const padic_struct,
         ctx: *const padic_ctx_struct,
     );
-    pub fn padic_poly_set_si(
-        poly: *mut padic_poly_struct,
-        x: mp_limb_signed_t,
-        ctx: *const padic_ctx_struct,
-    );
-    pub fn padic_poly_set_ui(
-        poly: *mut padic_poly_struct,
-        x: mp_limb_t,
-        ctx: *const padic_ctx_struct,
-    );
+    pub fn padic_poly_set_si(poly: *mut padic_poly_struct, x: slong, ctx: *const padic_ctx_struct);
+    pub fn padic_poly_set_ui(poly: *mut padic_poly_struct, x: ulong, ctx: *const padic_ctx_struct);
     pub fn padic_poly_set_fmpz(
         poly: *mut padic_poly_struct,
         x: *const fmpz,
@@ -120,12 +99,12 @@ extern "C" {
     pub fn padic_poly_get_coeff_padic(
         c: *mut padic_struct,
         poly: *const padic_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *const padic_ctx_struct,
     );
     pub fn padic_poly_set_coeff_padic(
         f: *mut padic_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         c: *const padic_struct,
         ctx: *const padic_ctx_struct,
     );
@@ -139,16 +118,16 @@ extern "C" {
     pub fn padic_poly_is_one(poly: *const padic_poly_struct) -> libc::c_int;
     pub fn _padic_poly_add(
         rop: *mut fmpz,
-        rval: *mut mp_limb_signed_t,
-        N: mp_limb_signed_t,
+        rval: *mut slong,
+        N: slong,
         op1: *const fmpz,
-        val1: mp_limb_signed_t,
-        len1: mp_limb_signed_t,
-        N1: mp_limb_signed_t,
+        val1: slong,
+        len1: slong,
+        UNUSED_N1: slong,
         op2: *const fmpz,
-        val2: mp_limb_signed_t,
-        len2: mp_limb_signed_t,
-        N2: mp_limb_signed_t,
+        val2: slong,
+        len2: slong,
+        UNUSED_N2: slong,
         ctx: *const padic_ctx_struct,
     );
     pub fn padic_poly_add(
@@ -159,16 +138,16 @@ extern "C" {
     );
     pub fn _padic_poly_sub(
         rop: *mut fmpz,
-        rval: *mut mp_limb_signed_t,
-        N: mp_limb_signed_t,
+        rval: *mut slong,
+        N: slong,
         op1: *const fmpz,
-        val1: mp_limb_signed_t,
-        len1: mp_limb_signed_t,
-        N1: mp_limb_signed_t,
+        val1: slong,
+        len1: slong,
+        UNUSED_N1: slong,
         op2: *const fmpz,
-        val2: mp_limb_signed_t,
-        len2: mp_limb_signed_t,
-        N2: mp_limb_signed_t,
+        val2: slong,
+        len2: slong,
+        UNUSED_N2: slong,
         ctx: *const padic_ctx_struct,
     );
     pub fn padic_poly_sub(
@@ -184,11 +163,11 @@ extern "C" {
     );
     pub fn _padic_poly_scalar_mul_padic(
         rop: *mut fmpz,
-        rval: *mut mp_limb_signed_t,
-        N: mp_limb_signed_t,
+        rval: *mut slong,
+        N: slong,
         op: *const fmpz,
-        val: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        val: slong,
+        len: slong,
         c: *const padic_struct,
         ctx: *const padic_ctx_struct,
     );
@@ -200,14 +179,14 @@ extern "C" {
     );
     pub fn _padic_poly_mul(
         rop: *mut fmpz,
-        rval: *mut mp_limb_signed_t,
-        N: mp_limb_signed_t,
+        rval: *mut slong,
+        N: slong,
         op1: *const fmpz,
-        val1: mp_limb_signed_t,
-        len1: mp_limb_signed_t,
+        val1: slong,
+        len1: slong,
         op2: *const fmpz,
-        val2: mp_limb_signed_t,
-        len2: mp_limb_signed_t,
+        val2: slong,
+        len2: slong,
         ctx: *const padic_ctx_struct,
     );
     pub fn padic_poly_mul(
@@ -218,33 +197,33 @@ extern "C" {
     );
     pub fn _padic_poly_pow(
         rop: *mut fmpz,
-        rval: *mut mp_limb_signed_t,
-        N: mp_limb_signed_t,
+        rval: *mut slong,
+        N: slong,
         op: *const fmpz,
-        val: mp_limb_signed_t,
-        len: mp_limb_signed_t,
-        e: mp_limb_t,
+        val: slong,
+        len: slong,
+        e: ulong,
         ctx: *const padic_ctx_struct,
     );
     pub fn padic_poly_pow(
         rop: *mut padic_poly_struct,
         op: *const padic_poly_struct,
-        e: mp_limb_t,
+        e: ulong,
         ctx: *const padic_ctx_struct,
     );
     pub fn padic_poly_inv_series(
         Qinv: *mut padic_poly_struct,
         Q: *const padic_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *const padic_ctx_struct,
     );
     pub fn _padic_poly_derivative(
         rop: *mut fmpz,
-        rval: *mut mp_limb_signed_t,
-        N: mp_limb_signed_t,
+        rval: *mut slong,
+        N: slong,
         op: *const fmpz,
-        val: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        val: slong,
+        len: slong,
         ctx: *const padic_ctx_struct,
     );
     pub fn padic_poly_derivative(
@@ -255,24 +234,24 @@ extern "C" {
     pub fn padic_poly_shift_left(
         rop: *mut padic_poly_struct,
         op: *const padic_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *const padic_ctx_struct,
     );
     pub fn padic_poly_shift_right(
         rop: *mut padic_poly_struct,
         op: *const padic_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *const padic_ctx_struct,
     );
     pub fn _padic_poly_evaluate_padic(
         u: *mut fmpz,
-        v: *mut mp_limb_signed_t,
-        N: mp_limb_signed_t,
+        v: *mut slong,
+        N: slong,
         poly: *const fmpz,
-        val: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        val: slong,
+        len: slong,
         a: *const fmpz,
-        b: mp_limb_signed_t,
+        b: slong,
         ctx: *const padic_ctx_struct,
     );
     pub fn padic_poly_evaluate_padic(
@@ -283,14 +262,14 @@ extern "C" {
     );
     pub fn _padic_poly_compose(
         rop: *mut fmpz,
-        rval: *mut mp_limb_signed_t,
-        N: mp_limb_signed_t,
+        rval: *mut slong,
+        N: slong,
         op1: *const fmpz,
-        val1: mp_limb_signed_t,
-        len1: mp_limb_signed_t,
+        val1: slong,
+        len1: slong,
         op2: *const fmpz,
-        val2: mp_limb_signed_t,
-        len2: mp_limb_signed_t,
+        val2: slong,
+        len2: slong,
         ctx: *const padic_ctx_struct,
     );
     pub fn padic_poly_compose(
@@ -301,25 +280,25 @@ extern "C" {
     );
     pub fn _padic_poly_compose_pow(
         rop: *mut fmpz,
-        rval: *mut mp_limb_signed_t,
-        N: mp_limb_signed_t,
+        rval: *mut slong,
+        N: slong,
         op: *const fmpz,
-        val: mp_limb_signed_t,
-        len: mp_limb_signed_t,
-        k: mp_limb_signed_t,
+        val: slong,
+        len: slong,
+        k: slong,
         ctx: *const padic_ctx_struct,
     );
     pub fn padic_poly_compose_pow(
         rop: *mut padic_poly_struct,
         op: *const padic_poly_struct,
-        k: mp_limb_signed_t,
+        k: slong,
         ctx: *const padic_ctx_struct,
     );
     pub fn _padic_poly_fprint(
         file: *mut FILE,
         poly: *const fmpz,
-        val: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        val: slong,
+        len: slong,
         ctx: *const padic_ctx_struct,
     ) -> libc::c_int;
     pub fn padic_poly_fprint(
@@ -330,8 +309,8 @@ extern "C" {
     pub fn _padic_poly_fprint_pretty(
         file: *mut FILE,
         poly: *const fmpz,
-        val: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        val: slong,
+        len: slong,
         var: *const libc::c_char,
         ctx: *const padic_ctx_struct,
     ) -> libc::c_int;
@@ -343,8 +322,8 @@ extern "C" {
     ) -> libc::c_int;
     pub fn _padic_poly_print(
         poly: *const fmpz,
-        val: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        val: slong,
+        len: slong,
         ctx: *const padic_ctx_struct,
     ) -> libc::c_int;
     pub fn padic_poly_print(
@@ -353,8 +332,8 @@ extern "C" {
     ) -> libc::c_int;
     pub fn _padic_poly_print_pretty(
         poly: *const fmpz,
-        val: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        val: slong,
+        len: slong,
         var: *const libc::c_char,
         ctx: *const padic_ctx_struct,
     ) -> libc::c_int;
@@ -366,8 +345,8 @@ extern "C" {
     pub fn padic_poly_debug(poly: *const padic_poly_struct) -> libc::c_int;
     pub fn _padic_poly_is_canonical(
         op: *const fmpz,
-        val: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        val: slong,
+        len: slong,
         ctx: *const padic_ctx_struct,
     ) -> libc::c_int;
     pub fn padic_poly_is_canonical(
@@ -376,9 +355,9 @@ extern "C" {
     ) -> libc::c_int;
     pub fn _padic_poly_is_reduced(
         op: *const fmpz,
-        val: mp_limb_signed_t,
-        len: mp_limb_signed_t,
-        N: mp_limb_signed_t,
+        val: slong,
+        len: slong,
+        N: slong,
         ctx: *const padic_ctx_struct,
     ) -> libc::c_int;
     pub fn padic_poly_is_reduced(

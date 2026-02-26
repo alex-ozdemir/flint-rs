@@ -10,8 +10,7 @@ pub const FLINT_PARALLEL_STRIDED: u32 = 2;
 pub const FLINT_PARALLEL_DYNAMIC: u32 = 4;
 pub const FLINT_PARALLEL_BSPLIT_LEFT_INPLACE: u32 = 8;
 pub const FLINT_PARALLEL_VERBOSE: u32 = 512;
-pub type do_func_t =
-    ::std::option::Option<unsafe extern "C" fn(i: mp_limb_signed_t, args: *mut libc::c_void)>;
+pub type do_func_t = ::std::option::Option<unsafe extern "C" fn(i: slong, args: *mut libc::c_void)>;
 pub type bsplit_merge_func_t = ::std::option::Option<
     unsafe extern "C" fn(
         arg1: *mut libc::c_void,
@@ -23,8 +22,8 @@ pub type bsplit_merge_func_t = ::std::option::Option<
 pub type bsplit_basecase_func_t = ::std::option::Option<
     unsafe extern "C" fn(
         arg1: *mut libc::c_void,
-        arg2: mp_limb_signed_t,
-        arg3: mp_limb_signed_t,
+        arg2: slong,
+        arg3: slong,
         arg4: *mut libc::c_void,
     ),
 >;
@@ -35,14 +34,14 @@ pub type bsplit_clear_func_t =
 extern "C" {
     pub fn flint_request_threads(
         handles: *mut *mut thread_pool_handle,
-        thread_limit: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
-    pub fn flint_give_back_threads(handles: *mut thread_pool_handle, num_handles: mp_limb_signed_t);
-    pub fn flint_get_num_available_threads() -> mp_limb_signed_t;
+        thread_limit: slong,
+    ) -> slong;
+    pub fn flint_give_back_threads(handles: *mut thread_pool_handle, num_handles: slong);
+    pub fn flint_get_num_available_threads() -> slong;
     pub fn flint_parallel_do(
         f: do_func_t,
         args: *mut libc::c_void,
-        n: mp_limb_signed_t,
+        n: slong,
         thread_limit: libc::c_int,
         flags: libc::c_int,
     );
@@ -54,9 +53,9 @@ extern "C" {
         init: bsplit_init_func_t,
         clear: bsplit_clear_func_t,
         args: *mut libc::c_void,
-        a: mp_limb_signed_t,
-        b: mp_limb_signed_t,
-        basecase_cutoff: mp_limb_signed_t,
+        a: slong,
+        b: slong,
+        basecase_cutoff: slong,
         thread_limit: libc::c_int,
         flags: libc::c_int,
     );

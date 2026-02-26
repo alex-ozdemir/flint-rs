@@ -9,19 +9,14 @@ extern "C" {
     #[link_name = "nmod_poly_mat_entry__extern"]
     pub fn nmod_poly_mat_entry(
         mat: *const nmod_poly_mat_struct,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
+        i: slong,
+        j: slong,
     ) -> *mut nmod_poly_struct;
     #[link_name = "nmod_poly_mat_nrows__extern"]
-    pub fn nmod_poly_mat_nrows(mat: *const nmod_poly_mat_struct) -> mp_limb_signed_t;
+    pub fn nmod_poly_mat_nrows(mat: *const nmod_poly_mat_struct) -> slong;
     #[link_name = "nmod_poly_mat_ncols__extern"]
-    pub fn nmod_poly_mat_ncols(mat: *const nmod_poly_mat_struct) -> mp_limb_signed_t;
-    pub fn nmod_poly_mat_init(
-        mat: *mut nmod_poly_mat_struct,
-        rows: mp_limb_signed_t,
-        cols: mp_limb_signed_t,
-        n: mp_limb_t,
-    );
+    pub fn nmod_poly_mat_ncols(mat: *const nmod_poly_mat_struct) -> slong;
+    pub fn nmod_poly_mat_init(mat: *mut nmod_poly_mat_struct, rows: slong, cols: slong, n: ulong);
     pub fn nmod_poly_mat_init_set(mat: *mut nmod_poly_mat_struct, src: *const nmod_poly_mat_struct);
     #[link_name = "nmod_poly_mat_swap__extern"]
     pub fn nmod_poly_mat_swap(mat1: *mut nmod_poly_mat_struct, mat2: *mut nmod_poly_mat_struct);
@@ -36,6 +31,7 @@ extern "C" {
         cmat: *const nmod_mat_struct,
     );
     pub fn nmod_poly_mat_clear(mat: *mut nmod_poly_mat_struct);
+    pub fn nmod_poly_mat_transpose(B: *mut nmod_poly_mat_struct, A: *const nmod_poly_mat_struct);
     pub fn nmod_poly_mat_set_trunc(
         res: *mut nmod_poly_mat_struct,
         pmat: *const nmod_poly_mat_struct,
@@ -46,24 +42,24 @@ extern "C" {
     pub fn nmod_poly_mat_shift_left(
         res: *mut nmod_poly_mat_struct,
         pmat: *const nmod_poly_mat_struct,
-        k: mp_limb_signed_t,
+        k: slong,
     );
     pub fn nmod_poly_mat_shift_right(
         res: *mut nmod_poly_mat_struct,
         pmat: *const nmod_poly_mat_struct,
-        k: mp_limb_signed_t,
+        k: slong,
     );
     #[link_name = "nmod_poly_mat_modulus__extern"]
-    pub fn nmod_poly_mat_modulus(mat: *const nmod_poly_mat_struct) -> mp_limb_t;
+    pub fn nmod_poly_mat_modulus(mat: *const nmod_poly_mat_struct) -> ulong;
     pub fn nmod_poly_mat_get_coeff_mat(
         coeff: *mut nmod_mat_struct,
         pmat: *const nmod_poly_mat_struct,
-        deg: mp_limb_signed_t,
+        deg: slong,
     );
     pub fn nmod_poly_mat_set_coeff_mat(
         pmat: *mut nmod_poly_mat_struct,
         coeff: *const nmod_mat_struct,
-        deg: mp_limb_signed_t,
+        deg: slong,
     );
     pub fn nmod_poly_mat_equal(
         mat1: *const nmod_poly_mat_struct,
@@ -83,22 +79,22 @@ extern "C" {
     pub fn nmod_poly_mat_one(mat: *mut nmod_poly_mat_struct);
     pub fn nmod_poly_mat_randtest(
         mat: *mut nmod_poly_mat_struct,
-        state: *mut flint_rand_s,
-        len: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        len: slong,
     );
     pub fn nmod_poly_mat_randtest_sparse(
         A: *mut nmod_poly_mat_struct,
-        state: *mut flint_rand_s,
-        len: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        len: slong,
         density: f32,
     );
     pub fn nmod_poly_mat_window_init(
         window: *mut nmod_poly_mat_struct,
         mat: *const nmod_poly_mat_struct,
-        r1: mp_limb_signed_t,
-        c1: mp_limb_signed_t,
-        r2: mp_limb_signed_t,
-        c2: mp_limb_signed_t,
+        r1: slong,
+        c1: slong,
+        r2: slong,
+        c2: slong,
     );
     pub fn nmod_poly_mat_window_clear(window: *mut nmod_poly_mat_struct);
     pub fn nmod_poly_mat_concat_horizontal(
@@ -112,9 +108,9 @@ extern "C" {
         mat2: *const nmod_poly_mat_struct,
     );
     pub fn nmod_poly_mat_print(mat: *const nmod_poly_mat_struct, x: *const libc::c_char);
-    pub fn nmod_poly_mat_max_length(A: *const nmod_poly_mat_struct) -> mp_limb_signed_t;
+    pub fn nmod_poly_mat_max_length(A: *const nmod_poly_mat_struct) -> slong;
     #[link_name = "nmod_poly_mat_degree__extern"]
-    pub fn nmod_poly_mat_degree(pmat: *const nmod_poly_mat_struct) -> mp_limb_signed_t;
+    pub fn nmod_poly_mat_degree(pmat: *const nmod_poly_mat_struct) -> slong;
     pub fn nmod_poly_mat_scalar_mul_nmod_poly(
         B: *mut nmod_poly_mat_struct,
         A: *const nmod_poly_mat_struct,
@@ -123,7 +119,7 @@ extern "C" {
     pub fn nmod_poly_mat_scalar_mul_nmod(
         B: *mut nmod_poly_mat_struct,
         A: *const nmod_poly_mat_struct,
-        c: mp_limb_t,
+        c: ulong,
     );
     pub fn nmod_poly_mat_add(
         C: *mut nmod_poly_mat_struct,
@@ -169,37 +165,37 @@ extern "C" {
     pub fn nmod_poly_mat_pow(
         B: *mut nmod_poly_mat_struct,
         A: *const nmod_poly_mat_struct,
-        exp: mp_limb_t,
+        exp: ulong,
     );
     pub fn nmod_poly_mat_evaluate_nmod(
         B: *mut nmod_mat_struct,
         A: *const nmod_poly_mat_struct,
-        x: mp_limb_t,
+        x: ulong,
     );
     pub fn nmod_poly_mat_find_pivot_any(
         mat: *const nmod_poly_mat_struct,
-        start_row: mp_limb_signed_t,
-        end_row: mp_limb_signed_t,
-        c: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
+        start_row: slong,
+        end_row: slong,
+        c: slong,
+    ) -> slong;
     pub fn nmod_poly_mat_find_pivot_partial(
         mat: *const nmod_poly_mat_struct,
-        start_row: mp_limb_signed_t,
-        end_row: mp_limb_signed_t,
-        c: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
+        start_row: slong,
+        end_row: slong,
+        c: slong,
+    ) -> slong;
     pub fn nmod_poly_mat_fflu(
         B: *mut nmod_poly_mat_struct,
         den: *mut nmod_poly_struct,
-        perm: *mut mp_limb_signed_t,
+        perm: *mut slong,
         A: *const nmod_poly_mat_struct,
         rank_check: libc::c_int,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn nmod_poly_mat_rref(
         B: *mut nmod_poly_mat_struct,
         den: *mut nmod_poly_struct,
         A: *const nmod_poly_mat_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn nmod_poly_mat_trace(trace: *mut nmod_poly_struct, mat: *const nmod_poly_mat_struct);
     pub fn nmod_poly_mat_det(det: *mut nmod_poly_struct, A: *const nmod_poly_mat_struct);
     pub fn nmod_poly_mat_det_fflu(det: *mut nmod_poly_struct, A: *const nmod_poly_mat_struct);
@@ -207,7 +203,7 @@ extern "C" {
         det: *mut nmod_poly_struct,
         A: *const nmod_poly_mat_struct,
     );
-    pub fn nmod_poly_mat_rank(A: *const nmod_poly_mat_struct) -> mp_limb_signed_t;
+    pub fn nmod_poly_mat_rank(A: *const nmod_poly_mat_struct) -> slong;
     pub fn nmod_poly_mat_inv(
         Ainv: *mut nmod_poly_mat_struct,
         den: *mut nmod_poly_struct,
@@ -216,7 +212,7 @@ extern "C" {
     pub fn nmod_poly_mat_nullspace(
         res: *mut nmod_poly_mat_struct,
         mat: *const nmod_poly_mat_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn nmod_poly_mat_solve(
         X: *mut nmod_poly_mat_struct,
         den: *mut nmod_poly_struct,
@@ -231,7 +227,7 @@ extern "C" {
     ) -> libc::c_int;
     pub fn nmod_poly_mat_solve_fflu_precomp(
         X: *mut nmod_poly_mat_struct,
-        perm: *const mp_limb_signed_t,
+        perm: *const slong,
         FFLU: *const nmod_poly_mat_struct,
         B: *const nmod_poly_mat_struct,
     );

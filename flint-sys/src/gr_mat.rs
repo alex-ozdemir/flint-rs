@@ -4,38 +4,9 @@ use crate::deps::*;
 use crate::flint::*;
 use crate::fmpq_types::*;
 use crate::fmpz_types::*;
-use crate::gr::*;
-use crate::gr_poly::*;
+use crate::gr_types::*;
 
 
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct gr_mat_struct {
-    pub entries: gr_ptr,
-    pub r: mp_limb_signed_t,
-    pub c: mp_limb_signed_t,
-    pub rows: *mut gr_ptr,
-}
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of gr_mat_struct"][::std::mem::size_of::<gr_mat_struct>() - 32usize];
-    ["Alignment of gr_mat_struct"][::std::mem::align_of::<gr_mat_struct>() - 8usize];
-    ["Offset of field: gr_mat_struct::entries"]
-        [::std::mem::offset_of!(gr_mat_struct, entries) - 0usize];
-    ["Offset of field: gr_mat_struct::r"][::std::mem::offset_of!(gr_mat_struct, r) - 8usize];
-    ["Offset of field: gr_mat_struct::c"][::std::mem::offset_of!(gr_mat_struct, c) - 16usize];
-    ["Offset of field: gr_mat_struct::rows"][::std::mem::offset_of!(gr_mat_struct, rows) - 24usize];
-};
-impl Default for gr_mat_struct {
-    fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
-pub type gr_mat_t = [gr_mat_struct; 1usize];
 pub type gr_method_mat_unary_op_get_scalar = ::std::option::Option<
     unsafe extern "C" fn(arg1: gr_ptr, arg2: *const gr_mat_struct, arg3: gr_ctx_ptr) -> libc::c_int,
 >;
@@ -54,13 +25,30 @@ pub type gr_method_mat_binary_op = ::std::option::Option<
         arg4: gr_ctx_ptr,
     ) -> libc::c_int,
 >;
+pub type gr_method_mat_binary_op_with_flag = ::std::option::Option<
+    unsafe extern "C" fn(
+        arg1: *mut gr_mat_struct,
+        arg2: *const gr_mat_struct,
+        arg3: *const gr_mat_struct,
+        arg4: libc::c_int,
+        arg5: gr_ctx_ptr,
+    ) -> libc::c_int,
+>;
+pub type gr_method_mat_binary_unary_op = ::std::option::Option<
+    unsafe extern "C" fn(
+        arg1: *mut gr_mat_struct,
+        arg2: *mut gr_mat_struct,
+        arg3: *const gr_mat_struct,
+        arg4: gr_ctx_ptr,
+    ) -> libc::c_int,
+>;
 pub type gr_method_mat_pivot_op = ::std::option::Option<
     unsafe extern "C" fn(
-        arg1: *mut mp_limb_signed_t,
+        arg1: *mut slong,
         arg2: *mut gr_mat_struct,
-        arg3: mp_limb_signed_t,
-        arg4: mp_limb_signed_t,
-        arg5: mp_limb_signed_t,
+        arg3: slong,
+        arg4: slong,
+        arg5: slong,
         arg6: gr_ctx_ptr,
     ) -> libc::c_int,
 >;
@@ -76,78 +64,117 @@ pub type gr_method_mat_diagonalization_op = ::std::option::Option<
 >;
 pub type gr_method_mat_lu_op = ::std::option::Option<
     unsafe extern "C" fn(
-        arg1: *mut mp_limb_signed_t,
-        arg2: *mut mp_limb_signed_t,
+        arg1: *mut slong,
+        arg2: *mut slong,
         arg3: *mut gr_mat_struct,
         arg4: *const gr_mat_struct,
         arg5: libc::c_int,
         arg6: gr_ctx_ptr,
     ) -> libc::c_int,
 >;
+pub type gr_method_mat_reduce_row_op = ::std::option::Option<
+    unsafe extern "C" fn(
+        arg1: *mut slong,
+        arg2: *mut gr_mat_struct,
+        arg3: *mut slong,
+        arg4: *mut slong,
+        arg5: slong,
+        arg6: gr_ctx_ptr,
+    ) -> libc::c_int,
+>;
+pub type __gr_method_vec_op = ::std::option::Option<
+    unsafe extern "C" fn(
+        arg1: gr_ptr,
+        arg2: gr_srcptr,
+        arg3: slong,
+        arg4: gr_ctx_ptr,
+    ) -> libc::c_int,
+>;
+pub type __gr_method_vec_scalar_op = ::std::option::Option<
+    unsafe extern "C" fn(
+        arg1: gr_ptr,
+        arg2: gr_srcptr,
+        arg3: slong,
+        arg4: gr_srcptr,
+        arg5: gr_ctx_ptr,
+    ) -> libc::c_int,
+>;
 extern "C" {
     #[link_name = "gr_mat_entry_ptr__extern"]
     pub fn gr_mat_entry_ptr(
         mat: *mut gr_mat_struct,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
+        i: slong,
+        j: slong,
         ctx: *mut gr_ctx_struct,
     ) -> gr_ptr;
     #[link_name = "gr_mat_entry_srcptr__extern"]
     pub fn gr_mat_entry_srcptr(
         mat: *const gr_mat_struct,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
+        i: slong,
+        j: slong,
         ctx: *mut gr_ctx_struct,
     ) -> gr_srcptr;
-    pub fn gr_mat_init(
-        mat: *mut gr_mat_struct,
-        rows: mp_limb_signed_t,
-        cols: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    );
+    pub fn gr_mat_init(mat: *mut gr_mat_struct, rows: slong, cols: slong, ctx: *mut gr_ctx_struct);
     pub fn gr_mat_init_set(
         res: *mut gr_mat_struct,
         mat: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_clear(mat: *mut gr_mat_struct, ctx: *mut gr_ctx_struct);
+    pub fn _gr_mat_check_resize(
+        mat: *mut gr_mat_struct,
+        r: slong,
+        c: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
     #[link_name = "gr_mat_swap__extern"]
-    pub fn gr_mat_swap(mat1: *mut gr_mat_struct, mat2: *mut gr_mat_struct, ctx: *mut gr_ctx_struct);
+    pub fn gr_mat_swap(
+        mat1: *mut gr_mat_struct,
+        mat2: *mut gr_mat_struct,
+        UNUSED_ctx: *mut gr_ctx_struct,
+    );
     pub fn gr_mat_swap_rows(
         mat: *mut gr_mat_struct,
-        perm: *mut mp_limb_signed_t,
-        r: mp_limb_signed_t,
-        s: mp_limb_signed_t,
+        perm: *mut slong,
+        r: slong,
+        s: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_invert_rows(
         mat: *mut gr_mat_struct,
-        perm: *mut mp_limb_signed_t,
+        perm: *mut slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_swap_cols(
         mat: *mut gr_mat_struct,
-        perm: *mut mp_limb_signed_t,
-        r: mp_limb_signed_t,
-        s: mp_limb_signed_t,
+        perm: *mut slong,
+        r: slong,
+        s: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_invert_cols(
         mat: *mut gr_mat_struct,
-        perm: *mut mp_limb_signed_t,
+        perm: *mut slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    pub fn gr_mat_move_row(
+        A: *mut gr_mat_struct,
+        i: slong,
+        new_i: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    #[link_name = "gr_mat_window_init__extern"]
     pub fn gr_mat_window_init(
         window: *mut gr_mat_struct,
         mat: *const gr_mat_struct,
-        r1: mp_limb_signed_t,
-        c1: mp_limb_signed_t,
-        r2: mp_limb_signed_t,
-        c2: mp_limb_signed_t,
+        r1: slong,
+        c1: slong,
+        r2: slong,
+        c2: slong,
         ctx: *mut gr_ctx_struct,
     );
     #[link_name = "gr_mat_window_clear__extern"]
-    pub fn gr_mat_window_clear(window: *mut gr_mat_struct, ctx: *mut gr_ctx_struct);
+    pub fn gr_mat_window_clear(UNUSED_window: *mut gr_mat_struct, UNUSED_ctx: *mut gr_ctx_struct);
     pub fn gr_mat_concat_horizontal(
         res: *mut gr_mat_struct,
         mat1: *const gr_mat_struct,
@@ -168,33 +195,39 @@ extern "C" {
     pub fn gr_mat_print(mat: *const gr_mat_struct, ctx: *mut gr_ctx_struct) -> libc::c_int;
     pub fn gr_mat_randtest(
         mat: *mut gr_mat_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_randops(
         mat: *mut gr_mat_struct,
-        state: *mut flint_rand_s,
-        count: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        count: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_randpermdiag(
         parity: *mut libc::c_int,
         mat: *mut gr_mat_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         diag: gr_ptr,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_randrank(
         mat: *mut gr_mat_struct,
-        state: *mut flint_rand_s,
-        rank: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        rank: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_randsimilar(
+        mat: *mut gr_mat_struct,
+        state: *mut flint_rand_struct,
+        opcount: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_mat_is_empty__extern"]
-    pub fn gr_mat_is_empty(mat: *const gr_mat_struct, ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_mat_is_empty(mat: *const gr_mat_struct, UNUSED_ctx: *mut gr_ctx_struct) -> truth_t;
     #[link_name = "gr_mat_is_square__extern"]
-    pub fn gr_mat_is_square(mat: *const gr_mat_struct, ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_mat_is_square(mat: *const gr_mat_struct, UNUSED_ctx: *mut gr_ctx_struct) -> truth_t;
     pub fn gr_mat_equal(
         mat1: *const gr_mat_struct,
         mat2: *const gr_mat_struct,
@@ -215,16 +248,10 @@ extern "C" {
         c: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
-    pub fn gr_mat_set_ui(
-        res: *mut gr_mat_struct,
-        v: mp_limb_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
-    pub fn gr_mat_set_si(
-        res: *mut gr_mat_struct,
-        v: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
+    pub fn gr_mat_set_ui(res: *mut gr_mat_struct, v: ulong, ctx: *mut gr_ctx_struct)
+        -> libc::c_int;
+    pub fn gr_mat_set_si(res: *mut gr_mat_struct, v: slong, ctx: *mut gr_ctx_struct)
+        -> libc::c_int;
     pub fn gr_mat_set_fmpz(
         res: *mut gr_mat_struct,
         v: *const fmpz,
@@ -243,6 +270,12 @@ extern "C" {
     pub fn gr_mat_set_fmpq_mat(
         res: *mut gr_mat_struct,
         mat: *const fmpq_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_set_gr_mat_other(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        mat_ctx: *mut gr_ctx_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_neg(
@@ -273,16 +306,185 @@ extern "C" {
         x: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    pub fn gr_mat_scalar_add(
+        res: *mut gr_mat_struct,
+        x: gr_srcptr,
+        mat: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_add_ui(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: ulong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_add_si(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_add_fmpz(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: *const fmpz,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_add_fmpq(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: *const fmpq,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_add_scalar_other(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: gr_srcptr,
+        x_ctx: *mut gr_ctx_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_scalar_other_add(
+        res: *mut gr_mat_struct,
+        x: gr_srcptr,
+        x_ctx: *mut gr_ctx_struct,
+        mat: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
     pub fn gr_mat_sub_scalar(
         res: *mut gr_mat_struct,
         mat: *const gr_mat_struct,
         x: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    pub fn gr_mat_scalar_sub(
+        res: *mut gr_mat_struct,
+        x: gr_srcptr,
+        mat: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_sub_ui(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: ulong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_sub_si(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_sub_fmpz(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: *const fmpz,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_sub_fmpq(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: *const fmpq,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_sub_scalar_other(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: gr_srcptr,
+        x_ctx: *mut gr_ctx_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_scalar_other_sub(
+        res: *mut gr_mat_struct,
+        x: gr_srcptr,
+        x_ctx: *mut gr_ctx_struct,
+        mat: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
     pub fn gr_mat_mul_scalar(
         res: *mut gr_mat_struct,
         mat: *const gr_mat_struct,
         x: gr_srcptr,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_scalar_mul(
+        res: *mut gr_mat_struct,
+        x: gr_srcptr,
+        mat: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_mul_ui(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: ulong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_mul_si(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_mul_fmpz(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: *const fmpz,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_mul_fmpq(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: *const fmpq,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_mul_scalar_other(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: gr_srcptr,
+        x_ctx: *mut gr_ctx_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_scalar_other_mul(
+        res: *mut gr_mat_struct,
+        x: gr_srcptr,
+        x_ctx: *mut gr_ctx_struct,
+        mat: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_div_scalar(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: gr_srcptr,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_div_scalar_other(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: gr_srcptr,
+        x_ctx: *mut gr_ctx_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_div_ui(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: ulong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_div_si(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_div_fmpz(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: *const fmpz,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_div_fmpq(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        x: *const fmpq,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_addmul_scalar(
@@ -297,12 +499,6 @@ extern "C" {
         x: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
-    pub fn gr_mat_div_scalar(
-        res: *mut gr_mat_struct,
-        mat: *const gr_mat_struct,
-        x: gr_srcptr,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
     pub fn gr_mat_mul_classical(
         C: *mut gr_mat_struct,
         A: *const gr_mat_struct,
@@ -310,6 +506,18 @@ extern "C" {
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_mul_strassen(
+        C: *mut gr_mat_struct,
+        A: *const gr_mat_struct,
+        B: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_mul_waksman(
+        C: *mut gr_mat_struct,
+        A: *const gr_mat_struct,
+        B: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_mul_rosowski(
         C: *mut gr_mat_struct,
         A: *const gr_mat_struct,
         B: *const gr_mat_struct,
@@ -333,10 +541,28 @@ extern "C" {
         mat: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    pub fn gr_mat_pow_ui(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        exp: ulong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_pow_si(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        exp: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_pow_fmpz(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        exp: *const fmpz,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
     pub fn _gr_mat_gr_poly_evaluate(
         y: *mut gr_mat_struct,
         poly: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         x: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -347,65 +573,64 @@ extern "C" {
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_find_nonzero_pivot_large_abs(
-        pivot_row: *mut mp_limb_signed_t,
+        pivot_row: *mut slong,
         mat: *mut gr_mat_struct,
-        start_row: mp_limb_signed_t,
-        end_row: mp_limb_signed_t,
-        column: mp_limb_signed_t,
+        start_row: slong,
+        end_row: slong,
+        column: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_find_nonzero_pivot_generic(
-        pivot_row: *mut mp_limb_signed_t,
+        pivot_row: *mut slong,
         mat: *mut gr_mat_struct,
-        start_row: mp_limb_signed_t,
-        end_row: mp_limb_signed_t,
-        column: mp_limb_signed_t,
+        start_row: slong,
+        end_row: slong,
+        column: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_find_nonzero_pivot(
-        pivot_row: *mut mp_limb_signed_t,
+        pivot_row: *mut slong,
         mat: *mut gr_mat_struct,
-        start_row: mp_limb_signed_t,
-        end_row: mp_limb_signed_t,
-        column: mp_limb_signed_t,
+        start_row: slong,
+        end_row: slong,
+        column: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_lu_recursive(
-        rank: *mut mp_limb_signed_t,
-        P: *mut mp_limb_signed_t,
+        rank: *mut slong,
+        P: *mut slong,
         LU: *mut gr_mat_struct,
         A: *const gr_mat_struct,
         rank_check: libc::c_int,
-        cutoff: mp_limb_signed_t,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_lu_classical(
-        rank: *mut mp_limb_signed_t,
-        P: *mut mp_limb_signed_t,
+        rank: *mut slong,
+        P: *mut slong,
         LU: *mut gr_mat_struct,
         A: *const gr_mat_struct,
         rank_check: libc::c_int,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_lu_generic(
-        rank: *mut mp_limb_signed_t,
-        P: *mut mp_limb_signed_t,
+        rank: *mut slong,
+        P: *mut slong,
         LU: *mut gr_mat_struct,
         A: *const gr_mat_struct,
         rank_check: libc::c_int,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_lu(
-        rank: *mut mp_limb_signed_t,
-        P: *mut mp_limb_signed_t,
+        rank: *mut slong,
+        P: *mut slong,
         LU: *mut gr_mat_struct,
         A: *const gr_mat_struct,
         rank_check: libc::c_int,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_fflu(
-        res_rank: *mut mp_limb_signed_t,
-        P: *mut mp_limb_signed_t,
+        res_rank: *mut slong,
+        P: *mut slong,
         LU: *mut gr_mat_struct,
         den: gr_ptr,
         A: *const gr_mat_struct,
@@ -432,14 +657,14 @@ extern "C" {
     ) -> libc::c_int;
     pub fn gr_mat_nonsingular_solve_fflu_precomp(
         X: *mut gr_mat_struct,
-        perm: *const mp_limb_signed_t,
+        perm: *const slong,
         A: *const gr_mat_struct,
         B: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_nonsingular_solve_lu_precomp(
         X: *mut gr_mat_struct,
-        perm: *const mp_limb_signed_t,
+        perm: *const slong,
         A: *const gr_mat_struct,
         B: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
@@ -524,50 +749,93 @@ extern "C" {
         A: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    pub fn gr_mat_permanent_cofactor(
+        res: gr_ptr,
+        A: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_permanent_ryser(
+        res: gr_ptr,
+        A: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_permanent_glynn(
+        res: gr_ptr,
+        A: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_permanent_glynn_threaded(
+        res: gr_ptr,
+        A: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_permanent_generic(
+        res: gr_ptr,
+        A: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_permanent(
+        res: gr_ptr,
+        A: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
     pub fn gr_mat_rank_lu(
-        rank: *mut mp_limb_signed_t,
+        rank: *mut slong,
         A: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_rank_fflu(
-        rank: *mut mp_limb_signed_t,
+        rank: *mut slong,
         A: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_rank(
-        rank: *mut mp_limb_signed_t,
+        rank: *mut slong,
         A: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_rref_lu(
-        res_rank: *mut mp_limb_signed_t,
+        res_rank: *mut slong,
         R: *mut gr_mat_struct,
         A: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_rref_fflu(
-        res_rank: *mut mp_limb_signed_t,
+        res_rank: *mut slong,
         R: *mut gr_mat_struct,
         A: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_rref(
-        res_rank: *mut mp_limb_signed_t,
+        res_rank: *mut slong,
         R: *mut gr_mat_struct,
         A: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_rref_den_fflu(
-        res_rank: *mut mp_limb_signed_t,
+        res_rank: *mut slong,
         R: *mut gr_mat_struct,
         den: gr_ptr,
         A: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_rref_den(
-        res_rank: *mut mp_limb_signed_t,
+        res_rank: *mut slong,
         R: *mut gr_mat_struct,
         den: gr_ptr,
+        A: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_nullspace_from_rref(
+        X: *mut gr_mat_struct,
+        A: *const gr_mat_struct,
+        Aden: gr_srcptr,
+        rank: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_nullspace_no_resize(
+        nullity: *mut slong,
+        X: *mut gr_mat_struct,
         A: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -608,6 +876,13 @@ extern "C" {
         unit: libc::c_int,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    pub fn gr_mat_nonsingular_solve_tril_generic(
+        X: *mut gr_mat_struct,
+        L: *const gr_mat_struct,
+        B: *const gr_mat_struct,
+        unit: libc::c_int,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
     pub fn gr_mat_nonsingular_solve_tril(
         X: *mut gr_mat_struct,
         L: *const gr_mat_struct,
@@ -625,6 +900,13 @@ extern "C" {
     pub fn gr_mat_nonsingular_solve_triu_recursive(
         X: *mut gr_mat_struct,
         U: *const gr_mat_struct,
+        B: *const gr_mat_struct,
+        unit: libc::c_int,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_nonsingular_solve_triu_generic(
+        X: *mut gr_mat_struct,
+        L: *const gr_mat_struct,
         B: *const gr_mat_struct,
         unit: libc::c_int,
         ctx: *mut gr_ctx_struct,
@@ -720,6 +1002,16 @@ extern "C" {
         mat: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    pub fn _gr_mat_charpoly_generic(
+        res: gr_ptr,
+        mat: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_charpoly_generic(
+        cp: *mut gr_poly_struct,
+        mat: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
     pub fn _gr_mat_charpoly(
         res: gr_ptr,
         mat: *const gr_mat_struct,
@@ -728,6 +1020,28 @@ extern "C" {
     pub fn gr_mat_charpoly(
         res: *mut gr_poly_struct,
         mat: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_mat_companion(
+        res: *mut gr_mat_struct,
+        poly: gr_srcptr,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_companion(
+        res: *mut gr_mat_struct,
+        poly: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_mat_companion_fraction(
+        res_num: *mut gr_mat_struct,
+        res_den: gr_ptr,
+        poly: gr_srcptr,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_companion_fraction(
+        res_num: *mut gr_mat_struct,
+        res_den: gr_ptr,
+        poly: *const gr_poly_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_hessenberg(
@@ -746,17 +1060,25 @@ extern "C" {
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_is_hessenberg(mat: *const gr_mat_struct, ctx: *mut gr_ctx_struct) -> truth_t;
-    pub fn gr_mat_reduce_row(
-        column: *mut mp_limb_signed_t,
+    pub fn gr_mat_reduce_row_generic(
+        column: *mut slong,
         A: *mut gr_mat_struct,
-        P: *mut mp_limb_signed_t,
-        L: *mut mp_limb_signed_t,
-        m: mp_limb_signed_t,
+        P: *mut slong,
+        L: *mut slong,
+        m: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_reduce_row(
+        column: *mut slong,
+        A: *mut gr_mat_struct,
+        P: *mut slong,
+        L: *mut slong,
+        m: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_apply_row_similarity(
         A: *mut gr_mat_struct,
-        r: mp_limb_signed_t,
+        r: slong,
         d: gr_ptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -808,25 +1130,25 @@ extern "C" {
     pub fn gr_mat_set_jordan_blocks(
         mat: *mut gr_mat_struct,
         lambda: *const gr_vec_struct,
-        num_blocks: mp_limb_signed_t,
-        block_lambda: *mut mp_limb_signed_t,
-        block_size: *mut mp_limb_signed_t,
+        num_blocks: slong,
+        block_lambda: *mut slong,
+        block_size: *mut slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_jordan_blocks(
         lambda: *mut gr_vec_struct,
-        num_blocks: *mut mp_limb_signed_t,
-        block_lambda: *mut mp_limb_signed_t,
-        block_size: *mut mp_limb_signed_t,
+        num_blocks: *mut slong,
+        block_lambda: *mut slong,
+        block_size: *mut slong,
         A: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mat_jordan_transformation(
         mat: *mut gr_mat_struct,
         lambda: *const gr_vec_struct,
-        num_blocks: mp_limb_signed_t,
-        block_lambda: *mut mp_limb_signed_t,
-        block_size: *mut mp_limb_signed_t,
+        num_blocks: slong,
+        block_lambda: *mut slong,
+        block_size: *mut slong,
         A: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -858,6 +1180,19 @@ extern "C" {
         A: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    pub fn gr_mat_func_jordan(
+        res: *mut gr_mat_struct,
+        A: *const gr_mat_struct,
+        jet_func: __gr_method_vec_op,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_func_param_jordan(
+        res: *mut gr_mat_struct,
+        A: *const gr_mat_struct,
+        jet_func: __gr_method_vec_scalar_op,
+        c: gr_srcptr,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
     pub fn gr_mat_exp_jordan(
         res: *mut gr_mat_struct,
         A: *const gr_mat_struct,
@@ -878,4 +1213,208 @@ extern "C" {
         A: *const gr_mat_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    pub fn gr_mat_pow_scalar_jordan(
+        res: *mut gr_mat_struct,
+        A: *const gr_mat_struct,
+        c: gr_srcptr,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_pow_scalar(
+        res: *mut gr_mat_struct,
+        A: *const gr_mat_struct,
+        c: gr_srcptr,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_pow_fmpq_jordan(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        exp: *const fmpq,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_pow_fmpq(
+        res: *mut gr_mat_struct,
+        mat: *const gr_mat_struct,
+        exp: *const fmpq,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_sqrt(
+        res: *mut gr_mat_struct,
+        A: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_rsqrt(
+        res: *mut gr_mat_struct,
+        A: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_norm_max(
+        res: gr_ptr,
+        mat: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_norm_1(
+        res: gr_ptr,
+        mat: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_norm_inf(
+        res: gr_ptr,
+        mat: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_norm_frobenius(
+        res: gr_ptr,
+        mat: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_is_orthogonal(A: *const gr_mat_struct, ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_mat_is_row_orthogonal(A: *const gr_mat_struct, ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_mat_is_row_orthonormal(A: *const gr_mat_struct, ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_mat_is_col_orthogonal(A: *const gr_mat_struct, ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_mat_is_col_orthonormal(A: *const gr_mat_struct, ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn gr_mat_randtest_orthogonal(
+        A: *mut gr_mat_struct,
+        state: *mut flint_rand_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_lq_gso(
+        L: *mut gr_mat_struct,
+        Q: *mut gr_mat_struct,
+        A: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_lq_recursive(
+        L: *mut gr_mat_struct,
+        Q: *mut gr_mat_struct,
+        A: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_lq_generic(
+        L: *mut gr_mat_struct,
+        Q: *mut gr_mat_struct,
+        A: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_lq(
+        L: *mut gr_mat_struct,
+        Q: *mut gr_mat_struct,
+        A: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_qr(
+        Q: *mut gr_mat_struct,
+        R: *mut gr_mat_struct,
+        A: *const gr_mat_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_is_row_lll_reduced_naive(
+        A: *const gr_mat_struct,
+        delta: gr_srcptr,
+        eta: gr_srcptr,
+        ctx: *mut gr_ctx_struct,
+    ) -> truth_t;
+    pub fn gr_mat_is_row_lll_reduced_with_removal_naive(
+        A: *const gr_mat_struct,
+        delta: gr_srcptr,
+        eta: gr_srcptr,
+        gs_B: gr_srcptr,
+        newd: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> truth_t;
+    pub fn _gr_mat_gr_poly_solve_lode_newton_start(
+        Y: *mut gr_mat_struct,
+        Z: *mut gr_mat_struct,
+        A_denominator_inv: *mut gr_poly_struct,
+        A_numerator: *const gr_mat_struct,
+        A_denominator: *const gr_poly_struct,
+        Y0: *const gr_mat_struct,
+        sol_poly_ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_mat_gr_poly_solve_lode_newton_step(
+        Y: *mut gr_mat_struct,
+        Z: *mut gr_mat_struct,
+        A_denominator_inv: *mut gr_poly_struct,
+        len: slong,
+        A_numerator: *const gr_mat_struct,
+        A_denominator: *const gr_poly_struct,
+        A_is_companion: libc::c_int,
+        sol_poly_ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_mat_gr_poly_solve_lode_newton(
+        Y: *mut gr_mat_struct,
+        Z: *mut gr_mat_struct,
+        A_numerator: *const gr_mat_struct,
+        A_denominator: *const gr_poly_struct,
+        Y0: *const gr_mat_struct,
+        len: slong,
+        A_poly_ctx: *mut gr_ctx_struct,
+        sol_poly_ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_gr_poly_solve_lode_newton(
+        Y: *mut gr_mat_struct,
+        A_numerator: *const gr_mat_struct,
+        A_denominator: *const gr_poly_struct,
+        Y0: *const gr_mat_struct,
+        len: slong,
+        A_poly_ctx: *mut gr_ctx_struct,
+        sol_poly_ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mat_test_mul(
+        mul_impl: gr_method_mat_binary_op,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
+    pub fn gr_mat_test_lu(
+        lu_impl: gr_method_mat_lu_op,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
+    pub fn gr_mat_test_det(
+        det_impl: gr_method_mat_unary_op_get_scalar,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
+    pub fn gr_mat_test_charpoly(
+        charpoly_impl: gr_method_mat_unary_op_get_scalar,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
+    pub fn gr_mat_test_nonsingular_solve_tril(
+        solve_impl: gr_method_mat_binary_op_with_flag,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
+    pub fn gr_mat_test_nonsingular_solve_triu(
+        solve_impl: gr_method_mat_binary_op_with_flag,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
+    pub fn gr_mat_test_approx_mul_max_norm(
+        mul_impl: gr_method_mat_binary_op,
+        rel_tol: gr_srcptr,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
+    pub fn gr_mat_test_approx_mul_pos_entrywise_accurate(
+        mul_impl: gr_method_mat_binary_op,
+        rel_tol: gr_srcptr,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
 }

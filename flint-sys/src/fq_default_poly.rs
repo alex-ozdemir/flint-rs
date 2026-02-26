@@ -2,7 +2,6 @@
 
 use libc::*;
 use crate::deps::*;
-use crate::bindgen::*;
 use crate::flint::*;
 use crate::fmpz_mod_types::*;
 use crate::fmpz_types::*;
@@ -15,7 +14,49 @@ use crate::nmod_types::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+pub struct __BindgenUnionField<T>(::std::marker::PhantomData<T>);
+impl<T> __BindgenUnionField<T> {
+    #[inline]
+    pub const fn new() -> Self {
+        __BindgenUnionField(::std::marker::PhantomData)
+    }
+    #[inline]
+    pub unsafe fn as_ref(&self) -> &T {
+        ::std::mem::transmute(self)
+    }
+    #[inline]
+    pub unsafe fn as_mut(&mut self) -> &mut T {
+        ::std::mem::transmute(self)
+    }
+}
+impl<T> ::std::default::Default for __BindgenUnionField<T> {
+    #[inline]
+    fn default() -> Self {
+        Self::new()
+    }
+}
+impl<T> ::std::clone::Clone for __BindgenUnionField<T> {
+    #[inline]
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+impl<T> ::std::marker::Copy for __BindgenUnionField<T> {}
+impl<T> ::std::fmt::Debug for __BindgenUnionField<T> {
+    fn fmt(&self, fmt: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        fmt.write_str("__BindgenUnionField")
+    }
+}
+impl<T> ::std::hash::Hash for __BindgenUnionField<T> {
+    fn hash<H: ::std::hash::Hasher>(&self, _state: &mut H) {}
+}
+impl<T> ::std::cmp::PartialEq for __BindgenUnionField<T> {
+    fn eq(&self, _other: &__BindgenUnionField<T>) -> bool {
+        true
+    }
+}
+impl<T> ::std::cmp::Eq for __BindgenUnionField<T> {}
+#[repr(C)]
 pub struct fq_default_poly_struct {
     pub fq: __BindgenUnionField<fq_poly_t>,
     pub fq_nmod: __BindgenUnionField<fq_nmod_poly_t>,
@@ -59,38 +100,38 @@ extern "C" {
     #[link_name = "fq_default_poly_init2__extern"]
     pub fn fq_default_poly_init2(
         poly: *mut fq_default_poly_struct,
-        alloc: mp_limb_signed_t,
+        alloc: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_realloc__extern"]
     pub fn fq_default_poly_realloc(
         poly: *mut fq_default_poly_struct,
-        alloc: mp_limb_signed_t,
+        alloc: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_truncate__extern"]
     pub fn fq_default_poly_truncate(
         poly: *mut fq_default_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_set_trunc__extern"]
     pub fn fq_default_poly_set_trunc(
         poly1: *mut fq_default_poly_struct,
         poly2: *mut fq_default_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_fit_length__extern"]
     pub fn fq_default_poly_fit_length(
         poly: *mut fq_default_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "_fq_default_poly_set_length__extern"]
     pub fn _fq_default_poly_set_length(
         poly: *mut fq_default_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_clear__extern"]
@@ -102,38 +143,38 @@ extern "C" {
     pub fn fq_default_poly_length(
         poly: *const fq_default_poly_struct,
         ctx: *const fq_default_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     #[link_name = "fq_default_poly_degree__extern"]
     pub fn fq_default_poly_degree(
         poly: *const fq_default_poly_struct,
         ctx: *const fq_default_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     #[link_name = "fq_default_poly_randtest__extern"]
     pub fn fq_default_poly_randtest(
         f: *mut fq_default_poly_struct,
-        state: *mut flint_rand_s,
-        len: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        len: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_randtest_not_zero__extern"]
     pub fn fq_default_poly_randtest_not_zero(
         f: *mut fq_default_poly_struct,
-        state: *mut flint_rand_s,
-        len: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        len: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_randtest_monic__extern"]
     pub fn fq_default_poly_randtest_monic(
         f: *mut fq_default_poly_struct,
-        state: *mut flint_rand_s,
-        len: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        len: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_randtest_irreducible__extern"]
     pub fn fq_default_poly_randtest_irreducible(
         f: *mut fq_default_poly_struct,
-        state: *mut flint_rand_s,
-        len: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        len: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_set__extern"]
@@ -176,46 +217,46 @@ extern "C" {
     pub fn fq_default_poly_reverse(
         res: *mut fq_default_poly_struct,
         poly: *const fq_default_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_deflation__extern"]
     pub fn fq_default_poly_deflation(
         input: *const fq_default_poly_struct,
         ctx: *const fq_default_ctx_struct,
-    ) -> mp_limb_t;
+    ) -> ulong;
     #[link_name = "fq_default_poly_deflate__extern"]
     pub fn fq_default_poly_deflate(
         result: *mut fq_default_poly_struct,
         input: *const fq_default_poly_struct,
-        deflation: mp_limb_t,
+        deflation: ulong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_inflate__extern"]
     pub fn fq_default_poly_inflate(
         result: *mut fq_default_poly_struct,
         input: *const fq_default_poly_struct,
-        inflation: mp_limb_t,
+        inflation: ulong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_get_coeff__extern"]
     pub fn fq_default_poly_get_coeff(
         x: *mut fq_default_struct,
         poly: *const fq_default_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_set_coeff__extern"]
     pub fn fq_default_poly_set_coeff(
         poly: *mut fq_default_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         x: *const fq_default_struct,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_set_coeff_fmpz__extern"]
     pub fn fq_default_poly_set_coeff_fmpz(
         poly: *mut fq_default_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         x: *const fmpz,
         ctx: *const fq_default_ctx_struct,
     );
@@ -246,7 +287,7 @@ extern "C" {
     pub fn fq_default_poly_equal_trunc(
         poly1: *const fq_default_poly_struct,
         poly2: *const fq_default_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *const fq_default_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "fq_default_poly_is_zero__extern"]
@@ -286,7 +327,7 @@ extern "C" {
     pub fn fq_default_poly_add_si(
         rop: *mut fq_default_poly_struct,
         op1: *const fq_default_poly_struct,
-        c: mp_limb_signed_t,
+        c: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_add_series__extern"]
@@ -294,7 +335,7 @@ extern "C" {
         rop: *mut fq_default_poly_struct,
         op1: *const fq_default_poly_struct,
         op2: *const fq_default_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_sub__extern"]
@@ -309,7 +350,7 @@ extern "C" {
         rop: *mut fq_default_poly_struct,
         op1: *const fq_default_poly_struct,
         op2: *const fq_default_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_neg__extern"]
@@ -358,7 +399,7 @@ extern "C" {
         rop: *mut fq_default_poly_struct,
         op1: *const fq_default_poly_struct,
         op2: *const fq_default_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_mulhigh__extern"]
@@ -366,7 +407,7 @@ extern "C" {
         rop: *mut fq_default_poly_struct,
         op1: *const fq_default_poly_struct,
         op2: *const fq_default_poly_struct,
-        start: mp_limb_signed_t,
+        start: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_mulmod__extern"]
@@ -387,15 +428,15 @@ extern "C" {
     pub fn fq_default_poly_pow(
         rop: *mut fq_default_poly_struct,
         op: *const fq_default_poly_struct,
-        e: mp_limb_t,
+        e: ulong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_pow_trunc__extern"]
     pub fn fq_default_poly_pow_trunc(
         res: *mut fq_default_poly_struct,
         poly: *const fq_default_poly_struct,
-        e: mp_limb_t,
-        trunc: mp_limb_signed_t,
+        e: ulong,
+        trunc: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_powmod_fmpz_binexp__extern"]
@@ -410,7 +451,7 @@ extern "C" {
     pub fn fq_default_poly_powmod_ui_binexp(
         res: *mut fq_default_poly_struct,
         poly: *const fq_default_poly_struct,
-        e: mp_limb_t,
+        e: ulong,
         f: *const fq_default_poly_struct,
         ctx: *const fq_default_ctx_struct,
     );
@@ -418,21 +459,21 @@ extern "C" {
     pub fn fq_default_poly_shift_left(
         rop: *mut fq_default_poly_struct,
         op: *const fq_default_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_shift_right__extern"]
     pub fn fq_default_poly_shift_right(
         rop: *mut fq_default_poly_struct,
         op: *const fq_default_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_hamming_weight__extern"]
     pub fn fq_default_poly_hamming_weight(
         op: *const fq_default_poly_struct,
         ctx: *const fq_default_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     #[link_name = "fq_default_poly_gcd__extern"]
     pub fn fq_default_poly_gcd(
         rop: *mut fq_default_poly_struct,
@@ -454,7 +495,7 @@ extern "C" {
         f: *mut fq_default_poly_struct,
         g: *const fq_default_poly_struct,
         ctx: *const fq_default_ctx_struct,
-    ) -> mp_limb_t;
+    ) -> ulong;
     #[link_name = "fq_default_poly_divrem__extern"]
     pub fn fq_default_poly_divrem(
         Q: *mut fq_default_poly_struct,
@@ -474,7 +515,7 @@ extern "C" {
     pub fn fq_default_poly_inv_series(
         Qinv: *mut fq_default_poly_struct,
         Q: *const fq_default_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_div_series__extern"]
@@ -482,7 +523,7 @@ extern "C" {
         Q: *mut fq_default_poly_struct,
         A: *const fq_default_poly_struct,
         B: *const fq_default_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_divides__extern"]
@@ -502,14 +543,14 @@ extern "C" {
     pub fn fq_default_poly_invsqrt_series(
         rop: *mut fq_default_poly_struct,
         op: *const fq_default_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_sqrt_series__extern"]
     pub fn fq_default_poly_sqrt_series(
         rop: *mut fq_default_poly_struct,
         op: *const fq_default_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut fq_default_ctx_struct,
     );
     #[link_name = "fq_default_poly_sqrt__extern"]

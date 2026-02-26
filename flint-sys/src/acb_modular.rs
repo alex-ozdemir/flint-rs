@@ -9,7 +9,6 @@ use crate::fmpz_types::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct psl2z_struct {
     pub a: fmpz,
     pub b: fmpz,
@@ -54,12 +53,12 @@ extern "C" {
     pub fn psl2z_inv(h: *mut psl2z_struct, g: *const psl2z_struct);
     pub fn psl2z_is_one(g: *const psl2z_struct) -> libc::c_int;
     pub fn psl2z_is_correct(g: *const psl2z_struct) -> libc::c_int;
-    pub fn psl2z_randtest(g: *mut psl2z_struct, state: *mut flint_rand_s, bits: mp_limb_signed_t);
+    pub fn psl2z_randtest(g: *mut psl2z_struct, state: *mut flint_rand_struct, bits: slong);
     pub fn acb_modular_transform(
         w: *mut acb_struct,
         g: *const psl2z_struct,
         z: *const acb_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     );
     pub fn acb_modular_fundamental_domain_approx_d(
         g: *mut psl2z_struct,
@@ -72,33 +71,33 @@ extern "C" {
         xx: *const arf_struct,
         yy: *const arf_struct,
         one_minus_eps: *const arf_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     );
     pub fn acb_modular_fundamental_domain_approx(
         w: *mut acb_struct,
         g: *mut psl2z_struct,
         z: *const acb_struct,
         one_minus_eps: *const arf_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     );
     pub fn acb_modular_is_in_fundamental_domain(
         z: *const acb_struct,
         tol: *const arf_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     ) -> libc::c_int;
     pub fn acb_modular_addseq_theta(
-        exponents: *mut mp_limb_signed_t,
-        aindex: *mut mp_limb_signed_t,
-        bindex: *mut mp_limb_signed_t,
-        num: mp_limb_signed_t,
+        exponents: *mut slong,
+        aindex: *mut slong,
+        bindex: *mut slong,
+        num: slong,
     );
     pub fn acb_modular_addseq_eta(
-        exponents: *mut mp_limb_signed_t,
-        aindex: *mut mp_limb_signed_t,
-        bindex: *mut mp_limb_signed_t,
-        num: mp_limb_signed_t,
+        exponents: *mut slong,
+        aindex: *mut slong,
+        bindex: *mut slong,
+        num: slong,
     );
-    pub fn acb_modular_fill_addseq(tab: *mut mp_limb_signed_t, len: mp_limb_signed_t);
+    pub fn acb_modular_fill_addseq(tab: *mut slong, len: slong);
     pub fn acb_modular_theta_transform(
         R: *mut libc::c_int,
         S: *mut libc::c_int,
@@ -110,23 +109,23 @@ extern "C" {
         theta3: *mut acb_struct,
         theta4: *mut acb_struct,
         q: *const acb_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     );
     pub fn acb_modular_theta_const_sum_basecase(
         theta2: *mut acb_struct,
         theta3: *mut acb_struct,
         theta4: *mut acb_struct,
         q: *const acb_struct,
-        N: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        N: slong,
+        prec: slong,
     );
     pub fn acb_modular_theta_const_sum_rs(
         theta2: *mut acb_struct,
         theta3: *mut acb_struct,
         theta4: *mut acb_struct,
         q: *const acb_struct,
-        N: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        N: slong,
+        prec: slong,
     );
     pub fn acb_modular_theta_sum(
         theta1: acb_ptr,
@@ -136,8 +135,8 @@ extern "C" {
         w: *const acb_struct,
         w_is_unit: libc::c_int,
         q: *const acb_struct,
-        len: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        len: slong,
+        prec: slong,
     );
     pub fn acb_modular_theta_notransform(
         theta1: *mut acb_struct,
@@ -146,7 +145,7 @@ extern "C" {
         theta4: *mut acb_struct,
         z: *const acb_struct,
         tau: *const acb_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     );
     pub fn acb_modular_theta(
         theta1: *mut acb_struct,
@@ -155,7 +154,7 @@ extern "C" {
         theta4: *mut acb_struct,
         z: *const acb_struct,
         tau: *const acb_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     );
     pub fn acb_modular_theta_jet_notransform(
         theta1: acb_ptr,
@@ -164,8 +163,8 @@ extern "C" {
         theta4: acb_ptr,
         z: *const acb_struct,
         tau: *const acb_struct,
-        len: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        len: slong,
+        prec: slong,
     );
     pub fn acb_modular_theta_jet(
         theta1: acb_ptr,
@@ -174,8 +173,8 @@ extern "C" {
         theta4: acb_ptr,
         z: *const acb_struct,
         tau: *const acb_struct,
-        len: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        len: slong,
+        prec: slong,
     );
     pub fn _acb_modular_theta_series(
         theta1: acb_ptr,
@@ -183,10 +182,10 @@ extern "C" {
         theta3: acb_ptr,
         theta4: acb_ptr,
         z: acb_srcptr,
-        zlen: mp_limb_signed_t,
+        zlen: slong,
         tau: *const acb_struct,
-        len: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        len: slong,
+        prec: slong,
     );
     pub fn acb_modular_theta_series(
         theta1: *mut acb_poly_struct,
@@ -195,54 +194,40 @@ extern "C" {
         theta4: *mut acb_poly_struct,
         z: *const acb_poly_struct,
         tau: *const acb_struct,
-        len: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        len: slong,
+        prec: slong,
     );
-    pub fn acb_modular_j(z: *mut acb_struct, tau: *const acb_struct, prec: mp_limb_signed_t);
+    pub fn acb_modular_j(z: *mut acb_struct, tau: *const acb_struct, prec: slong);
     pub fn acb_modular_epsilon_arg(g: *const psl2z_struct) -> libc::c_int;
-    pub fn acb_modular_eta_sum(eta: *mut acb_struct, q: *const acb_struct, prec: mp_limb_signed_t);
-    pub fn acb_modular_eta(z: *mut acb_struct, tau: *const acb_struct, prec: mp_limb_signed_t);
-    pub fn acb_modular_lambda(r: *mut acb_struct, tau: *const acb_struct, prec: mp_limb_signed_t);
-    pub fn acb_modular_delta(r: *mut acb_struct, tau: *const acb_struct, prec: mp_limb_signed_t);
-    pub fn acb_modular_eisenstein(
-        r: acb_ptr,
-        tau: *const acb_struct,
-        len: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    );
+    pub fn acb_modular_eta_sum(eta: *mut acb_struct, q: *const acb_struct, prec: slong);
+    pub fn acb_modular_eta(z: *mut acb_struct, tau: *const acb_struct, prec: slong);
+    pub fn acb_modular_lambda(r: *mut acb_struct, tau: *const acb_struct, prec: slong);
+    pub fn acb_modular_delta(r: *mut acb_struct, tau: *const acb_struct, prec: slong);
+    pub fn acb_modular_eisenstein(r: acb_ptr, tau: *const acb_struct, len: slong, prec: slong);
     pub fn acb_modular_elliptic_p(
         r: *mut acb_struct,
         z: *const acb_struct,
         tau: *const acb_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     );
     pub fn acb_modular_elliptic_p_zpx(
         r: acb_ptr,
         z: *const acb_struct,
         tau: *const acb_struct,
-        len: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        len: slong,
+        prec: slong,
     );
-    pub fn acb_modular_elliptic_k(k: *mut acb_struct, m: *const acb_struct, prec: mp_limb_signed_t);
-    pub fn acb_modular_elliptic_k_cpx(
-        w: acb_ptr,
-        m: *const acb_struct,
-        len: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_modular_elliptic_e(
-        res: *mut acb_struct,
-        m: *const acb_struct,
-        prec: mp_limb_signed_t,
-    );
-    pub fn acb_modular_hilbert_class_poly(res: *mut fmpz_poly_struct, D: mp_limb_signed_t);
+    pub fn acb_modular_elliptic_k(k: *mut acb_struct, m: *const acb_struct, prec: slong);
+    pub fn acb_modular_elliptic_k_cpx(w: acb_ptr, m: *const acb_struct, len: slong, prec: slong);
+    pub fn acb_modular_elliptic_e(res: *mut acb_struct, m: *const acb_struct, prec: slong);
+    pub fn acb_modular_hilbert_class_poly(res: *mut fmpz_poly_struct, D: slong);
     pub fn _acb_modular_mul(
         z: *mut acb_struct,
         tmp1: *mut acb_struct,
         tmp2: *mut acb_struct,
         x: *const acb_struct,
         y: *const acb_struct,
-        wprec: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        wprec: slong,
+        prec: slong,
     );
 }

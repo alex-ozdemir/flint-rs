@@ -12,26 +12,17 @@ extern "C" {
     #[link_name = "padic_mat__extern"]
     pub fn padic_mat(A: *const padic_mat_struct) -> *mut fmpz_mat_struct;
     #[link_name = "padic_mat_entry__extern"]
-    pub fn padic_mat_entry(
-        A: *const padic_mat_struct,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
-    ) -> *mut fmpz;
+    pub fn padic_mat_entry(A: *const padic_mat_struct, i: slong, j: slong) -> *mut fmpz;
     #[link_name = "padic_mat_get_val__extern"]
-    pub fn padic_mat_get_val(A: *const padic_mat_struct) -> mp_limb_signed_t;
+    pub fn padic_mat_get_val(A: *const padic_mat_struct) -> slong;
     #[link_name = "padic_mat_get_prec__extern"]
-    pub fn padic_mat_get_prec(A: *const padic_mat_struct) -> mp_limb_signed_t;
+    pub fn padic_mat_get_prec(A: *const padic_mat_struct) -> slong;
     #[link_name = "padic_mat_nrows__extern"]
-    pub fn padic_mat_nrows(A: *const padic_mat_struct) -> mp_limb_signed_t;
+    pub fn padic_mat_nrows(A: *const padic_mat_struct) -> slong;
     #[link_name = "padic_mat_ncols__extern"]
-    pub fn padic_mat_ncols(A: *const padic_mat_struct) -> mp_limb_signed_t;
-    pub fn padic_mat_init(A: *mut padic_mat_struct, r: mp_limb_signed_t, c: mp_limb_signed_t);
-    pub fn padic_mat_init2(
-        A: *mut padic_mat_struct,
-        r: mp_limb_signed_t,
-        c: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    );
+    pub fn padic_mat_ncols(A: *const padic_mat_struct) -> slong;
+    pub fn padic_mat_init(A: *mut padic_mat_struct, r: slong, c: slong);
+    pub fn padic_mat_init2(A: *mut padic_mat_struct, r: slong, c: slong, prec: slong);
     pub fn padic_mat_clear(A: *mut padic_mat_struct);
     pub fn _padic_mat_canonicalise(A: *mut padic_mat_struct, ctx: *const padic_ctx_struct);
     pub fn _padic_mat_reduce(A: *mut padic_mat_struct, ctx: *const padic_ctx_struct);
@@ -71,14 +62,14 @@ extern "C" {
     pub fn padic_mat_get_entry_padic(
         rop: *mut padic_struct,
         op: *const padic_mat_struct,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
+        i: slong,
+        j: slong,
         ctx: *const padic_ctx_struct,
     );
     pub fn padic_mat_set_entry_padic(
         rop: *mut padic_mat_struct,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
+        i: slong,
+        j: slong,
         op: *const padic_struct,
         ctx: *const padic_ctx_struct,
     );
@@ -102,7 +93,7 @@ extern "C" {
     ) -> libc::c_int;
     pub fn padic_mat_randtest(
         mat: *mut padic_mat_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         ctx: *const padic_ctx_struct,
     );
     pub fn padic_mat_transpose(B: *mut padic_mat_struct, A: *const padic_mat_struct);
@@ -140,7 +131,7 @@ extern "C" {
         B: *mut padic_mat_struct,
         A: *const padic_mat_struct,
         c: *const padic_struct,
-        ctx: *const padic_ctx_struct,
+        UNUSED_ctx: *const padic_ctx_struct,
     );
     pub fn padic_mat_scalar_mul_padic(
         B: *mut padic_mat_struct,

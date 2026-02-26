@@ -11,11 +11,10 @@ use crate::nmod_types::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mpolyv_struct {
     pub coeffs: *mut fmpz_mpoly_struct,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
+    pub alloc: slong,
+    pub length: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -39,10 +38,9 @@ impl Default for fmpz_mpolyv_struct {
 }
 pub type fmpz_mpolyv_t = [fmpz_mpolyv_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_poly_pfrac_struct {
-    pub r: mp_limb_signed_t,
-    pub bits: *mut mp_limb_t,
+    pub r: slong,
+    pub bits: *mut flint_bitcnt_t,
     pub a: fmpz_poly_t,
     pub newa: fmpz_poly_t,
     pub t: fmpz_poly_t,
@@ -119,11 +117,10 @@ impl Default for fmpz_poly_pfrac_struct {
 }
 pub type fmpz_poly_pfrac_t = [fmpz_poly_pfrac_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mpoly_pfrac_struct {
-    pub bits: mp_limb_t,
-    pub w: mp_limb_signed_t,
-    pub r: mp_limb_signed_t,
+    pub bits: flint_bitcnt_t,
+    pub w: slong,
+    pub r: slong,
     pub prod_mbetas: *mut fmpz_mpoly_struct,
     pub prod_mbetas_coeffs: *mut fmpz_mpolyv_struct,
     pub mbetas: *mut fmpz_mpoly_struct,
@@ -191,11 +188,10 @@ impl Default for fmpz_mpoly_pfrac_struct {
 }
 pub type fmpz_mpoly_pfrac_t = [fmpz_mpoly_pfrac_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_bpoly_struct {
     pub coeffs: *mut fmpz_poly_struct,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
+    pub alloc: slong,
+    pub length: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -219,11 +215,10 @@ impl Default for fmpz_bpoly_struct {
 }
 pub type fmpz_bpoly_t = [fmpz_bpoly_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_tpoly_struct {
     pub coeffs: *mut fmpz_bpoly_struct,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
+    pub alloc: slong,
+    pub length: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -247,27 +242,27 @@ impl Default for fmpz_tpoly_struct {
 }
 pub type fmpz_tpoly_t = [fmpz_tpoly_struct; 1usize];
 extern "C" {
-    pub fn tuple_print(alpha: *mut fmpz, n: mp_limb_signed_t);
-    pub fn tuple_saturate(alpha: *mut fmpz, n: mp_limb_signed_t, m: mp_limb_signed_t);
-    pub fn tuple_next(alpha: *mut fmpz, n: mp_limb_signed_t);
+    pub fn tuple_print(alpha: *mut fmpz, n: slong);
+    pub fn tuple_saturate(alpha: *mut fmpz, n: slong, m: slong);
+    pub fn tuple_next(alpha: *mut fmpz, n: slong);
     #[link_name = "fmpz_mpoly_factor_init__extern"]
     pub fn fmpz_mpoly_factor_init(
         f: *mut fmpz_mpoly_factor_struct,
-        ctx: *const fmpz_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_factor_init2(
         f: *mut fmpz_mpoly_factor_struct,
-        alloc: mp_limb_signed_t,
+        alloc: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_factor_realloc(
         f: *mut fmpz_mpoly_factor_struct,
-        alloc: mp_limb_signed_t,
+        alloc: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_factor_fit_length(
         f: *mut fmpz_mpoly_factor_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_factor_clear(
@@ -277,37 +272,37 @@ extern "C" {
     #[link_name = "fmpz_mpoly_factor_length__extern"]
     pub fn fmpz_mpoly_factor_length(
         f: *const fmpz_mpoly_factor_struct,
-        ctx: *const fmpz_mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+        UNUSED_ctx: *const fmpz_mpoly_ctx_struct,
+    ) -> slong;
     pub fn fmpz_mpoly_factor_get_constant_fmpz(
         c: *mut fmpz,
         f: *const fmpz_mpoly_factor_struct,
-        ctx: *const fmpz_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_factor_get_constant_fmpq(
         c: *mut fmpq,
         f: *const fmpz_mpoly_factor_struct,
-        ctx: *const fmpz_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpz_mpoly_ctx_struct,
     );
     #[link_name = "fmpz_mpoly_factor_get_base__extern"]
     pub fn fmpz_mpoly_factor_get_base(
         p: *mut fmpz_mpoly_struct,
         f: *const fmpz_mpoly_factor_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     #[link_name = "fmpz_mpoly_factor_swap_base__extern"]
     pub fn fmpz_mpoly_factor_swap_base(
         p: *mut fmpz_mpoly_struct,
         f: *mut fmpz_mpoly_factor_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_factor_get_exp_si(
         f: *mut fmpz_mpoly_factor_struct,
-        i: mp_limb_signed_t,
-        ctx: *const fmpz_mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+        i: slong,
+        UNUSED_ctx: *const fmpz_mpoly_ctx_struct,
+    ) -> slong;
     pub fn fmpz_mpoly_factor_set(
         f: *mut fmpz_mpoly_factor_struct,
         g: *const fmpz_mpoly_factor_struct,
@@ -342,20 +337,20 @@ extern "C" {
     pub fn fmpz_mpoly_factor_swap(
         f: *mut fmpz_mpoly_factor_struct,
         g: *mut fmpz_mpoly_factor_struct,
-        ctx: *const fmpz_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_factor_set_fmpz(
         f: *mut fmpz_mpoly_factor_struct,
         a: *const fmpz,
-        ctx: *const fmpz_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_factor_zero(
         f: *mut fmpz_mpoly_factor_struct,
-        ctx: *const fmpz_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_factor_one(
         f: *mut fmpz_mpoly_factor_struct,
-        ctx: *const fmpz_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_factor_sort(
         f: *mut fmpz_mpoly_factor_struct,
@@ -369,8 +364,8 @@ extern "C" {
     pub fn fmpz_mpoly_factor_bound_si(
         B: *mut fmpz,
         A: *const fmpz,
-        degs: *const mp_limb_signed_t,
-        nvars: mp_limb_signed_t,
+        degs: *const slong,
+        nvars: slong,
     ) -> libc::c_int;
     #[link_name = "fmpz_mpoly_factor_matches__extern"]
     pub fn fmpz_mpoly_factor_matches(
@@ -387,7 +382,7 @@ extern "C" {
     pub fn fmpz_mpoly_factor_append_ui(
         f: *mut fmpz_mpoly_factor_struct,
         A: *const fmpz_mpoly_struct,
-        e: mp_limb_t,
+        e: ulong,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_interp_lift_p(
@@ -403,9 +398,9 @@ extern "C" {
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_interp_mcrt_p(
-        coeffbits: *mut mp_limb_t,
+        coeffbits: *mut flint_bitcnt_t,
         H: *mut fmpz_mpoly_struct,
-        ctx: *const fmpz_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpz_mpoly_ctx_struct,
         m: *const fmpz,
         A: *const nmod_mpoly_struct,
         ctxp: *const nmod_mpoly_ctx_struct,
@@ -431,12 +426,12 @@ extern "C" {
         pctx: *const nmod_mpoly_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "fmpz_mpolyv_init__extern"]
-    pub fn fmpz_mpolyv_init(A: *mut fmpz_mpolyv_struct, ctx: *const fmpz_mpoly_ctx_struct);
+    pub fn fmpz_mpolyv_init(A: *mut fmpz_mpolyv_struct, UNUSED_ctx: *const fmpz_mpoly_ctx_struct);
     #[link_name = "fmpz_mpolyv_swap__extern"]
     pub fn fmpz_mpolyv_swap(
         A: *mut fmpz_mpolyv_struct,
         B: *mut fmpz_mpolyv_struct,
-        ctx: *const fmpz_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpolyv_clear(A: *mut fmpz_mpolyv_struct, ctx: *const fmpz_mpoly_ctx_struct);
     pub fn fmpz_mpolyv_print_pretty(
@@ -446,12 +441,12 @@ extern "C" {
     );
     pub fn fmpz_mpolyv_fit_length(
         A: *mut fmpz_mpolyv_struct,
-        length: mp_limb_signed_t,
+        length: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpolyv_set_coeff(
         A: *mut fmpz_mpolyv_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         c: *mut fmpz_mpoly_struct,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
@@ -463,7 +458,7 @@ extern "C" {
     );
     pub fn fmpz_mpoly_from_mpolyv(
         A: *mut fmpz_mpoly_struct,
-        Abits: mp_limb_t,
+        Abits: flint_bitcnt_t,
         B: *const fmpz_mpolyv_struct,
         xalpha: *const fmpz_mpoly_struct,
         ctx: *const fmpz_mpoly_ctx_struct,
@@ -471,18 +466,18 @@ extern "C" {
     pub fn _fmpz_mpoly_vec_content_mpoly(
         g: *mut fmpz_mpoly_struct,
         A: *const fmpz_mpoly_struct,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn _fmpz_mpoly_vec_divexact_mpoly(
         A: *mut fmpz_mpoly_struct,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         c: *const fmpz_mpoly_struct,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn _fmpz_mpoly_vec_mul_mpoly(
         A: *mut fmpz_mpoly_struct,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         c: *const fmpz_mpoly_struct,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
@@ -500,19 +495,19 @@ extern "C" {
         lctx: *const fmpz_mpoly_ctx_struct,
         B: *const fmpz_mpoly_struct,
         ctx: *const fmpz_mpoly_ctx_struct,
-        perm: *const mp_limb_signed_t,
-        shift: *const mp_limb_t,
-        stride: *const mp_limb_t,
+        perm: *const slong,
+        shift: *const ulong,
+        stride: *const ulong,
     );
     pub fn fmpz_mpoly_from_mpolyl_perm_inflate(
         A: *mut fmpz_mpoly_struct,
-        Abits: mp_limb_t,
+        Abits: flint_bitcnt_t,
         ctx: *const fmpz_mpoly_ctx_struct,
         B: *const fmpz_mpoly_struct,
         lctx: *const fmpz_mpoly_ctx_struct,
-        perm: *const mp_limb_signed_t,
-        shift: *const mp_limb_t,
-        stride: *const mp_limb_t,
+        perm: *const slong,
+        shift: *const ulong,
+        stride: *const ulong,
     );
     pub fn fmpz_mpolyl_gcd_brown(
         G: *mut fmpz_mpoly_struct,
@@ -521,7 +516,7 @@ extern "C" {
         A: *mut fmpz_mpoly_struct,
         B: *mut fmpz_mpoly_struct,
         ctx: *const fmpz_mpoly_ctx_struct,
-        I: *const mpoly_gcd_info_struct,
+        Iv: *const mpoly_gcd_info_struct,
     ) -> libc::c_int;
     pub fn fmpz_mpolyl_gcd_brown_threaded_pool(
         G: *mut fmpz_mpoly_struct,
@@ -530,9 +525,9 @@ extern "C" {
         A: *mut fmpz_mpoly_struct,
         B: *mut fmpz_mpoly_struct,
         ctx: *const fmpz_mpoly_ctx_struct,
-        I: *const mpoly_gcd_info_struct,
+        Iv: *const mpoly_gcd_info_struct,
         handles: *const thread_pool_handle,
-        num_handles: mp_limb_signed_t,
+        num_handles: slong,
     ) -> libc::c_int;
     pub fn fmpz_mpolyl_gcd_zippel(
         G: *mut fmpz_mpoly_struct,
@@ -541,7 +536,7 @@ extern "C" {
         A: *const fmpz_mpoly_struct,
         B: *const fmpz_mpoly_struct,
         ctx: *const fmpz_mpoly_ctx_struct,
-        randstate: *mut flint_rand_s,
+        randstate: *mut flint_rand_struct,
     ) -> libc::c_int;
     pub fn fmpz_mpolyl_gcd_zippel2(
         G: *mut fmpz_mpoly_struct,
@@ -554,52 +549,52 @@ extern "C" {
     ) -> libc::c_int;
     pub fn fmpz_mpolyl_gcd_hensel(
         G: *mut fmpz_mpoly_struct,
-        Gdeg: mp_limb_signed_t,
+        Gdeg: slong,
         Abar: *mut fmpz_mpoly_struct,
         Bbar: *mut fmpz_mpoly_struct,
         A: *const fmpz_mpoly_struct,
         B: *const fmpz_mpoly_struct,
         ctx: *const fmpz_mpoly_ctx_struct,
     ) -> libc::c_int;
-    pub fn fmpz_poly_pfrac_init(I: *mut fmpz_poly_pfrac_struct);
-    pub fn fmpz_poly_pfrac_clear(I: *mut fmpz_poly_pfrac_struct);
+    pub fn fmpz_poly_pfrac_init(Iv: *mut fmpz_poly_pfrac_struct);
+    pub fn fmpz_poly_pfrac_clear(Iv: *mut fmpz_poly_pfrac_struct);
     pub fn fmpz_poly_pfrac_precompute(
-        I: *mut fmpz_poly_pfrac_struct,
+        Iv: *mut fmpz_poly_pfrac_struct,
         b: *const fmpz_poly_struct,
-        r: mp_limb_signed_t,
+        r: slong,
     ) -> libc::c_int;
     pub fn fmpz_poly_pfrac_precomp(
         c: *mut fmpz_poly_struct,
         A: *const fmpz_poly_struct,
-        I: *mut fmpz_poly_pfrac_struct,
+        Iv: *mut fmpz_poly_pfrac_struct,
     ) -> libc::c_int;
     pub fn fmpz_mpoly_pfrac_init(
-        I: *mut fmpz_mpoly_pfrac_struct,
-        bits: mp_limb_t,
-        r: mp_limb_signed_t,
-        w: mp_limb_signed_t,
+        Iv: *mut fmpz_mpoly_pfrac_struct,
+        bits: flint_bitcnt_t,
+        r: slong,
+        w: slong,
         betas: *const fmpz_mpoly_struct,
         alpha: *const fmpz,
         ctx: *const fmpz_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpz_mpoly_pfrac_clear(
-        I: *mut fmpz_mpoly_pfrac_struct,
+        Iv: *mut fmpz_mpoly_pfrac_struct,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_pfrac(
-        l: mp_limb_signed_t,
+        l: slong,
         t: *mut fmpz_mpoly_struct,
-        degs: *const mp_limb_signed_t,
-        I: *mut fmpz_mpoly_pfrac_struct,
+        degs: *const slong,
+        Iv: *mut fmpz_mpoly_pfrac_struct,
         ctx: *const fmpz_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpz_mpoly_hlift(
-        m: mp_limb_signed_t,
+        m: slong,
         f: *mut fmpz_mpoly_struct,
-        r: mp_limb_signed_t,
+        r: slong,
         alpha: *const fmpz,
         A: *const fmpz_mpoly_struct,
-        degs: *const mp_limb_signed_t,
+        degs: *const slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn _fmpz_mpoly_get_lead0(
@@ -618,9 +613,9 @@ extern "C" {
     #[link_name = "fmpz_bpoly_swap__extern"]
     pub fn fmpz_bpoly_swap(A: *mut fmpz_bpoly_struct, B: *mut fmpz_bpoly_struct);
     pub fn fmpz_bpoly_clear(A: *mut fmpz_bpoly_struct);
-    pub fn fmpz_bpoly_realloc(A: *mut fmpz_bpoly_struct, len: mp_limb_signed_t);
+    pub fn fmpz_bpoly_realloc(A: *mut fmpz_bpoly_struct, len: slong);
     #[link_name = "fmpz_bpoly_fit_length__extern"]
-    pub fn fmpz_bpoly_fit_length(A: *mut fmpz_bpoly_struct, len: mp_limb_signed_t);
+    pub fn fmpz_bpoly_fit_length(A: *mut fmpz_bpoly_struct, len: slong);
     pub fn fmpz_bpoly_print_pretty(
         A: *mut fmpz_bpoly_struct,
         var0: *const libc::c_char,
@@ -631,34 +626,34 @@ extern "C" {
     #[link_name = "fmpz_bpoly_zero__extern"]
     pub fn fmpz_bpoly_zero(A: *mut fmpz_bpoly_struct);
     #[link_name = "fmpz_bpoly_degree0__extern"]
-    pub fn fmpz_bpoly_degree0(A: *const fmpz_bpoly_struct) -> mp_limb_signed_t;
-    pub fn fmpz_bpoly_degree1(A: *const fmpz_bpoly_struct) -> mp_limb_signed_t;
+    pub fn fmpz_bpoly_degree0(A: *const fmpz_bpoly_struct) -> slong;
+    pub fn fmpz_bpoly_degree1(A: *const fmpz_bpoly_struct) -> slong;
     pub fn fmpz_bpoly_set_coeff(
         A: *mut fmpz_bpoly_struct,
-        exp0: mp_limb_signed_t,
-        exp1: mp_limb_signed_t,
+        exp0: slong,
+        exp1: slong,
         c: *const fmpz,
     );
     pub fn fmpz_mpoly_set_fmpz_bpoly(
         A: *mut fmpz_mpoly_struct,
-        Abits: mp_limb_t,
+        Abits: flint_bitcnt_t,
         B: *const fmpz_bpoly_struct,
-        var0: mp_limb_signed_t,
-        var1: mp_limb_signed_t,
+        var0: slong,
+        var1: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_get_bpoly(
         A: *mut fmpz_bpoly_struct,
         B: *const fmpz_mpoly_struct,
-        var0: mp_limb_signed_t,
-        var1: mp_limb_signed_t,
+        var0: slong,
+        var1: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     #[link_name = "fmpz_tpoly_init__extern"]
     pub fn fmpz_tpoly_init(A: *mut fmpz_tpoly_struct);
     #[link_name = "fmpz_tpoly_swap__extern"]
     pub fn fmpz_tpoly_swap(A: *mut fmpz_tpoly_struct, B: *mut fmpz_tpoly_struct);
-    pub fn fmpz_tpoly_fit_length(A: *mut fmpz_tpoly_struct, len: mp_limb_signed_t);
+    pub fn fmpz_tpoly_fit_length(A: *mut fmpz_tpoly_struct, len: slong);
     pub fn fmpz_tpoly_clear(A: *mut fmpz_tpoly_struct);
     pub fn fmpz_bpoly_factor(
         c: *mut fmpz_poly_struct,
@@ -684,7 +679,7 @@ extern "C" {
         lcAfac: *const fmpz_mpoly_factor_struct,
         Auc: *const fmpz,
         Auf: *const fmpz_poly_struct,
-        r: mp_limb_signed_t,
+        r: slong,
         alpha: *const fmpz,
         ctx: *const fmpz_mpoly_ctx_struct,
     ) -> libc::c_int;
@@ -692,7 +687,7 @@ extern "C" {
         fac: *mut fmpz_mpolyv_struct,
         A: *const fmpz_mpoly_struct,
         ctx: *const fmpz_mpoly_ctx_struct,
-        Z: *mut zassenhaus_prune_struct,
+        UNUSED_Z: *mut zassenhaus_prune_struct,
     ) -> libc::c_int;
     pub fn fmpz_mpoly_factor_irred_wang(
         fac: *mut fmpz_mpolyv_struct,
@@ -701,7 +696,7 @@ extern "C" {
         lcAfac_irred: libc::c_int,
         lcA: *const fmpz_mpoly_struct,
         ctx: *const fmpz_mpoly_ctx_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         Z: *mut zassenhaus_prune_struct,
         allow_shift: libc::c_int,
     ) -> libc::c_int;
@@ -712,7 +707,7 @@ extern "C" {
         lcAfac_irred: libc::c_int,
         lcA: *const fmpz_mpoly_struct,
         ctx: *const fmpz_mpoly_ctx_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         Z: *mut zassenhaus_prune_struct,
     ) -> libc::c_int;
     pub fn fmpz_mpoly_factor_irred(
@@ -737,20 +732,20 @@ extern "C" {
     ) -> libc::c_int;
     pub fn _fmpz_mpoly_evaluate_rest_fmpz(
         E: *mut fmpz,
-        starts: *mut mp_limb_signed_t,
-        ends: *mut mp_limb_signed_t,
-        stops: *mut mp_limb_signed_t,
-        es: *mut mp_limb_t,
+        starts: *mut slong,
+        ends: *mut slong,
+        stops: *mut slong,
+        es: *mut ulong,
         Acoeffs: *const fmpz,
-        Aexps: *const mp_limb_t,
-        Alen: mp_limb_signed_t,
-        var: mp_limb_signed_t,
+        Aexps: *const ulong,
+        Alen: slong,
+        var: slong,
         alphas: *const fmpz,
-        offsets: *const mp_limb_signed_t,
-        shifts: *const mp_limb_signed_t,
-        N: mp_limb_signed_t,
-        mask: mp_limb_t,
-        nvars: mp_limb_signed_t,
+        offsets: *const slong,
+        shifts: *const slong,
+        N: slong,
+        mask: ulong,
+        nvars: slong,
     ) -> libc::c_int;
     pub fn _fmpz_mpoly_eval_rest_to_poly(
         E: *mut fmpz_poly_struct,
@@ -760,10 +755,10 @@ extern "C" {
     );
     pub fn fmpz_mpoly_factor_lcc_kaltofen_step(
         divs: *mut fmpz_mpoly_struct,
-        r: mp_limb_signed_t,
+        r: slong,
         Af: *mut fmpz_mpoly_factor_struct,
         Au: *const fmpz_poly_struct,
-        v: mp_limb_signed_t,
+        v: slong,
         alphas: *const fmpz,
         ctx: *const fmpz_mpoly_ctx_struct,
     ) -> libc::c_int;
@@ -771,9 +766,9 @@ extern "C" {
         divs: *mut fmpz_mpoly_struct,
         lcAf_: *const fmpz_mpoly_factor_struct,
         A: *const fmpz_mpoly_struct,
-        r: mp_limb_signed_t,
+        r: slong,
         alpha: *const fmpz,
-        degs: *mut mp_limb_signed_t,
+        degs: *mut slong,
         uf: *const fmpz_poly_factor_struct,
         ctx: *const fmpz_mpoly_ctx_struct,
     ) -> libc::c_int;
@@ -781,19 +776,19 @@ extern "C" {
         e: *mut fmpz_poly_struct,
         A: *const fmpz_mpoly_struct,
         alphas: *const fmpz,
-        v: mp_limb_signed_t,
+        v: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpz_mpoly_compression_do(
         L: *mut fmpz_mpoly_struct,
         Lctx: *const fmpz_mpoly_ctx_struct,
         Acoeffs: *mut fmpz,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         M: *mut mpoly_compression_struct,
     );
     pub fn fmpz_mpoly_compression_undo(
         A: *mut fmpz_mpoly_struct,
-        Abits: mp_limb_t,
+        Abits: flint_bitcnt_t,
         Actx: *const fmpz_mpoly_ctx_struct,
         L: *mut fmpz_mpoly_struct,
         Lctx: *const fmpz_mpoly_ctx_struct,

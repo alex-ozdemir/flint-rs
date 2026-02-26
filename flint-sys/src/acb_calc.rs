@@ -11,16 +11,15 @@ pub type acb_calc_func_t = ::std::option::Option<
         out: acb_ptr,
         inp: *const acb_struct,
         param: *mut libc::c_void,
-        order: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        order: slong,
+        prec: slong,
     ) -> libc::c_int,
 >;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct acb_calc_integrate_opt_struct {
-    pub deg_limit: mp_limb_signed_t,
-    pub eval_limit: mp_limb_signed_t,
-    pub depth_limit: mp_limb_signed_t,
+    pub deg_limit: slong,
+    pub eval_limit: slong,
+    pub depth_limit: slong,
     pub use_heap: libc::c_int,
     pub verbose: libc::c_int,
 }
@@ -58,8 +57,8 @@ extern "C" {
         param: *mut libc::c_void,
         x: *const acb_struct,
         radius: *const arb_struct,
-        maxdepth: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        maxdepth: slong,
+        prec: slong,
     );
     pub fn acb_calc_integrate_taylor(
         res: *mut acb_struct,
@@ -69,8 +68,8 @@ extern "C" {
         b: *const acb_struct,
         inner_radius: *const arf_struct,
         outer_radius: *const arf_struct,
-        accuracy_goal: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        accuracy_goal: slong,
+        prec: slong,
     ) -> libc::c_int;
     pub fn acb_calc_integrate_opt_init(options: *mut acb_calc_integrate_opt_struct);
     pub fn acb_calc_integrate(
@@ -79,21 +78,21 @@ extern "C" {
         param: *mut libc::c_void,
         a: *const acb_struct,
         b: *const acb_struct,
-        goal: mp_limb_signed_t,
+        goal: slong,
         tol: *const mag_struct,
         options: *const acb_calc_integrate_opt_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     ) -> libc::c_int;
     pub fn acb_calc_integrate_gl_auto_deg(
         res: *mut acb_struct,
-        eval_count: *mut mp_limb_signed_t,
+        eval_count: *mut slong,
         f: acb_calc_func_t,
         param: *mut libc::c_void,
         a: *const acb_struct,
         b: *const acb_struct,
         tol: *const mag_struct,
-        deg_limit: mp_limb_signed_t,
+        deg_limit: slong,
         verbose: libc::c_int,
-        prec: mp_limb_signed_t,
+        prec: slong,
     ) -> libc::c_int;
 }

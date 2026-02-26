@@ -62,7 +62,7 @@ mod tests {
             let mut res = res.assume_init();
             nf_elem::nf_elem_norm(&mut res, &x, &nf);
 
-            assert!(fmpq::fmpq_equal_ui(&res, 25) != 0);
+            assert!(fmpq::fmpq_equal_ui(&mut res, 25) != 0);
             println!("Success!");
 
             fmpz::fmpz_clear(&mut a);

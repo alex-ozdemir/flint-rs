@@ -6,32 +6,19 @@ use crate::flint::*;
 
 extern "C" {
     #[link_name = "_perm_init__extern"]
-    pub fn _perm_init(n: mp_limb_signed_t) -> *mut mp_limb_signed_t;
+    pub fn _perm_init(n: slong) -> *mut slong;
     #[link_name = "_perm_clear__extern"]
-    pub fn _perm_clear(vec: *mut mp_limb_signed_t);
+    pub fn _perm_clear(vec: *mut slong);
     #[link_name = "_perm_equal__extern"]
-    pub fn _perm_equal(
-        vec1: *const mp_limb_signed_t,
-        vec2: *const mp_limb_signed_t,
-        n: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
+    pub fn _perm_equal(vec1: *const slong, vec2: *const slong, n: slong) -> slong;
     #[link_name = "_perm_set__extern"]
-    pub fn _perm_set(res: *mut mp_limb_signed_t, vec: *const mp_limb_signed_t, n: mp_limb_signed_t);
+    pub fn _perm_set(res: *mut slong, vec: *const slong, n: slong);
     #[link_name = "_perm_one__extern"]
-    pub fn _perm_one(vec: *mut mp_limb_signed_t, n: mp_limb_signed_t);
+    pub fn _perm_one(vec: *mut slong, n: slong);
     #[link_name = "_perm_inv__extern"]
-    pub fn _perm_inv(res: *mut mp_limb_signed_t, vec: *const mp_limb_signed_t, n: mp_limb_signed_t);
+    pub fn _perm_inv(res: *mut slong, vec: *const slong, n: slong);
     #[link_name = "_perm_compose__extern"]
-    pub fn _perm_compose(
-        res: *mut mp_limb_signed_t,
-        vec1: *const mp_limb_signed_t,
-        vec2: *const mp_limb_signed_t,
-        n: mp_limb_signed_t,
-    );
-    pub fn _perm_randtest(
-        vec: *mut mp_limb_signed_t,
-        n: mp_limb_signed_t,
-        state: *mut flint_rand_s,
-    ) -> libc::c_int;
-    pub fn _perm_parity(vec: *const mp_limb_signed_t, n: mp_limb_signed_t) -> libc::c_int;
+    pub fn _perm_compose(res: *mut slong, vec1: *const slong, vec2: *const slong, n: slong);
+    pub fn _perm_randtest(vec: *mut slong, n: slong, state: *mut flint_rand_struct) -> libc::c_int;
+    pub fn _perm_parity(vec: *const slong, n: slong) -> libc::c_int;
 }

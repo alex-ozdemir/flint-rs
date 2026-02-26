@@ -2,29 +2,70 @@
 
 use libc::*;
 use crate::deps::*;
-use crate::bindgen::*;
 use crate::flint::*;
 use crate::fmpz_mod_types::*;
 use crate::fmpz_types::*;
 use crate::fq_nmod_types::*;
 use crate::fq_types::*;
 use crate::fq_zech_types::*;
-use crate::gr::*;
+use crate::gr_types::*;
 use crate::nmod_types::*;
 
 
+#[repr(C)]
+pub struct __BindgenUnionField<T>(::std::marker::PhantomData<T>);
+impl<T> __BindgenUnionField<T> {
+    #[inline]
+    pub const fn new() -> Self {
+        __BindgenUnionField(::std::marker::PhantomData)
+    }
+    #[inline]
+    pub unsafe fn as_ref(&self) -> &T {
+        ::std::mem::transmute(self)
+    }
+    #[inline]
+    pub unsafe fn as_mut(&mut self) -> &mut T {
+        ::std::mem::transmute(self)
+    }
+}
+impl<T> ::std::default::Default for __BindgenUnionField<T> {
+    #[inline]
+    fn default() -> Self {
+        Self::new()
+    }
+}
+impl<T> ::std::clone::Clone for __BindgenUnionField<T> {
+    #[inline]
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+impl<T> ::std::marker::Copy for __BindgenUnionField<T> {}
+impl<T> ::std::fmt::Debug for __BindgenUnionField<T> {
+    fn fmt(&self, fmt: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        fmt.write_str("__BindgenUnionField")
+    }
+}
+impl<T> ::std::hash::Hash for __BindgenUnionField<T> {
+    fn hash<H: ::std::hash::Hasher>(&self, _state: &mut H) {}
+}
+impl<T> ::std::cmp::PartialEq for __BindgenUnionField<T> {
+    fn eq(&self, _other: &__BindgenUnionField<T>) -> bool {
+        true
+    }
+}
+impl<T> ::std::cmp::Eq for __BindgenUnionField<T> {}
 pub const FQ_DEFAULT_FQ_ZECH: u32 = 1;
 pub const FQ_DEFAULT_FQ_NMOD: u32 = 2;
 pub const FQ_DEFAULT_FQ: u32 = 3;
 pub const FQ_DEFAULT_NMOD: u32 = 4;
 pub const FQ_DEFAULT_FMPZ_MOD: u32 = 5;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fq_default_struct {
     pub fq: __BindgenUnionField<fq_t>,
     pub fq_nmod: __BindgenUnionField<fq_nmod_t>,
     pub fq_zech: __BindgenUnionField<fq_zech_t>,
-    pub nmod: __BindgenUnionField<mp_limb_t>,
+    pub nmod: __BindgenUnionField<ulong>,
     pub fmpz_mod: __BindgenUnionField<fmpz_t>,
     pub bindgen_union_field: [u64; 6usize],
 }
@@ -56,7 +97,6 @@ pub type fq_default_t = [fq_default_struct; 1usize];
 pub type fq_default_ctx_struct = gr_ctx_struct;
 pub type fq_default_ctx_t = [fq_default_ctx_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct _gr_fmpz_mod_ctx_struct {
     pub ctx: *mut fmpz_mod_ctx_struct,
     pub is_prime: truth_t,
@@ -84,10 +124,9 @@ impl Default for _gr_fmpz_mod_ctx_struct {
     }
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct _gr_nmod_ctx_struct {
     pub nmod: nmod_t,
-    pub a: mp_limb_t,
+    pub a: ulong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -111,7 +150,7 @@ extern "C" {
     pub fn fq_default_ctx_init_type(
         ctx: *mut fq_default_ctx_struct,
         p: *const fmpz,
-        d: mp_limb_signed_t,
+        d: slong,
         var: *const libc::c_char,
         type_: libc::c_int,
     );
@@ -119,7 +158,7 @@ extern "C" {
     pub fn fq_default_ctx_init(
         ctx: *mut fq_default_ctx_struct,
         p: *const fmpz,
-        d: mp_limb_signed_t,
+        d: slong,
         var: *const libc::c_char,
     );
     #[link_name = "fq_default_ctx_inner__extern"]
@@ -153,7 +192,7 @@ extern "C" {
     #[link_name = "fq_default_ctx_type__extern"]
     pub fn fq_default_ctx_type(ctx: *const fq_default_ctx_struct) -> libc::c_int;
     #[link_name = "fq_default_ctx_degree__extern"]
-    pub fn fq_default_ctx_degree(ctx: *const fq_default_ctx_struct) -> mp_limb_signed_t;
+    pub fn fq_default_ctx_degree(ctx: *const fq_default_ctx_struct) -> slong;
     #[link_name = "fq_default_ctx_prime__extern"]
     pub fn fq_default_ctx_prime(prime: *mut fmpz, ctx: *const fq_default_ctx_struct);
     pub fn fq_default_ctx_modulus(p: *mut fmpz_mod_poly_struct, ctx: *const fq_default_ctx_struct);
@@ -162,6 +201,10 @@ extern "C" {
     pub fn fq_default_ctx_fprint(file: *mut FILE, ctx: *const fq_default_ctx_struct)
         -> libc::c_int;
     pub fn fq_default_ctx_print(ctx: *const fq_default_ctx_struct);
+    pub fn fq_default_ctx_init_randtest(
+        ctx: *mut fq_default_ctx_struct,
+        state: *mut flint_rand_struct,
+    );
     #[link_name = "fq_default_init__extern"]
     pub fn fq_default_init(rop: *mut fq_default_struct, ctx: *const fq_default_ctx_struct);
     #[link_name = "fq_default_init2__extern"]
@@ -212,14 +255,14 @@ extern "C" {
     pub fn fq_default_mul_si(
         rop: *mut fq_default_struct,
         op: *const fq_default_struct,
-        x: mp_limb_signed_t,
+        x: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_mul_ui__extern"]
     pub fn fq_default_mul_ui(
         rop: *mut fq_default_struct,
         op: *const fq_default_struct,
-        x: mp_limb_t,
+        x: ulong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_sqr__extern"]
@@ -242,8 +285,8 @@ extern "C" {
     #[link_name = "fq_default_div__extern"]
     pub fn fq_default_div(
         rop: *mut fq_default_struct,
-        op1: *const fq_default_struct,
-        op2: *const fq_default_struct,
+        op1: *mut fq_default_struct,
+        op2: *mut fq_default_struct,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_pow__extern"]
@@ -257,7 +300,7 @@ extern "C" {
     pub fn fq_default_pow_ui(
         rop: *mut fq_default_struct,
         op: *const fq_default_struct,
-        e: mp_limb_t,
+        e: ulong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_is_square__extern"]
@@ -280,25 +323,25 @@ extern "C" {
     #[link_name = "fq_default_randtest__extern"]
     pub fn fq_default_randtest(
         rop: *mut fq_default_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_randtest_not_zero__extern"]
     pub fn fq_default_randtest_not_zero(
         rop: *mut fq_default_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_rand__extern"]
     pub fn fq_default_rand(
         rop: *mut fq_default_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_rand_not_zero__extern"]
     pub fn fq_default_rand_not_zero(
         rop: *mut fq_default_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_equal__extern"]
@@ -332,13 +375,13 @@ extern "C" {
     #[link_name = "fq_default_set_ui__extern"]
     pub fn fq_default_set_ui(
         rop: *mut fq_default_struct,
-        x: mp_limb_t,
+        x: ulong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_set_si__extern"]
     pub fn fq_default_set_si(
         rop: *mut fq_default_struct,
-        x: mp_limb_signed_t,
+        x: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_zero__extern"]
@@ -394,8 +437,8 @@ extern "C" {
     #[link_name = "fq_default_get_coeff_fmpz__extern"]
     pub fn fq_default_get_coeff_fmpz(
         c: *mut fmpz,
-        op: *const fq_default_struct,
-        n: mp_limb_signed_t,
+        op: *mut fq_default_struct,
+        n: slong,
         ctx: *const fq_default_ctx_struct,
     );
     pub fn fq_default_fprint(
@@ -430,7 +473,7 @@ extern "C" {
     pub fn fq_default_frobenius(
         rop: *mut fq_default_struct,
         op: *const fq_default_struct,
-        e: mp_limb_signed_t,
+        e: slong,
         ctx: *const fq_default_ctx_struct,
     );
     #[link_name = "fq_default_norm__extern"]

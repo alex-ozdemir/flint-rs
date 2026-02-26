@@ -5,23 +5,11 @@ use crate::deps::*;
 
 extern "C" {
     #[link_name = "flint_mpz_add_uiui__extern"]
-    pub fn flint_mpz_add_uiui(a: mpz_ptr, b: mpz_srcptr, c1: mp_limb_t, c0: mp_limb_t);
+    pub fn flint_mpz_add_uiui(a: mpz_ptr, b: mpz_srcptr, c1: ulong, c0: ulong);
     #[link_name = "flint_mpz_add_signed_uiui__extern"]
-    pub fn flint_mpz_add_signed_uiui(a: mpz_ptr, b: mpz_srcptr, c1: mp_limb_t, c0: mp_limb_t);
+    pub fn flint_mpz_add_signed_uiui(a: mpz_ptr, b: mpz_srcptr, c1: ulong, c0: ulong);
     #[link_name = "flint_mpz_add_uiuiui__extern"]
-    pub fn flint_mpz_add_uiuiui(
-        a: mpz_ptr,
-        b: mpz_srcptr,
-        c2: mp_limb_t,
-        c1: mp_limb_t,
-        c0: mp_limb_t,
-    );
+    pub fn flint_mpz_add_uiuiui(a: mpz_ptr, b: mpz_srcptr, c2: ulong, c1: ulong, c0: ulong);
     #[link_name = "flint_mpz_add_signed_uiuiui__extern"]
-    pub fn flint_mpz_add_signed_uiuiui(
-        a: mpz_ptr,
-        b: mpz_srcptr,
-        c2: mp_limb_t,
-        c1: mp_limb_t,
-        c0: mp_limb_t,
-    );
+    pub fn flint_mpz_add_signed_uiuiui(a: mpz_ptr, b: mpz_srcptr, c2: ulong, c1: ulong, c0: ulong);
 }

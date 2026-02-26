@@ -6,10 +6,9 @@ use crate::flint::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct mag_struct {
     pub exp: fmpz,
-    pub man: mp_limb_t,
+    pub man: ulong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -31,7 +30,6 @@ pub type mag_t = [mag_struct; 1usize];
 pub type mag_ptr = *mut mag_struct;
 pub type mag_srcptr = *const mag_struct;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct arb_struct {
     pub mid: arf_struct,
     pub rad: mag_struct,
@@ -56,12 +54,11 @@ pub type arb_t = [arb_struct; 1usize];
 pub type arb_ptr = *mut arb_struct;
 pub type arb_srcptr = *const arb_struct;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct arb_mat_struct {
     pub entries: arb_ptr,
-    pub r: mp_limb_signed_t,
-    pub c: mp_limb_signed_t,
-    pub rows: *mut arb_ptr,
+    pub r: slong,
+    pub c: slong,
+    pub stride: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -71,8 +68,8 @@ const _: () = {
         [::std::mem::offset_of!(arb_mat_struct, entries) - 0usize];
     ["Offset of field: arb_mat_struct::r"][::std::mem::offset_of!(arb_mat_struct, r) - 8usize];
     ["Offset of field: arb_mat_struct::c"][::std::mem::offset_of!(arb_mat_struct, c) - 16usize];
-    ["Offset of field: arb_mat_struct::rows"]
-        [::std::mem::offset_of!(arb_mat_struct, rows) - 24usize];
+    ["Offset of field: arb_mat_struct::stride"]
+        [::std::mem::offset_of!(arb_mat_struct, stride) - 24usize];
 };
 impl Default for arb_mat_struct {
     fn default() -> Self {
@@ -85,11 +82,10 @@ impl Default for arb_mat_struct {
 }
 pub type arb_mat_t = [arb_mat_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct arb_poly_struct {
     pub coeffs: arb_ptr,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
+    pub alloc: slong,
+    pub length: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {

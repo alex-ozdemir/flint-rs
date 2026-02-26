@@ -9,40 +9,40 @@ extern "C" {
     pub fn _fmpz_mod_vec_set_fmpz_vec(
         A: *mut fmpz,
         B: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_vec_neg(
         A: *mut fmpz,
         B: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_vec_add(
         a: *mut fmpz,
         b: *const fmpz,
         c: *const fmpz,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_vec_sub(
         a: *mut fmpz,
         b: *const fmpz,
         c: *const fmpz,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_vec_scalar_mul_fmpz_mod(
         A: *mut fmpz,
         B: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         c: *const fmpz,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_vec_scalar_addmul_fmpz_mod(
         A: *mut fmpz,
         B: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         c: *const fmpz,
         ctx: *const fmpz_mod_ctx_struct,
     );
@@ -50,13 +50,13 @@ extern "C" {
         A: *mut fmpz,
         B: *const fmpz,
         C: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_vec_scalar_div_fmpz_mod(
         A: *mut fmpz,
         B: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         c: *const fmpz,
         ctx: *const fmpz_mod_ctx_struct,
     );
@@ -64,14 +64,14 @@ extern "C" {
         d: *mut fmpz,
         A: *const fmpz,
         B: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn _fmpz_mod_vec_dot_rev(
         r: *mut fmpz,
         a: *const fmpz,
         b: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
 }

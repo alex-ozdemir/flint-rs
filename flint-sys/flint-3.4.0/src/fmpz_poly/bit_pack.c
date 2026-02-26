@@ -1,0 +1,85 @@
+/*
+    Copyright (C) 2010 William Hart
+
+    This file is part of FLINT.
+
+    FLINT is free software: you can redistribute it and/or modify it under
+    the terms of the GNU Lesser General Public License (LGPL) as published
+    by the Free Software Foundation; either version 3 of the License, or
+    (at your option) any later version.  See <https://www.gnu.org/licenses/>.
+*/
+
+#include "mpn_extras.h"
+#include "fmpz.h"
+#include "fmpz_poly.h"
+
+void
+_fmpz_poly_bit_pack(nn_ptr arr, const fmpz * poly, slong len,
+                    flint_bitcnt_t bit_size, int negate)
+{
+    flint_bitcnt_t bits = 0;
+    slong limbs = 0;
+    flint_bitcnt_t b = bit_size % FLINT_BITS;
+    slong l = bit_size / FLINT_BITS;
+    int borrow = 0;
+    slong i;
+
+    for (i = 0; i < len; i++)
+    {
+        borrow =
+            fmpz_bit_pack(arr + limbs, bits, bit_size, poly + i, negate,
+                          borrow);
+        limbs += l;
+        bits += b;
+        if (bits >= FLINT_BITS)
+        {
+            bits -= FLINT_BITS;
+            limbs++;
+        }
+    }
+}
+
+void
+fmpz_poly_bit_pack(fmpz_t f, const fmpz_poly_t poly,
+                   flint_bitcnt_t bit_size)
+{
+    slong len;
+    mpz_ptr mpz;
+    slong i, d;
+    int negate;
+    mp_ptr ptr;
+
+    len = fmpz_poly_length(poly);
+
+    if (len == 0 || bit_size == 0)
+    {
+        fmpz_zero(f);
+        return;
+    }
+
+    mpz = _fmpz_promote(f);
+    d = (len * bit_size - 1) / FLINT_BITS + 1;
+    ptr = FLINT_MPZ_REALLOC(mpz, d);
+
+    flint_mpn_zero(ptr, d);
+
+    if (fmpz_sgn(fmpz_poly_lead(poly)) < 0)
+        negate = -1;
+    else
+        negate = 0;
+
+    _fmpz_poly_bit_pack(ptr, poly->coeffs, len, bit_size, negate);
+
+    for (i = d - 1; i >= 0; i--)
+    {
+        if (ptr[i] != 0)
+            break;
+    }
+    d = i + 1;
+
+    mpz->_mp_size = d;
+    _fmpz_demote_val(f);
+
+    if (negate)
+        fmpz_neg(f, f);
+}

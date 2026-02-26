@@ -9,9 +9,8 @@ use crate::limb_types::*;
 
 pub const SQUARING_SPACE: u32 = 70;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct _aprcl_config {
-    pub R: mp_limb_t,
+    pub R: ulong,
     pub s: fmpz_t,
     pub rs: n_factor_t,
     pub qs: fmpz_factor_t,
@@ -39,11 +38,10 @@ impl Default for _aprcl_config {
 }
 pub type aprcl_config = [_aprcl_config; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct _unity_zpq {
     pub polys: *mut fmpz_mod_poly_t,
-    pub p: mp_limb_t,
-    pub q: mp_limb_t,
+    pub p: ulong,
+    pub q: ulong,
     pub ctx: fmpz_mod_ctx_t,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -66,11 +64,10 @@ impl Default for _unity_zpq {
 }
 pub type unity_zpq = [_unity_zpq; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct _unity_zp {
     pub poly: fmpz_mod_poly_t,
-    pub p: mp_limb_t,
-    pub exp: mp_limb_t,
+    pub p: ulong,
+    pub exp: ulong,
     pub ctx: fmpz_mod_ctx_t,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -98,78 +95,62 @@ pub const primality_test_status_COMPOSITE: primality_test_status = 2;
 pub const primality_test_status_PROBABPRIME: primality_test_status = 3;
 pub type primality_test_status = libc::c_uint;
 extern "C" {
-    pub fn _aprcl_p_ind(conf: *const _aprcl_config, p: mp_limb_t) -> libc::c_int;
-    pub fn aprcl_p_power_in_q(q: mp_limb_t, p: mp_limb_t) -> mp_limb_t;
-    pub fn aprcl_is_mul_coprime_ui_ui(x: mp_limb_t, y: mp_limb_t, n: *const fmpz) -> libc::c_int;
-    pub fn aprcl_is_mul_coprime_ui_fmpz(
-        x: mp_limb_t,
-        y: *const fmpz,
-        n: *const fmpz,
-    ) -> libc::c_int;
+    pub fn _aprcl_p_ind(conf: *const _aprcl_config, p: ulong) -> libc::c_int;
+    pub fn aprcl_p_power_in_q(q: ulong, p: ulong) -> ulong;
+    pub fn aprcl_is_mul_coprime_ui_ui(x: ulong, y: ulong, n: *const fmpz) -> libc::c_int;
+    pub fn aprcl_is_mul_coprime_ui_fmpz(x: ulong, y: *const fmpz, n: *const fmpz) -> libc::c_int;
     pub fn aprcl_is_prime(n: *const fmpz) -> libc::c_int;
     pub fn aprcl_config_gauss_init(conf: *mut _aprcl_config, n: *const fmpz);
-    pub fn aprcl_config_gauss_init_min_R(conf: *mut _aprcl_config, n: *const fmpz, R: mp_limb_t);
+    pub fn aprcl_config_gauss_init_min_R(conf: *mut _aprcl_config, n: *const fmpz, R: ulong);
     pub fn aprcl_config_gauss_clear(conf: *mut _aprcl_config);
-    pub fn aprcl_R_value(n: *const fmpz) -> mp_limb_t;
+    pub fn aprcl_R_value(n: *const fmpz) -> ulong;
     pub fn aprcl_config_jacobi_init(conf: *mut _aprcl_config, n: *const fmpz);
     pub fn aprcl_config_jacobi_clear(conf: *mut _aprcl_config);
     pub fn aprcl_is_prime_gauss(n: *const fmpz) -> libc::c_int;
-    pub fn aprcl_is_prime_gauss_min_R(n: *const fmpz, R: mp_limb_t) -> libc::c_int;
+    pub fn aprcl_is_prime_gauss_min_R(n: *const fmpz, R: ulong) -> libc::c_int;
     pub fn _aprcl_is_prime_gauss(
         n: *const fmpz,
         config: *const _aprcl_config,
     ) -> primality_test_status;
-    pub fn _aprcl_is_gausspower_2q_equal_first(q: mp_limb_t, n: *const fmpz) -> libc::c_int;
-    pub fn _aprcl_is_gausspower_2q_equal_second(q: mp_limb_t, n: *const fmpz) -> libc::c_int;
-    pub fn _aprcl_is_gausspower_from_unity_p(
-        q: mp_limb_t,
-        r: mp_limb_t,
-        n: *const fmpz,
-    ) -> mp_limb_signed_t;
+    pub fn _aprcl_is_gausspower_2q_equal_first(q: ulong, n: *const fmpz) -> libc::c_int;
+    pub fn _aprcl_is_gausspower_2q_equal_second(q: ulong, n: *const fmpz) -> libc::c_int;
+    pub fn _aprcl_is_gausspower_from_unity_p(q: ulong, r: ulong, n: *const fmpz) -> slong;
     pub fn aprcl_is_prime_jacobi(n: *const fmpz) -> libc::c_int;
     pub fn _aprcl_is_prime_jacobi(
         n: *const fmpz,
         config: *const _aprcl_config,
     ) -> primality_test_status;
-    pub fn _aprcl_is_prime_jacobi_check_pk(
-        j: *const _unity_zp,
-        u: *const fmpz,
-        v: mp_limb_t,
-    ) -> mp_limb_signed_t;
-    pub fn _aprcl_is_prime_jacobi_check_21(q: mp_limb_t, n: *const fmpz) -> mp_limb_signed_t;
+    pub fn _aprcl_is_prime_jacobi_check_pk(j: *const _unity_zp, u: *const fmpz, v: ulong) -> slong;
+    pub fn _aprcl_is_prime_jacobi_check_21(q: ulong, n: *const fmpz) -> slong;
     pub fn _aprcl_is_prime_jacobi_check_22(
         j: *const _unity_zp,
         u: *const fmpz,
-        v: mp_limb_t,
-        q: mp_limb_t,
-    ) -> mp_limb_signed_t;
+        v: ulong,
+        q: ulong,
+    ) -> slong;
     pub fn _aprcl_is_prime_jacobi_check_2k(
         j: *const _unity_zp,
         j2_1: *const _unity_zp,
         j2_2: *const _unity_zp,
         u: *const fmpz,
-        v: mp_limb_t,
-    ) -> mp_limb_signed_t;
-    pub fn _aprcl_is_prime_jacobi_additional_test(n: *const fmpz, p: mp_limb_t) -> libc::c_int;
-    pub fn aprcl_is_prime_final_division(
-        n: *const fmpz,
-        s: *const fmpz,
-        r: mp_limb_t,
-    ) -> libc::c_int;
-    pub fn unity_zp_init(f: *mut _unity_zp, p: mp_limb_t, exp: mp_limb_t, n: *const fmpz);
+        v: ulong,
+    ) -> slong;
+    pub fn _aprcl_is_prime_jacobi_additional_test(n: *const fmpz, p: ulong) -> libc::c_int;
+    pub fn aprcl_is_prime_final_division(n: *const fmpz, s: *const fmpz, r: ulong) -> libc::c_int;
+    pub fn unity_zp_init(f: *mut _unity_zp, p: ulong, exp: ulong, n: *const fmpz);
     pub fn unity_zp_clear(f: *mut _unity_zp);
     pub fn unity_zp_copy(f: *mut _unity_zp, g: *const _unity_zp);
     pub fn unity_zp_swap(f: *mut _unity_zp, g: *mut _unity_zp);
     pub fn unity_zp_set_zero(f: *mut _unity_zp);
-    pub fn unity_zp_is_unity(f: *mut _unity_zp) -> mp_limb_signed_t;
+    pub fn unity_zp_is_unity(f: *mut _unity_zp) -> slong;
     pub fn unity_zp_equal(f: *mut _unity_zp, g: *mut _unity_zp) -> libc::c_int;
-    pub fn unity_zp_coeff_set_fmpz(f: *mut _unity_zp, ind: mp_limb_t, x: *const fmpz);
-    pub fn unity_zp_coeff_set_ui(f: *mut _unity_zp, ind: mp_limb_t, x: mp_limb_t);
-    pub fn unity_zp_coeff_add_fmpz(f: *mut _unity_zp, ind: mp_limb_t, x: *const fmpz);
-    pub fn unity_zp_coeff_add_ui(f: *mut _unity_zp, ind: mp_limb_t, x: mp_limb_t);
-    pub fn unity_zp_coeff_inc(f: *mut _unity_zp, ind: mp_limb_t);
-    pub fn unity_zp_coeff_dec(f: *mut _unity_zp, ind: mp_limb_t);
-    pub fn unity_zp_mul_scalar_ui(f: *mut _unity_zp, g: *const _unity_zp, s: mp_limb_t);
+    pub fn unity_zp_coeff_set_fmpz(f: *mut _unity_zp, ind: ulong, x: *const fmpz);
+    pub fn unity_zp_coeff_set_ui(f: *mut _unity_zp, ind: ulong, x: ulong);
+    pub fn unity_zp_coeff_add_fmpz(f: *mut _unity_zp, ind: ulong, x: *const fmpz);
+    pub fn unity_zp_coeff_add_ui(f: *mut _unity_zp, ind: ulong, x: ulong);
+    pub fn unity_zp_coeff_inc(f: *mut _unity_zp, ind: ulong);
+    pub fn unity_zp_coeff_dec(f: *mut _unity_zp, ind: ulong);
+    pub fn unity_zp_mul_scalar_ui(f: *mut _unity_zp, g: *const _unity_zp, s: ulong);
     pub fn unity_zp_add(f: *mut _unity_zp, g: *const _unity_zp, h: *const _unity_zp);
     pub fn unity_zp_mul(f: *mut _unity_zp, g: *const _unity_zp, h: *const _unity_zp);
     pub fn unity_zp_sqr(f: *mut _unity_zp, g: *const _unity_zp);
@@ -241,70 +222,45 @@ extern "C" {
     pub fn unity_zp_sqr11(f: *mut _unity_zp, g: *const _unity_zp, t: *mut fmpz_t);
     pub fn unity_zp_sqr16(f: *mut _unity_zp, g: *const _unity_zp, t: *mut fmpz_t);
     pub fn unity_zp_pow_fmpz(f: *mut _unity_zp, g: *const _unity_zp, pow: *const fmpz);
-    pub fn unity_zp_pow_ui(f: *mut _unity_zp, g: *const _unity_zp, pow: mp_limb_t);
-    pub fn _unity_zp_pow_select_k(n: *const fmpz) -> mp_limb_t;
+    pub fn unity_zp_pow_ui(f: *mut _unity_zp, g: *const _unity_zp, pow: ulong);
+    pub fn _unity_zp_pow_select_k(n: *const fmpz) -> ulong;
     pub fn unity_zp_pow_2k_fmpz(f: *mut _unity_zp, g: *const _unity_zp, pow: *const fmpz);
-    pub fn unity_zp_pow_2k_ui(f: *mut _unity_zp, g: *const _unity_zp, pow: mp_limb_t);
+    pub fn unity_zp_pow_2k_ui(f: *mut _unity_zp, g: *const _unity_zp, pow: ulong);
     pub fn unity_zp_pow_sliding_fmpz(f: *mut _unity_zp, g: *mut _unity_zp, pow: *const fmpz);
     pub fn _unity_zp_reduce_cyclotomic_divmod(f: *mut _unity_zp);
     pub fn _unity_zp_reduce_cyclotomic(f: *mut _unity_zp);
     pub fn unity_zp_reduce_cyclotomic(f: *mut _unity_zp, g: *const _unity_zp);
-    pub fn unity_zp_aut(f: *mut _unity_zp, g: *const _unity_zp, x: mp_limb_t);
-    pub fn unity_zp_aut_inv(f: *mut _unity_zp, g: *const _unity_zp, x: mp_limb_t);
-    pub fn aprcl_f_table(q: mp_limb_t) -> mp_ptr;
+    pub fn unity_zp_aut(f: *mut _unity_zp, g: *const _unity_zp, x: ulong);
+    pub fn unity_zp_aut_inv(f: *mut _unity_zp, g: *const _unity_zp, x: ulong);
+    pub fn aprcl_f_table(q: ulong) -> nn_ptr;
     pub fn _unity_zp_jacobi_sum_pq_general(
         f: *mut _unity_zp,
-        table: mp_ptr,
-        p: mp_limb_t,
-        q: mp_limb_t,
-        k: mp_limb_t,
-        a: mp_limb_t,
-        b: mp_limb_t,
+        table: nn_ptr,
+        p: ulong,
+        q: ulong,
+        k: ulong,
+        a: ulong,
+        b: ulong,
     );
-    pub fn unity_zp_jacobi_sum_pq(f: *mut _unity_zp, q: mp_limb_t, p: mp_limb_t);
-    pub fn unity_zp_jacobi_sum_2q_one(f: *mut _unity_zp, q: mp_limb_t);
-    pub fn unity_zp_jacobi_sum_2q_two(f: *mut _unity_zp, q: mp_limb_t);
-    pub fn unity_zpq_init(f: *mut _unity_zpq, q: mp_limb_t, p: mp_limb_t, n: *const fmpz);
+    pub fn unity_zp_jacobi_sum_pq(f: *mut _unity_zp, q: ulong, p: ulong);
+    pub fn unity_zp_jacobi_sum_2q_one(f: *mut _unity_zp, q: ulong);
+    pub fn unity_zp_jacobi_sum_2q_two(f: *mut _unity_zp, q: ulong);
+    pub fn unity_zpq_init(f: *mut _unity_zpq, q: ulong, p: ulong, n: *const fmpz);
     pub fn unity_zpq_clear(f: *mut _unity_zpq);
     pub fn unity_zpq_copy(f: *mut _unity_zpq, g: *const _unity_zpq);
     pub fn unity_zpq_swap(f: *mut _unity_zpq, g: *mut _unity_zpq);
     pub fn unity_zpq_equal(f: *const _unity_zpq, g: *const _unity_zpq) -> libc::c_int;
-    pub fn unity_zpq_coeff_set_fmpz(
-        f: *mut _unity_zpq,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
-        x: *const fmpz,
-    );
-    pub fn unity_zpq_coeff_set_ui(
-        f: *mut _unity_zpq,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
-        x: mp_limb_t,
-    );
-    pub fn unity_zpq_coeff_add(
-        f: *mut _unity_zpq,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
-        x: *const fmpz,
-    );
-    pub fn unity_zpq_coeff_add_ui(
-        f: *mut _unity_zpq,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
-        x: mp_limb_t,
-    );
+    pub fn unity_zpq_coeff_set_fmpz(f: *mut _unity_zpq, i: slong, j: slong, x: *const fmpz);
+    pub fn unity_zpq_coeff_set_ui(f: *mut _unity_zpq, i: slong, j: slong, x: ulong);
+    pub fn unity_zpq_coeff_add(f: *mut _unity_zpq, i: slong, j: slong, x: *const fmpz);
+    pub fn unity_zpq_coeff_add_ui(f: *mut _unity_zpq, i: slong, j: slong, x: ulong);
     pub fn unity_zpq_add(f: *mut _unity_zpq, g: *const _unity_zpq, h: *const _unity_zpq);
     pub fn unity_zpq_mul(f: *mut _unity_zpq, g: *const _unity_zpq, h: *const _unity_zpq);
     pub fn _unity_zpq_mul_unity_p(f: *mut _unity_zpq);
-    pub fn unity_zpq_mul_unity_p_pow(f: *mut _unity_zpq, g: *const _unity_zpq, p: mp_limb_signed_t);
+    pub fn unity_zpq_mul_unity_p_pow(f: *mut _unity_zpq, g: *const _unity_zpq, p: slong);
     pub fn unity_zpq_pow(f: *mut _unity_zpq, g: *const _unity_zpq, p: *const fmpz);
-    pub fn unity_zpq_pow_ui(f: *mut _unity_zpq, g: *const _unity_zpq, pow: mp_limb_t);
-    pub fn unity_zpq_gauss_sum(f: *mut _unity_zpq, q: mp_limb_t, p: mp_limb_t);
-    pub fn unity_zpq_gauss_sum_character_pow(
-        f: *mut _unity_zpq,
-        q: mp_limb_t,
-        p: mp_limb_t,
-        pow: mp_limb_t,
-    );
-    pub fn unity_zpq_gauss_sum_sigma_pow(f: *mut _unity_zpq, q: mp_limb_t, p: mp_limb_t);
+    pub fn unity_zpq_pow_ui(f: *mut _unity_zpq, g: *const _unity_zpq, pow: ulong);
+    pub fn unity_zpq_gauss_sum(f: *mut _unity_zpq, q: ulong, p: ulong);
+    pub fn unity_zpq_gauss_sum_character_pow(f: *mut _unity_zpq, q: ulong, p: ulong, pow: ulong);
+    pub fn unity_zpq_gauss_sum_sigma_pow(f: *mut _unity_zpq, q: ulong, p: ulong);
 }

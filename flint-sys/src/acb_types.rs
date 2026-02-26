@@ -5,7 +5,6 @@ use crate::arb_types::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct acb_struct {
     pub real: arb_struct,
     pub imag: arb_struct,
@@ -30,12 +29,11 @@ pub type acb_t = [acb_struct; 1usize];
 pub type acb_ptr = *mut acb_struct;
 pub type acb_srcptr = *const acb_struct;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct acb_mat_struct {
     pub entries: acb_ptr,
-    pub r: mp_limb_signed_t,
-    pub c: mp_limb_signed_t,
-    pub rows: *mut acb_ptr,
+    pub r: slong,
+    pub c: slong,
+    pub stride: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -45,8 +43,8 @@ const _: () = {
         [::std::mem::offset_of!(acb_mat_struct, entries) - 0usize];
     ["Offset of field: acb_mat_struct::r"][::std::mem::offset_of!(acb_mat_struct, r) - 8usize];
     ["Offset of field: acb_mat_struct::c"][::std::mem::offset_of!(acb_mat_struct, c) - 16usize];
-    ["Offset of field: acb_mat_struct::rows"]
-        [::std::mem::offset_of!(acb_mat_struct, rows) - 24usize];
+    ["Offset of field: acb_mat_struct::stride"]
+        [::std::mem::offset_of!(acb_mat_struct, stride) - 24usize];
 };
 impl Default for acb_mat_struct {
     fn default() -> Self {
@@ -59,11 +57,10 @@ impl Default for acb_mat_struct {
 }
 pub type acb_mat_t = [acb_mat_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct acb_poly_struct {
     pub coeffs: acb_ptr,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
+    pub alloc: slong,
+    pub length: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {

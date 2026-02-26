@@ -7,7 +7,6 @@ use crate::fmpz_types::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_poly_interval_poly_arg_t {
     pub baby: *mut fmpz_mod_poly_struct,
     pub res: *mut fmpz_mod_poly_struct,
@@ -16,7 +15,7 @@ pub struct fmpz_mod_poly_interval_poly_arg_t {
     pub vinv: *mut fmpz_mod_poly_struct,
     pub ctx: *const fmpz_mod_ctx_struct,
     pub tmp: *mut fmpz,
-    pub m: mp_limb_signed_t,
+    pub m: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -53,7 +52,7 @@ impl Default for fmpz_mod_poly_interval_poly_arg_t {
 extern "C" {
     pub fn fmpz_mod_poly_factor_init(
         fac: *mut fmpz_mod_poly_factor_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_factor_clear(
         fac: *mut fmpz_mod_poly_factor_struct,
@@ -61,12 +60,12 @@ extern "C" {
     );
     pub fn fmpz_mod_poly_factor_realloc(
         fac: *mut fmpz_mod_poly_factor_struct,
-        alloc: mp_limb_signed_t,
+        alloc: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_factor_fit_length(
         fac: *mut fmpz_mod_poly_factor_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_factor_set(
@@ -78,18 +77,18 @@ extern "C" {
     pub fn fmpz_mod_poly_factor_swap(
         a: *mut fmpz_mod_poly_factor_struct,
         b: *mut fmpz_mod_poly_factor_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_factor_get_poly(
         a: *mut fmpz_mod_poly_struct,
         b: *const fmpz_mod_poly_factor_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_factor_insert(
         fac: *mut fmpz_mod_poly_factor_struct,
         poly: *const fmpz_mod_poly_struct,
-        exp: mp_limb_signed_t,
+        exp: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_factor_print(
@@ -108,8 +107,8 @@ extern "C" {
     );
     pub fn fmpz_mod_poly_factor_pow(
         fac: *mut fmpz_mod_poly_factor_struct,
-        exp: mp_limb_signed_t,
-        ctx: *const fmpz_mod_ctx_struct,
+        exp: slong,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_is_irreducible(
         f: *const fmpz_mod_poly_struct,
@@ -130,13 +129,13 @@ extern "C" {
     ) -> libc::c_int;
     pub fn _fmpz_mod_poly_is_squarefree(
         f: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *const fmpz_mod_ctx_struct,
     ) -> libc::c_int;
     pub fn _fmpz_mod_poly_is_squarefree_f(
         fac: *mut fmpz,
         f: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *const fmpz_mod_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpz_mod_poly_is_squarefree(
@@ -150,22 +149,22 @@ extern "C" {
     ) -> libc::c_int;
     pub fn fmpz_mod_poly_factor_equal_deg_prob(
         factor: *mut fmpz_mod_poly_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         pol: *const fmpz_mod_poly_struct,
-        d: mp_limb_signed_t,
+        d: slong,
         ctx: *const fmpz_mod_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpz_mod_poly_factor_equal_deg_with_frob(
         factors: *mut fmpz_mod_poly_factor_struct,
         f: *const fmpz_mod_poly_struct,
-        d: mp_limb_signed_t,
+        d: slong,
         frob: *const fmpz_mod_poly_struct,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_factor_equal_deg(
         factors: *mut fmpz_mod_poly_factor_struct,
         pol: *const fmpz_mod_poly_struct,
-        d: mp_limb_signed_t,
+        d: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_factor_distinct_deg_with_frob(
@@ -178,7 +177,7 @@ extern "C" {
     pub fn fmpz_mod_poly_factor_distinct_deg(
         res: *mut fmpz_mod_poly_factor_struct,
         poly: *const fmpz_mod_poly_struct,
-        degs: *const *mut mp_limb_signed_t,
+        degs: *const *mut slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_factor_distinct_deg_threaded_with_frob(
@@ -191,7 +190,7 @@ extern "C" {
     pub fn fmpz_mod_poly_factor_distinct_deg_threaded(
         res: *mut fmpz_mod_poly_factor_struct,
         poly: *const fmpz_mod_poly_struct,
-        degs: *const *mut mp_limb_signed_t,
+        degs: *const *mut slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_poly_factor_squarefree(
@@ -237,14 +236,14 @@ extern "C" {
         x0: *mut fmpz_mod_poly_factor_struct,
         f: *const fmpz_mod_poly_struct,
         with_mult: libc::c_int,
-        length_limit: mp_limb_signed_t,
+        length_limit: slong,
         fac: *const fmpz_factor_struct,
         ctx: *const fmpz_mod_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpz_mod_poly_factor_get_fmpz_mod_poly(
         z: *mut fmpz_mod_poly_struct,
         fac: *mut fmpz_mod_poly_factor_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
 }

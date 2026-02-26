@@ -4,12 +4,14 @@ use libc::*;
 use crate::deps::*;
 
 
+pub const FLINT_HAVE_VA_LIST: u32 = 1;
+pub const FLINT_HAVE_FILE: u32 = 1;
 pub const __FLINT_VERSION: u32 = 3;
-pub const __FLINT_VERSION_MINOR: u32 = 1;
+pub const __FLINT_VERSION_MINOR: u32 = 4;
 pub const __FLINT_VERSION_PATCHLEVEL: u32 = 0;
 #[allow(unsafe_code)]
 pub const FLINT_VERSION: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"3.1.0\0") };
+    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"3.4.0\0") };
 #[allow(unsafe_code)]
 pub const _WORD_FMT: &::std::ffi::CStr =
     unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"l\0") };
@@ -19,40 +21,39 @@ pub const WORD_FMT: &::std::ffi::CStr =
 #[allow(unsafe_code)]
 pub const WORD_WIDTH_FMT: &::std::ffi::CStr =
     unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"%*l\0") };
-pub const FLINT_BITS: u32 = 64;
 pub const FLINT_D_BITS: u32 = 53;
 pub const FLINT64: u32 = 1;
 pub const SMALL_FMPZ_BITCOUNT_MAX: u32 = 62;
+pub const MPZ_MIN_ALLOC: u32 = 2;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct __FLINT_FILE {
     _unused: [u8; 0],
 }
 pub type FLINT_FILE = __FLINT_FILE;
+pub type flint_bitcnt_t = ulong;
+pub type nn_ptr = *mut ulong;
+pub type nn_srcptr = *const ulong;
 pub type flint_cleanup_function_t = ::std::option::Option<unsafe extern "C" fn()>;
 pub type thread_pool_handle = libc::c_int;
 #[repr(C)]
-#[derive(Copy, Clone)]
-pub struct flint_rand_s {
-    pub gmp_state: gmp_randstate_t,
-    pub gmp_init: libc::c_int,
-    pub __randval: mp_limb_t,
-    pub __randval2: mp_limb_t,
+pub struct flint_rand_struct {
+    pub __gmp_state: *mut libc::c_void,
+    pub __randval: ulong,
+    pub __randval2: ulong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of flint_rand_s"][::std::mem::size_of::<flint_rand_s>() - 56usize];
-    ["Alignment of flint_rand_s"][::std::mem::align_of::<flint_rand_s>() - 8usize];
-    ["Offset of field: flint_rand_s::gmp_state"]
-        [::std::mem::offset_of!(flint_rand_s, gmp_state) - 0usize];
-    ["Offset of field: flint_rand_s::gmp_init"]
-        [::std::mem::offset_of!(flint_rand_s, gmp_init) - 32usize];
-    ["Offset of field: flint_rand_s::__randval"]
-        [::std::mem::offset_of!(flint_rand_s, __randval) - 40usize];
-    ["Offset of field: flint_rand_s::__randval2"]
-        [::std::mem::offset_of!(flint_rand_s, __randval2) - 48usize];
+    ["Size of flint_rand_struct"][::std::mem::size_of::<flint_rand_struct>() - 24usize];
+    ["Alignment of flint_rand_struct"][::std::mem::align_of::<flint_rand_struct>() - 8usize];
+    ["Offset of field: flint_rand_struct::__gmp_state"]
+        [::std::mem::offset_of!(flint_rand_struct, __gmp_state) - 0usize];
+    ["Offset of field: flint_rand_struct::__randval"]
+        [::std::mem::offset_of!(flint_rand_struct, __randval) - 8usize];
+    ["Offset of field: flint_rand_struct::__randval2"]
+        [::std::mem::offset_of!(flint_rand_struct, __randval2) - 16usize];
 };
-impl Default for flint_rand_s {
+impl Default for flint_rand_struct {
     fn default() -> Self {
         let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
         unsafe {
@@ -61,7 +62,7 @@ impl Default for flint_rand_s {
         }
     }
 }
-pub type flint_rand_t = [flint_rand_s; 1usize];
+pub type flint_rand_t = [flint_rand_struct; 1usize];
 pub const flint_err_t_FLINT_ERROR: flint_err_t = 0;
 pub const flint_err_t_FLINT_OVERFLOW: flint_err_t = 1;
 pub const flint_err_t_FLINT_IMPINV: flint_err_t = 2;
@@ -72,11 +73,10 @@ pub const flint_err_t_FLINT_INEXACT: flint_err_t = 6;
 pub const flint_err_t_FLINT_TEST_FAIL: flint_err_t = 7;
 pub type flint_err_t = libc::c_uint;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct nmod_t {
-    pub n: mp_limb_t,
-    pub ninv: mp_limb_t,
-    pub norm: mp_limb_t,
+    pub n: ulong,
+    pub ninv: ulong,
+    pub norm: flint_bitcnt_t,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -95,10 +95,9 @@ impl Default for nmod_t {
         }
     }
 }
-pub type fmpz = mp_limb_signed_t;
+pub type fmpz = slong;
 pub type fmpz_t = [fmpz; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpq {
     pub num: fmpz,
     pub den: fmpz,
@@ -192,35 +191,57 @@ extern "C" {
     pub fn _flint_set_num_workers(num_workers: libc::c_int);
     pub fn flint_set_num_workers(num_workers: libc::c_int) -> libc::c_int;
     pub fn flint_reset_num_workers(max_workers: libc::c_int);
-    pub fn flint_set_thread_affinity(
-        cpus: *mut libc::c_int,
-        length: mp_limb_signed_t,
-    ) -> libc::c_int;
+    pub fn flint_set_thread_affinity(cpus: *mut libc::c_int, length: slong) -> libc::c_int;
     pub fn flint_restore_thread_affinity() -> libc::c_int;
     pub fn flint_test_multiplier() -> f64;
-    #[link_name = "flint_randinit__extern"]
-    pub fn flint_randinit(state: *mut flint_rand_s);
-    #[link_name = "flint_randseed__extern"]
-    pub fn flint_randseed(state: *mut flint_rand_s, seed1: mp_limb_t, seed2: mp_limb_t);
-    #[link_name = "flint_get_randseed__extern"]
-    pub fn flint_get_randseed(
-        seed1: *mut mp_limb_t,
-        seed2: *mut mp_limb_t,
-        state: *mut flint_rand_s,
+    #[link_name = "flint_rand_init__extern"]
+    pub fn flint_rand_init(state: *mut flint_rand_struct);
+    #[link_name = "flint_rand_set_seed__extern"]
+    pub fn flint_rand_set_seed(state: *mut flint_rand_struct, seed1: ulong, seed2: ulong);
+    #[link_name = "flint_rand_get_seed__extern"]
+    pub fn flint_rand_get_seed(seed1: *mut ulong, seed2: *mut ulong, state: *mut flint_rand_struct);
+    pub fn _flint_rand_init_gmp_state(arg1: *mut flint_rand_struct);
+    pub fn _flint_rand_clear_gmp_state(arg1: *mut flint_rand_struct);
+    #[link_name = "flint_rand_clear__extern"]
+    pub fn flint_rand_clear(state: *mut flint_rand_struct);
+    pub fn flint_randinit(arg1: *mut flint_rand_struct);
+    pub fn flint_randclear(arg1: *mut flint_rand_struct);
+    pub fn flint_randseed(arg1: *mut flint_rand_struct, arg2: ulong, arg3: ulong);
+    pub fn flint_get_randseed(arg1: *mut ulong, arg2: *mut ulong, arg3: *mut flint_rand_struct);
+    pub fn _flint_rand_init_gmp(arg1: *mut flint_rand_struct);
+    pub fn flint_rand_alloc() -> *mut flint_rand_struct;
+    pub fn flint_rand_free(state: *mut flint_rand_struct);
+    pub fn n_randlimb(arg1: *mut flint_rand_struct) -> ulong;
+    pub fn n_randtest(arg1: *mut flint_rand_struct) -> ulong;
+    pub fn n_randtest_not_zero(arg1: *mut flint_rand_struct) -> ulong;
+    #[link_name = "n_randint__extern"]
+    pub fn n_randint(state: *mut flint_rand_struct, limit: ulong) -> ulong;
+    pub fn flint_merge_sort(
+        buf: *mut libc::c_void,
+        len: slong,
+        size: slong,
+        cmp: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: *const libc::c_void,
+                arg2: *const libc::c_void,
+                arg3: *mut libc::c_void,
+            ) -> libc::c_int,
+        >,
+        data: *mut libc::c_void,
     );
-    #[link_name = "_flint_rand_init_gmp__extern"]
-    pub fn _flint_rand_init_gmp(state: *mut flint_rand_s);
-    #[link_name = "flint_randclear__extern"]
-    pub fn flint_randclear(state: *mut flint_rand_s);
-    #[link_name = "flint_rand_alloc__extern"]
-    pub fn flint_rand_alloc() -> *mut flint_rand_s;
-    #[link_name = "flint_rand_free__extern"]
-    pub fn flint_rand_free(state: *mut flint_rand_s);
-    pub fn n_randint(arg1: *mut flint_rand_s, arg2: mp_limb_t) -> mp_limb_t;
-    pub fn n_randtest(arg1: *mut flint_rand_s) -> mp_limb_t;
-    pub fn n_randtest_not_zero(arg1: *mut flint_rand_s) -> mp_limb_t;
-    #[link_name = "FLINT_BIT_COUNT__extern"]
-    pub fn FLINT_BIT_COUNT(x: mp_limb_t) -> mp_limb_t;
+    pub fn flint_sort(
+        buf: *mut libc::c_void,
+        len: slong,
+        size: slong,
+        cmp: ::std::option::Option<
+            unsafe extern "C" fn(
+                arg1: *const libc::c_void,
+                arg2: *const libc::c_void,
+                arg3: *mut libc::c_void,
+            ) -> libc::c_int,
+        >,
+        data: *mut libc::c_void,
+    );
     pub fn parse_fmt(floating: *mut libc::c_int, fmt: *const libc::c_char) -> libc::c_int;
     pub fn flint_printf(str_: *const libc::c_char, ...) -> libc::c_int;
     pub fn flint_sprintf(s: *mut libc::c_char, str_: *const libc::c_char, ...) -> libc::c_int;
@@ -229,6 +250,4 @@ extern "C" {
     pub fn flint_fprintf(f: *mut FILE, str_: *const libc::c_char, ...) -> libc::c_int;
     pub fn flint_fscanf(f: *mut FILE, str_: *const libc::c_char, ...) -> libc::c_int;
     pub fn flint_throw(exc: flint_err_t, msg: *const libc::c_char, ...);
-    #[link_name = "flint_mul_sizes__extern"]
-    pub fn flint_mul_sizes(x: mp_limb_signed_t, y: mp_limb_signed_t) -> mp_limb_signed_t;
 }

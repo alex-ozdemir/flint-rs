@@ -32,7 +32,7 @@ extern "C" {
     );
     pub fn fmpz_mpoly_q_set_si(
         res: *mut fmpz_mpoly_q_struct,
-        x: mp_limb_signed_t,
+        x: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_q_canonicalise(
@@ -85,7 +85,7 @@ extern "C" {
     #[link_name = "fmpz_mpoly_q_gen__extern"]
     pub fn fmpz_mpoly_q_gen(
         res: *mut fmpz_mpoly_q_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_q_print_pretty(
@@ -106,10 +106,10 @@ extern "C" {
     ) -> libc::c_int;
     pub fn fmpz_mpoly_q_randtest(
         res: *mut fmpz_mpoly_q_struct,
-        state: *mut flint_rand_s,
-        length: mp_limb_signed_t,
-        coeff_bits: mp_limb_t,
-        exp_bound: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        length: slong,
+        coeff_bits: ulong,
+        exp_bound: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_q_equal(
@@ -266,37 +266,32 @@ extern "C" {
     pub fn fmpz_mpoly_q_add_si(
         res: *mut fmpz_mpoly_q_struct,
         x: *const fmpz_mpoly_q_struct,
-        c: mp_limb_signed_t,
+        c: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     #[link_name = "fmpz_mpoly_q_sub_si__extern"]
     pub fn fmpz_mpoly_q_sub_si(
         res: *mut fmpz_mpoly_q_struct,
         x: *const fmpz_mpoly_q_struct,
-        c: mp_limb_signed_t,
+        c: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     #[link_name = "fmpz_mpoly_q_mul_si__extern"]
     pub fn fmpz_mpoly_q_mul_si(
         res: *mut fmpz_mpoly_q_struct,
         x: *const fmpz_mpoly_q_struct,
-        c: mp_limb_signed_t,
+        c: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     #[link_name = "fmpz_mpoly_q_div_si__extern"]
     pub fn fmpz_mpoly_q_div_si(
         res: *mut fmpz_mpoly_q_struct,
         x: *const fmpz_mpoly_q_struct,
-        c: mp_limb_signed_t,
+        c: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     #[link_name = "_fmpz_vec_content2__extern"]
-    pub fn _fmpz_vec_content2(
-        res: *mut fmpz,
-        vec: *const fmpz,
-        len: mp_limb_signed_t,
-        inp: *const fmpz,
-    );
+    pub fn _fmpz_vec_content2(res: *mut fmpz, vec: *const fmpz, len: slong, inp: *const fmpz);
     #[link_name = "fmpz_mpoly_gcd_assert_successful__extern"]
     pub fn fmpz_mpoly_gcd_assert_successful(
         res: *mut fmpz_mpoly_struct,
@@ -329,7 +324,7 @@ extern "C" {
         res: *mut acb_struct,
         f: *const fmpz_mpoly_q_struct,
         x: acb_srcptr,
-        prec: mp_limb_signed_t,
+        prec: slong,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
 }

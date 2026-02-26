@@ -5,10 +5,9 @@ use crate::flint::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct nmod_discrete_log_pohlig_hellman_table_entry_struct {
-    pub gammapow: mp_limb_t,
-    pub cm: mp_limb_t,
+    pub gammapow: ulong,
+    pub cm: ulong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -33,18 +32,17 @@ impl Default for nmod_discrete_log_pohlig_hellman_table_entry_struct {
     }
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct nmod_discrete_log_pohlig_hellman_entry_struct {
-    pub exp: mp_limb_signed_t,
-    pub prime: mp_limb_t,
-    pub gamma: mp_limb_t,
-    pub gammainv: mp_limb_t,
-    pub startingbeta: mp_limb_t,
-    pub co: mp_limb_t,
-    pub startinge: mp_limb_t,
-    pub idem: mp_limb_t,
-    pub cbound: mp_limb_t,
-    pub dbound: mp_limb_t,
+    pub exp: slong,
+    pub prime: ulong,
+    pub gamma: ulong,
+    pub gammainv: ulong,
+    pub startingbeta: ulong,
+    pub co: ulong,
+    pub startinge: ulong,
+    pub idem: ulong,
+    pub cbound: ulong,
+    pub dbound: ulong,
     pub table: *mut nmod_discrete_log_pohlig_hellman_table_entry_struct,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -90,12 +88,11 @@ impl Default for nmod_discrete_log_pohlig_hellman_entry_struct {
     }
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct nmod_discrete_log_pohlig_hellman_struct {
     pub mod_: nmod_t,
-    pub alpha: mp_limb_t,
-    pub alphainv: mp_limb_t,
-    pub num_factors: mp_limb_signed_t,
+    pub alpha: ulong,
+    pub alphainv: ulong,
+    pub num_factors: slong,
     pub entries: *mut nmod_discrete_log_pohlig_hellman_entry_struct,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -127,49 +124,50 @@ impl Default for nmod_discrete_log_pohlig_hellman_struct {
 pub type nmod_discrete_log_pohlig_hellman_t = [nmod_discrete_log_pohlig_hellman_struct; 1usize];
 extern "C" {
     #[link_name = "nmod_set_ui__extern"]
-    pub fn nmod_set_ui(x: mp_limb_t, mod_: nmod_t) -> mp_limb_t;
+    pub fn nmod_set_ui(x: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_set_si__extern"]
-    pub fn nmod_set_si(x: mp_limb_signed_t, mod_: nmod_t) -> mp_limb_t;
+    pub fn nmod_set_si(x: slong, mod_: nmod_t) -> ulong;
     #[link_name = "_nmod_add__extern"]
-    pub fn _nmod_add(a: mp_limb_t, b: mp_limb_t, mod_: nmod_t) -> mp_limb_t;
+    pub fn _nmod_add(a: ulong, b: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "_nmod_sub__extern"]
-    pub fn _nmod_sub(a: mp_limb_t, b: mp_limb_t, mod_: nmod_t) -> mp_limb_t;
+    pub fn _nmod_sub(a: ulong, b: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_add__extern"]
-    pub fn nmod_add(a: mp_limb_t, b: mp_limb_t, mod_: nmod_t) -> mp_limb_t;
+    pub fn nmod_add(a: ulong, b: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_sub__extern"]
-    pub fn nmod_sub(a: mp_limb_t, b: mp_limb_t, mod_: nmod_t) -> mp_limb_t;
+    pub fn nmod_sub(a: ulong, b: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_neg__extern"]
-    pub fn nmod_neg(a: mp_limb_t, mod_: nmod_t) -> mp_limb_t;
+    pub fn nmod_neg(a: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_mul__extern"]
-    pub fn nmod_mul(a: mp_limb_t, b: mp_limb_t, mod_: nmod_t) -> mp_limb_t;
+    pub fn nmod_mul(a: ulong, b: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "_nmod_mul_fullword__extern"]
-    pub fn _nmod_mul_fullword(a: mp_limb_t, b: mp_limb_t, mod_: nmod_t) -> mp_limb_t;
+    pub fn _nmod_mul_fullword(a: ulong, b: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_addmul__extern"]
-    pub fn nmod_addmul(a: mp_limb_t, b: mp_limb_t, c: mp_limb_t, mod_: nmod_t) -> mp_limb_t;
+    pub fn nmod_addmul(a: ulong, b: ulong, c: ulong, mod_: nmod_t) -> ulong;
+    #[link_name = "nmod_fmma__extern"]
+    pub fn nmod_fmma(a: ulong, b: ulong, c: ulong, d: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_inv__extern"]
-    pub fn nmod_inv(a: mp_limb_t, mod_: nmod_t) -> mp_limb_t;
+    pub fn nmod_inv(a: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_div__extern"]
-    pub fn nmod_div(a: mp_limb_t, b: mp_limb_t, mod_: nmod_t) -> mp_limb_t;
-    pub fn nmod_divides(a: *mut mp_limb_t, b: mp_limb_t, c: mp_limb_t, mod_: nmod_t)
-        -> libc::c_int;
+    pub fn nmod_div(a: ulong, b: ulong, mod_: nmod_t) -> ulong;
+    pub fn nmod_divides(a: *mut ulong, b: ulong, c: ulong, mod_: nmod_t) -> libc::c_int;
     #[link_name = "nmod_pow_ui__extern"]
-    pub fn nmod_pow_ui(a: mp_limb_t, exp: mp_limb_t, mod_: nmod_t) -> mp_limb_t;
+    pub fn nmod_pow_ui(a: ulong, exp: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_pow_fmpz__extern"]
-    pub fn nmod_pow_fmpz(a: mp_limb_t, exp: *const fmpz, mod_: nmod_t) -> mp_limb_t;
+    pub fn nmod_pow_fmpz(a: ulong, exp: *const fmpz, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_init__extern"]
-    pub fn nmod_init(mod_: *mut nmod_t, n: mp_limb_t);
+    pub fn nmod_init(mod_: *mut nmod_t, n: ulong);
     pub fn nmod_discrete_log_pohlig_hellman_init(L: *mut nmod_discrete_log_pohlig_hellman_struct);
     pub fn nmod_discrete_log_pohlig_hellman_clear(L: *mut nmod_discrete_log_pohlig_hellman_struct);
     pub fn nmod_discrete_log_pohlig_hellman_precompute_prime(
         L: *mut nmod_discrete_log_pohlig_hellman_struct,
-        p: mp_limb_t,
+        p: ulong,
     ) -> f64;
     pub fn nmod_discrete_log_pohlig_hellman_run(
         L: *const nmod_discrete_log_pohlig_hellman_struct,
-        y: mp_limb_t,
-    ) -> mp_limb_t;
+        y: ulong,
+    ) -> ulong;
     #[link_name = "nmod_discrete_log_pohlig_hellman_primitive_root__extern"]
     pub fn nmod_discrete_log_pohlig_hellman_primitive_root(
         L: *const nmod_discrete_log_pohlig_hellman_struct,
-    ) -> mp_limb_t;
+    ) -> ulong;
 }

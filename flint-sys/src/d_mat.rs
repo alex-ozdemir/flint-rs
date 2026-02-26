@@ -5,11 +5,10 @@ use crate::flint::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct d_mat_struct {
     pub entries: *mut f64,
-    pub r: mp_limb_signed_t,
-    pub c: mp_limb_signed_t,
+    pub r: slong,
+    pub c: slong,
     pub rows: *mut *mut f64,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -34,10 +33,10 @@ impl Default for d_mat_struct {
 pub type d_mat_t = [d_mat_struct; 1usize];
 extern "C" {
     #[link_name = "d_mat_nrows__extern"]
-    pub fn d_mat_nrows(mat: *const d_mat_struct) -> mp_limb_signed_t;
+    pub fn d_mat_nrows(mat: *const d_mat_struct) -> slong;
     #[link_name = "d_mat_ncols__extern"]
-    pub fn d_mat_ncols(mat: *const d_mat_struct) -> mp_limb_signed_t;
-    pub fn d_mat_init(mat: *mut d_mat_struct, rows: mp_limb_signed_t, cols: mp_limb_signed_t);
+    pub fn d_mat_ncols(mat: *const d_mat_struct) -> slong;
+    pub fn d_mat_init(mat: *mut d_mat_struct, rows: slong, cols: slong);
     #[link_name = "d_mat_swap_entrywise__extern"]
     pub fn d_mat_swap_entrywise(mat1: *mut d_mat_struct, mat2: *mut d_mat_struct);
     pub fn d_mat_set(mat1: *mut d_mat_struct, mat2: *const d_mat_struct);
@@ -54,9 +53,9 @@ extern "C" {
     pub fn d_mat_print(mat: *const d_mat_struct);
     pub fn d_mat_randtest(
         mat: *mut d_mat_struct,
-        state: *mut flint_rand_s,
-        minexp: mp_limb_signed_t,
-        maxexp: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        minexp: slong,
+        maxexp: slong,
     );
     pub fn d_mat_transpose(B: *mut d_mat_struct, A: *const d_mat_struct);
     pub fn d_mat_mul_classical(

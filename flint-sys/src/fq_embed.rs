@@ -10,7 +10,7 @@ extern "C" {
     pub fn fq_modulus_pow_series_inv(
         res: *mut fmpz_mod_poly_struct,
         ctx: *const fq_ctx_struct,
-        trunc: mp_limb_signed_t,
+        trunc: slong,
     );
     pub fn fq_modulus_derivative_inv(
         m_prime: *mut fmpz_poly_struct,

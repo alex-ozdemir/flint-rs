@@ -7,11 +7,10 @@ use crate::fmpz_types::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct bool_mat_struct {
     pub entries: *mut libc::c_int,
-    pub r: mp_limb_signed_t,
-    pub c: mp_limb_signed_t,
+    pub r: slong,
+    pub c: slong,
     pub rows: *mut *mut libc::c_int,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -37,26 +36,17 @@ impl Default for bool_mat_struct {
 pub type bool_mat_t = [bool_mat_struct; 1usize];
 extern "C" {
     #[link_name = "bool_mat_get_entry__extern"]
-    pub fn bool_mat_get_entry(
-        mat: *const bool_mat_struct,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
-    ) -> libc::c_int;
+    pub fn bool_mat_get_entry(mat: *const bool_mat_struct, i: slong, j: slong) -> libc::c_int;
     #[link_name = "bool_mat_set_entry__extern"]
-    pub fn bool_mat_set_entry(
-        mat: *mut bool_mat_struct,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
-        value: libc::c_int,
-    );
-    pub fn bool_mat_init(mat: *mut bool_mat_struct, r: mp_limb_signed_t, c: mp_limb_signed_t);
+    pub fn bool_mat_set_entry(mat: *mut bool_mat_struct, i: slong, j: slong, value: libc::c_int);
+    pub fn bool_mat_init(mat: *mut bool_mat_struct, r: slong, c: slong);
     pub fn bool_mat_clear(mat: *mut bool_mat_struct);
     #[link_name = "bool_mat_swap__extern"]
     pub fn bool_mat_swap(mat1: *mut bool_mat_struct, mat2: *mut bool_mat_struct);
     pub fn bool_mat_set(dest: *mut bool_mat_struct, src: *const bool_mat_struct);
-    pub fn bool_mat_randtest(mat: *mut bool_mat_struct, state: *mut flint_rand_s);
-    pub fn bool_mat_randtest_diagonal(mat: *mut bool_mat_struct, state: *mut flint_rand_s);
-    pub fn bool_mat_randtest_nilpotent(mat: *mut bool_mat_struct, state: *mut flint_rand_s);
+    pub fn bool_mat_randtest(mat: *mut bool_mat_struct, state: *mut flint_rand_struct);
+    pub fn bool_mat_randtest_diagonal(mat: *mut bool_mat_struct, state: *mut flint_rand_struct);
+    pub fn bool_mat_randtest_nilpotent(mat: *mut bool_mat_struct, state: *mut flint_rand_struct);
     pub fn bool_mat_fprint(file: *mut FILE, mat: *const bool_mat_struct);
     pub fn bool_mat_print(mat: *const bool_mat_struct);
     pub fn bool_mat_equal(
@@ -94,18 +84,18 @@ extern "C" {
         mat1: *const bool_mat_struct,
         mat2: *const bool_mat_struct,
     );
-    pub fn bool_mat_pow_ui(B: *mut bool_mat_struct, A: *const bool_mat_struct, exp: mp_limb_t);
+    pub fn bool_mat_pow_ui(B: *mut bool_mat_struct, A: *const bool_mat_struct, exp: ulong);
     #[link_name = "bool_mat_sqr__extern"]
     pub fn bool_mat_sqr(B: *mut bool_mat_struct, A: *const bool_mat_struct);
     pub fn bool_mat_trace(mat: *const bool_mat_struct) -> libc::c_int;
-    pub fn bool_mat_nilpotency_degree(mat: *const bool_mat_struct) -> mp_limb_signed_t;
+    pub fn bool_mat_nilpotency_degree(mat: *const bool_mat_struct) -> slong;
     pub fn bool_mat_transitive_closure(dest: *mut bool_mat_struct, src: *const bool_mat_struct);
     pub fn bool_mat_get_strongly_connected_components(
-        partition: *mut mp_limb_signed_t,
+        partition: *mut slong,
         A: *const bool_mat_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn bool_mat_all_pairs_longest_walk(
         B: *mut fmpz_mat_struct,
         A: *const bool_mat_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
 }

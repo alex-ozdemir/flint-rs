@@ -9,7 +9,7 @@ extern "C" {
     pub fn fq_zech_modulus_pow_series_inv(
         res: *mut nmod_poly_struct,
         ctx: *const fq_zech_ctx_struct,
-        trunc: mp_limb_signed_t,
+        trunc: slong,
     );
     pub fn fq_zech_modulus_derivative_inv(
         m_prime: *mut fq_zech_struct,
