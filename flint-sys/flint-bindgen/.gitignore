@@ -1,2 +1,6 @@
 /target
 Cargo.lock
+
+/flint-build
+/flint-out
+/scripts/logs
