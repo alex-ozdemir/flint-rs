@@ -15,7 +15,7 @@ const FLINT_DIR: &str = "flint-3.5.0";
 const FLINT_LIB: &str = "libflint.a";
 const FLINT_VER: &str = "3.5.0";
 
-include!("flint-bindgen/scripts/build_headers.rs");
+include!("build_headers.rs");
 
 #[derive(Clone, Copy, PartialEq)]
 enum Target {
