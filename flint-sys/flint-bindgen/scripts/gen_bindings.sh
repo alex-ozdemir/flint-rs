@@ -37,6 +37,7 @@ fi
 echo "Removing old build artifacts..."
 cargo clean
 rm -f C/extern.c src/__mod_statements.rs
+rm -f build_headers.rs
 pushd flint-bindgen
 cargo clean
 rm -f scripts/bindgen_headers.rs scripts/build_headers.rs
@@ -69,6 +70,7 @@ echo "Generating header list..."
 pushd flint-bindgen/scripts
 python headers.py ../flint-out/include/flint
 popd
+cp flint-bindgen/scripts/build_headers.rs build_headers.rs
 echo "Generating bindings..."
 deps_include_dir=${gmp_mpfr_dir}/out/include
 pushd flint-bindgen
