@@ -50,9 +50,9 @@ extern "C" {
     #[link_name = "di_print__extern"]
     pub fn di_print(x: di_t);
     pub fn arb_get_di(x: *const arb_struct) -> di_t;
-    pub fn arb_set_di(res: *mut arb_struct, x: di_t, prec: mp_limb_signed_t);
+    pub fn arb_set_di(res: *mut arb_struct, x: di_t, prec: slong);
     #[link_name = "d_randtest2__extern"]
-    pub fn d_randtest2(state: *mut flint_rand_s) -> f64;
+    pub fn d_randtest2(state: *mut flint_rand_struct) -> f64;
     #[link_name = "di_randtest__extern"]
-    pub fn di_randtest(state: *mut flint_rand_s) -> di_t;
+    pub fn di_randtest(state: *mut flint_rand_struct) -> di_t;
 }

@@ -2,8 +2,7 @@
 
 use crate::deps::*;
 use crate::acb_types::*;
-use crate::ca::*;
-use crate::calcium::*;
+use crate::ca_types::*;
 use crate::qqbar::*;
 
 
@@ -35,7 +34,7 @@ extern "C" {
         res: *mut ca_ext_struct,
         func: calcium_func_code,
         x: ca_srcptr,
-        nargs: mp_limb_signed_t,
+        nargs: slong,
         ctx: *mut ca_ctx_struct,
     );
     #[link_name = "ca_ext_init_set__extern"]
@@ -46,16 +45,16 @@ extern "C" {
     );
     pub fn ca_ext_clear(res: *mut ca_ext_struct, ctx: *mut ca_ctx_struct);
     #[link_name = "ca_ext_nargs__extern"]
-    pub fn ca_ext_nargs(x: *const ca_ext_struct, ctx: *mut ca_ctx_struct) -> mp_limb_signed_t;
+    pub fn ca_ext_nargs(x: *const ca_ext_struct, ctx: *mut ca_ctx_struct) -> slong;
     #[link_name = "ca_ext_get_arg__extern"]
     pub fn ca_ext_get_arg(
         res: *mut ca_struct,
         x: *const ca_ext_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *mut ca_ctx_struct,
     );
     #[link_name = "ca_ext_hash__extern"]
-    pub fn ca_ext_hash(x: *const ca_ext_struct, ctx: *mut ca_ctx_struct) -> mp_limb_t;
+    pub fn ca_ext_hash(x: *const ca_ext_struct, ctx: *mut ca_ctx_struct) -> ulong;
     pub fn ca_ext_equal_repr(
         x: *const ca_ext_struct,
         y: *const ca_ext_struct,
@@ -70,7 +69,7 @@ extern "C" {
     pub fn ca_ext_get_acb_raw(
         res: *mut acb_struct,
         x: *mut ca_ext_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
         ctx: *mut ca_ctx_struct,
     );
     pub fn ca_ext_cache_init(cache: *mut ca_ext_cache_struct, ctx: *mut ca_ctx_struct);

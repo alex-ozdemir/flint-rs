@@ -14,8 +14,8 @@ pub type arb_calc_func_t = ::std::option::Option<
         out: arb_ptr,
         inp: *const arb_struct,
         param: *mut libc::c_void,
-        order: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        order: slong,
+        prec: slong,
     ) -> libc::c_int,
 >;
 extern "C" {
@@ -25,32 +25,24 @@ extern "C" {
     #[link_name = "arf_interval_clear__extern"]
     pub fn arf_interval_clear(v: *mut arf_interval_struct);
     #[link_name = "_arf_interval_vec_init__extern"]
-    pub fn _arf_interval_vec_init(n: mp_limb_signed_t) -> arf_interval_ptr;
+    pub fn _arf_interval_vec_init(n: slong) -> arf_interval_ptr;
     #[link_name = "_arf_interval_vec_clear__extern"]
-    pub fn _arf_interval_vec_clear(v: arf_interval_ptr, n: mp_limb_signed_t);
+    pub fn _arf_interval_vec_clear(v: arf_interval_ptr, n: slong);
     #[link_name = "arf_interval_set__extern"]
     pub fn arf_interval_set(v: *mut arf_interval_struct, u: *const arf_interval_struct);
     #[link_name = "arf_interval_swap__extern"]
     pub fn arf_interval_swap(v: *mut arf_interval_struct, u: *mut arf_interval_struct);
     #[link_name = "arf_interval_get_arb__extern"]
-    pub fn arf_interval_get_arb(
-        x: *mut arb_struct,
-        v: *const arf_interval_struct,
-        prec: mp_limb_signed_t,
-    );
-    pub fn arf_interval_fprintd(
-        file: *mut FILE,
-        v: *const arf_interval_struct,
-        n: mp_limb_signed_t,
-    );
-    pub fn arf_interval_printd(v: *const arf_interval_struct, n: mp_limb_signed_t);
+    pub fn arf_interval_get_arb(x: *mut arb_struct, v: *const arf_interval_struct, prec: slong);
+    pub fn arf_interval_fprintd(file: *mut FILE, v: *const arf_interval_struct, n: slong);
+    pub fn arf_interval_printd(v: *const arf_interval_struct, n: slong);
     pub fn arb_calc_partition(
         L: *mut arf_interval_struct,
         R: *mut arf_interval_struct,
         func: arb_calc_func_t,
         param: *mut libc::c_void,
         block: *const arf_interval_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     ) -> libc::c_int;
     pub fn arb_calc_isolate_roots(
         blocks: *mut arf_interval_ptr,
@@ -58,25 +50,25 @@ extern "C" {
         func: arb_calc_func_t,
         param: *mut libc::c_void,
         block: *const arf_interval_struct,
-        maxdepth: mp_limb_signed_t,
-        maxeval: mp_limb_signed_t,
-        maxfound: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
+        maxdepth: slong,
+        maxeval: slong,
+        maxfound: slong,
+        prec: slong,
+    ) -> slong;
     pub fn arb_calc_refine_root_bisect(
         r: *mut arf_interval_struct,
         func: arb_calc_func_t,
         param: *mut libc::c_void,
         start: *const arf_interval_struct,
-        iter: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        iter: slong,
+        prec: slong,
     ) -> libc::c_int;
     pub fn arb_calc_newton_conv_factor(
         conv_factor: *mut arf_struct,
         func: arb_calc_func_t,
         param: *mut libc::c_void,
         conv_region: *const arb_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     );
     pub fn arb_calc_newton_step(
         xnew: *mut arb_struct,
@@ -85,7 +77,7 @@ extern "C" {
         x: *const arb_struct,
         conv_region: *const arb_struct,
         conv_factor: *const arf_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
     ) -> libc::c_int;
     pub fn arb_calc_refine_root_newton(
         r: *mut arb_struct,
@@ -94,7 +86,7 @@ extern "C" {
         start: *const arb_struct,
         conv_region: *const arb_struct,
         conv_factor: *const arf_struct,
-        eval_extra_prec: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        eval_extra_prec: slong,
+        prec: slong,
     ) -> libc::c_int;
 }

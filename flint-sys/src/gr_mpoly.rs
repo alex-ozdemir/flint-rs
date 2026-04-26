@@ -2,19 +2,18 @@
 
 use crate::deps::*;
 use crate::flint::*;
-use crate::gr::*;
+use crate::gr_types::*;
 use crate::mpoly_types::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct gr_mpoly_struct {
     pub coeffs: gr_ptr,
-    pub exps: *mut mp_limb_t,
-    pub length: mp_limb_signed_t,
-    pub bits: mp_limb_t,
-    pub coeffs_alloc: mp_limb_signed_t,
-    pub exps_alloc: mp_limb_signed_t,
+    pub exps: *mut ulong,
+    pub length: slong,
+    pub bits: flint_bitcnt_t,
+    pub coeffs_alloc: slong,
+    pub exps_alloc: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -43,384 +42,408 @@ impl Default for gr_mpoly_struct {
     }
 }
 pub type gr_mpoly_t = [gr_mpoly_struct; 1usize];
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct _gr_mpoly_ctx_struct {
+    pub cctx: *mut gr_ctx_struct,
+    pub mctx: *mut mpoly_ctx_struct,
+    pub vars: *mut *mut libc::c_char,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _gr_mpoly_ctx_struct"][::std::mem::size_of::<_gr_mpoly_ctx_struct>() - 24usize];
+    ["Alignment of _gr_mpoly_ctx_struct"][::std::mem::align_of::<_gr_mpoly_ctx_struct>() - 8usize];
+    ["Offset of field: _gr_mpoly_ctx_struct::cctx"]
+        [::std::mem::offset_of!(_gr_mpoly_ctx_struct, cctx) - 0usize];
+    ["Offset of field: _gr_mpoly_ctx_struct::mctx"]
+        [::std::mem::offset_of!(_gr_mpoly_ctx_struct, mctx) - 8usize];
+    ["Offset of field: _gr_mpoly_ctx_struct::vars"]
+        [::std::mem::offset_of!(_gr_mpoly_ctx_struct, vars) - 16usize];
+};
+impl Default for _gr_mpoly_ctx_struct {
+    fn default() -> Self {
+        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+pub type gr_mpoly_ctx_struct = gr_ctx_struct;
+pub type gr_mpoly_ctx_t = [gr_mpoly_ctx_struct; 1usize];
 extern "C" {
-    #[link_name = "gr_mpoly_init__extern"]
-    pub fn gr_mpoly_init(
-        A: *mut gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+    pub fn gr_mpoly_ctx_init_rand(
+        ctx: *mut gr_mpoly_ctx_struct,
+        state: *mut flint_rand_struct,
+        base_ring: *mut gr_ctx_struct,
+        max_nvars: slong,
     );
+    pub fn gr_mpoly_ctx_clear(ctx: *mut gr_mpoly_ctx_struct);
+    pub fn gr_mpoly_ctx_init(
+        ctx: *mut gr_mpoly_ctx_struct,
+        base_ring: *mut gr_ctx_struct,
+        nvars: slong,
+        ord: ordering_t,
+    );
+    pub fn gr_mpoly_ctx_set_gen_names(
+        ctx: *mut gr_mpoly_ctx_struct,
+        s: *mut *const libc::c_char,
+    ) -> libc::c_int;
+    pub fn gr_mpoly_gens(res: *mut gr_vec_struct, ctx: *mut gr_mpoly_ctx_struct) -> libc::c_int;
+    pub fn gr_mpoly_gens_recursive(
+        vec: *mut gr_vec_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mpoly_ctx_write(
+        out: *mut gr_stream_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mpoly_ctx_is_ring(ctx: *mut gr_mpoly_ctx_struct) -> truth_t;
+    pub fn gr_mpoly_ctx_is_zero_ring(ctx: *mut gr_mpoly_ctx_struct) -> truth_t;
+    pub fn gr_mpoly_ctx_is_commutative_ring(ctx: *mut gr_mpoly_ctx_struct) -> truth_t;
+    pub fn gr_mpoly_ctx_is_integral_domain(ctx: *mut gr_mpoly_ctx_struct) -> truth_t;
+    pub fn gr_mpoly_ctx_is_field(ctx: *mut gr_mpoly_ctx_struct) -> truth_t;
+    pub fn gr_mpoly_ctx_is_threadsafe(ctx: *mut gr_mpoly_ctx_struct) -> truth_t;
+    #[link_name = "gr_mpoly_init__extern"]
+    pub fn gr_mpoly_init(A: *mut gr_mpoly_struct, ctx: *mut gr_mpoly_ctx_struct);
     pub fn gr_mpoly_init3(
         A: *mut gr_mpoly_struct,
-        alloc: mp_limb_signed_t,
-        bits: mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        alloc: slong,
+        bits: flint_bitcnt_t,
+        ctx: *mut gr_mpoly_ctx_struct,
     );
-    pub fn gr_mpoly_init2(
-        A: *mut gr_mpoly_struct,
-        alloc: mp_limb_signed_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
-    );
+    pub fn gr_mpoly_init2(A: *mut gr_mpoly_struct, alloc: slong, ctx: *mut gr_mpoly_ctx_struct);
     #[link_name = "gr_mpoly_clear__extern"]
-    pub fn gr_mpoly_clear(
-        A: *mut gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
-    );
+    pub fn gr_mpoly_clear(A: *mut gr_mpoly_struct, ctx: *mut gr_mpoly_ctx_struct);
     pub fn _gr_mpoly_fit_length(
         coeffs: *mut gr_ptr,
-        coeffs_alloc: *mut mp_limb_signed_t,
-        exps: *mut *mut mp_limb_t,
-        exps_alloc: *mut mp_limb_signed_t,
-        N: mp_limb_signed_t,
-        length: mp_limb_signed_t,
+        coeffs_alloc: *mut slong,
+        exps: *mut *mut ulong,
+        exps_alloc: *mut slong,
+        N: slong,
+        length: slong,
         cctx: *mut gr_ctx_struct,
     );
-    pub fn gr_mpoly_fit_length(
-        A: *mut gr_mpoly_struct,
-        len: mp_limb_signed_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
-    );
+    pub fn gr_mpoly_fit_length(A: *mut gr_mpoly_struct, len: slong, ctx: *mut gr_mpoly_ctx_struct);
     pub fn gr_mpoly_fit_bits(
         A: *mut gr_mpoly_struct,
-        bits: mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        bits: flint_bitcnt_t,
+        ctx: *mut gr_mpoly_ctx_struct,
     );
     pub fn gr_mpoly_fit_length_fit_bits(
         A: *mut gr_mpoly_struct,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        len: slong,
+        bits: flint_bitcnt_t,
+        ctx: *mut gr_mpoly_ctx_struct,
     );
     pub fn gr_mpoly_fit_length_reset_bits(
         A: *mut gr_mpoly_struct,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        len: slong,
+        bits: flint_bitcnt_t,
+        ctx: *mut gr_mpoly_ctx_struct,
     );
     #[link_name = "_gr_mpoly_set_length__extern"]
     pub fn _gr_mpoly_set_length(
         A: *mut gr_mpoly_struct,
-        newlen: mp_limb_signed_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        newlen: slong,
+        ctx: *mut gr_mpoly_ctx_struct,
     );
+    #[link_name = "gr_mpoly_length__extern"]
+    pub fn gr_mpoly_length(x: *const gr_mpoly_struct, ctx: *mut gr_mpoly_ctx_struct) -> slong;
+    pub fn _gr_mpoly_normalise(A: *mut gr_mpoly_struct, ctx: *mut gr_mpoly_ctx_struct);
     #[link_name = "gr_mpoly_swap__extern"]
     pub fn gr_mpoly_swap(
         A: *mut gr_mpoly_struct,
         B: *mut gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
+    );
+    #[link_name = "gr_mpoly_set_shallow__extern"]
+    pub fn gr_mpoly_set_shallow(
+        res: *mut gr_mpoly_struct,
+        poly: *const gr_mpoly_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     );
     pub fn gr_mpoly_set(
         A: *mut gr_mpoly_struct,
         B: *const gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_mpoly_zero__extern"]
-    pub fn gr_mpoly_zero(
-        A: *mut gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
-    #[link_name = "gr_mpoly_is_zero__extern"]
-    pub fn gr_mpoly_is_zero(
-        A: *const gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
-    ) -> truth_t;
+    pub fn gr_mpoly_zero(A: *mut gr_mpoly_struct, ctx: *mut gr_mpoly_ctx_struct) -> libc::c_int;
+    pub fn gr_mpoly_is_zero(A: *const gr_mpoly_struct, ctx: *mut gr_mpoly_ctx_struct) -> truth_t;
     pub fn gr_mpoly_gen(
         A: *mut gr_mpoly_struct,
-        var: mp_limb_signed_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        var: slong,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_is_gen(
         A: *const gr_mpoly_struct,
-        var: mp_limb_signed_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        var: slong,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> truth_t;
     pub fn gr_mpoly_equal(
         A: *const gr_mpoly_struct,
         B: *const gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> truth_t;
     pub fn _gr_mpoly_push_exp_ui(
         A: *mut gr_mpoly_struct,
-        exp: *const mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        exp: *const ulong,
+        ctx: *mut gr_mpoly_ctx_struct,
     );
     pub fn gr_mpoly_push_term_scalar_ui(
         A: *mut gr_mpoly_struct,
         c: gr_srcptr,
-        exp: *const mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        exp: *const ulong,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_mpoly_push_exp_fmpz(
         A: *mut gr_mpoly_struct,
         exp: *const fmpz,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     );
     pub fn gr_mpoly_push_term_scalar_fmpz(
         A: *mut gr_mpoly_struct,
         c: gr_srcptr,
         exp: *const fmpz,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
-    pub fn gr_mpoly_sort_terms(
-        A: *mut gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
-    );
+    pub fn gr_mpoly_sort_terms(A: *mut gr_mpoly_struct, ctx: *mut gr_mpoly_ctx_struct);
     pub fn gr_mpoly_combine_like_terms(
         A: *mut gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_is_canonical(
         A: *const gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> truth_t;
-    pub fn gr_mpoly_assert_canonical(
-        A: *const gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
-    );
+    pub fn gr_mpoly_assert_canonical(A: *const gr_mpoly_struct, ctx: *mut gr_mpoly_ctx_struct);
     pub fn gr_mpoly_randtest_bits(
         A: *mut gr_mpoly_struct,
-        state: *mut flint_rand_s,
-        length: mp_limb_signed_t,
-        exp_bits: mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        state: *mut flint_rand_struct,
+        length: slong,
+        exp_bits: flint_bitcnt_t,
+        ctx: *mut gr_mpoly_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mpoly_randtest_bound(
+        A: *mut gr_mpoly_struct,
+        state: *mut flint_rand_struct,
+        length: slong,
+        exp_bound: ulong,
+        ctx: *mut gr_mpoly_ctx_struct,
+    ) -> libc::c_int;
+    #[link_name = "_gr_mpoly_randtest_default__extern"]
+    pub fn _gr_mpoly_randtest_default(
+        res: *mut gr_mpoly_struct,
+        state: *mut flint_rand_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_write_pretty(
         out: *mut gr_stream_struct,
         A: *const gr_mpoly_struct,
-        x_in: *mut *const libc::c_char,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mpoly_write(
+        out: *mut gr_stream_struct,
+        poly: *mut gr_mpoly_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_print_pretty(
         A: *const gr_mpoly_struct,
-        x_in: *mut *const libc::c_char,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mpoly_set_other(
+        res: *mut gr_mpoly_struct,
+        A: gr_srcptr,
+        A_ctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_set_scalar(
         A: *mut gr_mpoly_struct,
         c: gr_srcptr,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_set_ui(
         A: *mut gr_mpoly_struct,
-        c: mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        c: ulong,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_set_si(
         A: *mut gr_mpoly_struct,
-        c: mp_limb_signed_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        c: slong,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_set_fmpz(
         A: *mut gr_mpoly_struct,
         c: *const fmpz,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_set_fmpq(
         A: *mut gr_mpoly_struct,
         c: *const fmpq,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_mpoly_one__extern"]
-    pub fn gr_mpoly_one(
-        A: *mut gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
-    #[link_name = "gr_mpoly_is_one__extern"]
-    pub fn gr_mpoly_is_one(
-        A: *const gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
-    ) -> truth_t;
+    pub fn gr_mpoly_one(A: *mut gr_mpoly_struct, ctx: *mut gr_mpoly_ctx_struct) -> libc::c_int;
+    pub fn gr_mpoly_is_one(A: *const gr_mpoly_struct, ctx: *mut gr_mpoly_ctx_struct) -> truth_t;
     pub fn gr_mpoly_get_coeff_scalar_fmpz(
         c: gr_ptr,
         A: *const gr_mpoly_struct,
         exp: *const fmpz,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_get_coeff_scalar_ui(
         c: gr_ptr,
         A: *const gr_mpoly_struct,
-        exp: *const mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        exp: *const ulong,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_set_coeff_scalar_fmpz(
         A: *mut gr_mpoly_struct,
         c: gr_srcptr,
         exp: *const fmpz,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_set_coeff_ui_fmpz(
         A: *mut gr_mpoly_struct,
-        c: mp_limb_t,
+        c: ulong,
         exp: *const fmpz,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_set_coeff_si_fmpz(
         A: *mut gr_mpoly_struct,
-        c: mp_limb_signed_t,
+        c: slong,
         exp: *const fmpz,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_set_coeff_fmpz_fmpz(
         A: *mut gr_mpoly_struct,
         c: *const fmpz,
         exp: *const fmpz,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_set_coeff_fmpq_fmpz(
         A: *mut gr_mpoly_struct,
         c: *const fmpq,
         exp: *const fmpz,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_set_coeff_scalar_ui(
         poly: *mut gr_mpoly_struct,
         c: gr_srcptr,
-        exp: *const mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        exp: *const ulong,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_set_coeff_ui_ui(
         A: *mut gr_mpoly_struct,
-        c: mp_limb_t,
-        exp: *const mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        c: ulong,
+        exp: *const ulong,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_set_coeff_si_ui(
         A: *mut gr_mpoly_struct,
-        c: mp_limb_signed_t,
-        exp: *const mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        c: slong,
+        exp: *const ulong,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_set_coeff_fmpz_ui(
         A: *mut gr_mpoly_struct,
         c: *const fmpz,
-        exp: *const mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        exp: *const ulong,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_set_coeff_fmpq_ui(
         A: *mut gr_mpoly_struct,
         c: *const fmpq,
-        exp: *const mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        exp: *const ulong,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_neg(
         A: *mut gr_mpoly_struct,
         B: *const gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_add(
         A: *mut gr_mpoly_struct,
         B: *const gr_mpoly_struct,
         C: *const gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_sub(
         A: *mut gr_mpoly_struct,
         B: *const gr_mpoly_struct,
         C: *const gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_mul(
         poly1: *mut gr_mpoly_struct,
         poly2: *const gr_mpoly_struct,
         poly3: *const gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_mul_johnson(
         poly1: *mut gr_mpoly_struct,
         poly2: *const gr_mpoly_struct,
         poly3: *const gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_mul_monomial(
         A: *mut gr_mpoly_struct,
         B: *const gr_mpoly_struct,
         C: *const gr_mpoly_struct,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_mul_scalar(
         A: *mut gr_mpoly_struct,
         B: *const gr_mpoly_struct,
         c: gr_srcptr,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_mul_si(
         A: *mut gr_mpoly_struct,
         B: *const gr_mpoly_struct,
-        c: mp_limb_signed_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        c: slong,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_mul_ui(
         A: *mut gr_mpoly_struct,
         B: *const gr_mpoly_struct,
-        c: mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        c: ulong,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_mul_fmpz(
         A: *mut gr_mpoly_struct,
         B: *const gr_mpoly_struct,
         c: *const fmpz,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_mpoly_mul_fmpq(
         A: *mut gr_mpoly_struct,
         B: *const gr_mpoly_struct,
         c: *const fmpq,
-        mctx: *const mpoly_ctx_struct,
-        cctx: *mut gr_ctx_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mpoly_inv(
+        res: *mut gr_mpoly_struct,
+        poly: *const gr_mpoly_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mpoly_canonical_associate(
+        res: *mut gr_mpoly_struct,
+        u: *mut gr_mpoly_struct,
+        poly: *const gr_mpoly_struct,
+        ctx: *mut gr_mpoly_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mpoly_derivative(
+        A: *mut gr_mpoly_struct,
+        B: *const gr_mpoly_struct,
+        var: slong,
+        ctx: *mut gr_mpoly_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_mpoly_integral(
+        A: *mut gr_mpoly_struct,
+        B: *const gr_mpoly_struct,
+        var: slong,
+        ctx: *mut gr_mpoly_ctx_struct,
     ) -> libc::c_int;
 }

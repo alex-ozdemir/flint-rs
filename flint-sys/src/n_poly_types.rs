@@ -4,11 +4,10 @@ use crate::deps::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct n_poly_struct {
-    pub coeffs: *mut mp_limb_t,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
+    pub coeffs: *mut ulong,
+    pub alloc: slong,
+    pub length: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -34,11 +33,10 @@ pub type n_poly_t = [n_poly_struct; 1usize];
 pub type n_fq_poly_struct = n_poly_struct;
 pub type n_fq_poly_t = n_poly_t;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct n_bpoly_struct {
     pub coeffs: *mut n_poly_struct,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
+    pub alloc: slong,
+    pub length: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -64,11 +62,10 @@ pub type n_bpoly_t = [n_bpoly_struct; 1usize];
 pub type n_fq_bpoly_struct = n_bpoly_struct;
 pub type n_fq_bpoly_t = n_bpoly_t;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct n_tpoly_struct {
     pub coeffs: *mut n_bpoly_struct,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
+    pub alloc: slong,
+    pub length: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -94,12 +91,11 @@ pub type n_tpoly_t = [n_tpoly_struct; 1usize];
 pub type n_fq_tpoly_struct = n_tpoly_struct;
 pub type n_fq_tpoly_t = n_tpoly_t;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct n_polyu_struct {
-    pub exps: *mut mp_limb_t,
-    pub coeffs: *mut mp_limb_t,
-    pub length: mp_limb_signed_t,
-    pub alloc: mp_limb_signed_t,
+    pub exps: *mut ulong,
+    pub coeffs: *mut ulong,
+    pub length: slong,
+    pub alloc: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -127,12 +123,11 @@ pub type n_polyu_t = [n_polyu_struct; 1usize];
 pub type n_fq_polyu_struct = n_polyu_struct;
 pub type n_fq_polyu_t = n_polyu_t;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct n_polyun_struct {
     pub coeffs: *mut n_poly_struct,
-    pub exps: *mut mp_limb_t,
-    pub length: mp_limb_signed_t,
-    pub alloc: mp_limb_signed_t,
+    pub exps: *mut ulong,
+    pub length: slong,
+    pub alloc: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -160,11 +155,10 @@ pub type n_polyun_t = [n_polyun_struct; 1usize];
 pub type n_fq_polyun_struct = n_polyun_struct;
 pub type n_fq_polyun_t = n_polyun_t;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct n_poly_stack_struct {
     pub array: *mut *mut n_poly_struct,
-    pub alloc: mp_limb_signed_t,
-    pub top: mp_limb_signed_t,
+    pub alloc: slong,
+    pub top: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -188,11 +182,10 @@ impl Default for n_poly_stack_struct {
 }
 pub type n_poly_stack_t = [n_poly_stack_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct n_bpoly_stack_struct {
     pub array: *mut *mut n_bpoly_struct,
-    pub alloc: mp_limb_signed_t,
-    pub top: mp_limb_signed_t,
+    pub alloc: slong,
+    pub top: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -216,7 +209,6 @@ impl Default for n_bpoly_stack_struct {
 }
 pub type n_bpoly_stack_t = [n_bpoly_stack_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct n_poly_bpoly_stack_struct {
     pub poly_stack: n_poly_stack_t,
     pub bpoly_stack: n_bpoly_stack_t,
@@ -243,16 +235,15 @@ impl Default for n_poly_bpoly_stack_struct {
 }
 pub type n_poly_bpoly_stack_t = [n_poly_bpoly_stack_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct nmod_eval_interp_struct {
-    pub M: *mut mp_limb_t,
-    pub T: *mut mp_limb_t,
-    pub Q: *mut mp_limb_t,
-    pub array: *mut mp_limb_t,
-    pub alloc: mp_limb_signed_t,
-    pub d: mp_limb_signed_t,
-    pub radix: mp_limb_signed_t,
-    pub w: mp_limb_t,
+    pub M: *mut ulong,
+    pub T: *mut ulong,
+    pub Q: *mut ulong,
+    pub array: *mut ulong,
+    pub alloc: slong,
+    pub d: slong,
+    pub radix: slong,
+    pub w: ulong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {

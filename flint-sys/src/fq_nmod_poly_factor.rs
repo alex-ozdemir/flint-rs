@@ -7,12 +7,12 @@ use crate::fq_nmod_types::*;
 extern "C" {
     pub fn FQ_NMOD_POLY_ITERATED_FROBENIUS_CUTOFF(
         ctx: *const fq_nmod_ctx_struct,
-        length: mp_limb_signed_t,
+        length: slong,
     ) -> libc::c_int;
     pub fn fq_nmod_poly_factor_get_poly(
         z: *mut fq_nmod_poly_struct,
         fac: *const fq_nmod_poly_factor_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fq_nmod_ctx_struct,
     );
 }

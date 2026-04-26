@@ -5,12 +5,11 @@ use crate::flint::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct nmod_mat_struct {
-    pub entries: *mut mp_limb_t,
-    pub r: mp_limb_signed_t,
-    pub c: mp_limb_signed_t,
-    pub rows: *mut *mut mp_limb_t,
+    pub entries: *mut ulong,
+    pub r: slong,
+    pub c: slong,
+    pub stride: slong,
     pub mod_: nmod_t,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -21,8 +20,8 @@ const _: () = {
         [::std::mem::offset_of!(nmod_mat_struct, entries) - 0usize];
     ["Offset of field: nmod_mat_struct::r"][::std::mem::offset_of!(nmod_mat_struct, r) - 8usize];
     ["Offset of field: nmod_mat_struct::c"][::std::mem::offset_of!(nmod_mat_struct, c) - 16usize];
-    ["Offset of field: nmod_mat_struct::rows"]
-        [::std::mem::offset_of!(nmod_mat_struct, rows) - 24usize];
+    ["Offset of field: nmod_mat_struct::stride"]
+        [::std::mem::offset_of!(nmod_mat_struct, stride) - 24usize];
     ["Offset of field: nmod_mat_struct::mod_"]
         [::std::mem::offset_of!(nmod_mat_struct, mod_) - 32usize];
 };
@@ -37,11 +36,10 @@ impl Default for nmod_mat_struct {
 }
 pub type nmod_mat_t = [nmod_mat_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct nmod_poly_struct {
-    pub coeffs: mp_ptr,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
+    pub coeffs: nn_ptr,
+    pub alloc: slong,
+    pub length: slong,
     pub mod_: nmod_t,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -68,12 +66,11 @@ impl Default for nmod_poly_struct {
 }
 pub type nmod_poly_t = [nmod_poly_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct nmod_poly_factor_struct {
     pub p: *mut nmod_poly_struct,
-    pub exp: *mut mp_limb_signed_t,
-    pub num: mp_limb_signed_t,
-    pub alloc: mp_limb_signed_t,
+    pub exp: *mut slong,
+    pub num: slong,
+    pub alloc: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -100,13 +97,12 @@ impl Default for nmod_poly_factor_struct {
 }
 pub type nmod_poly_factor_t = [nmod_poly_factor_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct nmod_poly_mat_struct {
     pub entries: *mut nmod_poly_struct,
-    pub r: mp_limb_signed_t,
-    pub c: mp_limb_signed_t,
-    pub rows: *mut *mut nmod_poly_struct,
-    pub modulus: mp_limb_t,
+    pub r: slong,
+    pub c: slong,
+    pub stride: slong,
+    pub modulus: ulong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -118,8 +114,8 @@ const _: () = {
         [::std::mem::offset_of!(nmod_poly_mat_struct, r) - 8usize];
     ["Offset of field: nmod_poly_mat_struct::c"]
         [::std::mem::offset_of!(nmod_poly_mat_struct, c) - 16usize];
-    ["Offset of field: nmod_poly_mat_struct::rows"]
-        [::std::mem::offset_of!(nmod_poly_mat_struct, rows) - 24usize];
+    ["Offset of field: nmod_poly_mat_struct::stride"]
+        [::std::mem::offset_of!(nmod_poly_mat_struct, stride) - 24usize];
     ["Offset of field: nmod_poly_mat_struct::modulus"]
         [::std::mem::offset_of!(nmod_poly_mat_struct, modulus) - 32usize];
 };
@@ -134,14 +130,13 @@ impl Default for nmod_poly_mat_struct {
 }
 pub type nmod_poly_mat_t = [nmod_poly_mat_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct nmod_mpoly_struct {
-    pub coeffs: *mut mp_limb_t,
-    pub exps: *mut mp_limb_t,
-    pub length: mp_limb_signed_t,
-    pub bits: mp_limb_t,
-    pub coeffs_alloc: mp_limb_signed_t,
-    pub exps_alloc: mp_limb_signed_t,
+    pub coeffs: *mut ulong,
+    pub exps: *mut ulong,
+    pub length: slong,
+    pub bits: flint_bitcnt_t,
+    pub coeffs_alloc: slong,
+    pub exps_alloc: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -171,13 +166,12 @@ impl Default for nmod_mpoly_struct {
 }
 pub type nmod_mpoly_t = [nmod_mpoly_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct nmod_mpoly_factor_struct {
-    pub constant: mp_limb_t,
+    pub constant: ulong,
     pub poly: *mut nmod_mpoly_struct,
     pub exp: *mut fmpz,
-    pub num: mp_limb_signed_t,
-    pub alloc: mp_limb_signed_t,
+    pub num: slong,
+    pub alloc: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -206,3 +200,35 @@ impl Default for nmod_mpoly_factor_struct {
     }
 }
 pub type nmod_mpoly_factor_t = [nmod_mpoly_factor_struct; 1usize];
+pub const dot_method_t__DOT0: dot_method_t = 0;
+pub const dot_method_t__DOT1: dot_method_t = 1;
+pub const dot_method_t__DOT2_SPLIT: dot_method_t = 2;
+pub const dot_method_t__DOT2_HALF: dot_method_t = 3;
+pub const dot_method_t__DOT2: dot_method_t = 4;
+pub const dot_method_t__DOT3_ACC: dot_method_t = 5;
+pub const dot_method_t__DOT3: dot_method_t = 6;
+pub const dot_method_t__DOT_POW2: dot_method_t = 7;
+pub type dot_method_t = libc::c_uint;
+#[repr(C)]
+pub struct dot_params_t {
+    pub method: dot_method_t,
+    pub pow2_precomp: ulong,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of dot_params_t"][::std::mem::size_of::<dot_params_t>() - 16usize];
+    ["Alignment of dot_params_t"][::std::mem::align_of::<dot_params_t>() - 8usize];
+    ["Offset of field: dot_params_t::method"]
+        [::std::mem::offset_of!(dot_params_t, method) - 0usize];
+    ["Offset of field: dot_params_t::pow2_precomp"]
+        [::std::mem::offset_of!(dot_params_t, pow2_precomp) - 8usize];
+};
+impl Default for dot_params_t {
+    fn default() -> Self {
+        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}

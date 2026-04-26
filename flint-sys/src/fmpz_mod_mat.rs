@@ -8,68 +8,68 @@ use crate::fmpz_types::*;
 use crate::nmod_types::*;
 
 
-pub const FMPZ_MOD_MAT_MUL_TRANSPOSE_CUTOFF: u32 = 10;
 extern "C" {
     #[link_name = "fmpz_mod_mat_entry__extern"]
-    pub fn fmpz_mod_mat_entry(
-        mat: *const fmpz_mod_mat_struct,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
-    ) -> *mut fmpz;
+    pub fn fmpz_mod_mat_entry(mat: *const fmpz_mod_mat_struct, i: slong, j: slong) -> *mut fmpz;
+    #[link_name = "fmpz_mod_mat_row__extern"]
+    pub fn fmpz_mod_mat_row(mat: *const fmpz_mod_mat_struct, i: slong) -> *mut fmpz;
     pub fn fmpz_mod_mat_set_entry(
         mat: *mut fmpz_mod_mat_struct,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
+        i: slong,
+        j: slong,
         val: *const fmpz,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_get_entry(
         x: *mut fmpz,
         mat: *const fmpz_mod_mat_struct,
-        i: mp_limb_signed_t,
-        j: mp_limb_signed_t,
-        ctx: *const fmpz_mod_ctx_struct,
+        i: slong,
+        j: slong,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_init(
         mat: *mut fmpz_mod_mat_struct,
-        rows: mp_limb_signed_t,
-        cols: mp_limb_signed_t,
-        ctx: *const fmpz_mod_ctx_struct,
+        rows: slong,
+        cols: slong,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_init_set(
         mat: *mut fmpz_mod_mat_struct,
         src: *const fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
-    pub fn fmpz_mod_mat_clear(mat: *mut fmpz_mod_mat_struct, ctx: *const fmpz_mod_ctx_struct);
+    pub fn fmpz_mod_mat_clear(
+        mat: *mut fmpz_mod_mat_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
+    );
     #[link_name = "fmpz_mod_mat_nrows__extern"]
     pub fn fmpz_mod_mat_nrows(
         mat: *const fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
-    ) -> mp_limb_signed_t;
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
+    ) -> slong;
     #[link_name = "fmpz_mod_mat_ncols__extern"]
     pub fn fmpz_mod_mat_ncols(
         mat: *const fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
-    ) -> mp_limb_signed_t;
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
+    ) -> slong;
     #[link_name = "fmpz_mod_mat_one__extern"]
     pub fn fmpz_mod_mat_one(mat: *mut fmpz_mod_mat_struct, ctx: *const fmpz_mod_ctx_struct);
     #[link_name = "fmpz_mod_mat_zero__extern"]
-    pub fn fmpz_mod_mat_zero(mat: *mut fmpz_mod_mat_struct, ctx: *const fmpz_mod_ctx_struct);
+    pub fn fmpz_mod_mat_zero(mat: *mut fmpz_mod_mat_struct, UNUSED_ctx: *const fmpz_mod_ctx_struct);
     #[link_name = "fmpz_mod_mat_is_empty__extern"]
     pub fn fmpz_mod_mat_is_empty(
         mat: *const fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "fmpz_mod_mat_is_square__extern"]
     pub fn fmpz_mod_mat_is_square(
         mat: *const fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpz_mod_mat_swap(
         mat1: *mut fmpz_mod_mat_struct,
         mat2: *mut fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_swap_entrywise(
         mat1: *mut fmpz_mod_mat_struct,
@@ -79,13 +79,13 @@ extern "C" {
     pub fn fmpz_mod_mat_set(
         B: *mut fmpz_mod_mat_struct,
         A: *const fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     #[link_name = "fmpz_mod_mat_set_nmod_mat__extern"]
     pub fn fmpz_mod_mat_set_nmod_mat(
         A: *mut fmpz_mod_mat_struct,
         B: *const nmod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_set_fmpz_mat(
         A: *mut fmpz_mod_mat_struct,
@@ -95,103 +95,113 @@ extern "C" {
     pub fn fmpz_mod_mat_get_fmpz_mat(
         A: *mut fmpz_mat_struct,
         B: *const fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     #[link_name = "_fmpz_mod_mat_reduce__extern"]
     pub fn _fmpz_mod_mat_reduce(mat: *mut fmpz_mod_mat_struct, ctx: *const fmpz_mod_ctx_struct);
     pub fn fmpz_mod_mat_randtest(
         mat: *mut fmpz_mod_mat_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
+    pub fn fmpz_mod_mat_randfull(
+        mat: *mut fmpz_mod_mat_struct,
+        state: *mut flint_rand_struct,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
+    pub fn fmpz_mod_mat_rand(
+        mat: *mut fmpz_mod_mat_struct,
+        state: *mut flint_rand_struct,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_randrank(
         mat: *mut fmpz_mod_mat_struct,
-        state: *mut flint_rand_s,
-        rank: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        rank: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_randtril(
         mat: *mut fmpz_mod_mat_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         unit: libc::c_int,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_randtriu(
         mat: *mut fmpz_mod_mat_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         unit: libc::c_int,
         ctx: *const fmpz_mod_ctx_struct,
     );
     #[link_name = "fmpz_mod_mat_randops__extern"]
     pub fn fmpz_mod_mat_randops(
         mat: *mut fmpz_mod_mat_struct,
-        state: *mut flint_rand_s,
-        count: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        count: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_window_init(
         window: *mut fmpz_mod_mat_struct,
         mat: *const fmpz_mod_mat_struct,
-        r1: mp_limb_signed_t,
-        c1: mp_limb_signed_t,
-        r2: mp_limb_signed_t,
-        c2: mp_limb_signed_t,
-        ctx: *const fmpz_mod_ctx_struct,
+        r1: slong,
+        c1: slong,
+        r2: slong,
+        c2: slong,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_window_clear(
         window: *mut fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     #[link_name = "fmpz_mod_mat_concat_horizontal__extern"]
     pub fn fmpz_mod_mat_concat_horizontal(
         res: *mut fmpz_mod_mat_struct,
         mat1: *const fmpz_mod_mat_struct,
         mat2: *const fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     #[link_name = "fmpz_mod_mat_concat_vertical__extern"]
     pub fn fmpz_mod_mat_concat_vertical(
         res: *mut fmpz_mod_mat_struct,
         mat1: *const fmpz_mod_mat_struct,
         mat2: *const fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_fprint(
         file: *mut FILE,
         mat: *const fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpz_mod_mat_fprint_pretty(
         file: *mut FILE,
         mat: *const fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpz_mod_mat_print(
         mat: *const fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpz_mod_mat_print_pretty(
         mat: *const fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_equal(
         mat1: *const fmpz_mod_mat_struct,
         mat2: *const fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpz_mod_mat_is_zero(
         mat: *const fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpz_mod_mat_is_one(
         mat: *const fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "fmpz_mod_mat_transpose__extern"]
     pub fn fmpz_mod_mat_transpose(
         B: *mut fmpz_mod_mat_struct,
         A: *const fmpz_mod_mat_struct,
-        ctx: *const fmpz_mod_ctx_struct,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_add(
         C: *mut fmpz_mod_mat_struct,
@@ -213,13 +223,13 @@ extern "C" {
     pub fn fmpz_mod_mat_scalar_mul_si(
         B: *mut fmpz_mod_mat_struct,
         A: *const fmpz_mod_mat_struct,
-        c: mp_limb_signed_t,
+        c: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_scalar_mul_ui(
         B: *mut fmpz_mod_mat_struct,
         A: *const fmpz_mod_mat_struct,
-        c: mp_limb_t,
+        c: ulong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_scalar_mul_fmpz(
@@ -241,7 +251,7 @@ extern "C" {
         B: *const fmpz_mod_mat_struct,
         op: libc::c_int,
         threads: *mut thread_pool_handle,
-        num_threads: mp_limb_signed_t,
+        num_threads: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_mul_classical_threaded(
@@ -255,6 +265,12 @@ extern "C" {
         A: *const fmpz_mod_mat_struct,
         ctx: *const fmpz_mod_ctx_struct,
     );
+    pub fn fmpz_mod_mat_pow_ui(
+        B: *mut fmpz_mod_mat_struct,
+        A: *const fmpz_mod_mat_struct,
+        exp: ulong,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
     pub fn fmpz_mod_mat_submul(
         D: *mut fmpz_mod_mat_struct,
         C: *const fmpz_mod_mat_struct,
@@ -266,27 +282,27 @@ extern "C" {
         c: *mut fmpz,
         A: *const fmpz_mod_mat_struct,
         b: *const fmpz,
-        blen: mp_limb_signed_t,
+        blen: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_mul_fmpz_vec_ptr(
         c: *const *mut fmpz,
         A: *const fmpz_mod_mat_struct,
         b: *const *const fmpz,
-        blen: mp_limb_signed_t,
+        blen: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_fmpz_vec_mul(
         c: *mut fmpz,
         a: *const fmpz,
-        alen: mp_limb_signed_t,
+        alen: slong,
         B: *const fmpz_mod_mat_struct,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_fmpz_vec_mul_ptr(
         c: *const *mut fmpz,
         a: *const *const fmpz,
-        alen: mp_limb_signed_t,
+        alen: slong,
         B: *const fmpz_mod_mat_struct,
         ctx: *const fmpz_mod_ctx_struct,
     );
@@ -304,20 +320,21 @@ extern "C" {
         res: *mut fmpz_mod_mat_struct,
         mat: *const fmpz_mod_mat_struct,
         ctx: *const fmpz_mod_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn fmpz_mod_mat_reduce_row(
+        column: *mut slong,
         A: *mut fmpz_mod_mat_struct,
-        P: *mut mp_limb_signed_t,
-        L: *mut mp_limb_signed_t,
-        m: mp_limb_signed_t,
+        P: *mut slong,
+        L: *mut slong,
+        m: slong,
         ctx: *const fmpz_mod_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> libc::c_int;
     pub fn fmpz_mod_mat_lu(
-        P: *mut mp_limb_signed_t,
+        P: *mut slong,
         A: *mut fmpz_mod_mat_struct,
         rank_check: libc::c_int,
         ctx: *const fmpz_mod_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn fmpz_mod_mat_solve_triu(
         X: *mut fmpz_mod_mat_struct,
         L: *const fmpz_mod_mat_struct,
@@ -352,52 +369,52 @@ extern "C" {
     pub fn fmpz_mod_mat_rank(
         A: *const fmpz_mod_mat_struct,
         ctx: *const fmpz_mod_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn fmpz_mod_mat_nullspace(
         X: *mut fmpz_mod_mat_struct,
         A: *const fmpz_mod_mat_struct,
         ctx: *const fmpz_mod_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn fmpz_mod_mat_howell_form(
         mat: *mut fmpz_mod_mat_struct,
         ctx: *const fmpz_mod_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn fmpz_mod_mat_strong_echelon_form(
         mat: *mut fmpz_mod_mat_struct,
         ctx: *const fmpz_mod_ctx_struct,
     );
     pub fn fmpz_mod_mat_similarity(
         A: *mut fmpz_mod_mat_struct,
-        r: mp_limb_signed_t,
+        r: slong,
         d: *mut fmpz,
         ctx: *const fmpz_mod_ctx_struct,
     );
     #[link_name = "fmpz_mod_mat_swap_rows__extern"]
     pub fn fmpz_mod_mat_swap_rows(
         mat: *mut fmpz_mod_mat_struct,
-        perm: *mut mp_limb_signed_t,
-        r: mp_limb_signed_t,
-        s: mp_limb_signed_t,
-        ctx: *const fmpz_mod_ctx_struct,
+        perm: *mut slong,
+        r: slong,
+        s: slong,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     #[link_name = "fmpz_mod_mat_invert_rows__extern"]
     pub fn fmpz_mod_mat_invert_rows(
         mat: *mut fmpz_mod_mat_struct,
-        perm: *mut mp_limb_signed_t,
-        ctx: *const fmpz_mod_ctx_struct,
+        perm: *mut slong,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     #[link_name = "fmpz_mod_mat_swap_cols__extern"]
     pub fn fmpz_mod_mat_swap_cols(
         mat: *mut fmpz_mod_mat_struct,
-        perm: *mut mp_limb_signed_t,
-        r: mp_limb_signed_t,
-        s: mp_limb_signed_t,
-        ctx: *const fmpz_mod_ctx_struct,
+        perm: *mut slong,
+        r: slong,
+        s: slong,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
     #[link_name = "fmpz_mod_mat_invert_cols__extern"]
     pub fn fmpz_mod_mat_invert_cols(
         mat: *mut fmpz_mod_mat_struct,
-        perm: *mut mp_limb_signed_t,
-        ctx: *const fmpz_mod_ctx_struct,
+        perm: *mut slong,
+        UNUSED_ctx: *const fmpz_mod_ctx_struct,
     );
 }

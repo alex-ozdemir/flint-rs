@@ -6,12 +6,11 @@ use crate::fmpz_types::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpq_mat_struct {
     pub entries: *mut fmpq,
-    pub r: mp_limb_signed_t,
-    pub c: mp_limb_signed_t,
-    pub rows: *mut *mut fmpq,
+    pub r: slong,
+    pub c: slong,
+    pub stride: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -21,8 +20,8 @@ const _: () = {
         [::std::mem::offset_of!(fmpq_mat_struct, entries) - 0usize];
     ["Offset of field: fmpq_mat_struct::r"][::std::mem::offset_of!(fmpq_mat_struct, r) - 8usize];
     ["Offset of field: fmpq_mat_struct::c"][::std::mem::offset_of!(fmpq_mat_struct, c) - 16usize];
-    ["Offset of field: fmpq_mat_struct::rows"]
-        [::std::mem::offset_of!(fmpq_mat_struct, rows) - 24usize];
+    ["Offset of field: fmpq_mat_struct::stride"]
+        [::std::mem::offset_of!(fmpq_mat_struct, stride) - 24usize];
 };
 impl Default for fmpq_mat_struct {
     fn default() -> Self {
@@ -35,11 +34,10 @@ impl Default for fmpq_mat_struct {
 }
 pub type fmpq_mat_t = [fmpq_mat_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpq_poly_struct {
     pub coeffs: *mut fmpz,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
+    pub alloc: slong,
+    pub length: slong,
     pub den: fmpz_t,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -66,7 +64,6 @@ impl Default for fmpq_poly_struct {
 }
 pub type fmpq_poly_t = [fmpq_poly_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpq_mpoly_struct {
     pub content: fmpq_t,
     pub zpoly: fmpz_mpoly_t,
@@ -91,13 +88,12 @@ impl Default for fmpq_mpoly_struct {
 }
 pub type fmpq_mpoly_t = [fmpq_mpoly_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpq_mpoly_factor_struct {
     pub constant: fmpq_t,
     pub poly: *mut fmpq_mpoly_struct,
     pub exp: *mut fmpz,
-    pub num: mp_limb_signed_t,
-    pub alloc: mp_limb_signed_t,
+    pub num: slong,
+    pub alloc: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {

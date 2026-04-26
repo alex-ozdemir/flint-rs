@@ -2,7 +2,7 @@
 
 use crate::deps::*;
 use crate::flint::*;
-use crate::gr::*;
+use crate::gr_types::*;
 
 
 pub type gr_method_pfq_op_op = ::std::option::Option<
@@ -162,49 +162,35 @@ extern "C" {
     #[link_name = "gr_fac__extern"]
     pub fn gr_fac(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_fac_ui__extern"]
-    pub fn gr_fac_ui(res: gr_ptr, x: mp_limb_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_fac_ui(res: gr_ptr, x: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_fac_fmpz__extern"]
     pub fn gr_fac_fmpz(res: gr_ptr, x: *const fmpz, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_fac_vec__extern"]
-    pub fn gr_fac_vec(res: gr_ptr, len: mp_limb_signed_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_fac_vec(res: gr_ptr, len: slong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_rfac__extern"]
     pub fn gr_rfac(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_rfac_ui__extern"]
-    pub fn gr_rfac_ui(res: gr_ptr, x: mp_limb_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_rfac_ui(res: gr_ptr, x: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_rfac_fmpz__extern"]
     pub fn gr_rfac_fmpz(res: gr_ptr, x: *const fmpz, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_rfac_vec__extern"]
-    pub fn gr_rfac_vec(res: gr_ptr, len: mp_limb_signed_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_rfac_vec(res: gr_ptr, len: slong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_bin__extern"]
     pub fn gr_bin(res: gr_ptr, x: gr_srcptr, y: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_bin_ui__extern"]
-    pub fn gr_bin_ui(
-        res: gr_ptr,
-        x: gr_srcptr,
-        y: mp_limb_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
+    pub fn gr_bin_ui(res: gr_ptr, x: gr_srcptr, y: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_bin_uiui__extern"]
-    pub fn gr_bin_uiui(
-        res: gr_ptr,
-        x: mp_limb_t,
-        y: mp_limb_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
+    pub fn gr_bin_uiui(res: gr_ptr, x: ulong, y: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_bin_vec__extern"]
     pub fn gr_bin_vec(
         res: gr_ptr,
         x: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_bin_ui_vec__extern"]
-    pub fn gr_bin_ui_vec(
-        res: gr_ptr,
-        x: mp_limb_t,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
+    pub fn gr_bin_ui_vec(res: gr_ptr, x: ulong, len: slong, ctx: *mut gr_ctx_struct)
+        -> libc::c_int;
     #[link_name = "gr_rising__extern"]
     pub fn gr_rising(
         res: gr_ptr,
@@ -216,7 +202,7 @@ extern "C" {
     pub fn gr_rising_ui(
         res: gr_ptr,
         x: gr_srcptr,
-        y: mp_limb_t,
+        y: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_falling__extern"]
@@ -230,7 +216,7 @@ extern "C" {
     pub fn gr_falling_ui(
         res: gr_ptr,
         x: gr_srcptr,
-        y: mp_limb_t,
+        y: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_gamma__extern"]
@@ -255,113 +241,97 @@ extern "C" {
     #[link_name = "gr_doublefac__extern"]
     pub fn gr_doublefac(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_doublefac_ui__extern"]
-    pub fn gr_doublefac_ui(res: gr_ptr, x: mp_limb_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_doublefac_ui(res: gr_ptr, x: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_harmonic__extern"]
     pub fn gr_harmonic(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_harmonic_ui__extern"]
-    pub fn gr_harmonic_ui(res: gr_ptr, x: mp_limb_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_harmonic_ui(res: gr_ptr, x: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_bernoulli_ui__extern"]
-    pub fn gr_bernoulli_ui(res: gr_ptr, x: mp_limb_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_bernoulli_ui(res: gr_ptr, x: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_bernoulli_fmpz__extern"]
     pub fn gr_bernoulli_fmpz(res: gr_ptr, x: *const fmpz, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_bernoulli_vec__extern"]
-    pub fn gr_bernoulli_vec(
-        res: gr_ptr,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
+    pub fn gr_bernoulli_vec(res: gr_ptr, len: slong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_fib_ui__extern"]
-    pub fn gr_fib_ui(res: gr_ptr, x: mp_limb_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_fib_ui(res: gr_ptr, x: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_fib_fmpz__extern"]
     pub fn gr_fib_fmpz(res: gr_ptr, x: *const fmpz, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_fib_vec__extern"]
-    pub fn gr_fib_vec(res: gr_ptr, len: mp_limb_signed_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_fib_vec(res: gr_ptr, len: slong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_eulernum_ui__extern"]
-    pub fn gr_eulernum_ui(res: gr_ptr, x: mp_limb_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_eulernum_ui(res: gr_ptr, x: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_eulernum_fmpz__extern"]
     pub fn gr_eulernum_fmpz(res: gr_ptr, x: *const fmpz, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_eulernum_vec__extern"]
-    pub fn gr_eulernum_vec(
-        res: gr_ptr,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
+    pub fn gr_eulernum_vec(res: gr_ptr, len: slong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_bernpoly_ui__extern"]
     pub fn gr_bernpoly_ui(
         res: gr_ptr,
-        n: mp_limb_t,
+        n: ulong,
         x: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_eulerpoly_ui__extern"]
     pub fn gr_eulerpoly_ui(
         res: gr_ptr,
-        n: mp_limb_t,
+        n: ulong,
         x: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_bellnum_ui__extern"]
-    pub fn gr_bellnum_ui(res: gr_ptr, x: mp_limb_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_bellnum_ui(res: gr_ptr, x: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_bellnum_fmpz__extern"]
     pub fn gr_bellnum_fmpz(res: gr_ptr, x: *const fmpz, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_bellnum_vec__extern"]
-    pub fn gr_bellnum_vec(
-        res: gr_ptr,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
+    pub fn gr_bellnum_vec(res: gr_ptr, len: slong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_stirling_s1u_uiui__extern"]
     pub fn gr_stirling_s1u_uiui(
         res: gr_ptr,
-        x: mp_limb_t,
-        y: mp_limb_t,
+        x: ulong,
+        y: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_stirling_s1_uiui__extern"]
     pub fn gr_stirling_s1_uiui(
         res: gr_ptr,
-        x: mp_limb_t,
-        y: mp_limb_t,
+        x: ulong,
+        y: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_stirling_s2_uiui__extern"]
     pub fn gr_stirling_s2_uiui(
         res: gr_ptr,
-        x: mp_limb_t,
-        y: mp_limb_t,
+        x: ulong,
+        y: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_stirling_s1u_ui_vec__extern"]
     pub fn gr_stirling_s1u_ui_vec(
         res: gr_ptr,
-        x: mp_limb_t,
-        len: mp_limb_signed_t,
+        x: ulong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_stirling_s1_ui_vec__extern"]
     pub fn gr_stirling_s1_ui_vec(
         res: gr_ptr,
-        x: mp_limb_t,
-        len: mp_limb_signed_t,
+        x: ulong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_stirling_s2_ui_vec__extern"]
     pub fn gr_stirling_s2_ui_vec(
         res: gr_ptr,
-        x: mp_limb_t,
-        len: mp_limb_signed_t,
+        x: ulong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_partitions_ui__extern"]
-    pub fn gr_partitions_ui(res: gr_ptr, x: mp_limb_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_partitions_ui(res: gr_ptr, x: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_partitions_fmpz__extern"]
     pub fn gr_partitions_fmpz(res: gr_ptr, x: *const fmpz, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_partitions_vec__extern"]
-    pub fn gr_partitions_vec(
-        res: gr_ptr,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
+    pub fn gr_partitions_vec(res: gr_ptr, len: slong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_erf__extern"]
     pub fn gr_erf(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_erfc__extern"]
@@ -654,8 +624,8 @@ extern "C" {
     #[link_name = "gr_spherical_y_si__extern"]
     pub fn gr_spherical_y_si(
         res: gr_ptr,
-        n: mp_limb_signed_t,
-        m: mp_limb_signed_t,
+        n: slong,
+        m: slong,
         theta: gr_srcptr,
         phi: gr_srcptr,
         ctx: *mut gr_ctx_struct,
@@ -664,8 +634,8 @@ extern "C" {
     pub fn gr_legendre_p_root_ui(
         root: gr_ptr,
         weight: gr_ptr,
-        n: mp_limb_t,
-        k: mp_limb_t,
+        n: ulong,
+        k: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_hypgeom_0f1__extern"]
@@ -716,7 +686,7 @@ extern "C" {
     #[link_name = "gr_zeta__extern"]
     pub fn gr_zeta(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_zeta_ui__extern"]
-    pub fn gr_zeta_ui(res: gr_ptr, x: mp_limb_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_zeta_ui(res: gr_ptr, x: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "gr_hurwitz_zeta__extern"]
     pub fn gr_hurwitz_zeta(
         res: gr_ptr,
@@ -765,7 +735,7 @@ extern "C" {
     pub fn gr_zeta_zero_vec(
         res: gr_ptr,
         n: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_zeta_nzeros__extern"]
@@ -817,7 +787,7 @@ extern "C" {
     #[link_name = "gr_hilbert_class_poly__extern"]
     pub fn gr_hilbert_class_poly(
         res: gr_ptr,
-        D: mp_limb_signed_t,
+        D: slong,
         x: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -828,14 +798,14 @@ extern "C" {
     #[link_name = "gr_eisenstein_e__extern"]
     pub fn gr_eisenstein_e(
         res: gr_ptr,
-        n: mp_limb_t,
+        n: ulong,
         tau: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_eisenstein_g__extern"]
     pub fn gr_eisenstein_g(
         res: gr_ptr,
-        n: mp_limb_t,
+        n: ulong,
         tau: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -843,7 +813,7 @@ extern "C" {
     pub fn gr_eisenstein_g_vec(
         res: gr_ptr,
         tau: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_agm1__extern"]
@@ -1011,24 +981,16 @@ extern "C" {
     pub fn gr_generic_fac(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
     pub fn gr_generic_fac_fmpz(res: gr_ptr, n: *const fmpz, ctx: *mut gr_ctx_struct)
         -> libc::c_int;
-    pub fn gr_generic_fac_ui(res: gr_ptr, n: mp_limb_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
-    pub fn gr_generic_fac_vec(
-        res: gr_ptr,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
+    pub fn gr_generic_fac_ui(res: gr_ptr, n: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_generic_fac_vec(res: gr_ptr, len: slong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     pub fn gr_generic_rfac(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
     pub fn gr_generic_rfac_fmpz(
         res: gr_ptr,
         n: *const fmpz,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
-    pub fn gr_generic_rfac_ui(res: gr_ptr, n: mp_limb_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
-    pub fn gr_generic_rfac_vec(
-        res: gr_ptr,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
+    pub fn gr_generic_rfac_ui(res: gr_ptr, n: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_generic_rfac_vec(res: gr_ptr, len: slong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     pub fn gr_generic_rising(
         res: gr_ptr,
         x: gr_srcptr,
@@ -1038,7 +1000,7 @@ extern "C" {
     pub fn gr_generic_rising_ui(
         res: gr_ptr,
         x: gr_srcptr,
-        y: mp_limb_t,
+        y: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_generic_falling(
@@ -1050,7 +1012,7 @@ extern "C" {
     pub fn gr_generic_falling_ui(
         res: gr_ptr,
         x: gr_srcptr,
-        y: mp_limb_t,
+        y: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_generic_bin(
@@ -1062,39 +1024,31 @@ extern "C" {
     pub fn gr_generic_bin_ui(
         res: gr_ptr,
         x: gr_srcptr,
-        y: mp_limb_t,
+        y: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_generic_bin_uiui(
         res: gr_ptr,
-        x: mp_limb_t,
-        y: mp_limb_t,
+        x: ulong,
+        y: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_generic_bin_vec(
         res: gr_ptr,
         x: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_generic_bin_ui_vec(
         res: gr_ptr,
-        x: mp_limb_t,
-        len: mp_limb_signed_t,
+        x: ulong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_generic_doublefac(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
-    pub fn gr_generic_doublefac_ui(
-        res: gr_ptr,
-        n: mp_limb_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
+    pub fn gr_generic_doublefac_ui(res: gr_ptr, n: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     pub fn gr_generic_harmonic(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
-    pub fn gr_generic_harmonic_ui(
-        res: gr_ptr,
-        n: mp_limb_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
+    pub fn gr_generic_harmonic_ui(res: gr_ptr, n: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     pub fn gr_generic_beta(
         res: gr_ptr,
         x: gr_srcptr,
@@ -1109,37 +1063,24 @@ extern "C" {
     ) -> libc::c_int;
     pub fn gr_generic_fib_fmpz(res: gr_ptr, n: *const fmpz, ctx: *mut gr_ctx_struct)
         -> libc::c_int;
-    pub fn gr_generic_fib_ui(res: gr_ptr, n: mp_limb_t, ctx: *mut gr_ctx_struct) -> libc::c_int;
-    pub fn gr_generic_fib_vec(
-        res: gr_ptr,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
+    pub fn gr_generic_fib_ui(res: gr_ptr, n: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_generic_fib_vec(res: gr_ptr, len: slong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     pub fn gr_generic_bellnum_fmpz(
         res: gr_ptr,
         n: *const fmpz,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
-    pub fn gr_generic_bellnum_ui(res: gr_ptr, n: mp_limb_t, ctx: *mut gr_ctx_struct)
-        -> libc::c_int;
-    pub fn gr_generic_bellnum_vec(
-        res: gr_ptr,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
+    pub fn gr_generic_bellnum_ui(res: gr_ptr, n: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_generic_bellnum_vec(res: gr_ptr, len: slong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     pub fn gr_generic_partitions_fmpz(
         res: gr_ptr,
         n: *const fmpz,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
-    pub fn gr_generic_partitions_ui(
-        res: gr_ptr,
-        n: mp_limb_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
+    pub fn gr_generic_partitions_ui(res: gr_ptr, n: ulong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     pub fn gr_generic_partitions_vec(
         res: gr_ptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_generic_chebyshev_t2_fmpz(
@@ -1171,7 +1112,7 @@ extern "C" {
     pub fn gr_generic_erfcx(res: gr_ptr, x: gr_srcptr, ctx: *mut gr_ctx_struct) -> libc::c_int;
     pub fn gr_generic_hilbert_class_poly(
         res: gr_ptr,
-        D: mp_limb_signed_t,
+        D: slong,
         x: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;

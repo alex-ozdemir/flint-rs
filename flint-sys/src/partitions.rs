@@ -7,15 +7,15 @@ use crate::flint::*;
 
 
 extern "C" {
-    pub fn partitions_rademacher_bound(b: *mut arf_struct, n: *const fmpz, N: mp_limb_t);
+    pub fn partitions_rademacher_bound(b: *mut arf_struct, n: *const fmpz, N: ulong);
     pub fn partitions_hrr_sum_arb(
         x: *mut arb_struct,
         n: *const fmpz,
-        N0: mp_limb_signed_t,
-        N: mp_limb_signed_t,
+        N0: slong,
+        N: slong,
         use_doubles: libc::c_int,
     );
     pub fn partitions_fmpz_fmpz(p: *mut fmpz, n: *const fmpz, use_doubles: libc::c_int);
-    pub fn partitions_fmpz_ui(p: *mut fmpz, n: mp_limb_t);
-    pub fn partitions_leading_fmpz(res: *mut arb_struct, n: *const fmpz, prec: mp_limb_signed_t);
+    pub fn partitions_fmpz_ui(p: *mut fmpz, n: ulong);
+    pub fn partitions_leading_fmpz(res: *mut arb_struct, n: *const fmpz, prec: slong);
 }

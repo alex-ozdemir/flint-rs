@@ -7,15 +7,14 @@ use crate::nmod_types::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct nmod_poly_interval_poly_arg_t {
     pub baby: *mut nmod_poly_struct,
     pub res: *mut nmod_poly_struct,
     pub H: *mut nmod_poly_struct,
     pub v: *mut nmod_poly_struct,
     pub vinv: *mut nmod_poly_struct,
-    pub tmp: mp_ptr,
-    pub m: mp_limb_signed_t,
+    pub tmp: nn_ptr,
+    pub m: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -50,8 +49,8 @@ impl Default for nmod_poly_interval_poly_arg_t {
 extern "C" {
     pub fn nmod_poly_factor_init(fac: *mut nmod_poly_factor_struct);
     pub fn nmod_poly_factor_clear(fac: *mut nmod_poly_factor_struct);
-    pub fn nmod_poly_factor_realloc(fac: *mut nmod_poly_factor_struct, alloc: mp_limb_signed_t);
-    pub fn nmod_poly_factor_fit_length(fac: *mut nmod_poly_factor_struct, len: mp_limb_signed_t);
+    pub fn nmod_poly_factor_realloc(fac: *mut nmod_poly_factor_struct, alloc: slong);
+    pub fn nmod_poly_factor_fit_length(fac: *mut nmod_poly_factor_struct, len: slong);
     pub fn nmod_poly_factor_set(
         res: *mut nmod_poly_factor_struct,
         fac: *const nmod_poly_factor_struct,
@@ -61,12 +60,12 @@ extern "C" {
     pub fn nmod_poly_factor_get_poly(
         a: *mut nmod_poly_struct,
         b: *const nmod_poly_factor_struct,
-        i: mp_limb_signed_t,
+        i: slong,
     );
     pub fn nmod_poly_factor_insert(
         fac: *mut nmod_poly_factor_struct,
         poly: *const nmod_poly_struct,
-        exp: mp_limb_signed_t,
+        exp: slong,
     );
     pub fn nmod_poly_factor_print(fac: *const nmod_poly_factor_struct);
     pub fn nmod_poly_factor_print_pretty(
@@ -77,36 +76,32 @@ extern "C" {
         res: *mut nmod_poly_factor_struct,
         fac: *const nmod_poly_factor_struct,
     );
-    pub fn nmod_poly_factor_pow(fac: *mut nmod_poly_factor_struct, exp: mp_limb_signed_t);
+    pub fn nmod_poly_factor_pow(fac: *mut nmod_poly_factor_struct, exp: slong);
     pub fn nmod_poly_factor_equal_deg(
         factors: *mut nmod_poly_factor_struct,
         pol: *const nmod_poly_struct,
-        d: mp_limb_signed_t,
+        d: slong,
     );
     pub fn nmod_poly_factor_equal_deg_prob(
         factor: *mut nmod_poly_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         pol: *const nmod_poly_struct,
-        d: mp_limb_signed_t,
+        d: slong,
     ) -> libc::c_int;
     pub fn nmod_poly_factor_distinct_deg(
         res: *mut nmod_poly_factor_struct,
         poly: *const nmod_poly_struct,
-        degs: *const *mut mp_limb_signed_t,
+        degs: *const *mut slong,
     );
     pub fn nmod_poly_factor_distinct_deg_threaded(
         res: *mut nmod_poly_factor_struct,
         poly: *const nmod_poly_struct,
-        degs: *const *mut mp_limb_signed_t,
+        degs: *const *mut slong,
     );
     pub fn nmod_poly_is_irreducible(f: *const nmod_poly_struct) -> libc::c_int;
     pub fn nmod_poly_is_irreducible_rabin(f: *const nmod_poly_struct) -> libc::c_int;
     pub fn nmod_poly_is_irreducible_ddf(f: *const nmod_poly_struct) -> libc::c_int;
-    pub fn _nmod_poly_is_squarefree(
-        f: mp_srcptr,
-        len: mp_limb_signed_t,
-        mod_: nmod_t,
-    ) -> libc::c_int;
+    pub fn _nmod_poly_is_squarefree(f: nn_srcptr, len: slong, mod_: nmod_t) -> libc::c_int;
     pub fn nmod_poly_is_squarefree(f: *const nmod_poly_struct) -> libc::c_int;
     pub fn nmod_poly_factor_cantor_zassenhaus(
         res: *mut nmod_poly_factor_struct,
@@ -127,19 +122,19 @@ extern "C" {
     pub fn nmod_poly_factor_with_berlekamp(
         result: *mut nmod_poly_factor_struct,
         input: *const nmod_poly_struct,
-    ) -> mp_limb_t;
+    ) -> ulong;
     pub fn nmod_poly_factor_with_cantor_zassenhaus(
         result: *mut nmod_poly_factor_struct,
         input: *const nmod_poly_struct,
-    ) -> mp_limb_t;
+    ) -> ulong;
     pub fn nmod_poly_factor_with_kaltofen_shoup(
         result: *mut nmod_poly_factor_struct,
         input: *const nmod_poly_struct,
-    ) -> mp_limb_t;
+    ) -> ulong;
     pub fn nmod_poly_factor(
         result: *mut nmod_poly_factor_struct,
         input: *const nmod_poly_struct,
-    ) -> mp_limb_t;
+    ) -> ulong;
     pub fn _nmod_poly_interval_poly_worker(arg_ptr: *mut libc::c_void);
     pub fn nmod_poly_roots(
         r: *mut nmod_poly_factor_struct,

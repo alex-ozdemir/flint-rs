@@ -2,9 +2,9 @@
 
 use crate::deps::*;
 use crate::arf_types::*;
-use crate::calcium::*;
 use crate::flint::*;
 use crate::fmpz_types::*;
+use crate::gr_types::*;
 use crate::mpoly_types::*;
 
 
@@ -13,10 +13,9 @@ pub const FEXPR_SMALL_SYMBOL_LEN: u32 = 7;
 pub const FEXPR_LATEX_SMALL: u32 = 1;
 pub const FEXPR_LATEX_LOGIC: u32 = 2;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fexpr_struct {
-    pub data: *mut mp_limb_t,
-    pub alloc: mp_limb_signed_t,
+    pub data: *mut ulong,
+    pub alloc: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -38,11 +37,10 @@ pub type fexpr_t = [fexpr_struct; 1usize];
 pub type fexpr_ptr = *mut fexpr_struct;
 pub type fexpr_srcptr = *const fexpr_struct;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fexpr_vec_struct {
     pub entries: *mut fexpr_struct,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
+    pub alloc: slong,
+    pub length: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -71,78 +69,81 @@ extern "C" {
     #[link_name = "fexpr_clear__extern"]
     pub fn fexpr_clear(expr: *mut fexpr_struct);
     #[link_name = "_fexpr_vec_init__extern"]
-    pub fn _fexpr_vec_init(len: mp_limb_signed_t) -> fexpr_ptr;
+    pub fn _fexpr_vec_init(len: slong) -> fexpr_ptr;
     #[link_name = "_fexpr_vec_clear__extern"]
-    pub fn _fexpr_vec_clear(vec: fexpr_ptr, len: mp_limb_signed_t);
+    pub fn _fexpr_vec_clear(vec: fexpr_ptr, len: slong);
     #[link_name = "fexpr_fit_size__extern"]
-    pub fn fexpr_fit_size(expr: *mut fexpr_struct, size: mp_limb_signed_t);
+    pub fn fexpr_fit_size(expr: *mut fexpr_struct, size: slong);
     #[link_name = "_fexpr_size__extern"]
-    pub fn _fexpr_size(expr: *const mp_limb_t) -> mp_limb_signed_t;
+    pub fn _fexpr_size(expr: *const ulong) -> slong;
     #[link_name = "fexpr_size__extern"]
-    pub fn fexpr_size(expr: *const fexpr_struct) -> mp_limb_signed_t;
+    pub fn fexpr_size(expr: *const fexpr_struct) -> slong;
     #[link_name = "fexpr_set__extern"]
     pub fn fexpr_set(res: *mut fexpr_struct, expr: *const fexpr_struct);
     #[link_name = "fexpr_swap__extern"]
     pub fn fexpr_swap(a: *mut fexpr_struct, b: *mut fexpr_struct);
-    #[link_name = "_mpn_equal__extern"]
-    pub fn _mpn_equal(a: mp_srcptr, b: mp_srcptr, len: mp_limb_signed_t) -> libc::c_int;
     #[link_name = "fexpr_equal__extern"]
     pub fn fexpr_equal(a: *const fexpr_struct, b: *const fexpr_struct) -> libc::c_int;
-    pub fn fexpr_equal_si(expr: *const fexpr_struct, c: mp_limb_signed_t) -> libc::c_int;
-    pub fn fexpr_equal_ui(expr: *const fexpr_struct, c: mp_limb_t) -> libc::c_int;
-    pub fn fexpr_hash(expr: *const fexpr_struct) -> mp_limb_t;
+    pub fn fexpr_equal_si(expr: *const fexpr_struct, c: slong) -> libc::c_int;
+    pub fn fexpr_equal_ui(expr: *const fexpr_struct, c: ulong) -> libc::c_int;
+    pub fn fexpr_hash(expr: *const fexpr_struct) -> ulong;
     pub fn fexpr_cmp_fast(a: *const fexpr_struct, b: *const fexpr_struct) -> libc::c_int;
-    pub fn _fexpr_vec_sort_fast(vec: fexpr_ptr, len: mp_limb_signed_t);
+    pub fn _fexpr_vec_sort_fast(vec: fexpr_ptr, len: slong);
     #[link_name = "_fexpr_is_integer__extern"]
-    pub fn _fexpr_is_integer(expr: *const mp_limb_t) -> libc::c_int;
+    pub fn _fexpr_is_integer(expr: *const ulong) -> libc::c_int;
     #[link_name = "fexpr_is_integer__extern"]
     pub fn fexpr_is_integer(expr: *const fexpr_struct) -> libc::c_int;
     pub fn fexpr_is_neg_integer(expr: *const fexpr_struct) -> libc::c_int;
     #[link_name = "_fexpr_is_symbol__extern"]
-    pub fn _fexpr_is_symbol(expr: *const mp_limb_t) -> libc::c_int;
+    pub fn _fexpr_is_symbol(expr: *const ulong) -> libc::c_int;
     #[link_name = "fexpr_is_symbol__extern"]
     pub fn fexpr_is_symbol(expr: *const fexpr_struct) -> libc::c_int;
     #[link_name = "_fexpr_is_string__extern"]
-    pub fn _fexpr_is_string(expr: *const mp_limb_t) -> libc::c_int;
+    pub fn _fexpr_is_string(expr: *const ulong) -> libc::c_int;
     #[link_name = "fexpr_is_string__extern"]
     pub fn fexpr_is_string(expr: *const fexpr_struct) -> libc::c_int;
     #[link_name = "_fexpr_is_atom__extern"]
-    pub fn _fexpr_is_atom(expr: *const mp_limb_t) -> libc::c_int;
+    pub fn _fexpr_is_atom(expr: *const ulong) -> libc::c_int;
     #[link_name = "fexpr_is_atom__extern"]
     pub fn fexpr_is_atom(expr: *const fexpr_struct) -> libc::c_int;
     #[link_name = "fexpr_zero__extern"]
     pub fn fexpr_zero(res: *mut fexpr_struct);
     #[link_name = "fexpr_is_zero__extern"]
     pub fn fexpr_is_zero(expr: *const fexpr_struct) -> libc::c_int;
-    pub fn fexpr_set_si(res: *mut fexpr_struct, c: mp_limb_signed_t);
-    pub fn fexpr_set_ui(res: *mut fexpr_struct, c: mp_limb_t);
+    pub fn fexpr_set_si(res: *mut fexpr_struct, c: slong);
+    pub fn fexpr_set_ui(res: *mut fexpr_struct, c: ulong);
     pub fn fexpr_set_fmpz(res: *mut fexpr_struct, c: *const fmpz);
     pub fn fexpr_get_fmpz(c: *mut fmpz, x: *const fexpr_struct) -> libc::c_int;
     pub fn fexpr_set_fmpq(res: *mut fexpr_struct, x: *const fmpq);
     #[link_name = "fexpr_set_symbol_builtin__extern"]
-    pub fn fexpr_set_symbol_builtin(res: *mut fexpr_struct, id: mp_limb_signed_t);
+    pub fn fexpr_set_symbol_builtin(res: *mut fexpr_struct, id: slong);
     pub fn fexpr_set_symbol_str(res: *mut fexpr_struct, s: *const libc::c_char);
-    pub fn fexpr_get_symbol_str(expr: *const fexpr_struct) -> *mut libc::c_char;
     pub fn fexpr_set_string(res: *mut fexpr_struct, s: *const libc::c_char);
+    pub fn fexpr_get_symbol_str(expr: *const fexpr_struct) -> *mut libc::c_char;
     pub fn fexpr_get_string(expr: *const fexpr_struct) -> *mut libc::c_char;
-    pub fn fexpr_depth(expr: *const fexpr_struct) -> mp_limb_signed_t;
-    pub fn fexpr_num_leaves(expr: *const fexpr_struct) -> mp_limb_signed_t;
+    pub fn fexpr_get_decimal_str(
+        expr: *const fexpr_struct,
+        digits: slong,
+        flags: ulong,
+    ) -> *mut libc::c_char;
+    pub fn fexpr_depth(expr: *const fexpr_struct) -> slong;
+    pub fn fexpr_num_leaves(expr: *const fexpr_struct) -> slong;
     #[link_name = "fexpr_size_bytes__extern"]
-    pub fn fexpr_size_bytes(expr: *const fexpr_struct) -> mp_limb_signed_t;
+    pub fn fexpr_size_bytes(expr: *const fexpr_struct) -> slong;
     #[link_name = "fexpr_allocated_bytes__extern"]
-    pub fn fexpr_allocated_bytes(expr: *const fexpr_struct) -> mp_limb_signed_t;
+    pub fn fexpr_allocated_bytes(expr: *const fexpr_struct) -> slong;
     #[link_name = "fexpr_is_any_builtin_symbol__extern"]
     pub fn fexpr_is_any_builtin_symbol(expr: *const fexpr_struct) -> libc::c_int;
     #[link_name = "fexpr_is_builtin_symbol__extern"]
-    pub fn fexpr_is_builtin_symbol(expr: *const fexpr_struct, i: mp_limb_signed_t) -> libc::c_int;
-    pub fn fexpr_is_builtin_call(expr: *const fexpr_struct, i: mp_limb_signed_t) -> libc::c_int;
+    pub fn fexpr_is_builtin_symbol(expr: *const fexpr_struct, i: slong) -> libc::c_int;
+    pub fn fexpr_is_builtin_call(expr: *const fexpr_struct, i: slong) -> libc::c_int;
     pub fn fexpr_is_any_builtin_call(expr: *const fexpr_struct) -> libc::c_int;
     #[link_name = "fexpr_nargs__extern"]
-    pub fn fexpr_nargs(expr: *const fexpr_struct) -> mp_limb_signed_t;
+    pub fn fexpr_nargs(expr: *const fexpr_struct) -> slong;
     pub fn fexpr_func(res: *mut fexpr_struct, expr: *const fexpr_struct);
     pub fn fexpr_view_func(res: *mut fexpr_struct, expr: *const fexpr_struct);
-    pub fn fexpr_arg(res: *mut fexpr_struct, expr: *const fexpr_struct, i: mp_limb_signed_t);
-    pub fn fexpr_view_arg(res: *mut fexpr_struct, expr: *const fexpr_struct, i: mp_limb_signed_t);
+    pub fn fexpr_arg(res: *mut fexpr_struct, expr: *const fexpr_struct, i: slong);
+    pub fn fexpr_view_arg(res: *mut fexpr_struct, expr: *const fexpr_struct, i: slong);
     #[link_name = "fexpr_view_next__extern"]
     pub fn fexpr_view_next(view: *mut fexpr_struct);
     pub fn fexpr_call0(res: *mut fexpr_struct, f: *const fexpr_struct);
@@ -172,12 +173,12 @@ extern "C" {
         res: *mut fexpr_struct,
         f: *const fexpr_struct,
         args: fexpr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
     );
-    pub fn fexpr_call_builtin1(res: *mut fexpr_struct, f: mp_limb_signed_t, x: *const fexpr_struct);
+    pub fn fexpr_call_builtin1(res: *mut fexpr_struct, f: slong, x: *const fexpr_struct);
     pub fn fexpr_call_builtin2(
         res: *mut fexpr_struct,
-        f: mp_limb_signed_t,
+        f: slong,
         x: *const fexpr_struct,
         y: *const fexpr_struct,
     );
@@ -202,195 +203,191 @@ extern "C" {
         xs: *const fexpr_vec_struct,
         ys: *const fexpr_vec_struct,
     ) -> libc::c_int;
-    pub fn fexpr_write(stream: *mut calcium_stream_struct, expr: *const fexpr_struct);
+    pub fn fexpr_write(stream: *mut gr_stream_struct, expr: *const fexpr_struct);
     pub fn fexpr_print(expr: *const fexpr_struct);
     pub fn fexpr_get_str(expr: *const fexpr_struct) -> *mut libc::c_char;
-    pub fn fexpr_write_latex(
-        out: *mut calcium_stream_struct,
-        expr: *const fexpr_struct,
-        flags: mp_limb_t,
-    );
-    pub fn fexpr_print_latex(expr: *const fexpr_struct, flags: mp_limb_t);
-    pub fn fexpr_get_str_latex(expr: *const fexpr_struct, flags: mp_limb_t) -> *mut libc::c_char;
+    pub fn fexpr_write_latex(out: *mut gr_stream_struct, expr: *const fexpr_struct, flags: ulong);
+    pub fn fexpr_print_latex(expr: *const fexpr_struct, flags: ulong);
+    pub fn fexpr_get_str_latex(expr: *const fexpr_struct, flags: ulong) -> *mut libc::c_char;
     pub fn fexpr_write_latex_call(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_subscript(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_subscript_call(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_infix(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_mul(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_div(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_neg_pos(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_add(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_sub(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_pow(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_exp(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_factorial(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_integral(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_sum_product(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_divsum(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_limit(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_derivative(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_logic(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_collection(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_matrix(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_simple(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_simple2(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_simple2_small(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_alg_structure(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_setop(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_cases(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_where(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_show_form(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_range(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_decimal(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_call1_optional_derivative(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_call2_optional_derivative(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_sub1_call1_optional_derivative(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_sub1_call2_optional_derivative(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_misc_special(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_write_latex_residue(
-        out: *mut calcium_stream_struct,
+        out: *mut gr_stream_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     );
     pub fn fexpr_set_arf(res: *mut fexpr_struct, x: *const arf_struct);
     pub fn fexpr_set_d(res: *mut fexpr_struct, x: f64);
@@ -424,16 +421,16 @@ extern "C" {
     pub fn fexpr_expanded_normal_form(
         res: *mut fexpr_struct,
         expr: *const fexpr_struct,
-        flags: mp_limb_t,
+        flags: ulong,
     ) -> libc::c_int;
     #[link_name = "fexpr_vec_init__extern"]
-    pub fn fexpr_vec_init(vec: *mut fexpr_vec_struct, len: mp_limb_signed_t);
+    pub fn fexpr_vec_init(vec: *mut fexpr_vec_struct, len: slong);
     #[link_name = "fexpr_vec_print__extern"]
     pub fn fexpr_vec_print(F: *const fexpr_vec_struct);
     #[link_name = "fexpr_vec_swap__extern"]
     pub fn fexpr_vec_swap(x: *mut fexpr_vec_struct, y: *mut fexpr_vec_struct);
     #[link_name = "fexpr_vec_fit_length__extern"]
-    pub fn fexpr_vec_fit_length(vec: *mut fexpr_vec_struct, len: mp_limb_signed_t);
+    pub fn fexpr_vec_fit_length(vec: *mut fexpr_vec_struct, len: slong);
     #[link_name = "fexpr_vec_clear__extern"]
     pub fn fexpr_vec_clear(vec: *mut fexpr_vec_struct);
     #[link_name = "fexpr_vec_set__extern"]
@@ -441,10 +438,7 @@ extern "C" {
     #[link_name = "fexpr_vec_append__extern"]
     pub fn fexpr_vec_append(vec: *mut fexpr_vec_struct, f: *const fexpr_struct);
     #[link_name = "fexpr_vec_insert_unique__extern"]
-    pub fn fexpr_vec_insert_unique(
-        vec: *mut fexpr_vec_struct,
-        f: *const fexpr_struct,
-    ) -> mp_limb_signed_t;
+    pub fn fexpr_vec_insert_unique(vec: *mut fexpr_vec_struct, f: *const fexpr_struct) -> slong;
     #[link_name = "fexpr_vec_set_length__extern"]
-    pub fn fexpr_vec_set_length(vec: *mut fexpr_vec_struct, len: mp_limb_signed_t);
+    pub fn fexpr_vec_set_length(vec: *mut fexpr_vec_struct, len: slong);
 }

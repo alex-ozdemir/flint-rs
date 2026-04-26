@@ -13,14 +13,13 @@ pub const ordering_t_ORD_DEGLEX: ordering_t = 1;
 pub const ordering_t_ORD_DEGREVLEX: ordering_t = 2;
 pub type ordering_t = libc::c_uint;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct mpoly_ctx_struct {
-    pub nvars: mp_limb_signed_t,
-    pub nfields: mp_limb_signed_t,
+    pub nvars: slong,
+    pub nfields: slong,
     pub ord: ordering_t,
     pub deg: libc::c_int,
     pub rev: libc::c_int,
-    pub lut_words_per_exp: [mp_limb_signed_t; 64usize],
+    pub lut_words_per_exp: [slong; 64usize],
     pub lut_fix_bits: [libc::c_uchar; 64usize],
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -53,7 +52,6 @@ impl Default for mpoly_ctx_struct {
 }
 pub type mpoly_ctx_t = [mpoly_ctx_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct nmod_mpoly_ctx_struct {
     pub minfo: mpoly_ctx_t,
     pub mod_: nmod_t,
@@ -79,7 +77,6 @@ impl Default for nmod_mpoly_ctx_struct {
 }
 pub type nmod_mpoly_ctx_t = [nmod_mpoly_ctx_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mpoly_ctx_struct {
     pub minfo: mpoly_ctx_t,
 }
@@ -102,7 +99,6 @@ impl Default for fmpz_mpoly_ctx_struct {
 }
 pub type fmpz_mpoly_ctx_t = [fmpz_mpoly_ctx_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpq_mpoly_ctx_struct {
     pub zctx: fmpz_mpoly_ctx_t,
 }
@@ -125,7 +121,6 @@ impl Default for fmpq_mpoly_ctx_struct {
 }
 pub type fmpq_mpoly_ctx_t = [fmpq_mpoly_ctx_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mod_mpoly_ctx_struct {
     pub minfo: mpoly_ctx_t,
     pub ffinfo: fmpz_mod_ctx_t,
@@ -152,7 +147,6 @@ impl Default for fmpz_mod_mpoly_ctx_struct {
 }
 pub type fmpz_mod_mpoly_ctx_t = [fmpz_mod_mpoly_ctx_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_mpoly_ctx_struct {
     pub minfo: mpoly_ctx_t,
     pub fqctx: fq_nmod_ctx_t,
@@ -179,9 +173,8 @@ impl Default for fq_nmod_mpoly_ctx_struct {
 }
 pub type fq_nmod_mpoly_ctx_t = [fq_nmod_mpoly_ctx_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct _bindgen_ty_2 {
-    pub elem_size: mp_limb_signed_t,
+    pub elem_size: slong,
     pub ctx: *const libc::c_void,
     pub init: ::std::option::Option<
         unsafe extern "C" fn(arg1: *mut libc::c_void, arg2: *const libc::c_void),
@@ -279,10 +272,7 @@ pub struct _bindgen_ty_2 {
         ) -> libc::c_int,
     >,
     pub length: ::std::option::Option<
-        unsafe extern "C" fn(
-            arg1: *const libc::c_void,
-            arg2: *const libc::c_void,
-        ) -> mp_limb_signed_t,
+        unsafe extern "C" fn(arg1: *const libc::c_void, arg2: *const libc::c_void) -> slong,
     >,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -329,42 +319,41 @@ impl Default for _bindgen_ty_2 {
 }
 pub type mpoly_void_ring_t = [_bindgen_ty_2; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct mpoly_gcd_info_struct {
-    pub Amax_exp: *mut mp_limb_t,
-    pub Amin_exp: *mut mp_limb_t,
-    pub Astride: *mut mp_limb_t,
-    pub Adeflate_deg: *mut mp_limb_signed_t,
-    pub Alead_count: *mut mp_limb_signed_t,
-    pub Atail_count: *mut mp_limb_signed_t,
-    pub Bmax_exp: *mut mp_limb_t,
-    pub Bmin_exp: *mut mp_limb_t,
-    pub Bstride: *mut mp_limb_t,
-    pub Bdeflate_deg: *mut mp_limb_signed_t,
-    pub Blead_count: *mut mp_limb_signed_t,
-    pub Btail_count: *mut mp_limb_signed_t,
-    pub Gmin_exp: *mut mp_limb_t,
-    pub Abarmin_exp: *mut mp_limb_t,
-    pub Bbarmin_exp: *mut mp_limb_t,
-    pub Gstride: *mut mp_limb_t,
-    pub Gterm_count_est: *mut mp_limb_signed_t,
-    pub Gdeflate_deg_bound: *mut mp_limb_signed_t,
-    pub Gbits: mp_limb_t,
-    pub Abarbits: mp_limb_t,
-    pub Bbarbits: mp_limb_t,
-    pub mvars: mp_limb_signed_t,
-    pub Adeflate_tdeg: mp_limb_signed_t,
-    pub Bdeflate_tdeg: mp_limb_signed_t,
+    pub Amax_exp: *mut ulong,
+    pub Amin_exp: *mut ulong,
+    pub Astride: *mut ulong,
+    pub Adeflate_deg: *mut slong,
+    pub Alead_count: *mut slong,
+    pub Atail_count: *mut slong,
+    pub Bmax_exp: *mut ulong,
+    pub Bmin_exp: *mut ulong,
+    pub Bstride: *mut ulong,
+    pub Bdeflate_deg: *mut slong,
+    pub Blead_count: *mut slong,
+    pub Btail_count: *mut slong,
+    pub Gmin_exp: *mut ulong,
+    pub Abarmin_exp: *mut ulong,
+    pub Bbarmin_exp: *mut ulong,
+    pub Gstride: *mut ulong,
+    pub Gterm_count_est: *mut slong,
+    pub Gdeflate_deg_bound: *mut slong,
+    pub Gbits: flint_bitcnt_t,
+    pub Abarbits: flint_bitcnt_t,
+    pub Bbarbits: flint_bitcnt_t,
+    pub mvars: slong,
+    pub Adeflate_tdeg: slong,
+    pub Bdeflate_tdeg: slong,
     pub Adensity: f64,
     pub Bdensity: f64,
     pub hensel_time: f64,
     pub brown_time: f64,
     pub zippel_time: f64,
     pub zippel2_time: f64,
-    pub hensel_perm: *mut mp_limb_signed_t,
-    pub brown_perm: *mut mp_limb_signed_t,
-    pub zippel_perm: *mut mp_limb_signed_t,
-    pub zippel2_perm: *mut mp_limb_signed_t,
+    pub hensel_perm: *mut slong,
+    pub brown_perm: *mut slong,
+    pub zippel_perm: *mut slong,
+    pub zippel2_perm: *mut slong,
     pub can_use: libc::c_uint,
     pub Gdeflate_deg_bounds_are_nice: libc::c_int,
     pub data: *mut libc::c_char,
@@ -460,17 +449,16 @@ impl Default for mpoly_gcd_info_struct {
 }
 pub type mpoly_gcd_info_t = [mpoly_gcd_info_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct mpoly_compression_struct {
-    pub mvars: mp_limb_signed_t,
-    pub nvars: mp_limb_signed_t,
-    pub exps: *mut mp_limb_signed_t,
-    pub exps_alloc: mp_limb_signed_t,
-    pub rest: *mut mp_limb_signed_t,
-    pub rest_alloc: mp_limb_signed_t,
-    pub umat: *mut mp_limb_signed_t,
-    pub deltas: *mut mp_limb_signed_t,
-    pub degs: *mut mp_limb_signed_t,
+    pub mvars: slong,
+    pub nvars: slong,
+    pub exps: *mut slong,
+    pub exps_alloc: slong,
+    pub rest: *mut slong,
+    pub rest_alloc: slong,
+    pub umat: *mut slong,
+    pub deltas: *mut slong,
+    pub degs: *mut slong,
     pub is_trivial: libc::c_int,
     pub is_perm: libc::c_int,
     pub is_irred: libc::c_int,
@@ -517,13 +505,12 @@ impl Default for mpoly_compression_struct {
 }
 pub type mpoly_compression_t = [mpoly_compression_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct nmod_mpolyn_struct {
     pub coeffs: *mut n_poly_struct,
-    pub exps: *mut mp_limb_t,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
-    pub bits: mp_limb_signed_t,
+    pub exps: *mut ulong,
+    pub alloc: slong,
+    pub length: slong,
+    pub bits: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -551,13 +538,12 @@ impl Default for nmod_mpolyn_struct {
 }
 pub type nmod_mpolyn_t = [nmod_mpolyn_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct nmod_mpolyun_struct {
     pub coeffs: *mut nmod_mpolyn_struct,
-    pub exps: *mut mp_limb_t,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
-    pub bits: mp_limb_t,
+    pub exps: *mut ulong,
+    pub alloc: slong,
+    pub length: slong,
+    pub bits: flint_bitcnt_t,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {

@@ -12,8 +12,8 @@ use crate::mpoly_types::*;
 pub struct fmpq_mpoly_univar_struct {
     pub coeffs: *mut fmpq_mpoly_struct,
     pub exps: *mut fmpz,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
+    pub alloc: slong,
+    pub length: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -42,64 +42,60 @@ impl Default for fmpq_mpoly_univar_struct {
 pub type fmpq_mpoly_univar_t = [fmpq_mpoly_univar_struct; 1usize];
 extern "C" {
     #[link_name = "fmpq_mpoly_ctx_init__extern"]
-    pub fn fmpq_mpoly_ctx_init(
-        ctx: *mut fmpq_mpoly_ctx_struct,
-        nvars: mp_limb_signed_t,
-        ord: ordering_t,
-    );
+    pub fn fmpq_mpoly_ctx_init(ctx: *mut fmpq_mpoly_ctx_struct, nvars: slong, ord: ordering_t);
     #[link_name = "fmpq_mpoly_ctx_init_rand__extern"]
     pub fn fmpq_mpoly_ctx_init_rand(
         ctx: *mut fmpq_mpoly_ctx_struct,
-        state: *mut flint_rand_s,
-        max_nvars: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        max_nvars: slong,
     );
     #[link_name = "fmpq_mpoly_ctx_clear__extern"]
     pub fn fmpq_mpoly_ctx_clear(ctx: *mut fmpq_mpoly_ctx_struct);
     #[link_name = "fmpq_mpoly_ctx_nvars__extern"]
-    pub fn fmpq_mpoly_ctx_nvars(ctx: *const fmpq_mpoly_ctx_struct) -> mp_limb_signed_t;
+    pub fn fmpq_mpoly_ctx_nvars(ctx: *const fmpq_mpoly_ctx_struct) -> slong;
     #[link_name = "fmpq_mpoly_ctx_ord__extern"]
     pub fn fmpq_mpoly_ctx_ord(ctx: *const fmpq_mpoly_ctx_struct) -> ordering_t;
     #[link_name = "fmpq_mpoly_content_ref__extern"]
     pub fn fmpq_mpoly_content_ref(
         A: *mut fmpq_mpoly_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
     ) -> *mut fmpq;
     #[link_name = "fmpq_mpoly_zpoly_ref__extern"]
     pub fn fmpq_mpoly_zpoly_ref(
         A: *mut fmpq_mpoly_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
     ) -> *mut fmpz_mpoly_struct;
     #[link_name = "fmpq_mpoly_zpoly_term_coeff_ref__extern"]
     pub fn fmpq_mpoly_zpoly_term_coeff_ref(
         A: *mut fmpq_mpoly_struct,
-        i: mp_limb_signed_t,
-        ctx: *const fmpq_mpoly_ctx_struct,
+        i: slong,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
     ) -> *mut fmpz;
     #[link_name = "fmpq_mpoly_init__extern"]
     pub fn fmpq_mpoly_init(A: *mut fmpq_mpoly_struct, ctx: *const fmpq_mpoly_ctx_struct);
     #[link_name = "fmpq_mpoly_init2__extern"]
     pub fn fmpq_mpoly_init2(
         A: *mut fmpq_mpoly_struct,
-        alloc: mp_limb_signed_t,
+        alloc: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_init3__extern"]
     pub fn fmpq_mpoly_init3(
         A: *mut fmpq_mpoly_struct,
-        alloc: mp_limb_signed_t,
-        bits: mp_limb_t,
+        alloc: slong,
+        bits: flint_bitcnt_t,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_realloc__extern"]
     pub fn fmpq_mpoly_realloc(
         A: *mut fmpq_mpoly_struct,
-        alloc: mp_limb_signed_t,
+        alloc: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_fit_length__extern"]
     pub fn fmpq_mpoly_fit_length(
         A: *mut fmpq_mpoly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_clear__extern"]
@@ -107,7 +103,7 @@ extern "C" {
     #[link_name = "fmpq_mpoly_fit_bits__extern"]
     pub fn fmpq_mpoly_fit_bits(
         A: *mut fmpq_mpoly_struct,
-        bits: mp_limb_t,
+        bits: flint_bitcnt_t,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_set_str_pretty(
@@ -133,15 +129,11 @@ extern "C" {
         ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "fmpq_mpoly_gen__extern"]
-    pub fn fmpq_mpoly_gen(
-        A: *mut fmpq_mpoly_struct,
-        var: mp_limb_signed_t,
-        ctx: *const fmpq_mpoly_ctx_struct,
-    );
+    pub fn fmpq_mpoly_gen(A: *mut fmpq_mpoly_struct, var: slong, ctx: *const fmpq_mpoly_ctx_struct);
     #[link_name = "fmpq_mpoly_is_gen__extern"]
     pub fn fmpq_mpoly_is_gen(
         A: *const fmpq_mpoly_struct,
-        var: mp_limb_signed_t,
+        var: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "fmpq_mpoly_set__extern"]
@@ -160,7 +152,7 @@ extern "C" {
     pub fn fmpq_mpoly_swap(
         A: *mut fmpq_mpoly_struct,
         B: *mut fmpq_mpoly_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_is_fmpq__extern"]
     pub fn fmpq_mpoly_is_fmpq(
@@ -184,12 +176,12 @@ extern "C" {
     );
     pub fn fmpq_mpoly_set_ui(
         A: *mut fmpq_mpoly_struct,
-        c: mp_limb_t,
+        c: ulong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_set_si(
         A: *mut fmpq_mpoly_struct,
-        c: mp_limb_signed_t,
+        c: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_zero__extern"]
@@ -208,18 +200,18 @@ extern "C" {
     ) -> libc::c_int;
     pub fn fmpq_mpoly_equal_ui(
         A: *const fmpq_mpoly_struct,
-        c: mp_limb_t,
+        c: ulong,
         ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpq_mpoly_equal_si(
         A: *const fmpq_mpoly_struct,
-        c: mp_limb_signed_t,
+        c: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "fmpq_mpoly_is_zero__extern"]
     pub fn fmpq_mpoly_is_zero(
         A: *const fmpq_mpoly_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "fmpq_mpoly_is_one__extern"]
     pub fn fmpq_mpoly_is_one(
@@ -236,21 +228,21 @@ extern "C" {
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_degrees_si(
-        degs: *mut mp_limb_signed_t,
+        degs: *mut slong,
         A: *const fmpq_mpoly_struct,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_degree_fmpz(
         deg: *mut fmpz,
         A: *const fmpq_mpoly_struct,
-        var: mp_limb_signed_t,
+        var: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_degree_si(
         A: *const fmpq_mpoly_struct,
-        var: mp_limb_signed_t,
+        var: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn fmpq_mpoly_total_degree_fits_si(
         A: *const fmpq_mpoly_struct,
         ctx: *const fmpq_mpoly_ctx_struct,
@@ -263,7 +255,7 @@ extern "C" {
     pub fn fmpq_mpoly_total_degree_si(
         A: *const fmpq_mpoly_struct,
         ctx: *const fmpq_mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     #[link_name = "fmpq_mpoly_used_vars__extern"]
     pub fn fmpq_mpoly_used_vars(
         used: *mut libc::c_int,
@@ -274,11 +266,11 @@ extern "C" {
     pub fn fmpq_mpoly_get_denominator(
         d: *mut fmpz,
         A: *const fmpq_mpoly_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_is_monic(
         A: *const fmpq_mpoly_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpq_mpoly_get_coeff_fmpq_monomial(
         c: *mut fmpq,
@@ -307,7 +299,7 @@ extern "C" {
     pub fn fmpq_mpoly_set_coeff_fmpq_ui(
         A: *mut fmpq_mpoly_struct,
         c: *const fmpq,
-        exp: *const mp_limb_t,
+        exp: *const ulong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn _fmpq_mpoly_get_coeff_fmpq_fmpz(
@@ -325,32 +317,32 @@ extern "C" {
     pub fn fmpq_mpoly_get_coeff_fmpq_ui(
         c: *mut fmpq,
         A: *const fmpq_mpoly_struct,
-        exp: *const mp_limb_t,
+        exp: *const ulong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_get_coeff_vars_ui(
         C: *mut fmpq_mpoly_struct,
         A: *const fmpq_mpoly_struct,
-        vars: *const mp_limb_signed_t,
-        exps: *const mp_limb_t,
-        length: mp_limb_signed_t,
+        vars: *const slong,
+        exps: *const ulong,
+        length: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_is_fmpq_poly(
         A: *const fmpq_mpoly_struct,
-        var: mp_limb_signed_t,
+        var: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpq_mpoly_get_fmpq_poly(
         A: *mut fmpq_poly_struct,
         B: *const fmpq_mpoly_struct,
-        var: mp_limb_signed_t,
+        var: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpq_mpoly_set_fmpq_poly(
         A: *mut fmpq_mpoly_struct,
         B: *const fmpq_poly_struct,
-        var: mp_limb_signed_t,
+        var: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_cmp(
@@ -365,90 +357,90 @@ extern "C" {
     #[link_name = "fmpq_mpoly_length__extern"]
     pub fn fmpq_mpoly_length(
         A: *const fmpq_mpoly_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
+    ) -> slong;
     #[link_name = "fmpq_mpoly_resize__extern"]
     pub fn fmpq_mpoly_resize(
         A: *mut fmpq_mpoly_struct,
-        new_length: mp_limb_signed_t,
+        new_length: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_get_term_coeff_fmpq(
         c: *mut fmpq,
         A: *const fmpq_mpoly_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_set_term_coeff_fmpq(
         A: *mut fmpq_mpoly_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         c: *const fmpq,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_term_exp_fits_ui(
         A: *const fmpq_mpoly_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpq_mpoly_term_exp_fits_si(
         A: *const fmpq_mpoly_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpq_mpoly_get_term_exp_fmpz(
         exps: *mut *mut fmpz,
         A: *const fmpq_mpoly_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_get_term_exp_ui(
-        exps: *mut mp_limb_t,
+        exps: *mut ulong,
         A: *const fmpq_mpoly_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_get_term_exp_si(
-        exps: *mut mp_limb_signed_t,
+        exps: *mut slong,
         A: *const fmpq_mpoly_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_get_term_var_exp_ui(
         A: *const fmpq_mpoly_struct,
-        i: mp_limb_signed_t,
-        var: mp_limb_signed_t,
+        i: slong,
+        var: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
-    ) -> mp_limb_t;
+    ) -> ulong;
     pub fn fmpq_mpoly_get_term_var_exp_si(
         A: *const fmpq_mpoly_struct,
-        i: mp_limb_signed_t,
-        var: mp_limb_signed_t,
+        i: slong,
+        var: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     #[link_name = "fmpq_mpoly_set_term_exp_fmpz__extern"]
     pub fn fmpq_mpoly_set_term_exp_fmpz(
         A: *mut fmpq_mpoly_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         exps: *const *mut fmpz,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_set_term_exp_ui__extern"]
     pub fn fmpq_mpoly_set_term_exp_ui(
         A: *mut fmpq_mpoly_struct,
-        i: mp_limb_signed_t,
-        exps: *const mp_limb_t,
+        i: slong,
+        exps: *const ulong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_get_term(
         M: *mut fmpq_mpoly_struct,
         A: *const fmpq_mpoly_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_get_term_monomial(
         M: *mut fmpq_mpoly_struct,
         A: *const fmpq_mpoly_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_push_term_fmpq_fmpz(
@@ -477,56 +469,56 @@ extern "C" {
     );
     pub fn fmpq_mpoly_push_term_ui_fmpz(
         A: *mut fmpq_mpoly_struct,
-        c: mp_limb_t,
+        c: ulong,
         exp: *const *mut fmpz,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_push_term_ui_ffmpz(
         A: *mut fmpq_mpoly_struct,
-        c: mp_limb_t,
+        c: ulong,
         exp: *const fmpz,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_push_term_si_fmpz(
         A: *mut fmpq_mpoly_struct,
-        c: mp_limb_signed_t,
+        c: slong,
         exp: *const *mut fmpz,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_push_term_si_ffmpz(
         A: *mut fmpq_mpoly_struct,
-        c: mp_limb_signed_t,
+        c: slong,
         exp: *const fmpz,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_push_term_fmpq_ui(
         A: *mut fmpq_mpoly_struct,
         c: *const fmpq,
-        exp: *const mp_limb_t,
+        exp: *const ulong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_push_term_fmpz_ui(
         A: *mut fmpq_mpoly_struct,
         c: *const fmpz,
-        exp: *const mp_limb_t,
+        exp: *const ulong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_push_term_ui_ui(
         A: *mut fmpq_mpoly_struct,
-        c: mp_limb_t,
-        exp: *const mp_limb_t,
+        c: ulong,
+        exp: *const ulong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_push_term_si_ui(
         A: *mut fmpq_mpoly_struct,
-        c: mp_limb_signed_t,
-        exp: *const mp_limb_t,
+        c: slong,
+        exp: *const ulong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_reduce(A: *mut fmpq_mpoly_struct, ctx: *const fmpq_mpoly_ctx_struct);
     pub fn fmpq_mpoly_reduce_easy(
         A: *mut fmpq_mpoly_struct,
-        easy_length: mp_limb_signed_t,
+        easy_length: slong,
         arg1: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_sort_terms__extern"]
@@ -548,33 +540,33 @@ extern "C" {
     pub fn _fmpq_mpoly_push_rescale(
         A: *mut fmpq_mpoly_struct,
         C: *mut fmpq,
-        ctx: *const fmpq_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_randtest_bounds__extern"]
     pub fn fmpq_mpoly_randtest_bounds(
         A: *mut fmpq_mpoly_struct,
-        state: *mut flint_rand_s,
-        length: mp_limb_signed_t,
-        coeff_bits: mp_limb_t,
-        exp_bounds: *mut mp_limb_t,
+        state: *mut flint_rand_struct,
+        length: slong,
+        coeff_bits: flint_bitcnt_t,
+        exp_bounds: *mut ulong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_randtest_bound__extern"]
     pub fn fmpq_mpoly_randtest_bound(
         A: *mut fmpq_mpoly_struct,
-        state: *mut flint_rand_s,
-        length: mp_limb_signed_t,
-        coeff_bits: mp_limb_t,
-        exp_bound: mp_limb_t,
+        state: *mut flint_rand_struct,
+        length: slong,
+        coeff_bits: flint_bitcnt_t,
+        exp_bound: ulong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_randtest_bits__extern"]
     pub fn fmpq_mpoly_randtest_bits(
         A: *mut fmpq_mpoly_struct,
-        state: *mut flint_rand_s,
-        length: mp_limb_signed_t,
-        coeff_bits: mp_limb_t,
-        exp_bits: mp_limb_t,
+        state: *mut flint_rand_struct,
+        length: slong,
+        coeff_bits: flint_bitcnt_t,
+        exp_bits: flint_bitcnt_t,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_add_fmpq(
@@ -592,13 +584,13 @@ extern "C" {
     pub fn fmpq_mpoly_add_ui(
         A: *mut fmpq_mpoly_struct,
         B: *const fmpq_mpoly_struct,
-        c: mp_limb_t,
+        c: ulong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_add_si(
         A: *mut fmpq_mpoly_struct,
         B: *const fmpq_mpoly_struct,
-        c: mp_limb_signed_t,
+        c: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_sub_fmpq(
@@ -616,13 +608,13 @@ extern "C" {
     pub fn fmpq_mpoly_sub_ui(
         A: *mut fmpq_mpoly_struct,
         B: *const fmpq_mpoly_struct,
-        c: mp_limb_t,
+        c: ulong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_sub_si(
         A: *mut fmpq_mpoly_struct,
         B: *const fmpq_mpoly_struct,
-        c: mp_limb_signed_t,
+        c: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_add(
@@ -658,13 +650,13 @@ extern "C" {
     pub fn fmpq_mpoly_scalar_mul_ui(
         A: *mut fmpq_mpoly_struct,
         B: *const fmpq_mpoly_struct,
-        c: mp_limb_t,
+        c: ulong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_scalar_mul_si(
         A: *mut fmpq_mpoly_struct,
         B: *const fmpq_mpoly_struct,
-        c: mp_limb_signed_t,
+        c: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_scalar_div_fmpq(
@@ -682,13 +674,13 @@ extern "C" {
     pub fn fmpq_mpoly_scalar_div_ui(
         A: *mut fmpq_mpoly_struct,
         B: *const fmpq_mpoly_struct,
-        c: mp_limb_t,
+        c: ulong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_scalar_div_si(
         A: *mut fmpq_mpoly_struct,
         B: *const fmpq_mpoly_struct,
-        c: mp_limb_signed_t,
+        c: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_make_monic(
@@ -698,18 +690,18 @@ extern "C" {
     );
     pub fn _fmpq_mpoly_make_monic_inplace(
         A: *mut fmpq_mpoly_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_derivative(
         A: *mut fmpq_mpoly_struct,
         B: *const fmpq_mpoly_struct,
-        var: mp_limb_signed_t,
+        var: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_integral(
         A: *mut fmpq_mpoly_struct,
         B: *const fmpq_mpoly_struct,
-        var: mp_limb_signed_t,
+        var: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn _fmpq_mpoly_rescale(
@@ -728,7 +720,7 @@ extern "C" {
     pub fn fmpq_mpoly_evaluate_one_fmpq(
         A: *mut fmpq_mpoly_struct,
         B: *const fmpq_mpoly_struct,
-        var: mp_limb_signed_t,
+        var: slong,
         val: *const fmpq,
         ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
@@ -748,7 +740,7 @@ extern "C" {
     pub fn fmpq_mpoly_compose_fmpq_mpoly_gen(
         A: *mut fmpq_mpoly_struct,
         B: *const fmpq_mpoly_struct,
-        c: *const mp_limb_signed_t,
+        c: *const slong,
         ctxB: *const fmpq_mpoly_ctx_struct,
         ctxAC: *const fmpq_mpoly_ctx_struct,
     );
@@ -767,7 +759,7 @@ extern "C" {
     pub fn fmpq_mpoly_pow_ui(
         A: *mut fmpq_mpoly_struct,
         B: *const fmpq_mpoly_struct,
-        k: mp_limb_t,
+        k: ulong,
         ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpq_mpoly_divides(
@@ -794,7 +786,7 @@ extern "C" {
         r: *mut fmpq_mpoly_struct,
         poly2: *const fmpq_mpoly_struct,
         poly3: *const *mut fmpq_mpoly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_sqrt(
@@ -811,7 +803,7 @@ extern "C" {
     pub fn fmpq_mpoly_content(
         g: *mut fmpq,
         A: *const fmpq_mpoly_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_term_content(
         M: *mut fmpq_mpoly_struct,
@@ -821,8 +813,8 @@ extern "C" {
     pub fn fmpq_mpoly_content_vars(
         g: *mut fmpq_mpoly_struct,
         A: *const fmpq_mpoly_struct,
-        vars: *mut mp_limb_signed_t,
-        vars_length: mp_limb_signed_t,
+        vars: *mut slong,
+        vars_length: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpq_mpoly_gcd(
@@ -880,13 +872,13 @@ extern "C" {
         R: *mut fmpq_mpoly_struct,
         A: *const fmpq_mpoly_struct,
         B: *const fmpq_mpoly_struct,
-        var: mp_limb_signed_t,
+        var: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpq_mpoly_discriminant(
         R: *mut fmpq_mpoly_struct,
         A: *const fmpq_mpoly_struct,
-        var: mp_limb_signed_t,
+        var: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     #[doc = "Internal functions (guaranteed to change without notice)"]
@@ -897,12 +889,12 @@ extern "C" {
     pub fn fmpq_mpoly_repack_bits(
         A: *mut fmpq_mpoly_struct,
         B: *const fmpq_mpoly_struct,
-        Abits: mp_limb_t,
+        Abits: flint_bitcnt_t,
         ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpq_mpoly_univar_init(
         A: *mut fmpq_mpoly_univar_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_univar_clear(
         A: *mut fmpq_mpoly_univar_struct,
@@ -910,7 +902,7 @@ extern "C" {
     );
     pub fn fmpq_mpoly_univar_fit_length(
         A: *mut fmpq_mpoly_univar_struct,
-        length: mp_limb_signed_t,
+        length: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_univar_print_pretty(
@@ -925,56 +917,56 @@ extern "C" {
     pub fn fmpq_mpoly_to_univar(
         A: *mut fmpq_mpoly_univar_struct,
         B: *const fmpq_mpoly_struct,
-        var: mp_limb_signed_t,
+        var: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_from_univar_bits(
         A: *mut fmpq_mpoly_struct,
-        Abits: mp_limb_t,
+        Abits: flint_bitcnt_t,
         B: *const fmpq_mpoly_univar_struct,
-        var: mp_limb_signed_t,
+        var: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_from_univar(
         A: *mut fmpq_mpoly_struct,
         B: *const fmpq_mpoly_univar_struct,
-        var: mp_limb_signed_t,
+        var: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_univar_swap__extern"]
     pub fn fmpq_mpoly_univar_swap(
         A: *mut fmpq_mpoly_univar_struct,
         B: *mut fmpq_mpoly_univar_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_univar_degree_fits_si__extern"]
     pub fn fmpq_mpoly_univar_degree_fits_si(
         A: *const fmpq_mpoly_univar_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "fmpq_mpoly_univar_length__extern"]
     pub fn fmpq_mpoly_univar_length(
         A: *const fmpq_mpoly_univar_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
+    ) -> slong;
     #[link_name = "fmpq_mpoly_univar_get_term_exp_si__extern"]
     pub fn fmpq_mpoly_univar_get_term_exp_si(
         A: *mut fmpq_mpoly_univar_struct,
-        i: mp_limb_signed_t,
-        ctx: *const fmpq_mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+        i: slong,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
+    ) -> slong;
     #[link_name = "fmpq_mpoly_univar_get_term_coeff__extern"]
     pub fn fmpq_mpoly_univar_get_term_coeff(
         c: *mut fmpq_mpoly_struct,
         A: *const fmpq_mpoly_univar_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_univar_swap_term_coeff__extern"]
     pub fn fmpq_mpoly_univar_swap_term_coeff(
         c: *mut fmpq_mpoly_struct,
         A: *mut fmpq_mpoly_univar_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[doc = "Internal consistency checks"]

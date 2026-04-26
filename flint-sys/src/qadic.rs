@@ -10,12 +10,11 @@ use crate::padic_types::*;
 pub type qadic_t = padic_poly_t;
 pub type qadic_struct = padic_poly_struct;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct qadic_ctx_struct {
     pub pctx: padic_ctx_struct,
     pub a: *mut fmpz,
-    pub j: *mut mp_limb_signed_t,
-    pub len: mp_limb_signed_t,
+    pub j: *mut slong,
+    pub len: slong,
     pub var: *mut libc::c_char,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -43,62 +42,62 @@ impl Default for qadic_ctx_struct {
 pub type qadic_ctx_t = [qadic_ctx_struct; 1usize];
 extern "C" {
     #[link_name = "qadic_val__extern"]
-    pub fn qadic_val(op: *const padic_poly_struct) -> mp_limb_signed_t;
+    pub fn qadic_val(op: *const padic_poly_struct) -> slong;
     #[link_name = "qadic_prec__extern"]
-    pub fn qadic_prec(op: *const padic_poly_struct) -> mp_limb_signed_t;
+    pub fn qadic_prec(op: *const padic_poly_struct) -> slong;
     pub fn _qadic_ctx_init_conway_ui(
         ctx: *mut qadic_ctx_struct,
-        p: mp_limb_t,
-        d: mp_limb_signed_t,
-        min: mp_limb_signed_t,
-        max: mp_limb_signed_t,
+        p: ulong,
+        d: slong,
+        min: slong,
+        max: slong,
         var: *const libc::c_char,
         mode: padic_print_mode,
     ) -> libc::c_int;
     pub fn qadic_ctx_init_conway(
         ctx: *mut qadic_ctx_struct,
         p: *const fmpz,
-        d: mp_limb_signed_t,
-        min: mp_limb_signed_t,
-        max: mp_limb_signed_t,
+        d: slong,
+        min: slong,
+        max: slong,
         var: *const libc::c_char,
         mode: padic_print_mode,
     );
     pub fn qadic_ctx_init(
         ctx: *mut qadic_ctx_struct,
         p: *const fmpz,
-        d: mp_limb_signed_t,
-        min: mp_limb_signed_t,
-        max: mp_limb_signed_t,
+        d: slong,
+        min: slong,
+        max: slong,
         var: *const libc::c_char,
         mode: padic_print_mode,
     );
     pub fn qadic_ctx_clear(ctx: *mut qadic_ctx_struct);
     #[link_name = "qadic_ctx_degree__extern"]
-    pub fn qadic_ctx_degree(ctx: *const qadic_ctx_struct) -> mp_limb_signed_t;
+    pub fn qadic_ctx_degree(ctx: *const qadic_ctx_struct) -> slong;
     #[link_name = "qadic_ctx_print__extern"]
     pub fn qadic_ctx_print(ctx: *const qadic_ctx_struct);
     #[link_name = "qadic_init__extern"]
     pub fn qadic_init(x: *mut padic_poly_struct);
     #[link_name = "qadic_init2__extern"]
-    pub fn qadic_init2(rop: *mut padic_poly_struct, prec: mp_limb_signed_t);
+    pub fn qadic_init2(rop: *mut padic_poly_struct, prec: slong);
     #[link_name = "qadic_clear__extern"]
     pub fn qadic_clear(x: *mut padic_poly_struct);
     #[link_name = "_fmpz_poly_reduce__extern"]
     pub fn _fmpz_poly_reduce(
         R: *mut fmpz,
-        lenR: mp_limb_signed_t,
+        lenR: slong,
         a: *const fmpz,
-        j: *const mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        j: *const slong,
+        len: slong,
     );
     #[link_name = "_fmpz_mod_poly_reduce__extern"]
     pub fn _fmpz_mod_poly_reduce(
         R: *mut fmpz,
-        lenR: mp_limb_signed_t,
+        lenR: slong,
         a: *const fmpz,
-        j: *const mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        j: *const slong,
+        len: slong,
         p: *const fmpz,
     );
     #[link_name = "qadic_reduce__extern"]
@@ -106,26 +105,26 @@ extern "C" {
     #[link_name = "qadic_randtest__extern"]
     pub fn qadic_randtest(
         x: *mut padic_poly_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         ctx: *const qadic_ctx_struct,
     );
     #[link_name = "qadic_randtest_not_zero__extern"]
     pub fn qadic_randtest_not_zero(
         x: *mut padic_poly_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         ctx: *const qadic_ctx_struct,
     );
     #[link_name = "qadic_randtest_val__extern"]
     pub fn qadic_randtest_val(
         x: *mut padic_poly_struct,
-        state: *mut flint_rand_s,
-        val: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        val: slong,
         ctx: *const qadic_ctx_struct,
     );
     #[link_name = "qadic_randtest_int__extern"]
     pub fn qadic_randtest_int(
         x: *mut padic_poly_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         ctx: *const qadic_ctx_struct,
     );
     #[link_name = "qadic_zero__extern"]
@@ -135,7 +134,7 @@ extern "C" {
     #[link_name = "qadic_gen__extern"]
     pub fn qadic_gen(x: *mut padic_poly_struct, ctx: *const qadic_ctx_struct);
     #[link_name = "qadic_set_ui__extern"]
-    pub fn qadic_set_ui(rop: *mut padic_poly_struct, op: mp_limb_t, ctx: *const qadic_ctx_struct);
+    pub fn qadic_set_ui(rop: *mut padic_poly_struct, op: ulong, ctx: *const qadic_ctx_struct);
     #[link_name = "qadic_get_padic__extern"]
     pub fn qadic_get_padic(
         rop: *mut padic_struct,
@@ -189,12 +188,12 @@ extern "C" {
     pub fn _qadic_inv(
         rop: *mut fmpz,
         op: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         a: *const fmpz,
-        j: *const mp_limb_signed_t,
-        lena: mp_limb_signed_t,
+        j: *const slong,
+        lena: slong,
         p: *const fmpz,
-        N: mp_limb_signed_t,
+        N: slong,
     );
     pub fn qadic_inv(
         x: *mut padic_poly_struct,
@@ -204,11 +203,11 @@ extern "C" {
     pub fn _qadic_pow(
         rop: *mut fmpz,
         op: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         e: *const fmpz,
         a: *const fmpz,
-        j: *const mp_limb_signed_t,
-        lena: mp_limb_signed_t,
+        j: *const slong,
+        lena: slong,
         p: *const fmpz,
     );
     pub fn qadic_pow(
@@ -220,13 +219,13 @@ extern "C" {
     pub fn _qadic_exp_rectangular(
         rop: *mut fmpz,
         op: *const fmpz,
-        v: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        v: slong,
+        len: slong,
         a: *const fmpz,
-        j: *const mp_limb_signed_t,
-        lena: mp_limb_signed_t,
+        j: *const slong,
+        lena: slong,
         p: *const fmpz,
-        N: mp_limb_signed_t,
+        N: slong,
         pN: *const fmpz,
     );
     pub fn qadic_exp_rectangular(
@@ -237,13 +236,13 @@ extern "C" {
     pub fn _qadic_exp_balanced(
         rop: *mut fmpz,
         op: *const fmpz,
-        v: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        v: slong,
+        len: slong,
         a: *const fmpz,
-        j: *const mp_limb_signed_t,
-        lena: mp_limb_signed_t,
+        j: *const slong,
+        lena: slong,
         p: *const fmpz,
-        N: mp_limb_signed_t,
+        N: slong,
         pN: *const fmpz,
     );
     pub fn qadic_exp_balanced(
@@ -254,13 +253,13 @@ extern "C" {
     pub fn _qadic_exp(
         rop: *mut fmpz,
         op: *const fmpz,
-        v: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        v: slong,
+        len: slong,
         a: *const fmpz,
-        j: *const mp_limb_signed_t,
-        lena: mp_limb_signed_t,
+        j: *const slong,
+        lena: slong,
         p: *const fmpz,
-        N: mp_limb_signed_t,
+        N: slong,
         pN: *const fmpz,
     );
     pub fn qadic_exp(
@@ -271,13 +270,13 @@ extern "C" {
     pub fn _qadic_log_rectangular(
         z: *mut fmpz,
         y: *const fmpz,
-        v: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        v: slong,
+        len: slong,
         a: *const fmpz,
-        j: *const mp_limb_signed_t,
-        lena: mp_limb_signed_t,
+        j: *const slong,
+        lena: slong,
         p: *const fmpz,
-        N: mp_limb_signed_t,
+        N: slong,
         pN: *const fmpz,
     );
     pub fn qadic_log_rectangular(
@@ -288,12 +287,12 @@ extern "C" {
     pub fn _qadic_log_balanced(
         z: *mut fmpz,
         y: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         a: *const fmpz,
-        j: *const mp_limb_signed_t,
-        lena: mp_limb_signed_t,
+        j: *const slong,
+        lena: slong,
         p: *const fmpz,
-        N: mp_limb_signed_t,
+        N: slong,
         pN: *const fmpz,
     );
     pub fn qadic_log_balanced(
@@ -304,13 +303,13 @@ extern "C" {
     pub fn _qadic_log(
         z: *mut fmpz,
         y: *const fmpz,
-        v: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        v: slong,
+        len: slong,
         a: *const fmpz,
-        j: *const mp_limb_signed_t,
-        lena: mp_limb_signed_t,
+        j: *const slong,
+        lena: slong,
         p: *const fmpz,
-        N: mp_limb_signed_t,
+        N: slong,
         pN: *const fmpz,
     );
     pub fn qadic_log(
@@ -320,39 +319,39 @@ extern "C" {
     ) -> libc::c_int;
     pub fn _qadic_frobenius_a(
         rop: *mut fmpz,
-        exp: mp_limb_signed_t,
+        exp: slong,
         a: *const fmpz,
-        j: *const mp_limb_signed_t,
-        lena: mp_limb_signed_t,
+        j: *const slong,
+        lena: slong,
         p: *const fmpz,
-        N: mp_limb_signed_t,
+        N: slong,
     );
     pub fn _qadic_frobenius(
         rop: *mut fmpz,
         op: *const fmpz,
-        len: mp_limb_signed_t,
-        e: mp_limb_signed_t,
+        len: slong,
+        e: slong,
         a: *const fmpz,
-        j: *const mp_limb_signed_t,
-        lena: mp_limb_signed_t,
+        j: *const slong,
+        lena: slong,
         p: *const fmpz,
-        N: mp_limb_signed_t,
+        N: slong,
     );
     pub fn qadic_frobenius(
         rop: *mut padic_poly_struct,
         op: *const padic_poly_struct,
-        e: mp_limb_signed_t,
+        e: slong,
         ctx: *const qadic_ctx_struct,
     );
     pub fn _qadic_teichmuller(
         rop: *mut fmpz,
         op: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         a: *const fmpz,
-        j: *const mp_limb_signed_t,
-        lena: mp_limb_signed_t,
+        j: *const slong,
+        lena: slong,
         p: *const fmpz,
-        N: mp_limb_signed_t,
+        N: slong,
     );
     pub fn qadic_teichmuller(
         rop: *mut padic_poly_struct,
@@ -362,10 +361,10 @@ extern "C" {
     pub fn _qadic_trace(
         rop: *mut fmpz,
         op: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         a: *const fmpz,
-        j: *const mp_limb_signed_t,
-        lena: mp_limb_signed_t,
+        j: *const slong,
+        lena: slong,
         pN: *const fmpz,
     );
     pub fn qadic_trace(
@@ -376,33 +375,33 @@ extern "C" {
     pub fn _qadic_norm_resultant(
         rop: *mut fmpz,
         op: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         a: *const fmpz,
-        j: *const mp_limb_signed_t,
-        lena: mp_limb_signed_t,
+        j: *const slong,
+        lena: slong,
         p: *const fmpz,
-        N: mp_limb_signed_t,
+        N: slong,
     );
     pub fn _qadic_norm_analytic(
         rop: *mut fmpz,
         y: *const fmpz,
-        v: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        v: slong,
+        len: slong,
         a: *const fmpz,
-        j: *const mp_limb_signed_t,
-        lena: mp_limb_signed_t,
+        j: *const slong,
+        lena: slong,
         p: *const fmpz,
-        N: mp_limb_signed_t,
+        N: slong,
     );
     pub fn _qadic_norm(
         rop: *mut fmpz,
         op: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         a: *const fmpz,
-        j: *const mp_limb_signed_t,
-        lena: mp_limb_signed_t,
+        j: *const slong,
+        lena: slong,
         p: *const fmpz,
-        N: mp_limb_signed_t,
+        N: slong,
     );
     pub fn qadic_norm(
         rop: *mut padic_struct,

@@ -5,13 +5,37 @@ use crate::flint::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
+pub struct zz_struct {
+    pub alloc: libc::c_int,
+    pub size: libc::c_int,
+    pub ptr: nn_ptr,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of zz_struct"][::std::mem::size_of::<zz_struct>() - 16usize];
+    ["Alignment of zz_struct"][::std::mem::align_of::<zz_struct>() - 8usize];
+    ["Offset of field: zz_struct::alloc"][::std::mem::offset_of!(zz_struct, alloc) - 0usize];
+    ["Offset of field: zz_struct::size"][::std::mem::offset_of!(zz_struct, size) - 4usize];
+    ["Offset of field: zz_struct::ptr"][::std::mem::offset_of!(zz_struct, ptr) - 8usize];
+};
+impl Default for zz_struct {
+    fn default() -> Self {
+        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+pub type zz_ptr = *mut zz_struct;
+pub type zz_srcptr = *const zz_struct;
+#[repr(C)]
 pub struct fmpz_factor_struct {
     pub sign: libc::c_int,
     pub p: *mut fmpz,
-    pub exp: *mut mp_limb_t,
-    pub alloc: mp_limb_signed_t,
-    pub num: mp_limb_signed_t,
+    pub exp: *mut ulong,
+    pub alloc: slong,
+    pub num: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -39,11 +63,10 @@ impl Default for fmpz_factor_struct {
 }
 pub type fmpz_factor_t = [fmpz_factor_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_preinvn_struct {
-    pub dinv: mp_ptr,
-    pub n: mp_limb_signed_t,
-    pub norm: mp_limb_t,
+    pub dinv: nn_ptr,
+    pub n: slong,
+    pub norm: flint_bitcnt_t,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -67,11 +90,10 @@ impl Default for fmpz_preinvn_struct {
 }
 pub type fmpz_preinvn_t = [fmpz_preinvn_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_poly_struct {
     pub coeffs: *mut fmpz,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
+    pub alloc: slong,
+    pub length: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -95,13 +117,12 @@ impl Default for fmpz_poly_struct {
 }
 pub type fmpz_poly_t = [fmpz_poly_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_poly_factor_struct {
     pub c: fmpz,
     pub p: *mut fmpz_poly_struct,
-    pub exp: *mut mp_limb_signed_t,
-    pub num: mp_limb_signed_t,
-    pub alloc: mp_limb_signed_t,
+    pub exp: *mut slong,
+    pub num: slong,
+    pub alloc: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -130,12 +151,11 @@ impl Default for fmpz_poly_factor_struct {
 }
 pub type fmpz_poly_factor_t = [fmpz_poly_factor_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mat_struct {
     pub entries: *mut fmpz,
-    pub r: mp_limb_signed_t,
-    pub c: mp_limb_signed_t,
-    pub rows: *mut *mut fmpz,
+    pub r: slong,
+    pub c: slong,
+    pub stride: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -145,8 +165,8 @@ const _: () = {
         [::std::mem::offset_of!(fmpz_mat_struct, entries) - 0usize];
     ["Offset of field: fmpz_mat_struct::r"][::std::mem::offset_of!(fmpz_mat_struct, r) - 8usize];
     ["Offset of field: fmpz_mat_struct::c"][::std::mem::offset_of!(fmpz_mat_struct, c) - 16usize];
-    ["Offset of field: fmpz_mat_struct::rows"]
-        [::std::mem::offset_of!(fmpz_mat_struct, rows) - 24usize];
+    ["Offset of field: fmpz_mat_struct::stride"]
+        [::std::mem::offset_of!(fmpz_mat_struct, stride) - 24usize];
 };
 impl Default for fmpz_mat_struct {
     fn default() -> Self {
@@ -159,12 +179,11 @@ impl Default for fmpz_mat_struct {
 }
 pub type fmpz_mat_t = [fmpz_mat_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_poly_mat_struct {
     pub entries: *mut fmpz_poly_struct,
-    pub r: mp_limb_signed_t,
-    pub c: mp_limb_signed_t,
-    pub rows: *mut *mut fmpz_poly_struct,
+    pub r: slong,
+    pub c: slong,
+    pub stride: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -176,8 +195,8 @@ const _: () = {
         [::std::mem::offset_of!(fmpz_poly_mat_struct, r) - 8usize];
     ["Offset of field: fmpz_poly_mat_struct::c"]
         [::std::mem::offset_of!(fmpz_poly_mat_struct, c) - 16usize];
-    ["Offset of field: fmpz_poly_mat_struct::rows"]
-        [::std::mem::offset_of!(fmpz_poly_mat_struct, rows) - 24usize];
+    ["Offset of field: fmpz_poly_mat_struct::stride"]
+        [::std::mem::offset_of!(fmpz_poly_mat_struct, stride) - 24usize];
 };
 impl Default for fmpz_poly_mat_struct {
     fn default() -> Self {
@@ -190,13 +209,12 @@ impl Default for fmpz_poly_mat_struct {
 }
 pub type fmpz_poly_mat_t = [fmpz_poly_mat_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mpoly_struct {
     pub coeffs: *mut fmpz,
-    pub exps: *mut mp_limb_t,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
-    pub bits: mp_limb_t,
+    pub exps: *mut ulong,
+    pub alloc: slong,
+    pub length: slong,
+    pub bits: flint_bitcnt_t,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -224,14 +242,13 @@ impl Default for fmpz_mpoly_struct {
 }
 pub type fmpz_mpoly_t = [fmpz_mpoly_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mpoly_factor_struct {
     pub constant: fmpz_t,
     pub constant_den: fmpz_t,
     pub poly: *mut fmpz_mpoly_struct,
     pub exp: *mut fmpz,
-    pub num: mp_limb_signed_t,
-    pub alloc: mp_limb_signed_t,
+    pub num: slong,
+    pub alloc: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -288,7 +305,6 @@ impl Default for fmpz_poly_q_struct {
 }
 pub type fmpz_poly_q_t = [fmpz_poly_q_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpz_mpoly_q_struct {
     pub num: fmpz_mpoly_struct,
     pub den: fmpz_mpoly_struct,
@@ -313,7 +329,6 @@ impl Default for fmpz_mpoly_q_struct {
 }
 pub type fmpz_mpoly_q_t = [fmpz_mpoly_q_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fmpzi_struct {
     pub a: fmpz,
     pub b: fmpz,

@@ -14,9 +14,9 @@ extern "C" {
     #[link_name = "acf_clear__extern"]
     pub fn acf_clear(x: *mut acf_struct);
     #[link_name = "_acf_vec_init__extern"]
-    pub fn _acf_vec_init(n: mp_limb_signed_t) -> acf_ptr;
+    pub fn _acf_vec_init(n: slong) -> acf_ptr;
     #[link_name = "_acf_vec_clear__extern"]
-    pub fn _acf_vec_clear(v: acf_ptr, n: mp_limb_signed_t);
+    pub fn _acf_vec_clear(v: acf_ptr, n: slong);
     #[link_name = "acf_real_ptr__extern"]
     pub fn acf_real_ptr(z: *mut acf_struct) -> arf_ptr;
     #[link_name = "acf_imag_ptr__extern"]
@@ -28,17 +28,17 @@ extern "C" {
     #[link_name = "acf_equal__extern"]
     pub fn acf_equal(x: *const acf_struct, y: *const acf_struct) -> libc::c_int;
     #[link_name = "acf_printd__extern"]
-    pub fn acf_printd(x: *const acf_struct, n: mp_limb_signed_t);
+    pub fn acf_printd(x: *const acf_struct, n: slong);
     #[link_name = "acf_bits__extern"]
-    pub fn acf_bits(x: *const acf_struct) -> mp_limb_signed_t;
+    pub fn acf_bits(x: *const acf_struct) -> slong;
     #[link_name = "acf_allocated_bytes__extern"]
-    pub fn acf_allocated_bytes(x: *const acf_struct) -> mp_limb_signed_t;
+    pub fn acf_allocated_bytes(x: *const acf_struct) -> slong;
     #[link_name = "acf_randtest__extern"]
     pub fn acf_randtest(
         x: *mut acf_struct,
-        state: *mut flint_rand_s,
-        bits: mp_limb_signed_t,
-        mag_bits: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        bits: slong,
+        mag_bits: slong,
     );
     #[link_name = "acf_get_mag__extern"]
     pub fn acf_get_mag(res: *mut mag_struct, x: *const acf_struct);
@@ -48,14 +48,14 @@ extern "C" {
     pub fn acf_set_round(
         res: *mut acf_struct,
         x: *const acf_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
         rnd: arf_rnd_t,
     ) -> libc::c_int;
     #[link_name = "acf_neg_round__extern"]
     pub fn acf_neg_round(
         res: *mut acf_struct,
         x: *const acf_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
         rnd: arf_rnd_t,
     ) -> libc::c_int;
     #[link_name = "acf_add__extern"]
@@ -63,7 +63,7 @@ extern "C" {
         res: *mut acf_struct,
         x: *const acf_struct,
         y: *const acf_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
         rnd: arf_rnd_t,
     ) -> libc::c_int;
     #[link_name = "acf_sub__extern"]
@@ -71,7 +71,7 @@ extern "C" {
         res: *mut acf_struct,
         x: *const acf_struct,
         y: *const acf_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
         rnd: arf_rnd_t,
     ) -> libc::c_int;
     #[link_name = "acf_mul__extern"]
@@ -79,38 +79,28 @@ extern "C" {
         res: *mut acf_struct,
         x: *const acf_struct,
         y: *const acf_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
         rnd: arf_rnd_t,
     ) -> libc::c_int;
-    pub fn acf_approx_inv(
-        res: *mut acf_struct,
-        x: *const acf_struct,
-        prec: mp_limb_signed_t,
-        rnd: arf_rnd_t,
-    );
+    pub fn acf_approx_inv(res: *mut acf_struct, x: *const acf_struct, prec: slong, rnd: arf_rnd_t);
     pub fn acf_approx_div(
         res: *mut acf_struct,
         x: *const acf_struct,
         y: *const acf_struct,
-        prec: mp_limb_signed_t,
+        prec: slong,
         rnd: arf_rnd_t,
     );
-    pub fn acf_approx_sqrt(
-        res: *mut acf_struct,
-        x: *const acf_struct,
-        prec: mp_limb_signed_t,
-        rnd: arf_rnd_t,
-    );
+    pub fn acf_approx_sqrt(res: *mut acf_struct, x: *const acf_struct, prec: slong, rnd: arf_rnd_t);
     pub fn acf_approx_dot(
         res: *mut acf_struct,
         initial: *const acf_struct,
         subtract: libc::c_int,
         x: acf_srcptr,
-        xstep: mp_limb_signed_t,
+        xstep: slong,
         y: acf_srcptr,
-        ystep: mp_limb_signed_t,
-        len: mp_limb_signed_t,
-        prec: mp_limb_signed_t,
+        ystep: slong,
+        len: slong,
+        prec: slong,
         rnd: arf_rnd_t,
     );
 }

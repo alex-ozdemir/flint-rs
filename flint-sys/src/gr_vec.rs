@@ -2,29 +2,25 @@
 
 use crate::deps::*;
 use crate::flint::*;
-use crate::gr::*;
+use crate::gr_types::*;
 
 
 pub type gr_method_vec_normalise_op = ::std::option::Option<
     unsafe extern "C" fn(
-        arg1: *mut mp_limb_signed_t,
+        arg1: *mut slong,
         arg2: gr_srcptr,
-        arg3: mp_limb_signed_t,
+        arg3: slong,
         arg4: gr_ctx_ptr,
     ) -> libc::c_int,
 >;
 pub type gr_method_vec_normalise_weak_op = ::std::option::Option<
-    unsafe extern "C" fn(
-        arg1: gr_srcptr,
-        arg2: mp_limb_signed_t,
-        arg3: gr_ctx_ptr,
-    ) -> mp_limb_signed_t,
+    unsafe extern "C" fn(arg1: gr_srcptr, arg2: slong, arg3: gr_ctx_ptr) -> slong,
 >;
 pub type gr_method_vec_reduce_op = ::std::option::Option<
     unsafe extern "C" fn(
         arg1: gr_ptr,
         arg2: gr_srcptr,
-        arg3: mp_limb_signed_t,
+        arg3: slong,
         arg4: gr_ctx_ptr,
     ) -> libc::c_int,
 >;
@@ -35,7 +31,7 @@ pub type gr_method_vec_dot_op = ::std::option::Option<
         arg3: libc::c_int,
         arg4: gr_srcptr,
         arg5: gr_srcptr,
-        arg6: mp_limb_signed_t,
+        arg6: slong,
         arg7: gr_ctx_ptr,
     ) -> libc::c_int,
 >;
@@ -45,8 +41,8 @@ pub type gr_method_vec_dot_si_op = ::std::option::Option<
         arg2: gr_srcptr,
         arg3: libc::c_int,
         arg4: gr_srcptr,
-        arg5: *const mp_limb_signed_t,
-        arg6: mp_limb_signed_t,
+        arg5: *const slong,
+        arg6: slong,
         arg7: gr_ctx_ptr,
     ) -> libc::c_int,
 >;
@@ -56,8 +52,8 @@ pub type gr_method_vec_dot_ui_op = ::std::option::Option<
         arg2: gr_srcptr,
         arg3: libc::c_int,
         arg4: gr_srcptr,
-        arg5: *const mp_limb_t,
-        arg6: mp_limb_signed_t,
+        arg5: *const ulong,
+        arg6: slong,
         arg7: gr_ctx_ptr,
     ) -> libc::c_int,
 >;
@@ -68,37 +64,30 @@ pub type gr_method_vec_dot_fmpz_op = ::std::option::Option<
         arg3: libc::c_int,
         arg4: gr_srcptr,
         arg5: *const fmpz,
-        arg6: mp_limb_signed_t,
+        arg6: slong,
         arg7: gr_ctx_ptr,
     ) -> libc::c_int,
 >;
 extern "C" {
-    pub fn gr_vec_init(vec: *mut gr_vec_struct, len: mp_limb_signed_t, ctx: *mut gr_ctx_struct);
+    pub fn gr_vec_init(vec: *mut gr_vec_struct, len: slong, ctx: *mut gr_ctx_struct);
     pub fn gr_vec_clear(vec: *mut gr_vec_struct, ctx: *mut gr_ctx_struct);
-    #[link_name = "gr_vec_entry_ptr__extern"]
-    pub fn gr_vec_entry_ptr(
-        vec: *mut gr_vec_struct,
-        i: mp_limb_signed_t,
+    pub fn _gr_vec_check_resize(
+        res: *mut gr_vec_struct,
+        n: slong,
         ctx: *mut gr_ctx_struct,
-    ) -> gr_ptr;
+    ) -> libc::c_int;
+    #[link_name = "gr_vec_entry_ptr__extern"]
+    pub fn gr_vec_entry_ptr(vec: *mut gr_vec_struct, i: slong, ctx: *mut gr_ctx_struct) -> gr_ptr;
     #[link_name = "gr_vec_entry_srcptr__extern"]
     pub fn gr_vec_entry_srcptr(
         vec: *const gr_vec_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *mut gr_ctx_struct,
     ) -> gr_srcptr;
     #[link_name = "gr_vec_length__extern"]
-    pub fn gr_vec_length(vec: *const gr_vec_struct, ctx: *mut gr_ctx_struct) -> mp_limb_signed_t;
-    pub fn gr_vec_fit_length(
-        vec: *mut gr_vec_struct,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    );
-    pub fn gr_vec_set_length(
-        vec: *mut gr_vec_struct,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    );
+    pub fn gr_vec_length(vec: *const gr_vec_struct, UNUSED_ctx: *mut gr_ctx_struct) -> slong;
+    pub fn gr_vec_fit_length(vec: *mut gr_vec_struct, len: slong, ctx: *mut gr_ctx_struct);
+    pub fn gr_vec_set_length(vec: *mut gr_vec_struct, len: slong, ctx: *mut gr_ctx_struct);
     pub fn gr_vec_set(
         res: *mut gr_vec_struct,
         src: *const gr_vec_struct,
@@ -109,10 +98,42 @@ extern "C" {
         f: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    pub fn gr_vec_append_swap(vec: *mut gr_vec_struct, f: gr_ptr, ctx: *mut gr_ctx_struct);
+    pub fn _gr_vec_contains(
+        vec: gr_srcptr,
+        len: slong,
+        x: gr_srcptr,
+        ctx: *mut gr_ctx_struct,
+    ) -> truth_t;
+    #[link_name = "gr_vec_contains__extern"]
+    pub fn gr_vec_contains(
+        vec: *const gr_vec_struct,
+        x: gr_srcptr,
+        ctx: *mut gr_ctx_struct,
+    ) -> truth_t;
+    pub fn _gr_vec_sort(vec: gr_ptr, len: slong, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn gr_vec_sort(
+        dest: *mut gr_vec_struct,
+        src: *const gr_vec_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_vec_permute(vec: gr_ptr, perm: *mut slong, len: slong, ctx: *mut gr_ctx_struct);
+    pub fn gr_vec_permute(
+        dest: *mut gr_vec_struct,
+        src: *mut gr_vec_struct,
+        perm: *mut slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_vec_shuffle(
+        vec: gr_ptr,
+        state: *mut flint_rand_struct,
+        len: slong,
+        ctx: *mut gr_ctx_struct,
+    );
     pub fn _gr_vec_write(
         out: *mut gr_stream_struct,
         vec: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_vec_write(
@@ -120,48 +141,39 @@ extern "C" {
         vec: *const gr_vec_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
-    pub fn _gr_vec_print(
-        vec: gr_srcptr,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
+    pub fn _gr_vec_print(vec: gr_srcptr, len: slong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     pub fn gr_vec_print(vec: *const gr_vec_struct, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "_gr_vec_zero__extern"]
-    pub fn _gr_vec_zero(vec: gr_ptr, len: mp_limb_signed_t, ctx: *mut gr_ctx_struct)
-        -> libc::c_int;
+    pub fn _gr_vec_zero(vec: gr_ptr, len: slong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "_gr_vec_set__extern"]
     pub fn _gr_vec_set(
         res: gr_ptr,
         src: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_neg__extern"]
     pub fn _gr_vec_neg(
         res: gr_ptr,
         src: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_normalise__extern"]
     pub fn _gr_vec_normalise(
-        res: *mut mp_limb_signed_t,
+        res: *mut slong,
         vec: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_normalise_weak__extern"]
-    pub fn _gr_vec_normalise_weak(
-        vec: gr_srcptr,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> mp_limb_signed_t;
+    pub fn _gr_vec_normalise_weak(vec: gr_srcptr, len: slong, ctx: *mut gr_ctx_struct) -> slong;
     #[link_name = "_gr_vec_add__extern"]
     pub fn _gr_vec_add(
         res: gr_ptr,
         src1: gr_srcptr,
         src2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_sub__extern"]
@@ -169,7 +181,7 @@ extern "C" {
         res: gr_ptr,
         src1: gr_srcptr,
         src2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_mul__extern"]
@@ -177,7 +189,7 @@ extern "C" {
         res: gr_ptr,
         src1: gr_srcptr,
         src2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_div__extern"]
@@ -185,7 +197,7 @@ extern "C" {
         res: gr_ptr,
         src1: gr_srcptr,
         src2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_divexact__extern"]
@@ -193,7 +205,7 @@ extern "C" {
         res: gr_ptr,
         src1: gr_srcptr,
         src2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_pow__extern"]
@@ -201,14 +213,14 @@ extern "C" {
         res: gr_ptr,
         src1: gr_srcptr,
         src2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_add_scalar__extern"]
     pub fn _gr_vec_add_scalar(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -216,7 +228,7 @@ extern "C" {
     pub fn _gr_vec_sub_scalar(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -224,7 +236,7 @@ extern "C" {
     pub fn _gr_vec_mul_scalar(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -232,7 +244,7 @@ extern "C" {
     pub fn _gr_vec_div_scalar(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -240,7 +252,7 @@ extern "C" {
     pub fn _gr_vec_divexact_scalar(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -248,7 +260,7 @@ extern "C" {
     pub fn _gr_vec_pow_scalar(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -256,103 +268,103 @@ extern "C" {
     pub fn _gr_vec_add_scalar_si(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_signed_t,
+        len: slong,
+        c: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_sub_scalar_si__extern"]
     pub fn _gr_vec_sub_scalar_si(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_signed_t,
+        len: slong,
+        c: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_mul_scalar_si__extern"]
     pub fn _gr_vec_mul_scalar_si(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_signed_t,
+        len: slong,
+        c: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_div_scalar_si__extern"]
     pub fn _gr_vec_div_scalar_si(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_signed_t,
+        len: slong,
+        c: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_divexact_scalar_si__extern"]
     pub fn _gr_vec_divexact_scalar_si(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_signed_t,
+        len: slong,
+        c: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_pow_scalar_si__extern"]
     pub fn _gr_vec_pow_scalar_si(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_signed_t,
+        len: slong,
+        c: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_add_scalar_ui__extern"]
     pub fn _gr_vec_add_scalar_ui(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_t,
+        len: slong,
+        c: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_sub_scalar_ui__extern"]
     pub fn _gr_vec_sub_scalar_ui(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_t,
+        len: slong,
+        c: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_mul_scalar_ui__extern"]
     pub fn _gr_vec_mul_scalar_ui(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_t,
+        len: slong,
+        c: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_div_scalar_ui__extern"]
     pub fn _gr_vec_div_scalar_ui(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_t,
+        len: slong,
+        c: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_divexact_scalar_ui__extern"]
     pub fn _gr_vec_divexact_scalar_ui(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_t,
+        len: slong,
+        c: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_pow_scalar_ui__extern"]
     pub fn _gr_vec_pow_scalar_ui(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_t,
+        len: slong,
+        c: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_add_scalar_fmpz__extern"]
     pub fn _gr_vec_add_scalar_fmpz(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: *const fmpz,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -360,7 +372,7 @@ extern "C" {
     pub fn _gr_vec_sub_scalar_fmpz(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: *const fmpz,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -368,7 +380,7 @@ extern "C" {
     pub fn _gr_vec_mul_scalar_fmpz(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: *const fmpz,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -376,7 +388,7 @@ extern "C" {
     pub fn _gr_vec_div_scalar_fmpz(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: *const fmpz,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -384,7 +396,7 @@ extern "C" {
     pub fn _gr_vec_divexact_scalar_fmpz(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: *const fmpz,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -392,7 +404,7 @@ extern "C" {
     pub fn _gr_vec_pow_scalar_fmpz(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: *const fmpz,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -400,7 +412,7 @@ extern "C" {
     pub fn _gr_vec_add_scalar_fmpq(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: *const fmpq,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -408,7 +420,7 @@ extern "C" {
     pub fn _gr_vec_sub_scalar_fmpq(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: *const fmpq,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -416,7 +428,7 @@ extern "C" {
     pub fn _gr_vec_mul_scalar_fmpq(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: *const fmpq,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -424,7 +436,7 @@ extern "C" {
     pub fn _gr_vec_div_scalar_fmpq(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: *const fmpq,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -432,7 +444,7 @@ extern "C" {
     pub fn _gr_vec_divexact_scalar_fmpq(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: *const fmpq,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -440,7 +452,7 @@ extern "C" {
     pub fn _gr_vec_pow_scalar_fmpq(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: *const fmpq,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -449,7 +461,7 @@ extern "C" {
         vec1: gr_ptr,
         c: gr_srcptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_scalar_sub_vec__extern"]
@@ -457,7 +469,7 @@ extern "C" {
         vec1: gr_ptr,
         c: gr_srcptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_scalar_mul_vec__extern"]
@@ -465,7 +477,7 @@ extern "C" {
         vec1: gr_ptr,
         c: gr_srcptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_scalar_div_vec__extern"]
@@ -473,7 +485,7 @@ extern "C" {
         vec1: gr_ptr,
         c: gr_srcptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_scalar_divexact_vec__extern"]
@@ -481,7 +493,7 @@ extern "C" {
         vec1: gr_ptr,
         c: gr_srcptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_scalar_pow_vec__extern"]
@@ -489,7 +501,7 @@ extern "C" {
         vec1: gr_ptr,
         c: gr_srcptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_add_other__extern"]
@@ -498,7 +510,7 @@ extern "C" {
         vec2: gr_srcptr,
         vec3: gr_srcptr,
         ctx3: *mut gr_ctx_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_sub_other__extern"]
@@ -507,7 +519,7 @@ extern "C" {
         vec2: gr_srcptr,
         vec3: gr_srcptr,
         ctx3: *mut gr_ctx_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_mul_other__extern"]
@@ -516,7 +528,7 @@ extern "C" {
         vec2: gr_srcptr,
         vec3: gr_srcptr,
         ctx3: *mut gr_ctx_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_div_other__extern"]
@@ -525,7 +537,7 @@ extern "C" {
         vec2: gr_srcptr,
         vec3: gr_srcptr,
         ctx3: *mut gr_ctx_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_divexact_other__extern"]
@@ -534,7 +546,7 @@ extern "C" {
         vec2: gr_srcptr,
         vec3: gr_srcptr,
         ctx3: *mut gr_ctx_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_pow_other__extern"]
@@ -543,7 +555,7 @@ extern "C" {
         vec2: gr_srcptr,
         vec3: gr_srcptr,
         ctx3: *mut gr_ctx_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_other_add_vec__extern"]
@@ -552,7 +564,7 @@ extern "C" {
         vec2: gr_srcptr,
         ctx2: *mut gr_ctx_struct,
         vec3: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_other_sub_vec__extern"]
@@ -561,7 +573,7 @@ extern "C" {
         vec2: gr_srcptr,
         ctx2: *mut gr_ctx_struct,
         vec3: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_other_mul_vec__extern"]
@@ -570,7 +582,7 @@ extern "C" {
         vec2: gr_srcptr,
         ctx2: *mut gr_ctx_struct,
         vec3: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_other_div_vec__extern"]
@@ -579,7 +591,7 @@ extern "C" {
         vec2: gr_srcptr,
         ctx2: *mut gr_ctx_struct,
         vec3: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_other_divexact_vec__extern"]
@@ -588,7 +600,7 @@ extern "C" {
         vec2: gr_srcptr,
         ctx2: *mut gr_ctx_struct,
         vec3: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_other_pow_vec__extern"]
@@ -597,14 +609,14 @@ extern "C" {
         vec2: gr_srcptr,
         ctx2: *mut gr_ctx_struct,
         vec3: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_add_scalar_other__extern"]
     pub fn _gr_vec_add_scalar_other(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         cctx: *mut gr_ctx_struct,
         ctx: *mut gr_ctx_struct,
@@ -613,7 +625,7 @@ extern "C" {
     pub fn _gr_vec_sub_scalar_other(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         cctx: *mut gr_ctx_struct,
         ctx: *mut gr_ctx_struct,
@@ -622,7 +634,7 @@ extern "C" {
     pub fn _gr_vec_mul_scalar_other(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         cctx: *mut gr_ctx_struct,
         ctx: *mut gr_ctx_struct,
@@ -631,7 +643,7 @@ extern "C" {
     pub fn _gr_vec_div_scalar_other(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         cctx: *mut gr_ctx_struct,
         ctx: *mut gr_ctx_struct,
@@ -640,7 +652,7 @@ extern "C" {
     pub fn _gr_vec_divexact_scalar_other(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         cctx: *mut gr_ctx_struct,
         ctx: *mut gr_ctx_struct,
@@ -649,7 +661,7 @@ extern "C" {
     pub fn _gr_vec_pow_scalar_other(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         cctx: *mut gr_ctx_struct,
         ctx: *mut gr_ctx_struct,
@@ -660,7 +672,7 @@ extern "C" {
         c: gr_srcptr,
         cctx: *mut gr_ctx_struct,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_scalar_other_sub_vec__extern"]
@@ -669,7 +681,7 @@ extern "C" {
         c: gr_srcptr,
         cctx: *mut gr_ctx_struct,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_scalar_other_mul_vec__extern"]
@@ -678,7 +690,7 @@ extern "C" {
         c: gr_srcptr,
         cctx: *mut gr_ctx_struct,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_scalar_other_div_vec__extern"]
@@ -687,7 +699,7 @@ extern "C" {
         c: gr_srcptr,
         cctx: *mut gr_ctx_struct,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_scalar_other_divexact_vec__extern"]
@@ -696,7 +708,7 @@ extern "C" {
         c: gr_srcptr,
         cctx: *mut gr_ctx_struct,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_scalar_other_pow_vec__extern"]
@@ -705,22 +717,22 @@ extern "C" {
         c: gr_srcptr,
         cctx: *mut gr_ctx_struct,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_mul_scalar_2exp_si__extern"]
     pub fn _gr_vec_mul_scalar_2exp_si(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_signed_t,
+        len: slong,
+        c: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_addmul_scalar__extern"]
     pub fn _gr_vec_addmul_scalar(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -728,7 +740,7 @@ extern "C" {
     pub fn _gr_vec_submul_scalar(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -736,43 +748,39 @@ extern "C" {
     pub fn _gr_vec_addmul_scalar_si(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_signed_t,
+        len: slong,
+        c: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_submul_scalar_si__extern"]
     pub fn _gr_vec_submul_scalar_si(
         vec1: gr_ptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_signed_t,
+        len: slong,
+        c: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_equal__extern"]
     pub fn _gr_vec_equal(
         vec1: gr_srcptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> truth_t;
     #[link_name = "_gr_vec_is_zero__extern"]
-    pub fn _gr_vec_is_zero(
-        vec: gr_srcptr,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> truth_t;
+    pub fn _gr_vec_is_zero(vec: gr_srcptr, len: slong, ctx: *mut gr_ctx_struct) -> truth_t;
     #[link_name = "_gr_vec_sum__extern"]
     pub fn _gr_vec_sum(
         res: gr_ptr,
         vec: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_product__extern"]
     pub fn _gr_vec_product(
         res: gr_ptr,
         vec: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_dot__extern"]
@@ -782,7 +790,7 @@ extern "C" {
         subtract: libc::c_int,
         vec1: gr_srcptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_dot_rev__extern"]
@@ -792,7 +800,7 @@ extern "C" {
         subtract: libc::c_int,
         vec1: gr_srcptr,
         vec2: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_dot_si__extern"]
@@ -801,8 +809,8 @@ extern "C" {
         initial: gr_srcptr,
         subtract: libc::c_int,
         vec1: gr_srcptr,
-        vec2: *const mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        vec2: *const slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_dot_ui__extern"]
@@ -811,8 +819,8 @@ extern "C" {
         initial: gr_srcptr,
         subtract: libc::c_int,
         vec1: gr_srcptr,
-        vec2: *const mp_limb_t,
-        len: mp_limb_signed_t,
+        vec2: *const ulong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_dot_fmpz__extern"]
@@ -822,97 +830,93 @@ extern "C" {
         subtract: libc::c_int,
         vec1: gr_srcptr,
         vec2: *const fmpz,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_vec_reciprocals__extern"]
-    pub fn _gr_vec_reciprocals(
-        res: gr_ptr,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
+    pub fn _gr_vec_reciprocals(res: gr_ptr, len: slong, ctx: *mut gr_ctx_struct) -> libc::c_int;
     #[link_name = "_gr_vec_set_powers__extern"]
     pub fn _gr_vec_set_powers(
         res: gr_ptr,
         x: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_vec_randtest(
         res: gr_ptr,
-        state: *mut flint_rand_s,
-        len: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_vec_sum_bsplit_parallel(
         res: gr_ptr,
         vec: gr_srcptr,
-        len: mp_limb_signed_t,
-        basecase_cutoff: mp_limb_signed_t,
+        len: slong,
+        basecase_cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_vec_sum_bsplit(
         res: gr_ptr,
         vec: gr_srcptr,
-        len: mp_limb_signed_t,
-        basecase_cutoff: mp_limb_signed_t,
+        len: slong,
+        basecase_cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_vec_sum_parallel(
         res: gr_ptr,
         vec: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_vec_sum_serial(
         res: gr_ptr,
         vec: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_vec_sum_generic(
         res: gr_ptr,
         vec: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_vec_product_bsplit_parallel(
         res: gr_ptr,
         vec: gr_srcptr,
-        len: mp_limb_signed_t,
-        basecase_cutoff: mp_limb_signed_t,
+        len: slong,
+        basecase_cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_vec_product_bsplit(
         res: gr_ptr,
         vec: gr_srcptr,
-        len: mp_limb_signed_t,
-        basecase_cutoff: mp_limb_signed_t,
+        len: slong,
+        basecase_cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_vec_product_parallel(
         res: gr_ptr,
         vec: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_vec_product_serial(
         res: gr_ptr,
         vec: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_vec_product_generic(
         res: gr_ptr,
         vec: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_vec_step(
         vec: gr_ptr,
         start: gr_srcptr,
         step: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
 }

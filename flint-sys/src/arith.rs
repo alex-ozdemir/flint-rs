@@ -10,14 +10,13 @@ pub const BELL_NUMBER_TAB_SIZE: u32 = 26;
 pub const SMALL_EULER_LIMIT: u32 = 25;
 pub const BERNOULLI_SMALL_NUMER_LIMIT: u32 = 35;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct trig_prod_struct {
     pub n: libc::c_int,
     pub prefactor: libc::c_int,
-    pub sqrt_p: mp_limb_t,
-    pub sqrt_q: mp_limb_t,
-    pub cos_p: [mp_limb_signed_t; 64usize],
-    pub cos_q: [mp_limb_t; 64usize],
+    pub sqrt_p: ulong,
+    pub sqrt_q: ulong,
+    pub cos_p: [slong; 64usize],
+    pub cos_q: [ulong; 64usize],
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -46,86 +45,74 @@ impl Default for trig_prod_struct {
 }
 pub type trig_prod_t = [trig_prod_struct; 1usize];
 extern "C" {
-    pub fn _arith_harmonic_number(num: *mut fmpz, den: *mut fmpz, n: mp_limb_signed_t);
-    pub fn arith_harmonic_number(x: *mut fmpq, n: mp_limb_signed_t);
+    pub fn _arith_harmonic_number(num: *mut fmpz, den: *mut fmpz, n: slong);
+    pub fn arith_harmonic_number(x: *mut fmpq, n: slong);
     pub fn arith_ramanujan_tau(res: *mut fmpz, n: *const fmpz);
-    pub fn arith_ramanujan_tau_series(res: *mut fmpz_poly_struct, n: mp_limb_signed_t);
+    pub fn arith_ramanujan_tau_series(res: *mut fmpz_poly_struct, n: slong);
     pub fn arith_divisors(res: *mut fmpz_poly_struct, n: *const fmpz);
-    pub fn arith_stirling_number_1u(s: *mut fmpz, n: mp_limb_t, k: mp_limb_t);
-    pub fn arith_stirling_number_1(s: *mut fmpz, n: mp_limb_t, k: mp_limb_t);
-    pub fn arith_stirling_number_2(s: *mut fmpz, n: mp_limb_t, k: mp_limb_t);
-    pub fn arith_stirling_number_1u_vec(row: *mut fmpz, n: mp_limb_t, klen: mp_limb_signed_t);
-    pub fn arith_stirling_number_1_vec(row: *mut fmpz, n: mp_limb_t, klen: mp_limb_signed_t);
-    pub fn arith_stirling_number_2_vec(row: *mut fmpz, n: mp_limb_t, klen: mp_limb_signed_t);
+    pub fn arith_stirling_number_1u(s: *mut fmpz, n: ulong, k: ulong);
+    pub fn arith_stirling_number_1(s: *mut fmpz, n: ulong, k: ulong);
+    pub fn arith_stirling_number_2(s: *mut fmpz, n: ulong, k: ulong);
+    pub fn arith_stirling_number_1u_vec(row: *mut fmpz, n: ulong, klen: slong);
+    pub fn arith_stirling_number_1_vec(row: *mut fmpz, n: ulong, klen: slong);
+    pub fn arith_stirling_number_2_vec(row: *mut fmpz, n: ulong, klen: slong);
     pub fn arith_stirling_number_1u_vec_next(
         row: *mut fmpz,
         prev: *const fmpz,
-        n: mp_limb_signed_t,
-        klen: mp_limb_signed_t,
+        n: slong,
+        klen: slong,
     );
     pub fn arith_stirling_number_1_vec_next(
         row: *mut fmpz,
         prev: *const fmpz,
-        n: mp_limb_signed_t,
-        klen: mp_limb_signed_t,
+        n: slong,
+        klen: slong,
     );
     pub fn arith_stirling_number_2_vec_next(
         row: *mut fmpz,
         prev: *const fmpz,
-        n: mp_limb_signed_t,
-        klen: mp_limb_signed_t,
+        n: slong,
+        klen: slong,
     );
     pub fn arith_stirling_matrix_1u(mat: *mut fmpz_mat_struct);
     pub fn arith_stirling_matrix_1(mat: *mut fmpz_mat_struct);
     pub fn arith_stirling_matrix_2(mat: *mut fmpz_mat_struct);
-    pub static bell_number_tab: [mp_limb_t; 0usize];
-    pub fn arith_bell_number_size(n: mp_limb_t) -> f64;
-    pub fn arith_bell_number(b: *mut fmpz, n: mp_limb_t);
-    pub fn arith_bell_number_dobinski(res: *mut fmpz, n: mp_limb_t);
-    pub fn arith_bell_number_multi_mod(res: *mut fmpz, n: mp_limb_t);
-    pub fn arith_bell_number_vec(b: *mut fmpz, n: mp_limb_signed_t);
-    pub fn arith_bell_number_vec_recursive(b: *mut fmpz, n: mp_limb_signed_t);
-    pub fn arith_bell_number_vec_multi_mod(b: *mut fmpz, n: mp_limb_signed_t);
-    pub fn arith_bell_number_nmod(n: mp_limb_t, mod_: nmod_t) -> mp_limb_t;
-    pub fn arith_bell_number_nmod_vec(b: mp_ptr, n: mp_limb_signed_t, mod_: nmod_t);
-    pub fn arith_bell_number_nmod_vec_recursive(b: mp_ptr, n: mp_limb_signed_t, mod_: nmod_t);
-    pub fn arith_bell_number_nmod_vec_series(
-        b: mp_ptr,
-        n: mp_limb_signed_t,
-        mod_: nmod_t,
-    ) -> libc::c_int;
-    pub fn arith_bell_number_nmod_vec_ogf(res: mp_ptr, len: mp_limb_signed_t, mod_: nmod_t);
-    pub static euler_number_small: [mp_limb_t; 13usize];
-    pub fn arith_euler_number_size(n: mp_limb_t) -> f64;
-    pub fn arith_euler_number_vec(res: *mut fmpz, n: mp_limb_signed_t);
-    pub fn arith_euler_number(res: *mut fmpz, n: mp_limb_t);
-    pub fn arith_euler_polynomial(poly: *mut fmpq_poly_struct, n: mp_limb_t);
-    pub static _bernoulli_numer_small: [mp_limb_signed_t; 18usize];
-    pub fn _arith_bernoulli_number(num: *mut fmpz, den: *mut fmpz, n: mp_limb_t);
-    pub fn arith_bernoulli_number(x: *mut fmpq, n: mp_limb_t);
-    pub fn _arith_bernoulli_number_vec(num: *mut fmpz, den: *mut fmpz, n: mp_limb_signed_t);
-    pub fn arith_bernoulli_number_vec(num: *mut fmpq, n: mp_limb_signed_t);
-    pub fn arith_bernoulli_number_denom(den: *mut fmpz, n: mp_limb_t);
-    pub fn arith_bernoulli_number_size(n: mp_limb_t) -> f64;
-    pub fn arith_bernoulli_polynomial(poly: *mut fmpq_poly_struct, n: mp_limb_t);
-    pub fn _arith_bernoulli_number_vec_multi_mod(
-        num: *mut fmpz,
-        den: *mut fmpz,
-        n: mp_limb_signed_t,
-    );
-    pub fn _arith_bernoulli_number_vec_recursive(
-        num: *mut fmpz,
-        den: *mut fmpz,
-        n: mp_limb_signed_t,
-    );
-    pub fn arith_landau_function_vec(res: *mut fmpz, len: mp_limb_signed_t);
+    pub static bell_number_tab: [ulong; 0usize];
+    pub fn arith_bell_number_size(n: ulong) -> f64;
+    pub fn arith_bell_number(b: *mut fmpz, n: ulong);
+    pub fn arith_bell_number_dobinski(res: *mut fmpz, n: ulong);
+    pub fn arith_bell_number_multi_mod(res: *mut fmpz, n: ulong);
+    pub fn arith_bell_number_vec(b: *mut fmpz, n: slong);
+    pub fn arith_bell_number_vec_recursive(b: *mut fmpz, n: slong);
+    pub fn arith_bell_number_vec_multi_mod(b: *mut fmpz, n: slong);
+    pub fn arith_bell_number_nmod(n: ulong, mod_: nmod_t) -> ulong;
+    pub fn arith_bell_number_nmod_vec(b: nn_ptr, n: slong, mod_: nmod_t);
+    pub fn arith_bell_number_nmod_vec_recursive(b: nn_ptr, n: slong, mod_: nmod_t);
+    pub fn arith_bell_number_nmod_vec_series(b: nn_ptr, n: slong, mod_: nmod_t) -> libc::c_int;
+    pub fn arith_bell_number_nmod_vec_ogf(res: nn_ptr, len: slong, mod_: nmod_t);
+    pub static euler_number_small: [ulong; 13usize];
+    pub fn arith_euler_number_size(n: ulong) -> f64;
+    pub fn arith_euler_number_vec(res: *mut fmpz, n: slong);
+    pub fn arith_euler_number(res: *mut fmpz, n: ulong);
+    pub fn arith_euler_polynomial(poly: *mut fmpq_poly_struct, n: ulong);
+    pub static _bernoulli_numer_small: [slong; 18usize];
+    pub fn _arith_bernoulli_number(num: *mut fmpz, den: *mut fmpz, n: ulong);
+    pub fn arith_bernoulli_number(x: *mut fmpq, n: ulong);
+    pub fn _arith_bernoulli_number_vec(num: *mut fmpz, den: *mut fmpz, n: slong);
+    pub fn arith_bernoulli_number_vec(num: *mut fmpq, n: slong);
+    pub fn arith_bernoulli_number_denom(den: *mut fmpz, n: ulong);
+    pub fn arith_bernoulli_number_size(n: ulong) -> f64;
+    pub fn arith_bernoulli_polynomial(poly: *mut fmpq_poly_struct, n: ulong);
+    pub fn _arith_bernoulli_number_vec_multi_mod(num: *mut fmpz, den: *mut fmpz, n: slong);
+    pub fn _arith_bernoulli_number_vec_recursive(num: *mut fmpz, den: *mut fmpz, n: slong);
+    pub fn arith_landau_function_vec(res: *mut fmpz, len: slong);
     #[link_name = "trig_prod_init__extern"]
     pub fn trig_prod_init(sum: *mut trig_prod_struct);
-    pub fn arith_hrr_expsum_factored(prod: *mut trig_prod_struct, k: mp_limb_t, n: mp_limb_t);
+    pub fn arith_hrr_expsum_factored(prod: *mut trig_prod_struct, k: ulong, n: ulong);
     pub static partitions_lookup: [libc::c_uint; 128usize];
-    pub fn arith_number_of_partitions_nmod_vec(res: mp_ptr, len: mp_limb_signed_t, mod_: nmod_t);
-    pub fn arith_number_of_partitions_vec(res: *mut fmpz, len: mp_limb_signed_t);
-    pub fn arith_number_of_partitions(x: *mut fmpz, n: mp_limb_t);
-    pub fn arith_sum_of_squares(r: *mut fmpz, k: mp_limb_t, n: *const fmpz);
-    pub fn arith_sum_of_squares_vec(r: *mut fmpz, k: mp_limb_t, n: mp_limb_signed_t);
+    pub fn arith_number_of_partitions_nmod_vec(res: nn_ptr, len: slong, mod_: nmod_t);
+    pub fn arith_number_of_partitions_vec(res: *mut fmpz, len: slong);
+    pub fn arith_number_of_partitions(x: *mut fmpz, n: ulong);
+    pub fn arith_sum_of_squares(r: *mut fmpz, k: ulong, n: *const fmpz);
+    pub fn arith_sum_of_squares_vec(r: *mut fmpz, k: ulong, n: slong);
 }

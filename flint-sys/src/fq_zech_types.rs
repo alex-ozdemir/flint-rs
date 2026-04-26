@@ -5,9 +5,8 @@ use crate::fq_nmod_types::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_struct {
-    pub value: mp_limb_t,
+    pub value: ulong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -27,17 +26,16 @@ impl Default for fq_zech_struct {
 }
 pub type fq_zech_t = [fq_zech_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_ctx_struct {
-    pub qm1: mp_limb_t,
-    pub qm1o2: mp_limb_t,
-    pub qm1opm1: mp_limb_t,
-    pub p: mp_limb_t,
+    pub qm1: ulong,
+    pub qm1o2: ulong,
+    pub qm1opm1: ulong,
+    pub p: ulong,
     pub ppre: f64,
-    pub prime_root: mp_limb_t,
-    pub zech_log_table: *mut mp_limb_t,
-    pub prime_field_table: *mut mp_limb_t,
-    pub eval_table: *mut mp_limb_t,
+    pub prime_root: ulong,
+    pub zech_log_table: *mut ulong,
+    pub prime_field_table: *mut ulong,
+    pub eval_table: *mut ulong,
     pub fq_nmod_ctx: *mut fq_nmod_ctx_struct,
     pub owns_fq_nmod_ctx: libc::c_int,
     pub is_conway: libc::c_int,
@@ -82,12 +80,11 @@ impl Default for fq_zech_ctx_struct {
 }
 pub type fq_zech_ctx_t = [fq_zech_ctx_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_mat_struct {
     pub entries: *mut fq_zech_struct,
-    pub r: mp_limb_signed_t,
-    pub c: mp_limb_signed_t,
-    pub rows: *mut *mut fq_zech_struct,
+    pub r: slong,
+    pub c: slong,
+    pub stride: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -99,8 +96,8 @@ const _: () = {
         [::std::mem::offset_of!(fq_zech_mat_struct, r) - 8usize];
     ["Offset of field: fq_zech_mat_struct::c"]
         [::std::mem::offset_of!(fq_zech_mat_struct, c) - 16usize];
-    ["Offset of field: fq_zech_mat_struct::rows"]
-        [::std::mem::offset_of!(fq_zech_mat_struct, rows) - 24usize];
+    ["Offset of field: fq_zech_mat_struct::stride"]
+        [::std::mem::offset_of!(fq_zech_mat_struct, stride) - 24usize];
 };
 impl Default for fq_zech_mat_struct {
     fn default() -> Self {
@@ -113,11 +110,10 @@ impl Default for fq_zech_mat_struct {
 }
 pub type fq_zech_mat_t = [fq_zech_mat_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_poly_struct {
     pub coeffs: *mut fq_zech_struct,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
+    pub alloc: slong,
+    pub length: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -141,12 +137,11 @@ impl Default for fq_zech_poly_struct {
 }
 pub type fq_zech_poly_t = [fq_zech_poly_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fq_zech_poly_factor_struct {
     pub poly: *mut fq_zech_poly_struct,
-    pub exp: *mut mp_limb_signed_t,
-    pub num: mp_limb_signed_t,
-    pub alloc: mp_limb_signed_t,
+    pub exp: *mut slong,
+    pub num: slong,
+    pub alloc: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {

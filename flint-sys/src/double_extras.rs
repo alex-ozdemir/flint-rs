@@ -32,17 +32,9 @@ impl Default for double_uint64_u {
     }
 }
 extern "C" {
-    pub fn d_randtest(state: *mut flint_rand_s) -> f64;
-    pub fn d_randtest_signed(
-        state: *mut flint_rand_s,
-        minexp: mp_limb_signed_t,
-        maxexp: mp_limb_signed_t,
-    ) -> f64;
-    pub fn d_randtest_special(
-        state: *mut flint_rand_s,
-        minexp: mp_limb_signed_t,
-        maxexp: mp_limb_signed_t,
-    ) -> f64;
+    pub fn d_randtest(state: *mut flint_rand_struct) -> f64;
+    pub fn d_randtest_signed(state: *mut flint_rand_struct, minexp: slong, maxexp: slong) -> f64;
+    pub fn d_randtest_special(state: *mut flint_rand_struct, minexp: slong, maxexp: slong) -> f64;
     #[link_name = "d_polyval__extern"]
     pub fn d_polyval(poly: *const f64, len: libc::c_int, x: f64) -> f64;
     pub fn d_lambertw(x: f64) -> f64;

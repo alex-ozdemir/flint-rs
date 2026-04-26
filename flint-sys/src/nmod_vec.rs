@@ -3,102 +3,215 @@
 use libc::*;
 use crate::deps::*;
 use crate::flint::*;
+use crate::nmod_types::*;
 
 
+pub const DOT_SPLIT_BITS: u32 = 56;
 extern "C" {
     #[link_name = "_nmod_vec_init__extern"]
-    pub fn _nmod_vec_init(len: mp_limb_signed_t) -> mp_ptr;
+    pub fn _nmod_vec_init(len: slong) -> nn_ptr;
     #[link_name = "_nmod_vec_clear__extern"]
-    pub fn _nmod_vec_clear(vec: mp_ptr);
-    pub fn _nmod_vec_randtest(
-        vec: mp_ptr,
-        state: *mut flint_rand_s,
-        len: mp_limb_signed_t,
-        mod_: nmod_t,
-    );
+    pub fn _nmod_vec_clear(vec: nn_ptr);
+    pub fn _nmod_vec_randtest(vec: nn_ptr, state: *mut flint_rand_struct, len: slong, mod_: nmod_t);
+    pub fn _nmod_vec_rand(vec: nn_ptr, state: *mut flint_rand_struct, len: slong, mod_: nmod_t);
     #[link_name = "_nmod_vec_zero__extern"]
-    pub fn _nmod_vec_zero(vec: mp_ptr, len: mp_limb_signed_t);
-    pub fn _nmod_vec_max_bits(vec: mp_srcptr, len: mp_limb_signed_t) -> mp_limb_t;
+    pub fn _nmod_vec_zero(vec: nn_ptr, len: slong);
+    pub fn _nmod_vec_max_bits(vec: nn_srcptr, len: slong) -> flint_bitcnt_t;
     #[link_name = "_nmod_vec_set__extern"]
-    pub fn _nmod_vec_set(res: mp_ptr, vec: mp_srcptr, len: mp_limb_signed_t);
+    pub fn _nmod_vec_set(res: nn_ptr, vec: nn_srcptr, len: slong);
     #[link_name = "_nmod_vec_swap__extern"]
-    pub fn _nmod_vec_swap(a: mp_ptr, b: mp_ptr, length: mp_limb_signed_t);
+    pub fn _nmod_vec_swap(a: nn_ptr, b: nn_ptr, length: slong);
     #[link_name = "_nmod_vec_equal__extern"]
-    pub fn _nmod_vec_equal(vec: mp_srcptr, vec2: mp_srcptr, len: mp_limb_signed_t) -> libc::c_int;
+    pub fn _nmod_vec_equal(vec: nn_srcptr, vec2: nn_srcptr, len: slong) -> libc::c_int;
     #[link_name = "_nmod_vec_is_zero__extern"]
-    pub fn _nmod_vec_is_zero(vec: mp_srcptr, len: mp_limb_signed_t) -> libc::c_int;
-    pub fn _nmod_vec_reduce(res: mp_ptr, vec: mp_srcptr, len: mp_limb_signed_t, mod_: nmod_t);
-    pub fn _nmod_vec_add(
-        res: mp_ptr,
-        vec1: mp_srcptr,
-        vec2: mp_srcptr,
-        len: mp_limb_signed_t,
+    pub fn _nmod_vec_is_zero(vec: nn_srcptr, len: slong) -> libc::c_int;
+    pub fn _nmod_vec_fprint_pretty(
+        file: *mut FILE,
+        vec: nn_srcptr,
+        len: slong,
         mod_: nmod_t,
-    );
-    pub fn _nmod_vec_sub(
-        res: mp_ptr,
-        vec1: mp_srcptr,
-        vec2: mp_srcptr,
-        len: mp_limb_signed_t,
-        mod_: nmod_t,
-    );
-    pub fn _nmod_vec_neg(res: mp_ptr, vec: mp_srcptr, len: mp_limb_signed_t, mod_: nmod_t);
+    ) -> libc::c_int;
+    pub fn _nmod_vec_fprint(f: *mut FILE, vec: nn_srcptr, len: slong, mod_: nmod_t) -> libc::c_int;
+    pub fn _nmod_vec_print_pretty(vec: nn_srcptr, len: slong, mod_: nmod_t);
+    pub fn _nmod_vec_print(vec: nn_srcptr, len: slong, mod_: nmod_t) -> libc::c_int;
+    pub fn _nmod_vec_reduce(res: nn_ptr, vec: nn_srcptr, len: slong, mod_: nmod_t);
+    pub fn _nmod_vec_add(res: nn_ptr, vec1: nn_srcptr, vec2: nn_srcptr, len: slong, mod_: nmod_t);
+    pub fn _nmod_vec_sub(res: nn_ptr, vec1: nn_srcptr, vec2: nn_srcptr, len: slong, mod_: nmod_t);
+    pub fn _nmod_vec_neg(res: nn_ptr, vec: nn_srcptr, len: slong, mod_: nmod_t);
     pub fn _nmod_vec_scalar_mul_nmod(
-        res: mp_ptr,
-        vec: mp_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_t,
+        res: nn_ptr,
+        vec: nn_srcptr,
+        len: slong,
+        c: ulong,
+        mod_: nmod_t,
+    );
+    pub fn _nmod_vec_scalar_mul_nmod_generic(
+        res: nn_ptr,
+        vec: nn_srcptr,
+        len: slong,
+        c: ulong,
         mod_: nmod_t,
     );
     pub fn _nmod_vec_scalar_mul_nmod_shoup(
-        res: mp_ptr,
-        vec: mp_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_t,
+        res: nn_ptr,
+        vec: nn_srcptr,
+        len: slong,
+        c: ulong,
         mod_: nmod_t,
     );
     pub fn _nmod_vec_scalar_addmul_nmod(
-        res: mp_ptr,
-        vec: mp_srcptr,
-        len: mp_limb_signed_t,
-        c: mp_limb_t,
+        res: nn_ptr,
+        vec: nn_srcptr,
+        len: slong,
+        c: ulong,
         mod_: nmod_t,
     );
-    pub fn _nmod_vec_dot_bound_limbs(len: mp_limb_signed_t, mod_: nmod_t) -> libc::c_int;
+    pub fn _nmod_vec_scalar_addmul_nmod_generic(
+        res: nn_ptr,
+        vec: nn_srcptr,
+        len: slong,
+        c: ulong,
+        mod_: nmod_t,
+    );
+    pub fn _nmod_vec_scalar_addmul_nmod_shoup(
+        res: nn_ptr,
+        vec: nn_srcptr,
+        len: slong,
+        c: ulong,
+        mod_: nmod_t,
+    );
+    pub fn _nmod_vec_invert(res: nn_ptr, vec: nn_srcptr, len: ulong, mod_: nmod_t);
+    pub fn _nmod_vec_invert_naive(res: nn_ptr, vec: nn_srcptr, len: ulong, mod_: nmod_t);
+    pub fn _nmod_vec_invert_generic(res: nn_ptr, vec: nn_srcptr, len: ulong, mod_: nmod_t);
+    pub fn _nmod_vec_invert_shoup(res: nn_ptr, vec: nn_srcptr, len: ulong, mod_: nmod_t);
+    #[link_name = "_nmod_vec_dot_params__extern"]
+    pub fn _nmod_vec_dot_params(len: ulong, mod_: nmod_t) -> dot_params_t;
+    pub fn _nmod_vec_dot_bound_limbs(len: slong, mod_: nmod_t) -> libc::c_int;
+    pub fn _nmod_vec_dot_bound_limbs_from_params(
+        len: slong,
+        mod_: nmod_t,
+        params: dot_params_t,
+    ) -> libc::c_int;
+    pub fn _nmod_vec_dot_pow2(vec1: nn_srcptr, vec2: nn_srcptr, len: slong, mod_: nmod_t) -> ulong;
+    pub fn _nmod_vec_dot1(vec1: nn_srcptr, vec2: nn_srcptr, len: slong, mod_: nmod_t) -> ulong;
+    pub fn _nmod_vec_dot2_half(
+        vec1: nn_srcptr,
+        vec2: nn_srcptr,
+        len: slong,
+        mod_: nmod_t,
+        pow2_precomp: ulong,
+    ) -> ulong;
+    pub fn _nmod_vec_dot2(vec1: nn_srcptr, vec2: nn_srcptr, len: slong, mod_: nmod_t) -> ulong;
+    pub fn _nmod_vec_dot3_acc(vec1: nn_srcptr, vec2: nn_srcptr, len: slong, mod_: nmod_t) -> ulong;
+    pub fn _nmod_vec_dot3(vec1: nn_srcptr, vec2: nn_srcptr, len: slong, mod_: nmod_t) -> ulong;
+    pub fn _nmod_vec_dot2_split(
+        vec1: nn_srcptr,
+        vec2: nn_srcptr,
+        len: slong,
+        mod_: nmod_t,
+        pow2_precomp: ulong,
+    ) -> ulong;
+    pub fn _nmod_vec_dot_pow2_rev(
+        vec1: nn_srcptr,
+        vec2: nn_srcptr,
+        len: slong,
+        mod_: nmod_t,
+    ) -> ulong;
+    pub fn _nmod_vec_dot1_rev(vec1: nn_srcptr, vec2: nn_srcptr, len: slong, mod_: nmod_t) -> ulong;
+    pub fn _nmod_vec_dot2_half_rev(
+        vec1: nn_srcptr,
+        vec2: nn_srcptr,
+        len: slong,
+        mod_: nmod_t,
+    ) -> ulong;
+    pub fn _nmod_vec_dot2_rev(vec1: nn_srcptr, vec2: nn_srcptr, len: slong, mod_: nmod_t) -> ulong;
+    pub fn _nmod_vec_dot3_acc_rev(
+        vec1: nn_srcptr,
+        vec2: nn_srcptr,
+        len: slong,
+        mod_: nmod_t,
+    ) -> ulong;
+    pub fn _nmod_vec_dot3_rev(vec1: nn_srcptr, vec2: nn_srcptr, len: slong, mod_: nmod_t) -> ulong;
+    pub fn _nmod_vec_dot2_split_rev(
+        vec1: nn_srcptr,
+        vec2: nn_srcptr,
+        len: slong,
+        mod_: nmod_t,
+        pow2_precomp: ulong,
+    ) -> ulong;
+    pub fn _nmod_vec_dot_pow2_ptr(
+        vec1: nn_srcptr,
+        vec2: *const nn_ptr,
+        offset: slong,
+        len: slong,
+        mod_: nmod_t,
+    ) -> ulong;
+    pub fn _nmod_vec_dot1_ptr(
+        vec1: nn_srcptr,
+        vec2: *const nn_ptr,
+        offset: slong,
+        len: slong,
+        mod_: nmod_t,
+    ) -> ulong;
+    pub fn _nmod_vec_dot2_half_ptr(
+        vec1: nn_srcptr,
+        vec2: *const nn_ptr,
+        offset: slong,
+        len: slong,
+        mod_: nmod_t,
+    ) -> ulong;
+    pub fn _nmod_vec_dot2_ptr(
+        vec1: nn_srcptr,
+        vec2: *const nn_ptr,
+        offset: slong,
+        len: slong,
+        mod_: nmod_t,
+    ) -> ulong;
+    pub fn _nmod_vec_dot3_acc_ptr(
+        vec1: nn_srcptr,
+        vec2: *const nn_ptr,
+        offset: slong,
+        len: slong,
+        mod_: nmod_t,
+    ) -> ulong;
+    pub fn _nmod_vec_dot3_ptr(
+        vec1: nn_srcptr,
+        vec2: *const nn_ptr,
+        offset: slong,
+        len: slong,
+        mod_: nmod_t,
+    ) -> ulong;
+    pub fn _nmod_vec_dot2_split_ptr(
+        vec1: nn_srcptr,
+        vec2: *const nn_ptr,
+        offset: slong,
+        len: slong,
+        mod_: nmod_t,
+        pow2_precomp: ulong,
+    ) -> ulong;
+    #[link_name = "_nmod_vec_dot__extern"]
     pub fn _nmod_vec_dot(
-        vec1: mp_srcptr,
-        vec2: mp_srcptr,
-        len: mp_limb_signed_t,
+        vec1: nn_srcptr,
+        vec2: nn_srcptr,
+        len: slong,
         mod_: nmod_t,
-        nlimbs: libc::c_int,
-    ) -> mp_limb_t;
+        params: dot_params_t,
+    ) -> ulong;
+    #[link_name = "_nmod_vec_dot_rev__extern"]
     pub fn _nmod_vec_dot_rev(
-        vec1: mp_srcptr,
-        vec2: mp_srcptr,
-        len: mp_limb_signed_t,
+        vec1: nn_srcptr,
+        vec2: nn_srcptr,
+        len: slong,
         mod_: nmod_t,
-        nlimbs: libc::c_int,
-    ) -> mp_limb_t;
+        params: dot_params_t,
+    ) -> ulong;
+    #[link_name = "_nmod_vec_dot_ptr__extern"]
     pub fn _nmod_vec_dot_ptr(
-        vec1: mp_srcptr,
-        vec2: *const mp_ptr,
-        offset: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        vec1: nn_srcptr,
+        vec2: *const nn_ptr,
+        offset: slong,
+        len: slong,
         mod_: nmod_t,
-        nlimbs: libc::c_int,
-    ) -> mp_limb_t;
-    pub fn _nmod_vec_fprint_pretty(
-        file: *mut FILE,
-        vec: mp_srcptr,
-        len: mp_limb_signed_t,
-        mod_: nmod_t,
-    ) -> libc::c_int;
-    pub fn _nmod_vec_fprint(
-        f: *mut FILE,
-        vec: mp_srcptr,
-        len: mp_limb_signed_t,
-        mod_: nmod_t,
-    ) -> libc::c_int;
-    pub fn _nmod_vec_print_pretty(vec: mp_srcptr, len: mp_limb_signed_t, mod_: nmod_t);
-    pub fn _nmod_vec_print(vec: mp_srcptr, len: mp_limb_signed_t, mod_: nmod_t) -> libc::c_int;
+        params: dot_params_t,
+    ) -> ulong;
 }

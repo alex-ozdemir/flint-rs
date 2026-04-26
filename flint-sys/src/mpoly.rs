@@ -17,10 +17,9 @@ pub const MPOLY_FACTOR_USE_WANG: u32 = 2;
 pub const MPOLY_FACTOR_USE_ZIP: u32 = 4;
 pub const MPOLY_FACTOR_USE_ALL: u32 = 7;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct mpoly_heap_t {
-    pub i: mp_limb_t,
-    pub j: mp_limb_t,
+    pub i: ulong,
+    pub j: ulong,
     pub next: *mut mpoly_heap_t,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -41,12 +40,11 @@ impl Default for mpoly_heap_t {
     }
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct mpoly_nheap_t {
-    pub i: mp_limb_t,
-    pub j: mp_limb_t,
+    pub i: ulong,
+    pub j: ulong,
     pub next: *mut mpoly_nheap_t,
-    pub p: mp_limb_signed_t,
+    pub p: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -67,9 +65,8 @@ impl Default for mpoly_nheap_t {
     }
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct mpoly_heap1_s {
-    pub exp: mp_limb_t,
+    pub exp: ulong,
     pub next: *mut libc::c_void,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -91,7 +88,7 @@ impl Default for mpoly_heap1_s {
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct mpoly_heap_s {
-    pub exp: *mut mp_limb_t,
+    pub exp: *mut ulong,
     pub next: *mut libc::c_void,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -111,12 +108,11 @@ impl Default for mpoly_heap_s {
     }
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct mpoly_rbnode_ui_struct {
-    pub key: mp_limb_t,
-    pub up: mp_limb_signed_t,
-    pub left: mp_limb_signed_t,
-    pub right: mp_limb_signed_t,
+    pub key: ulong,
+    pub up: slong,
+    pub left: slong,
+    pub right: slong,
     pub color: libc::c_int,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -145,14 +141,13 @@ impl Default for mpoly_rbnode_ui_struct {
     }
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct mpoly_rbtree_ui_struct {
-    pub length: mp_limb_signed_t,
+    pub length: slong,
     pub nodes: *mut mpoly_rbnode_ui_struct,
-    pub node_alloc: mp_limb_signed_t,
+    pub node_alloc: slong,
     pub data: *mut libc::c_char,
-    pub data_alloc: mp_limb_signed_t,
-    pub data_size: mp_limb_signed_t,
+    pub data_alloc: slong,
+    pub data_size: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -183,12 +178,11 @@ impl Default for mpoly_rbtree_ui_struct {
 }
 pub type mpoly_rbtree_ui_t = [mpoly_rbtree_ui_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct mpoly_rbnode_fmpz_struct {
     pub key: fmpz_t,
-    pub up: mp_limb_signed_t,
-    pub left: mp_limb_signed_t,
-    pub right: mp_limb_signed_t,
+    pub up: slong,
+    pub left: slong,
+    pub right: slong,
     pub color: libc::c_int,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -218,14 +212,13 @@ impl Default for mpoly_rbnode_fmpz_struct {
     }
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct mpoly_rbtree_fmpz_struct {
-    pub length: mp_limb_signed_t,
+    pub length: slong,
     pub nodes: *mut mpoly_rbnode_fmpz_struct,
-    pub node_alloc: mp_limb_signed_t,
+    pub node_alloc: slong,
     pub data: *mut libc::c_char,
-    pub data_alloc: mp_limb_signed_t,
-    pub data_size: mp_limb_signed_t,
+    pub data_alloc: slong,
+    pub data_size: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -257,12 +250,11 @@ impl Default for mpoly_rbtree_fmpz_struct {
 }
 pub type mpoly_rbtree_fmpz_t = [mpoly_rbtree_fmpz_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct mpoly_univar_struct {
     pub coeffs: *mut libc::c_char,
     pub exps: *mut fmpz,
-    pub length: mp_limb_signed_t,
-    pub alloc: mp_limb_signed_t,
+    pub length: slong,
+    pub alloc: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -288,10 +280,9 @@ impl Default for mpoly_univar_struct {
 }
 pub type mpoly_univar_t = [mpoly_univar_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct string_with_length_struct {
     pub str_: *mut libc::c_char,
-    pub str_len: mp_limb_signed_t,
+    pub str_len: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -314,20 +305,19 @@ impl Default for string_with_length_struct {
     }
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct mpoly_parse_struct {
     pub R: mpoly_void_ring_t,
-    pub stack: *mut mp_limb_signed_t,
-    pub stack_len: mp_limb_signed_t,
-    pub stack_alloc: mp_limb_signed_t,
+    pub stack: *mut slong,
+    pub stack_len: slong,
+    pub stack_alloc: slong,
     pub estore: *mut libc::c_char,
-    pub estore_len: mp_limb_signed_t,
-    pub estore_alloc: mp_limb_signed_t,
+    pub estore_len: slong,
+    pub estore_alloc: slong,
     pub tmp: *mut libc::c_void,
     pub terminal_strings: *mut string_with_length_struct,
     pub terminal_values: *mut libc::c_char,
-    pub terminals_alloc: mp_limb_signed_t,
-    pub terminals_len: mp_limb_signed_t,
+    pub terminals_alloc: slong,
+    pub terminals_len: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -369,45 +359,74 @@ impl Default for mpoly_parse_struct {
 }
 pub type mpoly_parse_t = [mpoly_parse_struct; 1usize];
 extern "C" {
-    #[link_name = "mpoly_divide_threads__extern"]
-    pub fn mpoly_divide_threads(n: mp_limb_signed_t, la: f64, lb: f64) -> mp_limb_signed_t;
-    pub fn mpoly_ctx_init(ctx: *mut mpoly_ctx_struct, nvars: mp_limb_signed_t, ord: ordering_t);
+    pub fn mpoly_divide_threads(n: slong, la: f64, lb: f64) -> slong;
+    pub fn __gmpn_add_n(
+        arg1: mp_ptr,
+        arg2: mp_srcptr,
+        arg3: mp_srcptr,
+        arg4: mp_size_t,
+    ) -> mp_limb_t;
+    pub fn __gmpn_sub_n(
+        arg1: mp_ptr,
+        arg2: mp_srcptr,
+        arg3: mp_srcptr,
+        arg4: mp_size_t,
+    ) -> mp_limb_t;
+    pub fn __gmpn_addmul_1(
+        arg1: mp_ptr,
+        arg2: mp_srcptr,
+        arg3: mp_size_t,
+        arg4: mp_limb_t,
+    ) -> mp_limb_t;
+    pub fn __gmpn_submul_1(
+        arg1: mp_ptr,
+        arg2: mp_srcptr,
+        arg3: mp_size_t,
+        arg4: mp_limb_t,
+    ) -> mp_limb_t;
+    pub fn __gmpn_rshift(
+        arg1: mp_ptr,
+        arg2: mp_srcptr,
+        arg3: mp_size_t,
+        arg4: libc::c_uint,
+    ) -> mp_limb_t;
+    pub fn __gmpn_mul_1(
+        arg1: mp_ptr,
+        arg2: mp_srcptr,
+        arg3: mp_size_t,
+        arg4: mp_limb_t,
+    ) -> mp_limb_t;
+    pub fn mpoly_ctx_init(ctx: *mut mpoly_ctx_struct, nvars: slong, ord: ordering_t);
     pub fn mpoly_ctx_init_rand(
         mctx: *mut mpoly_ctx_struct,
-        state: *mut flint_rand_s,
-        max_nvars: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        max_nvars: slong,
     );
     pub fn mpoly_monomial_randbits_fmpz(
         exp: *mut fmpz,
-        state: *mut flint_rand_s,
-        exp_bits: mp_limb_t,
+        state: *mut flint_rand_struct,
+        exp_bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
-    pub fn mpoly_ctx_clear(mctx: *mut mpoly_ctx_struct);
+    pub fn mpoly_ctx_clear(UNUSED_mctx: *mut mpoly_ctx_struct);
     #[link_name = "mpoly_words_per_exp_sp__extern"]
-    pub fn mpoly_words_per_exp_sp(
-        bits: mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+    pub fn mpoly_words_per_exp_sp(bits: flint_bitcnt_t, mctx: *const mpoly_ctx_struct) -> slong;
     #[link_name = "mpoly_words_per_exp_mp__extern"]
-    pub fn mpoly_words_per_exp_mp(
-        bits: mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+    pub fn mpoly_words_per_exp_mp(bits: flint_bitcnt_t, mctx: *const mpoly_ctx_struct) -> slong;
     #[link_name = "mpoly_words_per_exp__extern"]
-    pub fn mpoly_words_per_exp(bits: mp_limb_t, mctx: *const mpoly_ctx_struct) -> mp_limb_signed_t;
+    pub fn mpoly_words_per_exp(bits: flint_bitcnt_t, mctx: *const mpoly_ctx_struct) -> slong;
     #[link_name = "mpoly_fix_bits__extern"]
-    pub fn mpoly_fix_bits(bits: mp_limb_t, mctx: *const mpoly_ctx_struct) -> mp_limb_t;
-    pub fn mpoly_rbtree_ui_init(T: *mut mpoly_rbtree_ui_struct, data_size: mp_limb_signed_t);
+    pub fn mpoly_fix_bits(bits: flint_bitcnt_t, mctx: *const mpoly_ctx_struct) -> flint_bitcnt_t;
+    pub fn mpoly_rbtree_ui_init(T: *mut mpoly_rbtree_ui_struct, data_size: slong);
     pub fn mpoly_rbtree_ui_clear(T: *mut mpoly_rbtree_ui_struct);
     pub fn mpoly_rbtree_ui_lookup(
         T: *mut mpoly_rbtree_ui_struct,
         its_new: *mut libc::c_int,
-        key: mp_limb_t,
+        key: ulong,
     ) -> *mut libc::c_void;
     #[link_name = "mpoly_rbtree_ui_head__extern"]
-    pub fn mpoly_rbtree_ui_head(T: *const mpoly_rbtree_ui_struct) -> mp_limb_signed_t;
-    pub fn mpoly_rbtree_fmpz_init(T: *mut mpoly_rbtree_fmpz_struct, data_size: mp_limb_signed_t);
+    pub fn mpoly_rbtree_ui_head(T: *const mpoly_rbtree_ui_struct) -> slong;
+    pub fn mpoly_rbtree_fmpz_init(T: *mut mpoly_rbtree_fmpz_struct, data_size: slong);
     pub fn mpoly_rbtree_fmpz_clear(T: *mut mpoly_rbtree_fmpz_struct);
     pub fn mpoly_rbtree_fmpz_lookup(
         T: *mut mpoly_rbtree_fmpz_struct,
@@ -415,519 +434,474 @@ extern "C" {
         key: *const fmpz,
     ) -> *mut libc::c_void;
     #[link_name = "mpoly_rbtree_fmpz_head__extern"]
-    pub fn mpoly_rbtree_fmpz_head(T: *const mpoly_rbtree_fmpz_struct) -> mp_limb_signed_t;
+    pub fn mpoly_rbtree_fmpz_head(T: *const mpoly_rbtree_fmpz_struct) -> slong;
     #[link_name = "mpoly_ordering_randtest__extern"]
-    pub fn mpoly_ordering_randtest(state: *mut flint_rand_s) -> ordering_t;
+    pub fn mpoly_ordering_randtest(state: *mut flint_rand_struct) -> ordering_t;
     #[link_name = "mpoly_ordering_isdeg__extern"]
     pub fn mpoly_ordering_isdeg(mctx: *const mpoly_ctx_struct) -> libc::c_int;
     #[link_name = "mpoly_ordering_isrev__extern"]
     pub fn mpoly_ordering_isrev(mctx: *const mpoly_ctx_struct) -> libc::c_int;
     pub fn mpoly_ordering_print(ord: ordering_t);
     #[link_name = "mpoly_monomial_zero__extern"]
-    pub fn mpoly_monomial_zero(exp_ptr: *mut mp_limb_t, N: mp_limb_signed_t);
+    pub fn mpoly_monomial_zero(exp_ptr: *mut ulong, N: slong);
     #[link_name = "mpoly_monomial_add__extern"]
     pub fn mpoly_monomial_add(
-        exp_ptr: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
+        exp_ptr: *mut ulong,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        N: slong,
     );
     #[link_name = "mpoly_monomial_add_mp__extern"]
     pub fn mpoly_monomial_add_mp(
-        exp_ptr: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
+        exp_ptr: *mut ulong,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        N: slong,
     );
     #[link_name = "mpoly_monomial_sub__extern"]
     pub fn mpoly_monomial_sub(
-        exp_ptr: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
+        exp_ptr: *mut ulong,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        N: slong,
     );
     #[link_name = "mpoly_monomial_sub_mp__extern"]
     pub fn mpoly_monomial_sub_mp(
-        exp_ptr: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
+        exp_ptr: *mut ulong,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        N: slong,
     );
     #[link_name = "mpoly_monomial_madd__extern"]
     pub fn mpoly_monomial_madd(
-        exp1: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        scalar: mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
+        exp1: *mut ulong,
+        exp2: *const ulong,
+        scalar: ulong,
+        exp3: *const ulong,
+        N: slong,
     );
     #[link_name = "mpoly_monomial_madd_mp__extern"]
     pub fn mpoly_monomial_madd_mp(
-        exp1: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        scalar: mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
+        exp1: *mut ulong,
+        exp2: *const ulong,
+        scalar: ulong,
+        exp3: *const ulong,
+        N: slong,
     );
     #[link_name = "mpoly_monomial_madd_inplace_mp__extern"]
     pub fn mpoly_monomial_madd_inplace_mp(
-        exp12: *mut mp_limb_t,
-        scalar: mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
+        exp12: *mut ulong,
+        scalar: ulong,
+        exp3: *const ulong,
+        N: slong,
     );
     #[link_name = "mpoly_monomial_msub__extern"]
     pub fn mpoly_monomial_msub(
-        exp1: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        scalar: mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
+        exp1: *mut ulong,
+        exp2: *const ulong,
+        scalar: ulong,
+        exp3: *const ulong,
+        N: slong,
     );
     #[link_name = "mpoly_monomial_msub_mp__extern"]
     pub fn mpoly_monomial_msub_mp(
-        exp1: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        scalar: mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
+        exp1: *mut ulong,
+        exp2: *const ulong,
+        scalar: ulong,
+        exp3: *const ulong,
+        N: slong,
     );
-    #[link_name = "mpoly_monomial_msub_ui_array__extern"]
     pub fn mpoly_monomial_msub_ui_array(
-        exp1: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        scalar: *const mp_limb_t,
-        scalar_limbs: mp_limb_signed_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
+        exp1: *mut ulong,
+        exp2: *const ulong,
+        scalar: *const ulong,
+        scalar_limbs: slong,
+        exp3: *const ulong,
+        N: slong,
     );
-    #[link_name = "mpoly_monomial_madd_ui_array__extern"]
     pub fn mpoly_monomial_madd_ui_array(
-        exp1: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        scalar: *const mp_limb_t,
-        scalar_limbs: mp_limb_signed_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
+        exp1: *mut ulong,
+        exp2: *const ulong,
+        scalar: *const ulong,
+        scalar_limbs: slong,
+        exp3: *const ulong,
+        N: slong,
     );
     #[link_name = "mpoly_monomial_madd_fmpz__extern"]
     pub fn mpoly_monomial_madd_fmpz(
-        exp1: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
+        exp1: *mut ulong,
+        exp2: *const ulong,
         scalar: *const fmpz,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
+        exp3: *const ulong,
+        N: slong,
     );
     #[link_name = "mpoly_overflow_mask_sp__extern"]
-    pub fn mpoly_overflow_mask_sp(bits: mp_limb_t) -> mp_limb_t;
+    pub fn mpoly_overflow_mask_sp(bits: flint_bitcnt_t) -> ulong;
     #[link_name = "mpoly_monomial_max1__extern"]
     pub fn mpoly_monomial_max1(
-        exp2: mp_limb_t,
-        exp3: mp_limb_t,
-        bits: mp_limb_t,
-        mask: mp_limb_t,
-    ) -> mp_limb_t;
-    #[link_name = "mpoly_monomial_max__extern"]
+        exp2: ulong,
+        exp3: ulong,
+        bits: flint_bitcnt_t,
+        mask: ulong,
+    ) -> ulong;
     pub fn mpoly_monomial_max(
-        exp1: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        bits: mp_limb_t,
-        N: mp_limb_signed_t,
-        mask: mp_limb_t,
+        exp1: *mut ulong,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        bits: flint_bitcnt_t,
+        N: slong,
+        mask: ulong,
     );
     #[link_name = "mpoly_monomial_min1__extern"]
     pub fn mpoly_monomial_min1(
-        exp2: mp_limb_t,
-        exp3: mp_limb_t,
-        bits: mp_limb_t,
-        mask: mp_limb_t,
-    ) -> mp_limb_t;
-    #[link_name = "mpoly_monomial_min__extern"]
+        exp2: ulong,
+        exp3: ulong,
+        bits: flint_bitcnt_t,
+        mask: ulong,
+    ) -> ulong;
     pub fn mpoly_monomial_min(
-        exp1: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        bits: mp_limb_t,
-        N: mp_limb_signed_t,
-        mask: mp_limb_t,
+        exp1: *mut ulong,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        bits: flint_bitcnt_t,
+        N: slong,
+        mask: ulong,
     );
-    #[link_name = "mpoly_monomial_max_mp__extern"]
     pub fn mpoly_monomial_max_mp(
-        exp1: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        bits: mp_limb_t,
-        N: mp_limb_signed_t,
+        exp1: *mut ulong,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        bits: flint_bitcnt_t,
+        N: slong,
     );
-    #[link_name = "mpoly_monomial_min_mp__extern"]
     pub fn mpoly_monomial_min_mp(
-        exp1: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        bits: mp_limb_t,
-        N: mp_limb_signed_t,
+        exp1: *mut ulong,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        bits: flint_bitcnt_t,
+        N: slong,
     );
     #[link_name = "mpoly_monomial_overflows__extern"]
-    pub fn mpoly_monomial_overflows(
-        exp2: *mut mp_limb_t,
-        N: mp_limb_signed_t,
-        mask: mp_limb_t,
-    ) -> libc::c_int;
+    pub fn mpoly_monomial_overflows(exp2: *mut ulong, N: slong, mask: ulong) -> libc::c_int;
     #[link_name = "mpoly_monomial_overflows_mp__extern"]
     pub fn mpoly_monomial_overflows_mp(
-        exp_ptr: *mut mp_limb_t,
-        N: mp_limb_signed_t,
-        bits: mp_limb_t,
+        exp_ptr: *mut ulong,
+        N: slong,
+        bits: flint_bitcnt_t,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_overflows1__extern"]
-    pub fn mpoly_monomial_overflows1(exp: mp_limb_t, mask: mp_limb_t) -> libc::c_int;
+    pub fn mpoly_monomial_overflows1(exp: ulong, mask: ulong) -> libc::c_int;
     #[link_name = "mpoly_monomial_divides__extern"]
     pub fn mpoly_monomial_divides(
-        exp_ptr: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
-        mask: mp_limb_t,
+        exp_ptr: *mut ulong,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        N: slong,
+        mask: ulong,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_halves__extern"]
     pub fn mpoly_monomial_halves(
-        exp_ptr: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        N: mp_limb_signed_t,
-        mask: mp_limb_t,
+        exp_ptr: *mut ulong,
+        exp2: *const ulong,
+        N: slong,
+        mask: ulong,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_divides_mp__extern"]
     pub fn mpoly_monomial_divides_mp(
-        exp_ptr: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
-        bits: mp_limb_t,
+        exp_ptr: *mut ulong,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        N: slong,
+        bits: flint_bitcnt_t,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_halves_mp__extern"]
     pub fn mpoly_monomial_halves_mp(
-        exp_ptr: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        N: mp_limb_signed_t,
-        bits: mp_limb_t,
+        exp_ptr: *mut ulong,
+        exp2: *const ulong,
+        N: slong,
+        bits: flint_bitcnt_t,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_divides_test__extern"]
     pub fn mpoly_monomial_divides_test(
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
-        mask: mp_limb_t,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        N: slong,
+        mask: ulong,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_divides_mp_test__extern"]
     pub fn mpoly_monomial_divides_mp_test(
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
-        bits: mp_limb_t,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        N: slong,
+        bits: flint_bitcnt_t,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_divides1__extern"]
     pub fn mpoly_monomial_divides1(
-        exp_ptr: *mut mp_limb_t,
-        exp2: mp_limb_t,
-        exp3: mp_limb_t,
-        mask: mp_limb_t,
+        exp_ptr: *mut ulong,
+        exp2: ulong,
+        exp3: ulong,
+        mask: ulong,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_halves1__extern"]
-    pub fn mpoly_monomial_halves1(
-        exp_ptr: *mut mp_limb_t,
-        exp2: mp_limb_t,
-        mask: mp_limb_t,
-    ) -> libc::c_int;
+    pub fn mpoly_monomial_halves1(exp_ptr: *mut ulong, exp2: ulong, mask: ulong) -> libc::c_int;
     #[link_name = "mpoly_monomial_set__extern"]
-    pub fn mpoly_monomial_set(exp2: *mut mp_limb_t, exp3: *const mp_limb_t, N: mp_limb_signed_t);
+    pub fn mpoly_monomial_set(exp2: *mut ulong, exp3: *const ulong, N: slong);
     #[link_name = "mpoly_monomial_set_extra__extern"]
     pub fn mpoly_monomial_set_extra(
-        exp2: *mut mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
-        offset: mp_limb_signed_t,
-        extra: mp_limb_t,
+        exp2: *mut ulong,
+        exp3: *const ulong,
+        N: slong,
+        offset: slong,
+        extra: ulong,
     );
-    #[link_name = "mpoly_copy_monomials__extern"]
-    pub fn mpoly_copy_monomials(
-        exp1: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        N: mp_limb_signed_t,
-    );
+    pub fn mpoly_copy_monomials(exp1: *mut ulong, exp2: *const ulong, len: slong, N: slong);
     #[link_name = "mpoly_monomial_swap__extern"]
-    pub fn mpoly_monomial_swap(exp2: *mut mp_limb_t, exp3: *mut mp_limb_t, N: mp_limb_signed_t);
+    pub fn mpoly_monomial_swap(exp2: *mut ulong, exp3: *mut ulong, N: slong);
     #[link_name = "mpoly_monomial_mul_ui__extern"]
-    pub fn mpoly_monomial_mul_ui(
-        exp2: *mut mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
-        c: mp_limb_t,
-    );
+    pub fn mpoly_monomial_mul_ui(exp2: *mut ulong, exp3: *const ulong, N: slong, c: ulong);
     #[link_name = "mpoly_monomial_mul_ui_mp__extern"]
-    pub fn mpoly_monomial_mul_ui_mp(
-        exp2: *mut mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
-        c: mp_limb_t,
-    );
-    pub fn mpoly_monomial_mul_fmpz(
-        exp2: *mut mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
-        c: *const fmpz,
-    );
+    pub fn mpoly_monomial_mul_ui_mp(exp2: *mut ulong, exp3: *const ulong, N: slong, c: ulong);
+    pub fn mpoly_monomial_mul_fmpz(exp2: *mut ulong, exp3: *const ulong, N: slong, c: *const fmpz);
     #[link_name = "mpoly_monomial_is_zero__extern"]
-    pub fn mpoly_monomial_is_zero(exp: *const mp_limb_t, N: mp_limb_signed_t) -> libc::c_int;
+    pub fn mpoly_monomial_is_zero(exp: *const ulong, N: slong) -> libc::c_int;
     #[link_name = "mpoly_monomial_equal__extern"]
-    pub fn mpoly_monomial_equal(
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
-    ) -> libc::c_int;
+    pub fn mpoly_monomial_equal(exp2: *const ulong, exp3: *const ulong, N: slong) -> libc::c_int;
     #[link_name = "mpoly_monomial_equal_extra__extern"]
     pub fn mpoly_monomial_equal_extra(
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
-        offset: mp_limb_signed_t,
-        extra: mp_limb_t,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        N: slong,
+        offset: slong,
+        extra: ulong,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_cmp1__extern"]
-    pub fn mpoly_monomial_cmp1(a: mp_limb_t, b: mp_limb_t, cmpmask: mp_limb_t) -> libc::c_int;
+    pub fn mpoly_monomial_cmp1(a: ulong, b: ulong, cmpmask: ulong) -> libc::c_int;
     #[link_name = "mpoly_monomial_gt1__extern"]
-    pub fn mpoly_monomial_gt1(a: mp_limb_t, b: mp_limb_t, cmpmask: mp_limb_t) -> libc::c_int;
+    pub fn mpoly_monomial_gt1(a: ulong, b: ulong, cmpmask: ulong) -> libc::c_int;
     #[link_name = "mpoly_monomial_ge1__extern"]
-    pub fn mpoly_monomial_ge1(a: mp_limb_t, b: mp_limb_t, cmpmask: mp_limb_t) -> libc::c_int;
+    pub fn mpoly_monomial_ge1(a: ulong, b: ulong, cmpmask: ulong) -> libc::c_int;
     #[link_name = "mpoly_monomial_lt__extern"]
     pub fn mpoly_monomial_lt(
-        exp3: *const mp_limb_t,
-        exp2: *const mp_limb_t,
-        N: mp_limb_signed_t,
-        cmpmask: *const mp_limb_t,
+        exp3: *const ulong,
+        exp2: *const ulong,
+        N: slong,
+        cmpmask: *const ulong,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_gt__extern"]
     pub fn mpoly_monomial_gt(
-        exp3: *const mp_limb_t,
-        exp2: *const mp_limb_t,
-        N: mp_limb_signed_t,
-        cmpmask: *const mp_limb_t,
+        exp3: *const ulong,
+        exp2: *const ulong,
+        N: slong,
+        cmpmask: *const ulong,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_lt_nomask__extern"]
     pub fn mpoly_monomial_lt_nomask(
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        N: slong,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_gt_nomask__extern"]
     pub fn mpoly_monomial_gt_nomask(
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        N: slong,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_lt_nomask_extra__extern"]
     pub fn mpoly_monomial_lt_nomask_extra(
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
-        offset: mp_limb_signed_t,
-        extra: mp_limb_t,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        N: slong,
+        offset: slong,
+        extra: ulong,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_gt_nomask_extra__extern"]
     pub fn mpoly_monomial_gt_nomask_extra(
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
-        offset: mp_limb_signed_t,
-        extra: mp_limb_t,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        N: slong,
+        offset: slong,
+        extra: ulong,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_cmp__extern"]
     pub fn mpoly_monomial_cmp(
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
-        cmpmask: *const mp_limb_t,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        N: slong,
+        cmpmask: *const ulong,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_cmp_nomask__extern"]
     pub fn mpoly_monomial_cmp_nomask(
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        N: slong,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_cmp_nomask_extra__extern"]
     pub fn mpoly_monomial_cmp_nomask_extra(
-        exp2: *const mp_limb_t,
-        exp3: *const mp_limb_t,
-        N: mp_limb_signed_t,
-        offset: mp_limb_signed_t,
-        extra: mp_limb_t,
+        exp2: *const ulong,
+        exp3: *const ulong,
+        N: slong,
+        offset: slong,
+        extra: ulong,
     ) -> libc::c_int;
     #[link_name = "mpoly_monomial_divides_tight__extern"]
     pub fn mpoly_monomial_divides_tight(
-        e1: mp_limb_signed_t,
-        e2: mp_limb_signed_t,
-        prods: *mut mp_limb_signed_t,
-        num: mp_limb_signed_t,
+        e1: slong,
+        e2: slong,
+        prods: *mut slong,
+        num: slong,
     ) -> libc::c_int;
     #[link_name = "mpoly_max_degrees_tight__extern"]
     pub fn mpoly_max_degrees_tight(
-        max_exp: *mut mp_limb_signed_t,
-        exps: *mut mp_limb_t,
-        len: mp_limb_signed_t,
-        prods: *mut mp_limb_signed_t,
-        num: mp_limb_signed_t,
+        max_exp: *mut slong,
+        exps: *mut ulong,
+        len: slong,
+        prods: *mut slong,
+        num: slong,
     );
-    #[link_name = "mpoly_geobucket_clog4__extern"]
-    pub fn mpoly_geobucket_clog4(x: mp_limb_signed_t) -> mp_limb_signed_t;
     #[link_name = "pack_exp2__extern"]
-    pub fn pack_exp2(e0: mp_limb_t, e1: mp_limb_t) -> mp_limb_t;
+    pub fn pack_exp2(e0: ulong, e1: ulong) -> ulong;
     #[link_name = "pack_exp3__extern"]
-    pub fn pack_exp3(e0: mp_limb_t, e1: mp_limb_t, e2: mp_limb_t) -> mp_limb_t;
+    pub fn pack_exp3(e0: ulong, e1: ulong, e2: ulong) -> ulong;
     #[link_name = "extract_exp__extern"]
-    pub fn extract_exp(e: mp_limb_t, idx: libc::c_int, nvars: libc::c_int) -> mp_limb_t;
+    pub fn extract_exp(e: ulong, idx: libc::c_int, nvars: libc::c_int) -> ulong;
     pub fn _mpoly_bidegree(
-        Aexps: *const mp_limb_t,
-        Abits: mp_limb_t,
+        Aexps: *const ulong,
+        Abits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_t;
-    pub fn mpoly_gen_fields_ui(
-        exp: *mut mp_limb_t,
-        var: mp_limb_signed_t,
-        mctx: *const mpoly_ctx_struct,
-    );
-    pub fn mpoly_gen_fields_fmpz(
-        exp: *mut fmpz,
-        var: mp_limb_signed_t,
-        mctx: *const mpoly_ctx_struct,
-    );
+    ) -> ulong;
+    pub fn mpoly_gen_fields_ui(exp: *mut ulong, var: slong, mctx: *const mpoly_ctx_struct);
+    pub fn mpoly_gen_fields_fmpz(exp: *mut fmpz, var: slong, mctx: *const mpoly_ctx_struct);
     pub fn mpoly_gen_bits_required(
-        var: mp_limb_signed_t,
-        mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_t;
+        UNUSED_var: slong,
+        UNUSED_mctx: *const mpoly_ctx_struct,
+    ) -> flint_bitcnt_t;
     #[link_name = "mpoly_gen_index__extern"]
-    pub fn mpoly_gen_index(v: mp_limb_signed_t, mctx: *const mpoly_ctx_struct) -> mp_limb_signed_t;
+    pub fn mpoly_gen_index(v: slong, mctx: *const mpoly_ctx_struct) -> slong;
     pub fn mpoly_gen_offset_shift_sp(
-        offset: *mut mp_limb_signed_t,
-        shift: *mut mp_limb_signed_t,
-        var: mp_limb_signed_t,
-        bits: mp_limb_t,
+        offset: *mut slong,
+        shift: *mut slong,
+        var: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_gen_monomial_offset_shift_sp(
-        mexp: *mut mp_limb_t,
-        offset: *mut mp_limb_signed_t,
-        shift: *mut mp_limb_signed_t,
-        var: mp_limb_signed_t,
-        bits: mp_limb_t,
+        mexp: *mut ulong,
+        offset: *mut slong,
+        shift: *mut slong,
+        var: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_gen_monomial_sp(
-        oneexp: *mut mp_limb_t,
-        var: mp_limb_signed_t,
-        bits: mp_limb_t,
+        oneexp: *mut ulong,
+        var: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_gen_offset_mp(
-        var: mp_limb_signed_t,
-        bits: mp_limb_t,
+        var: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn mpoly_gen_monomial_offset_mp(
-        mexp: *mut mp_limb_t,
-        var: mp_limb_signed_t,
-        bits: mp_limb_t,
+        mexp: *mut ulong,
+        var: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn mpoly_compose_mat_gen(
         M: *mut fmpz_mat_struct,
-        c: *const mp_limb_signed_t,
+        c: *const slong,
         mctxB: *const mpoly_ctx_struct,
         mctxAC: *const mpoly_ctx_struct,
     );
     pub fn mpoly_compose_mat_fill_column(
         M: *mut fmpz_mat_struct,
-        Cexp: *const mp_limb_t,
-        Cbits: mp_limb_t,
-        Bvar: mp_limb_signed_t,
+        Cexp: *const ulong,
+        Cbits: flint_bitcnt_t,
+        Bvar: slong,
         mctxB: *const mpoly_ctx_struct,
         mctxAC: *const mpoly_ctx_struct,
     );
     pub fn mpoly_get_cmpmask(
-        cmpmask: *mut mp_limb_t,
-        N: mp_limb_signed_t,
-        bits: mp_limb_t,
+        cmpmask: *mut ulong,
+        N: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_get_ovfmask(
-        ovfmask: *mut mp_limb_t,
-        N: mp_limb_signed_t,
-        bits: mp_limb_t,
+        ovfmask: *mut ulong,
+        N: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_monomials_cmp(
-        Aexps: *const mp_limb_t,
-        Abits: mp_limb_t,
-        Bexps: *const mp_limb_t,
-        Bbits: mp_limb_t,
-        length: mp_limb_signed_t,
+        Aexps: *const ulong,
+        Abits: flint_bitcnt_t,
+        Bexps: *const ulong,
+        Bbits: flint_bitcnt_t,
+        length: slong,
         mctx: *const mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn mpoly_exp_bits_required_ui(
-        user_exp: *const mp_limb_t,
+        user_exp: *const ulong,
         mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_t;
+    ) -> flint_bitcnt_t;
     pub fn mpoly_exp_bits_required_ffmpz(
         user_exp: *const fmpz,
         mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_t;
+    ) -> flint_bitcnt_t;
     pub fn mpoly_exp_bits_required_pfmpz(
         user_exp: *const *mut fmpz,
         mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_t;
-    #[link_name = "mpoly_gen_pow_exp_bits_required__extern"]
+    ) -> flint_bitcnt_t;
     pub fn mpoly_gen_pow_exp_bits_required(
-        v: mp_limb_signed_t,
-        e: mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_t;
+        UNUSED_v: slong,
+        e: ulong,
+        UNUSED_mctx: *const mpoly_ctx_struct,
+    ) -> flint_bitcnt_t;
     pub fn mpoly_is_poly(
-        Aexps: *const mp_limb_t,
-        Alen: mp_limb_signed_t,
-        Abits: mp_limb_t,
-        var: mp_limb_signed_t,
+        Aexps: *const ulong,
+        Alen: slong,
+        Abits: flint_bitcnt_t,
+        var: slong,
         mctx: *const mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn mpoly_pack_vec_ui(
-        exp1: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        bits: mp_limb_t,
-        nfields: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        exp1: *mut ulong,
+        exp2: *const ulong,
+        bits: flint_bitcnt_t,
+        nfields: slong,
+        len: slong,
     );
     pub fn mpoly_pack_vec_fmpz(
-        exp1: *mut mp_limb_t,
+        exp1: *mut ulong,
         exp2: *const fmpz,
-        bits: mp_limb_t,
-        nfields: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        bits: flint_bitcnt_t,
+        nfields: slong,
+        len: slong,
     );
     pub fn mpoly_unpack_vec_ui(
-        exp1: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        bits: mp_limb_t,
-        nfields: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        exp1: *mut ulong,
+        exp2: *const ulong,
+        bits: flint_bitcnt_t,
+        nfields: slong,
+        len: slong,
     );
     pub fn mpoly_unpack_vec_fmpz(
         exp1: *mut fmpz,
-        exp2: *const mp_limb_t,
-        bits: mp_limb_t,
-        nfields: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        exp2: *const ulong,
+        bits: flint_bitcnt_t,
+        nfields: slong,
+        len: slong,
+    );
+    pub fn mpoly_get_monomial_ui_unpacked_ui(
+        user_exps: *mut ulong,
+        poly_exps: *const ulong,
+        mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_get_monomial_ui_unpacked_ffmpz(
-        user_exps: *mut mp_limb_t,
+        user_exps: *mut ulong,
         poly_exps: *const fmpz,
         mctx: *const mpoly_ctx_struct,
     );
@@ -941,641 +915,615 @@ extern "C" {
         poly_exps: *const fmpz,
         mctx: *const mpoly_ctx_struct,
     );
-    pub fn mpoly_get_monomial_ui_unpacked_ui(
-        user_exps: *mut mp_limb_t,
-        poly_exps: *const mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-    );
     pub fn mpoly_get_monomial_ui_sp(
-        user_exps: *mut mp_limb_t,
-        poly_exps: *const mp_limb_t,
-        bits: mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-    );
-    pub fn mpoly_get_monomial_ui_mp(
-        user_exps: *mut mp_limb_t,
-        poly_exps: *const mp_limb_t,
-        bits: mp_limb_t,
+        user_exps: *mut ulong,
+        poly_exps: *const ulong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_get_monomial_si_mp(
-        user_exps: *mut mp_limb_signed_t,
-        poly_exps: *const mp_limb_t,
-        bits: mp_limb_t,
+        user_exps: *mut slong,
+        poly_exps: *const ulong,
+        bits: flint_bitcnt_t,
+        mctx: *const mpoly_ctx_struct,
+    );
+    pub fn mpoly_get_monomial_ui_mp(
+        user_exps: *mut ulong,
+        poly_exps: *const ulong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     #[link_name = "mpoly_get_monomial_ui__extern"]
     pub fn mpoly_get_monomial_ui(
-        user_exps: *mut mp_limb_t,
-        poly_exps: *const mp_limb_t,
-        bits: mp_limb_t,
+        user_exps: *mut ulong,
+        poly_exps: *const ulong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     #[link_name = "mpoly_get_monomial_si__extern"]
     pub fn mpoly_get_monomial_si(
-        user_exps: *mut mp_limb_signed_t,
-        poly_exps: *const mp_limb_t,
-        bits: mp_limb_t,
+        user_exps: *mut slong,
+        poly_exps: *const ulong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_get_monomial_var_exp_ui_sp(
-        poly_exps: *const mp_limb_t,
-        var: mp_limb_signed_t,
-        bits: mp_limb_t,
+        poly_exps: *const ulong,
+        var: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_t;
-    pub fn mpoly_get_monomial_var_exp_ui_mp(
-        poly_exps: *const mp_limb_t,
-        var: mp_limb_signed_t,
-        bits: mp_limb_t,
-        mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_t;
+    ) -> ulong;
     pub fn mpoly_get_monomial_var_exp_si_mp(
-        poly_exps: *const mp_limb_t,
-        var: mp_limb_signed_t,
-        bits: mp_limb_t,
+        poly_exps: *const ulong,
+        var: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
+    pub fn mpoly_get_monomial_var_exp_ui_mp(
+        poly_exps: *const ulong,
+        var: slong,
+        bits: flint_bitcnt_t,
+        mctx: *const mpoly_ctx_struct,
+    ) -> ulong;
     #[link_name = "mpoly_get_monomial_var_exp_ui__extern"]
     pub fn mpoly_get_monomial_var_exp_ui(
-        poly_exps: *const mp_limb_t,
-        var: mp_limb_signed_t,
-        bits: mp_limb_t,
+        poly_exps: *const ulong,
+        var: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_t;
+    ) -> ulong;
     #[link_name = "mpoly_get_monomial_var_exp_si__extern"]
     pub fn mpoly_get_monomial_var_exp_si(
-        poly_exps: *const mp_limb_t,
-        var: mp_limb_signed_t,
-        bits: mp_limb_t,
+        poly_exps: *const ulong,
+        var: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn mpoly_get_monomial_ffmpz(
         exps: *mut fmpz,
-        poly_exps: *const mp_limb_t,
-        bits: mp_limb_t,
+        poly_exps: *const ulong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_get_monomial_pfmpz(
         exps: *mut *mut fmpz,
-        poly_exps: *const mp_limb_t,
-        bits: mp_limb_t,
+        poly_exps: *const ulong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_set_monomial_ui(
-        exp1: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        bits: mp_limb_t,
+        exp1: *mut ulong,
+        exp2: *const ulong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_set_monomial_ffmpz(
-        exp1: *mut mp_limb_t,
+        exp1: *mut ulong,
         exp2: *const fmpz,
-        bits: mp_limb_t,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_set_monomial_pfmpz(
-        exp1: *mut mp_limb_t,
+        exp1: *mut ulong,
         exp2: *const *mut fmpz,
-        bits: mp_limb_t,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_repack_monomials(
-        exps1: *mut mp_limb_t,
-        bits1: mp_limb_t,
-        exps2: *const mp_limb_t,
-        bits2: mp_limb_t,
-        len: mp_limb_signed_t,
+        exps1: *mut ulong,
+        bits1: flint_bitcnt_t,
+        exps2: *const ulong,
+        bits2: flint_bitcnt_t,
+        len: slong,
         mctx: *const mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn mpoly_pack_monomials_tight(
-        exp1: *mut mp_limb_t,
-        exp2: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        mults: *const mp_limb_signed_t,
-        num: mp_limb_signed_t,
-        bits: mp_limb_signed_t,
+        exp1: *mut ulong,
+        exp2: *const ulong,
+        len: slong,
+        mults: *const slong,
+        num: slong,
+        bits: slong,
     );
     pub fn mpoly_unpack_monomials_tight(
-        e1: *mut mp_limb_t,
-        e2: *mut mp_limb_t,
-        len: mp_limb_signed_t,
-        mults: *mut mp_limb_signed_t,
-        num: mp_limb_signed_t,
-        bits: mp_limb_signed_t,
+        e1: *mut ulong,
+        e2: *mut ulong,
+        len: slong,
+        mults: *mut slong,
+        num: slong,
+        bits: slong,
     );
     pub fn mpoly_monomial_exists(
-        index: *mut mp_limb_signed_t,
-        poly_exps: *const mp_limb_t,
-        exp: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        N: mp_limb_signed_t,
-        cmpmask: *const mp_limb_t,
+        index: *mut slong,
+        poly_exps: *const ulong,
+        exp: *const ulong,
+        len: slong,
+        N: slong,
+        cmpmask: *const ulong,
     ) -> libc::c_int;
-    pub fn mpoly_monomial_index1_nomask(
-        Aexps: *mut mp_limb_t,
-        Alen: mp_limb_signed_t,
-        e: mp_limb_t,
-    ) -> mp_limb_signed_t;
+    pub fn mpoly_monomial_index1_nomask(Aexps: *mut ulong, Alen: slong, e: ulong) -> slong;
     pub fn mpoly_monomial_index_ui(
-        Aexp: *const mp_limb_t,
-        Abits: mp_limb_t,
-        Alength: mp_limb_signed_t,
-        exp: *const mp_limb_t,
+        Aexp: *const ulong,
+        Abits: flint_bitcnt_t,
+        Alength: slong,
+        exp: *const ulong,
         mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn mpoly_monomial_index_pfmpz(
-        Aexp: *const mp_limb_t,
-        Abits: mp_limb_t,
-        Alength: mp_limb_signed_t,
+        Aexp: *const ulong,
+        Abits: flint_bitcnt_t,
+        Alength: slong,
         exp: *const *mut fmpz,
         mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn mpoly_monomial_index_monomial(
-        Aexp: *const mp_limb_t,
-        Abits: mp_limb_t,
-        Alength: mp_limb_signed_t,
-        Mexp: *const mp_limb_t,
-        Mbits: mp_limb_t,
+        Aexp: *const ulong,
+        Abits: flint_bitcnt_t,
+        Alength: slong,
+        Mexp: *const ulong,
+        Mbits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn mpoly_min_fields_ui_sp(
-        min_fields: *mut mp_limb_t,
-        poly_exps: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
+        min_fields: *mut ulong,
+        poly_exps: *const ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_min_fields_fmpz(
         min_fields: *mut fmpz,
-        poly_exps: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
+        poly_exps: *const ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_max_fields_ui_sp(
-        max_fields: *mut mp_limb_t,
-        poly_exps: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
+        max_fields: *mut ulong,
+        poly_exps: *const ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_max_fields_fmpz(
         max_fields: *mut fmpz,
-        poly_exps: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
+        poly_exps: *const ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_degrees_fit_si(
-        poly_exps: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
+        poly_exps: *const ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn mpoly_degrees_si(
-        user_degs: *mut mp_limb_signed_t,
-        poly_exps: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
+        user_degs: *mut slong,
+        poly_exps: *const ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_degrees_si_threaded(
-        user_degs: *mut mp_limb_signed_t,
-        poly_exps: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
+        user_degs: *mut slong,
+        poly_exps: *const ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
         handles: *const thread_pool_handle,
-        num_handles: mp_limb_signed_t,
+        num_handles: slong,
     );
     pub fn mpoly_degrees_ffmpz(
         user_degs: *mut fmpz,
-        poly_exps: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
+        poly_exps: *const ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_degrees_pfmpz(
         user_degs: *mut *mut fmpz,
-        poly_exps: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
+        poly_exps: *const ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_degree_si(
-        poly_exps: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
-        var: mp_limb_signed_t,
+        poly_exps: *const ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
+        var: slong,
         mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn mpoly_degree_fmpz(
         deg: *mut fmpz,
-        poly_exps: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
-        var: mp_limb_signed_t,
+        poly_exps: *const ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
+        var: slong,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_total_degree_fits_si(
-        exps: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
+        exps: *const ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn mpoly_total_degree_si(
-        exps: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
+        exps: *const ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+    ) -> slong;
     pub fn mpoly_total_degree_fmpz(
         totdeg: *mut fmpz,
-        exps: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
+        exps: *const ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_total_degree_fmpz_ref(
         totdeg: *mut fmpz,
-        exps: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
+        exps: *const ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_used_vars_or(
         used: *mut libc::c_int,
-        exps: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
+        exps: *const ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_monomial_cmp_general(
-        Aexp: *mut mp_limb_t,
-        Abits: mp_limb_t,
-        Bexp: *mut mp_limb_t,
-        Bbits: mp_limb_t,
+        Aexp: *mut ulong,
+        Abits: flint_bitcnt_t,
+        Bexp: *mut ulong,
+        Bbits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn mpoly_search_monomials(
-        e_ind: *mut *mut mp_limb_signed_t,
-        e: *mut mp_limb_t,
-        e_score: *mut mp_limb_signed_t,
-        t1: *mut mp_limb_signed_t,
-        t2: *mut mp_limb_signed_t,
-        t3: *mut mp_limb_signed_t,
-        lower: mp_limb_signed_t,
-        upper: mp_limb_signed_t,
-        a: *const mp_limb_t,
-        a_len: mp_limb_signed_t,
-        b: *const mp_limb_t,
-        b_len: mp_limb_signed_t,
-        N: mp_limb_signed_t,
-        cmpmask: *const mp_limb_t,
+        e_ind: *mut *mut slong,
+        e: *mut ulong,
+        e_score: *mut slong,
+        t1: *mut slong,
+        t2: *mut slong,
+        t3: *mut slong,
+        lower: slong,
+        upper: slong,
+        a: *const ulong,
+        a_len: slong,
+        b: *const ulong,
+        b_len: slong,
+        N: slong,
+        cmpmask: *const ulong,
     );
     pub fn mpoly_main_variable_split_LEX(
-        ind: *mut mp_limb_signed_t,
-        pexp: *mut mp_limb_t,
-        Aexp: *const mp_limb_t,
-        l1: mp_limb_signed_t,
-        Alen: mp_limb_signed_t,
-        mults: *const mp_limb_t,
-        num: mp_limb_signed_t,
-        Abits: mp_limb_signed_t,
+        ind: *mut slong,
+        pexp: *mut ulong,
+        Aexp: *const ulong,
+        l1: slong,
+        Alen: slong,
+        mults: *const ulong,
+        num: slong,
+        Abits: slong,
     );
     pub fn mpoly_main_variable_split_DEG(
-        ind: *mut mp_limb_signed_t,
-        pexp: *mut mp_limb_t,
-        Aexp: *const mp_limb_t,
-        l1: mp_limb_signed_t,
-        Alen: mp_limb_signed_t,
-        deg: mp_limb_t,
-        num: mp_limb_signed_t,
-        Abits: mp_limb_signed_t,
+        ind: *mut slong,
+        pexp: *mut ulong,
+        Aexp: *const ulong,
+        l1: slong,
+        Alen: slong,
+        deg: ulong,
+        num: slong,
+        Abits: slong,
     );
     pub fn mpoly_term_exp_fits_si(
-        exps: *mut mp_limb_t,
-        bits: mp_limb_t,
-        n: mp_limb_signed_t,
+        exps: *mut ulong,
+        bits: flint_bitcnt_t,
+        n: slong,
         mctx: *const mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn mpoly_term_exp_fits_ui(
-        exps: *mut mp_limb_t,
-        bits: mp_limb_t,
-        n: mp_limb_signed_t,
+        exps: *mut ulong,
+        bits: flint_bitcnt_t,
+        n: slong,
         mctx: *const mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn mpoly_is_gen(
-        exps: *mut mp_limb_t,
-        var: mp_limb_signed_t,
-        bits: mp_limb_t,
+        exps: *mut ulong,
+        var: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn mpoly_monomials_valid_test(
-        exps: *mut mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
+        exps: *mut ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn mpoly_monomials_overflow_test(
-        exps: *mut mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
+        exps: *mut ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn mpoly_monomials_inorder_test(
-        exps: *mut mp_limb_t,
-        len: mp_limb_signed_t,
-        bits: mp_limb_t,
+        exps: *mut ulong,
+        len: slong,
+        bits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     ) -> libc::c_int;
-    pub fn mpoly_reverse(
-        Aexp: *mut mp_limb_t,
-        Bexp: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        N: mp_limb_signed_t,
-    );
+    pub fn mpoly_reverse(Aexp: *mut ulong, Bexp: *const ulong, len: slong, N: slong);
     pub fn mpoly_monomials_deflation(
         shift: *mut fmpz,
         stride: *mut fmpz,
-        Aexps: *const mp_limb_t,
-        Abits: mp_limb_t,
-        Alength: mp_limb_signed_t,
+        Aexps: *const ulong,
+        Abits: flint_bitcnt_t,
+        Alength: slong,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_monomials_deflate(
-        Aexps: *mut mp_limb_t,
-        Abits: mp_limb_t,
-        Bexps: *const mp_limb_t,
-        Bbits: mp_limb_t,
-        Blength: mp_limb_signed_t,
+        Aexps: *mut ulong,
+        Abits: flint_bitcnt_t,
+        Bexps: *const ulong,
+        Bbits: flint_bitcnt_t,
+        Blength: slong,
         shift: *const fmpz,
         stride: *const fmpz,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_monomials_inflate(
-        Aexps: *mut mp_limb_t,
-        Abits: mp_limb_t,
-        Bexps: *const mp_limb_t,
-        Bbits: mp_limb_t,
-        Blength: mp_limb_signed_t,
+        Aexps: *mut ulong,
+        Abits: flint_bitcnt_t,
+        Bexps: *const ulong,
+        Bbits: flint_bitcnt_t,
+        Blength: slong,
         shift: *const fmpz,
         stride: *const fmpz,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn _mpoly_gen_shift_right(
-        Aexp: *mut mp_limb_t,
-        Abits: mp_limb_t,
-        Alength: mp_limb_signed_t,
-        var: mp_limb_signed_t,
-        amount: mp_limb_t,
+        Aexp: *mut ulong,
+        Abits: flint_bitcnt_t,
+        Alength: slong,
+        var: slong,
+        amount: ulong,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn _mpoly_gen_shift_right_fmpz(
-        Aexp: *mut mp_limb_t,
-        Abits: mp_limb_t,
-        Alength: mp_limb_signed_t,
-        var: mp_limb_signed_t,
+        Aexp: *mut ulong,
+        Abits: flint_bitcnt_t,
+        Alength: slong,
+        var: slong,
         amount: *const fmpz,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn _mpoly_gen_shift_left(
-        Aexp: *mut mp_limb_t,
-        Abits: mp_limb_t,
-        Alength: mp_limb_signed_t,
-        var: mp_limb_signed_t,
-        amount: mp_limb_t,
+        Aexp: *mut ulong,
+        Abits: flint_bitcnt_t,
+        Alength: slong,
+        var: slong,
+        amount: ulong,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_monomials_shift_right_ui(
-        Aexps: *mut mp_limb_t,
-        Abits: mp_limb_t,
-        Alength: mp_limb_signed_t,
-        user_exps: *const mp_limb_t,
+        Aexps: *mut ulong,
+        Abits: flint_bitcnt_t,
+        Alength: slong,
+        user_exps: *const ulong,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_monomials_shift_right_ffmpz(
-        Aexps: *mut mp_limb_t,
-        Abits: mp_limb_t,
-        Alength: mp_limb_signed_t,
+        Aexps: *mut ulong,
+        Abits: flint_bitcnt_t,
+        Alength: slong,
         user_exps: *const fmpz,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly1_fill_marks(
-        Dcoeffs: *mut *mut mp_limb_t,
-        Dlen: *mut mp_limb_signed_t,
-        Dalloc: *mut mp_limb_signed_t,
-        Aexps: *const mp_limb_t,
-        Alen: mp_limb_signed_t,
-        Abits: mp_limb_t,
+        Dcoeffs: *mut *mut ulong,
+        Dlen: *mut slong,
+        Dalloc: *mut slong,
+        Aexps: *const ulong,
+        Alen: slong,
+        Abits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly2_fill_marks(
-        Dcoeffs: *mut *mut mp_limb_t,
-        Dlen: *mut mp_limb_signed_t,
-        Dalloc: *mut mp_limb_signed_t,
-        Aexps: *const mp_limb_t,
-        Alen: mp_limb_signed_t,
-        Abits: mp_limb_t,
+        Dcoeffs: *mut *mut ulong,
+        Dlen: *mut slong,
+        Dalloc: *mut slong,
+        Aexps: *const ulong,
+        Alen: slong,
+        Abits: flint_bitcnt_t,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_to_mpolyl_perm_deflate(
-        Aexps: *mut mp_limb_t,
-        Abits: mp_limb_t,
+        Aexps: *mut ulong,
+        Abits: flint_bitcnt_t,
         Actx: *const mpoly_ctx_struct,
-        Bexps: *mut mp_limb_t,
-        Bbits: mp_limb_t,
+        Bexps: *mut ulong,
+        Bbits: flint_bitcnt_t,
         Bctx: *const mpoly_ctx_struct,
-        length: mp_limb_signed_t,
-        perm: *const mp_limb_signed_t,
-        shift: *const mp_limb_t,
-        stride: *const mp_limb_t,
+        length: slong,
+        perm: *const slong,
+        shift: *const ulong,
+        stride: *const ulong,
     );
     pub fn mpoly_from_mpolyl_perm_inflate(
-        Bexps: *mut mp_limb_t,
-        Bbits: mp_limb_t,
+        Bexps: *mut ulong,
+        Bbits: flint_bitcnt_t,
         Bctx: *const mpoly_ctx_struct,
-        Aexps: *mut mp_limb_t,
-        Abits: mp_limb_t,
+        Aexps: *mut ulong,
+        Abits: flint_bitcnt_t,
         Actx: *const mpoly_ctx_struct,
-        length: mp_limb_signed_t,
-        perm: *const mp_limb_signed_t,
-        shift: *const mp_limb_t,
-        stride: *const mp_limb_t,
+        length: slong,
+        perm: *const slong,
+        shift: *const ulong,
+        stride: *const ulong,
     );
-    pub fn mpoly_gcd_info_init(I: *mut mpoly_gcd_info_struct, nvars: mp_limb_signed_t);
-    pub fn mpoly_gcd_info_clear(I: *mut mpoly_gcd_info_struct);
+    pub fn mpoly_gcd_info_init(Iv: *mut mpoly_gcd_info_struct, nvars: slong);
+    pub fn mpoly_gcd_info_clear(Iv: *mut mpoly_gcd_info_struct);
     pub fn mpoly_gcd_info_limits(
-        Amax_exp: *mut mp_limb_t,
-        Amin_exp: *mut mp_limb_t,
-        Amax_exp_count: *mut mp_limb_signed_t,
-        Amin_exp_count: *mut mp_limb_signed_t,
-        Aexps: *const mp_limb_t,
-        Abits: mp_limb_t,
-        Alength: mp_limb_signed_t,
+        Amax_exp: *mut ulong,
+        Amin_exp: *mut ulong,
+        Amax_exp_count: *mut slong,
+        Amin_exp_count: *mut slong,
+        Aexps: *const ulong,
+        Abits: flint_bitcnt_t,
+        Alength: slong,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_gcd_info_stride(
-        strides: *mut mp_limb_t,
-        Aexps: *const mp_limb_t,
-        Abits: mp_limb_t,
-        Alength: mp_limb_signed_t,
-        Amax_exp: *const mp_limb_t,
-        Amin_exp: *const mp_limb_t,
-        Bexps: *const mp_limb_t,
-        Bbits: mp_limb_t,
-        Blength: mp_limb_signed_t,
-        Bmax_exp: *const mp_limb_t,
-        Bmin_exp: *const mp_limb_t,
+        strides: *mut ulong,
+        Aexps: *const ulong,
+        Abits: flint_bitcnt_t,
+        Alength: slong,
+        Amax_exp: *const ulong,
+        Amin_exp: *const ulong,
+        Bexps: *const ulong,
+        Bbits: flint_bitcnt_t,
+        Blength: slong,
+        Bmax_exp: *const ulong,
+        Bmin_exp: *const ulong,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_gcd_info_set_perm(
-        I: *mut mpoly_gcd_info_struct,
-        Alength: mp_limb_signed_t,
-        Blength: mp_limb_signed_t,
+        Iv: *mut mpoly_gcd_info_struct,
+        Alength: slong,
+        Blength: slong,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_gcd_info_get_brown_upper_limit(
-        I: *const mpoly_gcd_info_struct,
-        var: mp_limb_signed_t,
-        bound: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
+        Iv: *const mpoly_gcd_info_struct,
+        var: slong,
+        bound: slong,
+    ) -> slong;
     pub fn mpoly_gcd_info_measure_hensel(
-        I: *mut mpoly_gcd_info_struct,
-        Alength: mp_limb_signed_t,
-        Blength: mp_limb_signed_t,
-        mctx: *const mpoly_ctx_struct,
+        Iv: *mut mpoly_gcd_info_struct,
+        Alength: slong,
+        Blength: slong,
+        UNUSED_mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_gcd_info_measure_brown(
-        I: *mut mpoly_gcd_info_struct,
-        Alength: mp_limb_signed_t,
-        Blength: mp_limb_signed_t,
-        mctx: *const mpoly_ctx_struct,
+        Iv: *mut mpoly_gcd_info_struct,
+        Alength: slong,
+        Blength: slong,
+        UNUSED_mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_gcd_info_measure_bma(
-        I: *mut mpoly_gcd_info_struct,
-        Alength: mp_limb_signed_t,
-        Blength: mp_limb_signed_t,
-        mctx: *const mpoly_ctx_struct,
+        Iv: *mut mpoly_gcd_info_struct,
+        Alength: slong,
+        Blength: slong,
+        UNUSED_mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_gcd_info_measure_zippel(
-        I: *mut mpoly_gcd_info_struct,
-        Alength: mp_limb_signed_t,
-        Blength: mp_limb_signed_t,
-        mctx: *const mpoly_ctx_struct,
+        Iv: *mut mpoly_gcd_info_struct,
+        UNUSED_Alength: slong,
+        UNUSED_Blength: slong,
+        UNUSED_mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_gcd_info_measure_zippel2(
-        I: *mut mpoly_gcd_info_struct,
-        Alength: mp_limb_signed_t,
-        Blength: mp_limb_signed_t,
-        mctx: *const mpoly_ctx_struct,
+        Iv: *mut mpoly_gcd_info_struct,
+        UNUSED_Alength: slong,
+        UNUSED_Blength: slong,
+        UNUSED_mctx: *const mpoly_ctx_struct,
     );
     pub fn mpoly_monomial_cofactors(
         Abarexps: *mut fmpz,
         Bbarexps: *mut fmpz,
-        Aexps: *const mp_limb_t,
-        Abits: mp_limb_t,
-        Bexps: *const mp_limb_t,
-        Bbits: mp_limb_t,
-        length: mp_limb_signed_t,
+        Aexps: *const ulong,
+        Abits: flint_bitcnt_t,
+        Bexps: *const ulong,
+        Bbits: flint_bitcnt_t,
+        length: slong,
         mctx: *const mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn mpoly_is_proved_not_square(
-        Aexps: *const mp_limb_t,
-        Alen: mp_limb_signed_t,
-        Abits: mp_limb_t,
-        N: mp_limb_signed_t,
-        t: *mut mp_limb_t,
+        Aexps: *const ulong,
+        Alen: slong,
+        Abits: flint_bitcnt_t,
+        N: slong,
+        t: *mut ulong,
     ) -> libc::c_int;
     pub fn mpoly_remove_var_powers(
         var_powers: *mut fmpz,
-        Aexps: *mut mp_limb_t,
-        Abits: mp_limb_t,
-        Alen: mp_limb_signed_t,
+        Aexps: *mut ulong,
+        Abits: flint_bitcnt_t,
+        Alen: slong,
         mctx: *const mpoly_ctx_struct,
     );
     pub fn _mpoly_compress_exps(
-        V: *mut mp_limb_signed_t,
-        D: *mut mp_limb_signed_t,
-        deg: *mut mp_limb_signed_t,
-        S: *mut mp_limb_signed_t,
-        n: mp_limb_signed_t,
-        l: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
+        V: *mut slong,
+        D: *mut slong,
+        deg: *mut slong,
+        S: *mut slong,
+        n: slong,
+        l: slong,
+    ) -> slong;
     pub fn mpoly_test_irreducible(
-        Aexps: *mut mp_limb_t,
-        Abits: mp_limb_t,
-        Alen: mp_limb_signed_t,
+        Aexps: *mut ulong,
+        Abits: flint_bitcnt_t,
+        Alen: slong,
         ctx: *const mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn _mpoly_test_irreducible(
-        Aexps: *mut mp_limb_signed_t,
-        stride: mp_limb_signed_t,
-        Alen: mp_limb_signed_t,
-        nvars: mp_limb_signed_t,
-        state: *mut flint_rand_s,
-        tries_left: mp_limb_signed_t,
+        Aexps: *mut slong,
+        stride: slong,
+        Alen: slong,
+        nvars: slong,
+        state: *mut flint_rand_struct,
+        tries_left: slong,
     ) -> libc::c_int;
     pub fn mpoly_compression_init(M: *mut mpoly_compression_struct);
     pub fn mpoly_compression_clear(M: *mut mpoly_compression_struct);
     pub fn mpoly_compression_set(
         M: *mut mpoly_compression_struct,
-        Aexps: *const mp_limb_t,
-        Abits: mp_limb_t,
-        Alen: mp_limb_signed_t,
+        Aexps: *const ulong,
+        Abits: flint_bitcnt_t,
+        Alen: slong,
         mctx: *const mpoly_ctx_struct,
     );
-    pub fn mpoly_bivar_cld_bounds(l: *mut mp_limb_signed_t, n: mp_limb_signed_t);
+    pub fn mpoly_bivar_cld_bounds(l: *mut slong, n: slong);
     #[link_name = "_slong_array_fit_length__extern"]
-    pub fn _slong_array_fit_length(
-        array: *mut *mut mp_limb_signed_t,
-        alloc: *mut mp_limb_signed_t,
-        len: mp_limb_signed_t,
-    );
+    pub fn _slong_array_fit_length(array: *mut *mut slong, alloc: *mut slong, len: slong);
     pub fn _mpoly_heap_pop1(
         heap: *mut mpoly_heap1_s,
-        heap_len: *mut mp_limb_signed_t,
-        maskhi: mp_limb_t,
+        heap_len: *mut slong,
+        maskhi: ulong,
     ) -> *mut libc::c_void;
     pub fn _mpoly_heap_insert1(
         heap: *mut mpoly_heap1_s,
-        exp: mp_limb_t,
+        exp: ulong,
         x: *mut libc::c_void,
-        next_loc: *mut mp_limb_signed_t,
-        heap_len: *mut mp_limb_signed_t,
-        maskhi: mp_limb_t,
+        next_loc: *mut slong,
+        heap_len: *mut slong,
+        maskhi: ulong,
     );
     pub fn _mpoly_heap_pop(
         heap: *mut mpoly_heap_s,
-        heap_len: *mut mp_limb_signed_t,
-        N: mp_limb_signed_t,
-        cmpmask: *const mp_limb_t,
+        heap_len: *mut slong,
+        N: slong,
+        cmpmask: *const ulong,
     ) -> *mut libc::c_void;
     pub fn _mpoly_heap_insert(
         heap: *mut mpoly_heap_s,
-        exp: *mut mp_limb_t,
+        exp: *mut ulong,
         x: *mut libc::c_void,
-        next_loc: *mut mp_limb_signed_t,
-        heap_len: *mut mp_limb_signed_t,
-        N: mp_limb_signed_t,
-        cmpmask: *const mp_limb_t,
+        next_loc: *mut slong,
+        heap_len: *mut slong,
+        N: slong,
+        cmpmask: *const ulong,
     ) -> libc::c_int;
     pub fn mpoly_void_ring_elem_init(R: *mut _bindgen_ty_2) -> *mut libc::c_void;
     pub fn mpoly_void_ring_elem_clear(a: *mut libc::c_void, R: *mut _bindgen_ty_2);
     pub fn mpoly_univar_init(A: *mut mpoly_univar_struct, R: *mut _bindgen_ty_2);
+    pub fn mpoly_univar_init2(A: *mut mpoly_univar_struct, len: slong, R: *mut _bindgen_ty_2);
     pub fn mpoly_univar_clear(A: *mut mpoly_univar_struct, R: *mut _bindgen_ty_2);
     pub fn mpoly_univar_swap(A: *mut mpoly_univar_struct, B: *mut mpoly_univar_struct);
-    pub fn mpoly_univar_fit_length(
-        A: *mut mpoly_univar_struct,
-        len: mp_limb_signed_t,
-        R: *mut _bindgen_ty_2,
-    );
-    pub fn mpoly_univar_init2(
-        A: *mut mpoly_univar_struct,
-        len: mp_limb_signed_t,
-        R: *mut _bindgen_ty_2,
-    );
+    pub fn mpoly_univar_fit_length(A: *mut mpoly_univar_struct, len: slong, R: *mut _bindgen_ty_2);
     pub fn mpoly_univar_pseudo_gcd_ducos(
         G: *mut mpoly_univar_struct,
         B: *mut mpoly_univar_struct,
@@ -1604,17 +1552,16 @@ extern "C" {
         E: *mut mpoly_parse_struct,
         res: *mut libc::c_void,
         s: *const libc::c_char,
-        len: mp_limb_signed_t,
+        len: slong,
     ) -> libc::c_int;
-    #[link_name = "mpoly_main_variable_terms1__extern"]
     pub fn mpoly_main_variable_terms1(
-        i1: *mut mp_limb_signed_t,
-        n1: *mut mp_limb_signed_t,
-        exp1: *const mp_limb_t,
-        l1: mp_limb_signed_t,
-        len1: mp_limb_signed_t,
-        k: mp_limb_signed_t,
-        num: mp_limb_signed_t,
-        bits: mp_limb_signed_t,
+        i1: *mut slong,
+        n1: *mut slong,
+        exp1: *const ulong,
+        l1: slong,
+        len1: slong,
+        k: slong,
+        UNUSED_num: slong,
+        bits: slong,
     );
 }

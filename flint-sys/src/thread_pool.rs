@@ -6,7 +6,6 @@ use crate::flint::*;
 
 
 #[repr(C)]
-#[derive(Copy, Clone)]
 pub struct thread_pool_entry_struct {
     pub pth: pthread_t,
     pub mutex: pthread_mutex_t,
@@ -60,12 +59,11 @@ impl Default for thread_pool_entry_struct {
 }
 pub type thread_pool_entry_t = [thread_pool_entry_struct; 1usize];
 #[repr(C)]
-#[derive(Copy, Clone)]
 pub struct thread_pool_struct {
     pub original_affinity: *mut libc::c_void,
     pub mutex: pthread_mutex_t,
     pub tdata: *mut thread_pool_entry_struct,
-    pub length: mp_limb_signed_t,
+    pub length: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -94,23 +92,20 @@ extern "C" {
     pub static mut global_thread_pool: thread_pool_t;
     pub static mut global_thread_pool_initialized: libc::c_int;
     pub fn thread_pool_idle_loop(varg: *mut libc::c_void) -> *mut libc::c_void;
-    pub fn thread_pool_init(T: *mut thread_pool_struct, l: mp_limb_signed_t);
+    pub fn thread_pool_init(T: *mut thread_pool_struct, l: slong);
     pub fn thread_pool_set_affinity(
         T: *mut thread_pool_struct,
         cpus: *mut libc::c_int,
-        length: mp_limb_signed_t,
+        length: slong,
     ) -> libc::c_int;
     pub fn thread_pool_restore_affinity(T: *mut thread_pool_struct) -> libc::c_int;
-    pub fn thread_pool_get_size(T: *mut thread_pool_struct) -> mp_limb_signed_t;
-    pub fn thread_pool_set_size(
-        T: *mut thread_pool_struct,
-        new_size: mp_limb_signed_t,
-    ) -> libc::c_int;
+    pub fn thread_pool_get_size(T: *mut thread_pool_struct) -> slong;
+    pub fn thread_pool_set_size(T: *mut thread_pool_struct, new_size: slong) -> libc::c_int;
     pub fn thread_pool_request(
         T: *mut thread_pool_struct,
         out: *mut thread_pool_handle,
-        requested: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
+        requested: slong,
+    ) -> slong;
     pub fn thread_pool_wake(
         T: *mut thread_pool_struct,
         i: thread_pool_handle,
@@ -122,21 +117,21 @@ extern "C" {
     pub fn thread_pool_give_back(T: *mut thread_pool_struct, i: thread_pool_handle);
     pub fn thread_pool_clear(T: *mut thread_pool_struct);
     pub fn _thread_pool_distribute_work_2(
-        start: mp_limb_signed_t,
-        stop: mp_limb_signed_t,
-        Astart: *mut mp_limb_signed_t,
-        Astop: *mut mp_limb_signed_t,
-        Alen: mp_limb_signed_t,
-        Bstart: *mut mp_limb_signed_t,
-        Bstop: *mut mp_limb_signed_t,
-        Blen: mp_limb_signed_t,
+        start: slong,
+        stop: slong,
+        Astart: *mut slong,
+        Astop: *mut slong,
+        Alen: slong,
+        Bstart: *mut slong,
+        Bstop: *mut slong,
+        UNUSED_Blen: slong,
     );
     pub fn _thread_pool_find_work_2(
-        a: mp_limb_t,
-        alpha: mp_limb_t,
-        b: mp_limb_t,
-        beta: mp_limb_t,
-        yn: mp_limb_t,
-        yd: mp_limb_t,
-    ) -> mp_limb_t;
+        a: ulong,
+        alpha: ulong,
+        b: ulong,
+        beta: ulong,
+        yn: ulong,
+        yd: ulong,
+    ) -> ulong;
 }

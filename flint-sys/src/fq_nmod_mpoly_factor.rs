@@ -10,13 +10,12 @@ use crate::nmod_types::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_mpoly_factor_struct {
     pub constant: fq_nmod_t,
     pub poly: *mut fq_nmod_mpoly_struct,
     pub exp: *mut fmpz,
-    pub num: mp_limb_signed_t,
-    pub alloc: mp_limb_signed_t,
+    pub num: slong,
+    pub alloc: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -46,11 +45,10 @@ impl Default for fq_nmod_mpoly_factor_struct {
 }
 pub type fq_nmod_mpoly_factor_t = [fq_nmod_mpoly_factor_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_mpolyv_struct {
     pub coeffs: *mut fq_nmod_mpoly_struct,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
+    pub alloc: slong,
+    pub length: slong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -75,11 +73,10 @@ impl Default for fq_nmod_mpolyv_struct {
 }
 pub type fq_nmod_mpolyv_t = [fq_nmod_mpolyv_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct fq_nmod_mpoly_pfrac_struct {
-    pub bits: mp_limb_t,
-    pub w: mp_limb_signed_t,
-    pub r: mp_limb_signed_t,
+    pub bits: flint_bitcnt_t,
+    pub w: slong,
+    pub r: slong,
     pub inv_prod_dbetas: *mut fq_nmod_poly_struct,
     pub inv_prod_dbetas_mvar: *mut fq_nmod_mpoly_struct,
     pub dbetas: *mut fq_nmod_poly_struct,
@@ -162,12 +159,12 @@ extern "C" {
     );
     pub fn fq_nmod_mpoly_factor_realloc(
         f: *mut fq_nmod_mpoly_factor_struct,
-        alloc: mp_limb_signed_t,
+        alloc: slong,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     );
     pub fn fq_nmod_mpoly_factor_fit_length(
         f: *mut fq_nmod_mpoly_factor_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     );
     pub fn fq_nmod_mpoly_factor_clear(
@@ -177,8 +174,8 @@ extern "C" {
     #[link_name = "fq_nmod_mpoly_factor_length__extern"]
     pub fn fq_nmod_mpoly_factor_length(
         f: *const fq_nmod_mpoly_factor_struct,
-        ctx: *const fq_nmod_mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+        UNUSED_ctx: *const fq_nmod_mpoly_ctx_struct,
+    ) -> slong;
     pub fn fq_nmod_mpoly_factor_get_constant_fq_nmod(
         c: *mut nmod_poly_struct,
         f: *const fq_nmod_mpoly_factor_struct,
@@ -188,21 +185,21 @@ extern "C" {
     pub fn fq_nmod_mpoly_factor_get_base(
         p: *mut fq_nmod_mpoly_struct,
         f: *const fq_nmod_mpoly_factor_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     );
     #[link_name = "fq_nmod_mpoly_factor_swap_base__extern"]
     pub fn fq_nmod_mpoly_factor_swap_base(
         p: *mut fq_nmod_mpoly_struct,
         f: *const fq_nmod_mpoly_factor_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     );
     pub fn fq_nmod_mpoly_factor_get_exp_si(
         f: *mut fq_nmod_mpoly_factor_struct,
-        i: mp_limb_signed_t,
-        ctx: *const fq_nmod_mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+        i: slong,
+        UNUSED_ctx: *const fq_nmod_mpoly_ctx_struct,
+    ) -> slong;
     pub fn fq_nmod_mpoly_factor_set(
         a: *mut fq_nmod_mpoly_factor_struct,
         b: *const fq_nmod_mpoly_factor_struct,
@@ -216,7 +213,7 @@ extern "C" {
     pub fn fq_nmod_mpoly_factor_append_ui(
         f: *mut fq_nmod_mpoly_factor_struct,
         A: *const fq_nmod_mpoly_struct,
-        e: mp_limb_t,
+        e: ulong,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     );
     pub fn fq_nmod_mpoly_factor_append_fmpz(
@@ -259,7 +256,7 @@ extern "C" {
     pub fn fq_nmod_mpoly_factor_swap(
         A: *mut fq_nmod_mpoly_factor_struct,
         B: *mut fq_nmod_mpoly_factor_struct,
-        ctx: *const fq_nmod_mpoly_ctx_struct,
+        UNUSED_ctx: *const fq_nmod_mpoly_ctx_struct,
     );
     pub fn fq_nmod_mpoly_factor_one(
         a: *mut fq_nmod_mpoly_factor_struct,
@@ -297,7 +294,7 @@ extern "C" {
         A: *mut n_bpoly_struct,
         B: *const n_bpoly_struct,
         C: *const n_bpoly_struct,
-        order: mp_limb_signed_t,
+        order: slong,
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn n_fq_bpoly_add(
@@ -317,7 +314,7 @@ extern "C" {
         R: *mut n_bpoly_struct,
         A: *const n_bpoly_struct,
         B: *const n_bpoly_struct,
-        order: mp_limb_signed_t,
+        order: slong,
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn n_fq_bpoly_divides(
@@ -334,16 +331,16 @@ extern "C" {
     pub fn fq_nmod_mpoly_get_n_fq_bpoly(
         A: *mut n_bpoly_struct,
         B: *const fq_nmod_mpoly_struct,
-        varx: mp_limb_signed_t,
-        vary: mp_limb_signed_t,
+        varx: slong,
+        vary: slong,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     );
     pub fn fq_nmod_mpoly_set_n_fq_bpoly(
         A: *mut fq_nmod_mpoly_struct,
-        Abits: mp_limb_t,
+        Abits: flint_bitcnt_t,
         B: *const n_bpoly_struct,
-        varx: mp_limb_signed_t,
-        vary: mp_limb_signed_t,
+        varx: slong,
+        vary: slong,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     );
     pub fn n_fq_bpoly_factor_smprime(
@@ -358,7 +355,7 @@ extern "C" {
         F: *mut n_tpoly_struct,
         B: *mut n_bpoly_struct,
         ctx: *const fq_nmod_ctx_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
     ) -> libc::c_int;
     pub fn n_polyu3_fq_print_pretty(
         A: *const n_polyu_struct,
@@ -391,12 +388,15 @@ extern "C" {
         ctx: *const fq_nmod_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "fq_nmod_mpolyv_init__extern"]
-    pub fn fq_nmod_mpolyv_init(A: *mut fq_nmod_mpolyv_struct, ctx: *const fq_nmod_mpoly_ctx_struct);
+    pub fn fq_nmod_mpolyv_init(
+        A: *mut fq_nmod_mpolyv_struct,
+        UNUSED_ctx: *const fq_nmod_mpoly_ctx_struct,
+    );
     #[link_name = "fq_nmod_mpolyv_swap__extern"]
     pub fn fq_nmod_mpolyv_swap(
         A: *mut fq_nmod_mpolyv_struct,
         B: *mut fq_nmod_mpolyv_struct,
-        ctx: *const fq_nmod_mpoly_ctx_struct,
+        UNUSED_ctx: *const fq_nmod_mpoly_ctx_struct,
     );
     pub fn fq_nmod_mpolyv_clear(
         A: *mut fq_nmod_mpolyv_struct,
@@ -409,12 +409,12 @@ extern "C" {
     );
     pub fn fq_nmod_mpolyv_fit_length(
         A: *mut fq_nmod_mpolyv_struct,
-        length: mp_limb_signed_t,
+        length: slong,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     );
     pub fn fq_nmod_mpolyv_set_coeff(
         A: *mut fq_nmod_mpolyv_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         c: *mut fq_nmod_mpoly_struct,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     );
@@ -426,7 +426,7 @@ extern "C" {
     );
     pub fn fq_nmod_mpoly_from_mpolyv(
         A: *mut fq_nmod_mpoly_struct,
-        Abits: mp_limb_t,
+        Abits: flint_bitcnt_t,
         B: *const fq_nmod_mpolyv_struct,
         xalpha: *const fq_nmod_mpoly_struct,
         ctx: *const fq_nmod_mpoly_ctx_struct,
@@ -434,18 +434,18 @@ extern "C" {
     pub fn _fq_nmod_mpoly_vec_content_mpoly(
         g: *mut fq_nmod_mpoly_struct,
         A: *const fq_nmod_mpoly_struct,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn _fq_nmod_mpoly_vec_divexact_mpoly(
         A: *mut fq_nmod_mpoly_struct,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         c: *const fq_nmod_mpoly_struct,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     );
     pub fn _fq_nmod_mpoly_vec_mul_mpoly(
         A: *mut fq_nmod_mpoly_struct,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         c: *const fq_nmod_mpoly_struct,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     );
@@ -460,7 +460,7 @@ extern "C" {
         lcAfac: *const fq_nmod_mpoly_factor_struct,
         Auc: *const n_poly_struct,
         Auf: *const n_bpoly_struct,
-        r: mp_limb_signed_t,
+        r: slong,
         alpha: *const n_poly_struct,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     ) -> libc::c_int;
@@ -468,13 +468,13 @@ extern "C" {
         fac: *mut fq_nmod_mpolyv_struct,
         A: *const fq_nmod_mpoly_struct,
         ctx: *const fq_nmod_mpoly_ctx_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
     ) -> libc::c_int;
     pub fn fq_nmod_mpoly_factor_irred_lgprime_zassenhaus(
         fac: *mut fq_nmod_mpolyv_struct,
         A: *const fq_nmod_mpoly_struct,
         ctx: *const fq_nmod_mpoly_ctx_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
     ) -> libc::c_int;
     pub fn fq_nmod_mpoly_factor_irred_smprime_wang(
         fac: *mut fq_nmod_mpolyv_struct,
@@ -482,7 +482,7 @@ extern "C" {
         lcAfac: *const fq_nmod_mpoly_factor_struct,
         lcA: *const fq_nmod_mpoly_struct,
         ctx: *const fq_nmod_mpoly_ctx_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
     ) -> libc::c_int;
     pub fn fq_nmod_mpoly_factor_irred_lgprime_wang(
         Af: *mut fq_nmod_mpolyv_struct,
@@ -490,7 +490,7 @@ extern "C" {
         lcAfac: *const fq_nmod_mpoly_factor_struct,
         lcA: *const fq_nmod_mpoly_struct,
         ctx: *const fq_nmod_mpoly_ctx_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
     ) -> libc::c_int;
     pub fn fq_nmod_mpoly_factor_irred_smprime_zippel(
         fac: *mut fq_nmod_mpolyv_struct,
@@ -498,7 +498,7 @@ extern "C" {
         lcAfac: *const fq_nmod_mpoly_factor_struct,
         lcA: *const fq_nmod_mpoly_struct,
         ctx: *const fq_nmod_mpoly_ctx_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
     ) -> libc::c_int;
     pub fn fq_nmod_mpoly_factor_irred_lgprime_zippel(
         Af: *mut fq_nmod_mpolyv_struct,
@@ -506,50 +506,50 @@ extern "C" {
         lcAfac: *const fq_nmod_mpoly_factor_struct,
         lcA: *const fq_nmod_mpoly_struct,
         ctx: *const fq_nmod_mpoly_ctx_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
     ) -> libc::c_int;
     pub fn fq_nmod_mpoly_compression_do(
         L: *mut fq_nmod_mpoly_struct,
         Lctx: *const fq_nmod_mpoly_ctx_struct,
-        Acoeffs: *mut mp_limb_t,
-        Alen: mp_limb_signed_t,
+        Acoeffs: *mut ulong,
+        Alen: slong,
         M: *mut mpoly_compression_struct,
     );
     pub fn fq_nmod_mpoly_compression_undo(
         A: *mut fq_nmod_mpoly_struct,
-        Abits: mp_limb_t,
+        Abits: flint_bitcnt_t,
         Actx: *const fq_nmod_mpoly_ctx_struct,
         L: *mut fq_nmod_mpoly_struct,
         Lctx: *const fq_nmod_mpoly_ctx_struct,
         M: *mut mpoly_compression_struct,
     );
     pub fn fq_nmod_mpoly_pfrac_init(
-        I: *mut fq_nmod_mpoly_pfrac_struct,
-        bits: mp_limb_t,
-        l: mp_limb_signed_t,
-        r: mp_limb_signed_t,
+        Iv: *mut fq_nmod_mpoly_pfrac_struct,
+        bits: flint_bitcnt_t,
+        l: slong,
+        r: slong,
         betas: *const fq_nmod_mpoly_struct,
         alpha: *const fq_nmod_struct,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fq_nmod_mpoly_pfrac_clear(
-        I: *mut fq_nmod_mpoly_pfrac_struct,
+        Iv: *mut fq_nmod_mpoly_pfrac_struct,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     );
     pub fn fq_nmod_mpoly_pfrac(
-        r: mp_limb_signed_t,
+        r: slong,
         t: *mut fq_nmod_mpoly_struct,
-        deg: *const mp_limb_signed_t,
-        I: *mut fq_nmod_mpoly_pfrac_struct,
+        deg: *const slong,
+        Iv: *mut fq_nmod_mpoly_pfrac_struct,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fq_nmod_mpoly_hlift(
-        m: mp_limb_signed_t,
+        m: slong,
         f: *mut fq_nmod_mpoly_struct,
-        r: mp_limb_signed_t,
+        r: slong,
         alpha: *const fq_nmod_struct,
         A: *const fq_nmod_mpoly_struct,
-        degs: *const mp_limb_signed_t,
+        degs: *const slong,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn n_fq_bpoly_hlift2_cubic(
@@ -557,7 +557,7 @@ extern "C" {
         B0: *mut n_bpoly_struct,
         B1: *mut n_bpoly_struct,
         alpha_: *const nmod_poly_struct,
-        degree_inner: mp_limb_signed_t,
+        degree_inner: slong,
         ctx: *const fq_nmod_ctx_struct,
         E: *mut nmod_eval_interp_struct,
         St: *mut n_poly_bpoly_stack_struct,
@@ -567,7 +567,7 @@ extern "C" {
         B0: *mut n_bpoly_struct,
         B1: *mut n_bpoly_struct,
         alpha: *const nmod_poly_struct,
-        degree_inner: mp_limb_signed_t,
+        degree_inner: slong,
         ctx: *const fq_nmod_ctx_struct,
         St: *mut n_poly_bpoly_stack_struct,
     ) -> libc::c_int;
@@ -576,27 +576,27 @@ extern "C" {
         B0: *mut n_bpoly_struct,
         B1: *mut n_bpoly_struct,
         alpha_: *const nmod_poly_struct,
-        degree_inner: mp_limb_signed_t,
+        degree_inner: slong,
         ctx: *const fq_nmod_ctx_struct,
         E: *mut nmod_eval_interp_struct,
         St: *mut n_poly_bpoly_stack_struct,
     ) -> libc::c_int;
     pub fn n_fq_bpoly_hlift(
-        r: mp_limb_signed_t,
+        r: slong,
         A: *mut n_bpoly_struct,
         B: *mut n_bpoly_struct,
         alpha: *const nmod_poly_struct,
-        degree_inner: mp_limb_signed_t,
+        degree_inner: slong,
         ctx: *const fq_nmod_ctx_struct,
-        St: *mut n_poly_bpoly_stack_struct,
+        UNUSED_St: *mut n_poly_bpoly_stack_struct,
     ) -> libc::c_int;
     pub fn n_fq_polyu3_hlift(
-        r: mp_limb_signed_t,
+        r: slong,
         BB: *mut n_polyun_struct,
         A: *mut n_polyu_struct,
         B: *mut n_polyu_struct,
         beta: *const nmod_poly_struct,
-        degree_inner: mp_limb_signed_t,
+        degree_inner: slong,
         ctx: *const fq_nmod_ctx_struct,
         St: *mut n_poly_bpoly_stack_struct,
     ) -> libc::c_int;
@@ -623,20 +623,20 @@ extern "C" {
     ) -> libc::c_int;
     pub fn _fq_nmod_mpoly_eval_rest_n_fq_poly(
         E: *mut n_poly_struct,
-        starts: *mut mp_limb_signed_t,
-        ends: *mut mp_limb_signed_t,
-        stops: *mut mp_limb_signed_t,
-        es: *mut mp_limb_t,
-        Acoeffs: *const mp_limb_t,
-        Aexps: *const mp_limb_t,
-        Alen: mp_limb_signed_t,
-        var: mp_limb_signed_t,
+        starts: *mut slong,
+        ends: *mut slong,
+        stops: *mut slong,
+        es: *mut ulong,
+        Acoeffs: *const ulong,
+        Aexps: *const ulong,
+        Alen: slong,
+        var: slong,
         alphas: *const n_fq_poly_struct,
-        offsets: *const mp_limb_signed_t,
-        shifts: *const mp_limb_signed_t,
-        N: mp_limb_signed_t,
-        mask: mp_limb_t,
-        nvars: mp_limb_signed_t,
+        offsets: *const slong,
+        shifts: *const slong,
+        N: slong,
+        mask: ulong,
+        nvars: slong,
         ctx: *const fq_nmod_ctx_struct,
     ) -> libc::c_int;
     pub fn _fq_nmod_mpoly_eval_rest_to_n_fq_bpoly(
@@ -647,9 +647,9 @@ extern "C" {
     );
     pub fn _fq_nmod_mpoly_set_n_fq_bpoly_gen1_zero(
         A: *mut fq_nmod_mpoly_struct,
-        Abits: mp_limb_t,
+        Abits: flint_bitcnt_t,
         B: *const n_bpoly_struct,
-        var: mp_limb_signed_t,
+        var: slong,
         ctx: *const fq_nmod_mpoly_ctx_struct,
     );
 }

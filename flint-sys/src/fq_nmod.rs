@@ -10,20 +10,26 @@ use crate::nmod_types::*;
 extern "C" {
     pub fn fq_nmod_ctx_init_ui(
         ctx: *mut fq_nmod_ctx_struct,
-        prime: mp_limb_t,
-        deg: mp_limb_signed_t,
+        prime: ulong,
+        deg: slong,
         var: *const libc::c_char,
     );
     pub fn _fq_nmod_ctx_init_conway_ui(
         ctx: *mut fq_nmod_ctx_struct,
-        prime: mp_limb_t,
-        deg: mp_limb_signed_t,
+        prime: ulong,
+        deg: slong,
         var: *const libc::c_char,
     ) -> libc::c_int;
     pub fn fq_nmod_ctx_init_conway_ui(
         ctx: *mut fq_nmod_ctx_struct,
-        prime: mp_limb_t,
-        deg: mp_limb_signed_t,
+        prime: ulong,
+        deg: slong,
+        var: *const libc::c_char,
+    );
+    pub fn fq_nmod_ctx_init_minimal_weight_ui(
+        ctx: *mut fq_nmod_ctx_struct,
+        prime: ulong,
+        deg: slong,
         var: *const libc::c_char,
     );
     pub fn fq_nmod_ctx_init_modulus(
@@ -33,48 +39,36 @@ extern "C" {
     );
     pub fn fq_nmod_ctx_init_randtest(
         ctx: *mut fq_nmod_ctx_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         type_: libc::c_int,
     );
     pub fn fq_nmod_ctx_init_randtest_reducible(
         ctx: *mut fq_nmod_ctx_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         type_: libc::c_int,
     );
     pub fn fq_nmod_ctx_clear(ctx: *mut fq_nmod_ctx_struct);
     #[link_name = "fq_nmod_ctx_modulus__extern"]
     pub fn fq_nmod_ctx_modulus(ctx: *const fq_nmod_ctx_struct) -> *const nmod_poly_struct;
     #[link_name = "fq_nmod_ctx_degree__extern"]
-    pub fn fq_nmod_ctx_degree(ctx: *const fq_nmod_ctx_struct) -> mp_limb_signed_t;
+    pub fn fq_nmod_ctx_degree(ctx: *const fq_nmod_ctx_struct) -> slong;
     #[link_name = "fq_nmod_ctx_prime__extern"]
-    pub fn fq_nmod_ctx_prime(ctx: *const fq_nmod_ctx_struct) -> mp_limb_t;
+    pub fn fq_nmod_ctx_prime(ctx: *const fq_nmod_ctx_struct) -> ulong;
     pub fn fq_nmod_ctx_order(f: *mut fmpz, ctx: *const fq_nmod_ctx_struct);
     pub fn fq_nmod_ctx_fprint(file: *mut FILE, ctx: *const fq_nmod_ctx_struct) -> libc::c_int;
     pub fn fq_nmod_ctx_print(ctx: *const fq_nmod_ctx_struct);
     pub fn fq_nmod_init(rop: *mut nmod_poly_struct, ctx: *const fq_nmod_ctx_struct);
     pub fn fq_nmod_init2(rop: *mut nmod_poly_struct, ctx: *const fq_nmod_ctx_struct);
-    pub fn fq_nmod_clear(rop: *mut nmod_poly_struct, ctx: *const fq_nmod_ctx_struct);
-    pub fn _fq_nmod_sparse_reduce(
-        R: *mut mp_limb_t,
-        lenR: mp_limb_signed_t,
-        ctx: *const fq_nmod_ctx_struct,
-    );
-    pub fn _fq_nmod_dense_reduce(
-        R: *mut mp_limb_t,
-        lenR: mp_limb_signed_t,
-        ctx: *const fq_nmod_ctx_struct,
-    );
-    pub fn _fq_nmod_reduce(
-        R: *mut mp_limb_t,
-        lenR: mp_limb_signed_t,
-        ctx: *const fq_nmod_ctx_struct,
-    );
+    pub fn fq_nmod_clear(rop: *mut nmod_poly_struct, UNUSED_ctx: *const fq_nmod_ctx_struct);
+    pub fn _fq_nmod_sparse_reduce(R: *mut ulong, lenR: slong, ctx: *const fq_nmod_ctx_struct);
+    pub fn _fq_nmod_dense_reduce(R: *mut ulong, lenR: slong, ctx: *const fq_nmod_ctx_struct);
+    pub fn _fq_nmod_reduce(R: *mut ulong, lenR: slong, ctx: *const fq_nmod_ctx_struct);
     pub fn fq_nmod_reduce(rop: *mut nmod_poly_struct, ctx: *const fq_nmod_ctx_struct);
     pub fn fq_nmod_add(
         rop: *mut nmod_poly_struct,
         op1: *const nmod_poly_struct,
         op2: *const nmod_poly_struct,
-        ctx: *const fq_nmod_ctx_struct,
+        UNUSED_ctx: *const fq_nmod_ctx_struct,
     );
     pub fn fq_nmod_sub(
         rop: *mut nmod_poly_struct,
@@ -90,7 +84,7 @@ extern "C" {
     pub fn fq_nmod_neg(
         rop: *mut nmod_poly_struct,
         op1: *const nmod_poly_struct,
-        ctx: *const fq_nmod_ctx_struct,
+        UNUSED_ctx: *const fq_nmod_ctx_struct,
     );
     pub fn fq_nmod_mul(
         rop: *mut nmod_poly_struct,
@@ -107,13 +101,13 @@ extern "C" {
     pub fn fq_nmod_mul_si(
         rop: *mut nmod_poly_struct,
         op: *const nmod_poly_struct,
-        x: mp_limb_signed_t,
+        x: slong,
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn fq_nmod_mul_ui(
         rop: *mut nmod_poly_struct,
         op: *const nmod_poly_struct,
-        x: mp_limb_t,
+        x: ulong,
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn fq_nmod_sqr(
@@ -127,9 +121,9 @@ extern "C" {
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn _fq_nmod_pow(
-        rop: *mut mp_limb_t,
-        op: *const mp_limb_t,
-        len: mp_limb_signed_t,
+        rop: *mut ulong,
+        op: *const ulong,
+        len: slong,
         e: *const fmpz,
         ctx: *const fq_nmod_ctx_struct,
     );
@@ -142,7 +136,7 @@ extern "C" {
     pub fn fq_nmod_pow_ui(
         rop: *mut nmod_poly_struct,
         op1: *const nmod_poly_struct,
-        e: mp_limb_t,
+        e: ulong,
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn fq_nmod_sqrt(
@@ -161,58 +155,54 @@ extern "C" {
     ) -> libc::c_int;
     pub fn fq_nmod_randtest(
         rop: *mut nmod_poly_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn fq_nmod_randtest_dense(
         rop: *mut nmod_poly_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn fq_nmod_randtest_not_zero(
         rop: *mut nmod_poly_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn fq_nmod_rand(
         rop: *mut nmod_poly_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn fq_nmod_rand_not_zero(
         rop: *mut nmod_poly_struct,
-        state: *mut flint_rand_s,
+        state: *mut flint_rand_struct,
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn fq_nmod_equal(
         op1: *const nmod_poly_struct,
         op2: *const nmod_poly_struct,
-        ctx: *const fq_nmod_ctx_struct,
+        UNUSED_ctx: *const fq_nmod_ctx_struct,
     ) -> libc::c_int;
     pub fn fq_nmod_is_zero(
         op: *const nmod_poly_struct,
-        ctx: *const fq_nmod_ctx_struct,
+        UNUSED_ctx: *const fq_nmod_ctx_struct,
     ) -> libc::c_int;
     pub fn fq_nmod_is_one(
         op: *const nmod_poly_struct,
-        ctx: *const fq_nmod_ctx_struct,
+        UNUSED_ctx: *const fq_nmod_ctx_struct,
     ) -> libc::c_int;
     pub fn fq_nmod_cmp(
         a: *const nmod_poly_struct,
         b: *const nmod_poly_struct,
-        ctx: *const fq_nmod_ctx_struct,
+        UNUSED_ctx: *const fq_nmod_ctx_struct,
     ) -> libc::c_int;
     pub fn fq_nmod_set(
         rop: *mut nmod_poly_struct,
         op: *const nmod_poly_struct,
-        ctx: *const fq_nmod_ctx_struct,
+        UNUSED_ctx: *const fq_nmod_ctx_struct,
     );
-    pub fn fq_nmod_set_si(
-        rop: *mut nmod_poly_struct,
-        x: mp_limb_signed_t,
-        ctx: *const fq_nmod_ctx_struct,
-    );
-    pub fn fq_nmod_set_ui(rop: *mut nmod_poly_struct, x: mp_limb_t, ctx: *const fq_nmod_ctx_struct);
+    pub fn fq_nmod_set_si(rop: *mut nmod_poly_struct, x: slong, ctx: *const fq_nmod_ctx_struct);
+    pub fn fq_nmod_set_ui(rop: *mut nmod_poly_struct, x: ulong, ctx: *const fq_nmod_ctx_struct);
     pub fn fq_nmod_set_fmpz(
         rop: *mut nmod_poly_struct,
         x: *const fmpz,
@@ -226,7 +216,7 @@ extern "C" {
     pub fn fq_nmod_get_fmpz(
         a: *mut fmpz,
         b: *const nmod_poly_struct,
-        ctx: *const fq_nmod_ctx_struct,
+        UNUSED_ctx: *const fq_nmod_ctx_struct,
     ) -> libc::c_int;
     pub fn fq_nmod_get_nmod_poly(
         a: *mut nmod_poly_struct,
@@ -236,26 +226,26 @@ extern "C" {
     pub fn fq_nmod_swap(
         op1: *mut nmod_poly_struct,
         op2: *mut nmod_poly_struct,
-        ctx: *const fq_nmod_ctx_struct,
+        UNUSED_ctx: *const fq_nmod_ctx_struct,
     );
-    pub fn fq_nmod_zero(rop: *mut nmod_poly_struct, ctx: *const fq_nmod_ctx_struct);
-    pub fn fq_nmod_one(rop: *mut nmod_poly_struct, ctx: *const fq_nmod_ctx_struct);
+    pub fn fq_nmod_zero(rop: *mut nmod_poly_struct, UNUSED_ctx: *const fq_nmod_ctx_struct);
+    pub fn fq_nmod_one(rop: *mut nmod_poly_struct, UNUSED_ctx: *const fq_nmod_ctx_struct);
     pub fn fq_nmod_gen(rop: *mut nmod_poly_struct, ctx: *const fq_nmod_ctx_struct);
     pub fn fq_nmod_fprint(
         file: *mut FILE,
         op: *const nmod_poly_struct,
-        ctx: *const fq_nmod_ctx_struct,
+        UNUSED_ctx: *const fq_nmod_ctx_struct,
     ) -> libc::c_int;
     pub fn fq_nmod_fprint_pretty(
         file: *mut FILE,
         op: *const nmod_poly_struct,
         ctx: *const fq_nmod_ctx_struct,
     ) -> libc::c_int;
-    pub fn fq_nmod_print(op: *const nmod_poly_struct, ctx: *const fq_nmod_ctx_struct);
+    pub fn fq_nmod_print(op: *const nmod_poly_struct, UNUSED_ctx: *const fq_nmod_ctx_struct);
     pub fn fq_nmod_print_pretty(op: *const nmod_poly_struct, ctx: *const fq_nmod_ctx_struct);
     pub fn fq_nmod_get_str(
         op: *const nmod_poly_struct,
-        ctx: *const fq_nmod_ctx_struct,
+        UNUSED_ctx: *const fq_nmod_ctx_struct,
     ) -> *mut libc::c_char;
     pub fn fq_nmod_get_str_pretty(
         op: *const nmod_poly_struct,
@@ -263,8 +253,8 @@ extern "C" {
     ) -> *mut libc::c_char;
     pub fn _fq_nmod_trace(
         rop: *mut fmpz,
-        op: *const mp_limb_t,
-        len: mp_limb_signed_t,
+        op: *const ulong,
+        len: slong,
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn fq_nmod_trace(
@@ -273,22 +263,22 @@ extern "C" {
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn _fq_nmod_frobenius(
-        rop: *mut mp_limb_t,
-        op: *const mp_limb_t,
-        len: mp_limb_signed_t,
-        e: mp_limb_signed_t,
+        rop: *mut ulong,
+        op: *const ulong,
+        len: slong,
+        e: slong,
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn fq_nmod_frobenius(
         rop: *mut nmod_poly_struct,
         op: *const nmod_poly_struct,
-        e: mp_limb_signed_t,
+        e: slong,
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn _fq_nmod_norm(
         rop: *mut fmpz,
-        op: *const mp_limb_t,
-        len: mp_limb_signed_t,
+        op: *const ulong,
+        len: slong,
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn fq_nmod_norm(
@@ -299,31 +289,31 @@ extern "C" {
     pub fn fq_nmod_bit_pack(
         f: *mut fmpz,
         op: *const nmod_poly_struct,
-        bit_size: mp_limb_t,
-        ctx: *const fq_nmod_ctx_struct,
+        bit_size: flint_bitcnt_t,
+        UNUSED_ctx: *const fq_nmod_ctx_struct,
     );
     pub fn fq_nmod_bit_unpack(
         rop: *mut nmod_poly_struct,
         f: *const fmpz,
-        bit_size: mp_limb_t,
+        bit_size: flint_bitcnt_t,
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn fq_nmod_ctx_init(
         arg1: *mut fq_nmod_ctx_struct,
         arg2: *mut fmpz,
-        arg3: mp_limb_signed_t,
+        arg3: slong,
         arg4: *const libc::c_char,
     );
     pub fn _fq_nmod_ctx_init_conway(
         arg1: *mut fq_nmod_ctx_struct,
         arg2: *mut fmpz,
-        arg3: mp_limb_signed_t,
+        arg3: slong,
         arg4: *const libc::c_char,
     ) -> libc::c_int;
     pub fn fq_nmod_ctx_init_conway(
         arg1: *mut fq_nmod_ctx_struct,
         arg2: *mut fmpz,
-        arg3: mp_limb_signed_t,
+        arg3: slong,
         arg4: *const libc::c_char,
     );
 }

@@ -7,16 +7,15 @@ use crate::flint::*;
 
 pub const BERNOULLI_REV_MIN: u32 = 32;
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct bernoulli_rev_struct {
-    pub alloc: mp_limb_signed_t,
-    pub prec: mp_limb_signed_t,
-    pub max_power: mp_limb_signed_t,
+    pub alloc: slong,
+    pub prec: slong,
+    pub max_power: slong,
     pub powers: *mut fmpz,
     pub pow_error: fmpz_t,
     pub prefactor: arb_t,
     pub two_pi_squared: arb_t,
-    pub n: mp_limb_t,
+    pub n: ulong,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
@@ -50,29 +49,25 @@ impl Default for bernoulli_rev_struct {
 }
 pub type bernoulli_rev_t = [bernoulli_rev_struct; 1usize];
 extern "C" {
-    pub static mut bernoulli_cache_num: mp_limb_signed_t;
+    pub static mut bernoulli_cache_num: slong;
     pub static mut bernoulli_cache: *mut fmpq;
-    pub fn bernoulli_cache_compute(n: mp_limb_signed_t);
+    pub fn bernoulli_cache_compute(n: slong);
     #[link_name = "bernoulli_denom_size__extern"]
-    pub fn bernoulli_denom_size(n: mp_limb_signed_t) -> mp_limb_signed_t;
+    pub fn bernoulli_denom_size(n: slong) -> slong;
     #[link_name = "bernoulli_zeta_terms__extern"]
-    pub fn bernoulli_zeta_terms(s: mp_limb_t, prec: mp_limb_signed_t) -> mp_limb_signed_t;
+    pub fn bernoulli_zeta_terms(s: ulong, prec: slong) -> slong;
     #[link_name = "bernoulli_power_prec__extern"]
-    pub fn bernoulli_power_prec(
-        i: mp_limb_signed_t,
-        s1: mp_limb_t,
-        wp: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
+    pub fn bernoulli_power_prec(i: slong, s1: ulong, wp: slong) -> slong;
     #[link_name = "bernoulli_global_prec__extern"]
-    pub fn bernoulli_global_prec(nmax: mp_limb_t) -> mp_limb_signed_t;
-    pub fn bernoulli_rev_init(iter: *mut bernoulli_rev_struct, nmax: mp_limb_t);
+    pub fn bernoulli_global_prec(nmax: ulong) -> slong;
+    pub fn bernoulli_rev_init(iter: *mut bernoulli_rev_struct, nmax: ulong);
     pub fn bernoulli_rev_next(numer: *mut fmpz, denom: *mut fmpz, iter: *mut bernoulli_rev_struct);
     pub fn bernoulli_rev_clear(iter: *mut bernoulli_rev_struct);
-    pub fn bernoulli_fmpq_vec_no_cache(res: *mut fmpq, a: mp_limb_t, num: mp_limb_signed_t);
-    pub fn bernoulli_bound_2exp_si(n: mp_limb_t) -> mp_limb_signed_t;
-    pub fn bernoulli_mod_p_harvey(k: mp_limb_t, p: mp_limb_t) -> mp_limb_t;
-    pub fn _bernoulli_fmpq_ui_multi_mod(num: *mut fmpz, den: *mut fmpz, n: mp_limb_t, alpha: f64);
-    pub fn _bernoulli_fmpq_ui_zeta(num: *mut fmpz, den: *mut fmpz, n: mp_limb_t);
-    pub fn _bernoulli_fmpq_ui(num: *mut fmpz, den: *mut fmpz, n: mp_limb_t);
-    pub fn bernoulli_fmpq_ui(b: *mut fmpq, n: mp_limb_t);
+    pub fn bernoulli_fmpq_vec_no_cache(res: *mut fmpq, a: ulong, num: slong);
+    pub fn bernoulli_bound_2exp_si(n: ulong) -> slong;
+    pub fn bernoulli_mod_p_harvey(k: ulong, p: ulong) -> ulong;
+    pub fn _bernoulli_fmpq_ui_multi_mod(num: *mut fmpz, den: *mut fmpz, n: ulong, alpha: f64);
+    pub fn _bernoulli_fmpq_ui_zeta(num: *mut fmpz, den: *mut fmpz, n: ulong);
+    pub fn _bernoulli_fmpq_ui(num: *mut fmpz, den: *mut fmpz, n: ulong);
+    pub fn bernoulli_fmpq_ui(b: *mut fmpq, n: ulong);
 }

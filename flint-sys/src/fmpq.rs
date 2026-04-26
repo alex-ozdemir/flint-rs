@@ -8,7 +8,6 @@ use crate::flint::*;
 pub const FMPQ_RECONSTRUCT_HGCD_CUTOFF: u32 = 500;
 #[doc = " 2x2 integer matrix"]
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct _fmpz_mat22_struct {
     pub _11: fmpz_t,
     pub _12: fmpz_t,
@@ -42,12 +41,11 @@ impl Default for _fmpz_mat22_struct {
 }
 pub type _fmpz_mat22_t = [_fmpz_mat22_struct; 1usize];
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct _ui_mat22_struct {
-    pub _11: mp_limb_t,
-    pub _12: mp_limb_t,
-    pub _21: mp_limb_t,
-    pub _22: mp_limb_t,
+    pub _11: ulong,
+    pub _12: ulong,
+    pub _21: ulong,
+    pub _22: ulong,
     pub det: libc::c_int,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
@@ -77,12 +75,11 @@ impl Default for _ui_mat22_struct {
 pub type _ui_mat22_t = [_ui_mat22_struct; 1usize];
 #[doc = " resizable integer vector specific to cfrac functionality"]
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct _fmpq_cfrac_list_struct {
     pub array: *mut fmpz,
-    pub length: mp_limb_signed_t,
-    pub alloc: mp_limb_signed_t,
-    pub limit: mp_limb_signed_t,
+    pub length: slong,
+    pub alloc: slong,
+    pub limit: slong,
     pub alt_sum: fmpz_t,
     pub want_alt_sum: libc::c_int,
 }
@@ -116,7 +113,6 @@ impl Default for _fmpq_cfrac_list_struct {
 pub type _fmpq_cfrac_list_t = [_fmpq_cfrac_list_struct; 1usize];
 #[doc = " ball for closed interval [left, right]"]
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct _fmpq_ball_struct {
     pub left_num: fmpz_t,
     pub left_den: fmpz_t,
@@ -154,67 +150,39 @@ extern "C" {
     pub fn fmpq_init(x: *mut fmpq);
     #[link_name = "fmpq_clear__extern"]
     pub fn fmpq_clear(x: *mut fmpq);
-    #[link_name = "fmpq_zero__extern"]
-    pub fn fmpq_zero(res: *mut fmpq);
-    #[link_name = "fmpq_one__extern"]
-    pub fn fmpq_one(res: *mut fmpq);
-    #[link_name = "fmpq_equal__extern"]
-    pub fn fmpq_equal(x: *const fmpq, y: *const fmpq) -> libc::c_int;
-    #[link_name = "fmpq_sgn__extern"]
-    pub fn fmpq_sgn(x: *const fmpq) -> libc::c_int;
-    #[link_name = "fmpq_is_zero__extern"]
-    pub fn fmpq_is_zero(x: *const fmpq) -> libc::c_int;
-    #[link_name = "fmpq_is_one__extern"]
-    pub fn fmpq_is_one(x: *const fmpq) -> libc::c_int;
-    #[link_name = "fmpq_is_pm1__extern"]
-    pub fn fmpq_is_pm1(x: *const fmpq) -> libc::c_int;
-    #[link_name = "fmpq_set__extern"]
-    pub fn fmpq_set(dest: *mut fmpq, src: *const fmpq);
     #[link_name = "fmpq_swap__extern"]
     pub fn fmpq_swap(op1: *mut fmpq, op2: *mut fmpq);
-    #[link_name = "fmpq_neg__extern"]
-    pub fn fmpq_neg(dest: *mut fmpq, src: *const fmpq);
-    #[link_name = "fmpq_abs__extern"]
-    pub fn fmpq_abs(dest: *mut fmpq, src: *const fmpq);
-    pub fn _fmpq_cmp(p: *const fmpz, q: *const fmpz, r: *const fmpz, s: *const fmpz)
-        -> libc::c_int;
-    pub fn fmpq_cmp(x: *const fmpq, y: *const fmpq) -> libc::c_int;
-    pub fn _fmpq_cmp_fmpz(p: *const fmpz, q: *const fmpz, r: *const fmpz) -> libc::c_int;
-    pub fn fmpq_cmp_fmpz(x: *const fmpq, y: *const fmpz) -> libc::c_int;
-    pub fn _fmpq_cmp_ui(p: *const fmpz, q: *const fmpz, c: mp_limb_t) -> libc::c_int;
-    pub fn fmpq_cmp_ui(x: *const fmpq, c: mp_limb_t) -> libc::c_int;
-    pub fn _fmpq_cmp_si(p: *const fmpz, q: *const fmpz, c: mp_limb_signed_t) -> libc::c_int;
-    pub fn fmpq_cmp_si(x: *const fmpq, c: mp_limb_signed_t) -> libc::c_int;
     pub fn _fmpq_canonicalise(num: *mut fmpz, den: *mut fmpz);
     pub fn fmpq_canonicalise(res: *mut fmpq);
     pub fn _fmpq_is_canonical(num: *const fmpz, den: *const fmpz) -> libc::c_int;
     pub fn fmpq_is_canonical(x: *const fmpq) -> libc::c_int;
-    pub fn _fmpq_set_ui(rnum: *mut fmpz, rden: *mut fmpz, p: mp_limb_t, q: mp_limb_t);
-    pub fn fmpq_set_ui(res: *mut fmpq, p: mp_limb_t, q: mp_limb_t);
-    pub fn _fmpq_set_si(rnum: *mut fmpz, rden: *mut fmpz, p: mp_limb_signed_t, q: mp_limb_t);
-    pub fn fmpq_set_si(res: *mut fmpq, p: mp_limb_signed_t, q: mp_limb_t);
-    #[link_name = "fmpq_equal_ui__extern"]
-    pub fn fmpq_equal_ui(q: *const fmpq, n: mp_limb_t) -> libc::c_int;
-    #[link_name = "fmpq_equal_si__extern"]
-    pub fn fmpq_equal_si(q: *const fmpq, n: mp_limb_signed_t) -> libc::c_int;
+    #[link_name = "fmpq_zero__extern"]
+    pub fn fmpq_zero(res: *mut fmpq);
+    #[link_name = "fmpq_one__extern"]
+    pub fn fmpq_one(res: *mut fmpq);
+    #[link_name = "fmpq_set__extern"]
+    pub fn fmpq_set(dest: *mut fmpq, src: *const fmpq);
+    pub fn flint_mpq_init_set_readonly(z: *mut __mpq_struct, f: *const fmpq);
+    pub fn flint_mpq_clear_readonly(z: *mut __mpq_struct);
+    pub fn fmpq_init_set_readonly(f: *mut fmpq, z: *const __mpq_struct);
+    pub fn fmpq_clear_readonly(f: *mut fmpq);
+    pub fn _fmpq_set_si(rnum: *mut fmpz, rden: *mut fmpz, p: slong, q: ulong);
+    pub fn _fmpq_set_ui(rnum: *mut fmpz, rden: *mut fmpz, p: ulong, q: ulong);
+    pub fn fmpq_set_si(res: *mut fmpq, p: slong, q: ulong);
+    pub fn fmpq_set_ui(res: *mut fmpq, p: ulong, q: ulong);
+    pub fn fmpq_set_fmpz_frac(res: *mut fmpq, p: *const fmpz, q: *const fmpz);
+    pub fn fmpq_set_mpq(dest: *mut fmpq, src: *const __mpq_struct);
     #[link_name = "fmpq_set_fmpz__extern"]
     pub fn fmpq_set_fmpz(q: *mut fmpq, n: *const fmpz);
-    pub fn fmpq_set_fmpz_frac(res: *mut fmpq, p: *const fmpz, q: *const fmpz);
+    pub fn fmpq_get_d(a: *const fmpq) -> f64;
+    pub fn fmpq_get_mpz_frac(a: *mut __mpz_struct, b: *mut __mpz_struct, c: *mut fmpq);
+    pub fn fmpq_get_mpq(dest: *mut __mpq_struct, src: *const fmpq);
+    pub fn fmpq_get_mpfr(r: *mut __mpfr_struct, x: *const fmpq, rnd: mpfr_rnd_t) -> libc::c_int;
     pub fn fmpq_set_str(
         res: *mut fmpq,
         str_: *const libc::c_char,
         base: libc::c_int,
     ) -> libc::c_int;
-    #[link_name = "fmpq_set_mpq__extern"]
-    pub fn fmpq_set_mpq(dest: *mut fmpq, src: *const __mpq_struct);
-    #[link_name = "fmpq_get_mpq__extern"]
-    pub fn fmpq_get_mpq(dest: *mut __mpq_struct, src: *const fmpq);
-    pub fn fmpq_get_d(a: *const fmpq) -> f64;
-    pub fn fmpq_get_mpz_frac(a: *mut __mpz_struct, b: *mut __mpz_struct, c: *mut fmpq);
-    pub fn flint_mpq_init_set_readonly(z: *mut __mpq_struct, f: *const fmpq);
-    pub fn flint_mpq_clear_readonly(z: *mut __mpq_struct);
-    pub fn fmpq_init_set_readonly(f: *mut fmpq, z: *const __mpq_struct);
-    pub fn fmpq_clear_readonly(f: *mut fmpq);
     pub fn _fmpq_get_str(
         str_: *mut libc::c_char,
         b: libc::c_int,
@@ -226,40 +194,51 @@ extern "C" {
         b: libc::c_int,
         x: *const fmpq,
     ) -> *mut libc::c_char;
-    pub fn _fmpq_fprint(file: *mut FILE, num: *const fmpz, den: *const fmpz) -> libc::c_int;
-    pub fn fmpq_fprint(file: *mut FILE, x: *const fmpq) -> libc::c_int;
-    pub fn _fmpq_print(num: *const fmpz, den: *const fmpz) -> libc::c_int;
-    pub fn fmpq_print(x: *const fmpq) -> libc::c_int;
-    pub fn _fmpq_randtest(
-        num: *mut fmpz,
-        den: *mut fmpz,
-        state: *mut flint_rand_s,
-        bits: mp_limb_t,
+    #[link_name = "fmpq_is_zero__extern"]
+    pub fn fmpq_is_zero(x: *const fmpq) -> libc::c_int;
+    #[link_name = "fmpq_is_one__extern"]
+    pub fn fmpq_is_one(x: *const fmpq) -> libc::c_int;
+    #[link_name = "fmpq_is_pm1__extern"]
+    pub fn fmpq_is_pm1(x: *const fmpq) -> libc::c_int;
+    #[link_name = "fmpq_sgn__extern"]
+    pub fn fmpq_sgn(x: *const fmpq) -> libc::c_int;
+    #[link_name = "fmpq_equal_si__extern"]
+    pub fn fmpq_equal_si(q: *mut fmpq, n: slong) -> libc::c_int;
+    #[link_name = "fmpq_equal_ui__extern"]
+    pub fn fmpq_equal_ui(q: *mut fmpq, n: ulong) -> libc::c_int;
+    #[link_name = "fmpq_equal__extern"]
+    pub fn fmpq_equal(x: *const fmpq, y: *const fmpq) -> libc::c_int;
+    pub fn _fmpq_cmp_si(p: *const fmpz, q: *const fmpz, c: slong) -> libc::c_int;
+    pub fn _fmpq_cmp_ui(p: *const fmpz, q: *const fmpz, c: ulong) -> libc::c_int;
+    pub fn _fmpq_cmp_fmpz(p: *const fmpz, q: *const fmpz, r: *const fmpz) -> libc::c_int;
+    pub fn _fmpq_cmp(p: *const fmpz, q: *const fmpz, r: *const fmpz, s: *const fmpz)
+        -> libc::c_int;
+    pub fn fmpq_cmp_si(x: *const fmpq, c: slong) -> libc::c_int;
+    pub fn fmpq_cmp_ui(x: *const fmpq, c: ulong) -> libc::c_int;
+    pub fn fmpq_cmp_fmpz(x: *const fmpq, y: *const fmpz) -> libc::c_int;
+    pub fn fmpq_cmp(x: *const fmpq, y: *const fmpq) -> libc::c_int;
+    pub fn fmpq_height_bits(x: *const fmpq) -> flint_bitcnt_t;
+    pub fn fmpq_height(height: *mut fmpz, x: *const fmpq);
+    #[link_name = "fmpq_neg__extern"]
+    pub fn fmpq_neg(dest: *mut fmpq, src: *const fmpq);
+    #[link_name = "fmpq_abs__extern"]
+    pub fn fmpq_abs(dest: *mut fmpq, src: *const fmpq);
+    pub fn _fmpq_add_si(rnum: *mut fmpz, rden: *mut fmpz, p: *const fmpz, q: *const fmpz, r: slong);
+    pub fn _fmpq_add_ui(rnum: *mut fmpz, rden: *mut fmpz, p: *const fmpz, q: *const fmpz, r: ulong);
+    pub fn _fmpq_add_fmpz(
+        rnum: *mut fmpz,
+        rden: *mut fmpz,
+        p: *const fmpz,
+        q: *const fmpz,
+        r: *const fmpz,
     );
-    pub fn fmpq_randtest(res: *mut fmpq, state: *mut flint_rand_s, bits: mp_limb_t);
-    pub fn fmpq_randtest_not_zero(res: *mut fmpq, state: *mut flint_rand_s, bits: mp_limb_t);
-    pub fn _fmpq_randbits(
-        num: *mut fmpz,
-        den: *mut fmpz,
-        state: *mut flint_rand_s,
-        bits: mp_limb_t,
-    );
-    pub fn fmpq_randbits(res: *mut fmpq, state: *mut flint_rand_s, bits: mp_limb_t);
     pub fn _fmpq_add_small(
         rnum: *mut fmpz,
         rden: *mut fmpz,
-        p1: mp_limb_signed_t,
-        q1: mp_limb_t,
-        p2: mp_limb_signed_t,
-        q2: mp_limb_t,
-    );
-    pub fn _fmpq_mul_small(
-        rnum: *mut fmpz,
-        rden: *mut fmpz,
-        p1: mp_limb_signed_t,
-        q1: mp_limb_t,
-        p2: mp_limb_signed_t,
-        q2: mp_limb_t,
+        p1: slong,
+        q1: ulong,
+        p2: slong,
+        q2: ulong,
     );
     pub fn _fmpq_add(
         rnum: *mut fmpz,
@@ -269,31 +248,19 @@ extern "C" {
         op2num: *const fmpz,
         op2den: *const fmpz,
     );
+    pub fn fmpq_add_si(res: *mut fmpq, op1: *const fmpq, c: slong);
+    pub fn fmpq_add_ui(res: *mut fmpq, op1: *const fmpq, c: ulong);
+    pub fn fmpq_add_fmpz(res: *mut fmpq, op1: *const fmpq, c: *const fmpz);
     pub fn fmpq_add(res: *mut fmpq, op1: *const fmpq, op2: *const fmpq);
-    pub fn _fmpq_add_si(
-        rnum: *mut fmpz,
-        rden: *mut fmpz,
-        p: *const fmpz,
-        q: *const fmpz,
-        r: mp_limb_signed_t,
-    );
-    pub fn fmpq_add_si(res: *mut fmpq, op1: *const fmpq, c: mp_limb_signed_t);
-    pub fn _fmpq_add_ui(
-        rnum: *mut fmpz,
-        rden: *mut fmpz,
-        p: *const fmpz,
-        q: *const fmpz,
-        r: mp_limb_t,
-    );
-    pub fn fmpq_add_ui(res: *mut fmpq, op1: *const fmpq, c: mp_limb_t);
-    pub fn _fmpq_add_fmpz(
+    pub fn _fmpq_sub_si(rnum: *mut fmpz, rden: *mut fmpz, p: *const fmpz, q: *const fmpz, r: slong);
+    pub fn _fmpq_sub_ui(rnum: *mut fmpz, rden: *mut fmpz, p: *const fmpz, q: *const fmpz, r: ulong);
+    pub fn _fmpq_sub_fmpz(
         rnum: *mut fmpz,
         rden: *mut fmpz,
         p: *const fmpz,
         q: *const fmpz,
         r: *const fmpz,
     );
-    pub fn fmpq_add_fmpz(res: *mut fmpq, op1: *const fmpq, c: *const fmpz);
     pub fn _fmpq_sub(
         rnum: *mut fmpz,
         rden: *mut fmpz,
@@ -302,47 +269,20 @@ extern "C" {
         op2num: *const fmpz,
         op2den: *const fmpz,
     );
-    pub fn fmpq_sub(res: *mut fmpq, op1: *const fmpq, op2: *const fmpq);
-    pub fn _fmpq_sub_si(
-        rnum: *mut fmpz,
-        rden: *mut fmpz,
-        p: *const fmpz,
-        q: *const fmpz,
-        r: mp_limb_signed_t,
-    );
-    pub fn fmpq_sub_si(res: *mut fmpq, op1: *const fmpq, c: mp_limb_signed_t);
-    pub fn _fmpq_sub_ui(
-        rnum: *mut fmpz,
-        rden: *mut fmpz,
-        p: *const fmpz,
-        q: *const fmpz,
-        r: mp_limb_t,
-    );
-    pub fn fmpq_sub_ui(res: *mut fmpq, op1: *const fmpq, c: mp_limb_t);
-    pub fn _fmpq_sub_fmpz(
-        rnum: *mut fmpz,
-        rden: *mut fmpz,
-        p: *const fmpz,
-        q: *const fmpz,
-        r: *const fmpz,
-    );
+    pub fn fmpq_sub_si(res: *mut fmpq, op1: *const fmpq, c: slong);
+    pub fn fmpq_sub_ui(res: *mut fmpq, op1: *const fmpq, c: ulong);
     pub fn fmpq_sub_fmpz(res: *mut fmpq, op1: *const fmpq, c: *const fmpz);
-    pub fn _fmpq_mul_si(
+    pub fn fmpq_sub(res: *mut fmpq, op1: *const fmpq, op2: *const fmpq);
+    pub fn _fmpq_mul_si(rnum: *mut fmpz, rden: *mut fmpz, p: *const fmpz, q: *const fmpz, r: slong);
+    pub fn _fmpq_mul_ui(rnum: *mut fmpz, rden: *mut fmpz, p: *const fmpz, q: *const fmpz, r: ulong);
+    pub fn _fmpq_mul_small(
         rnum: *mut fmpz,
         rden: *mut fmpz,
-        p: *const fmpz,
-        q: *const fmpz,
-        r: mp_limb_signed_t,
+        p1: slong,
+        q1: ulong,
+        p2: slong,
+        q2: ulong,
     );
-    pub fn fmpq_mul_si(res: *mut fmpq, op1: *const fmpq, c: mp_limb_signed_t);
-    pub fn _fmpq_mul_ui(
-        rnum: *mut fmpz,
-        rden: *mut fmpz,
-        p: *const fmpz,
-        q: *const fmpz,
-        r: mp_limb_t,
-    );
-    pub fn fmpq_mul_ui(res: *mut fmpq, op1: *const fmpq, c: mp_limb_t);
     pub fn _fmpq_mul(
         rnum: *mut fmpz,
         rden: *mut fmpz,
@@ -351,35 +291,11 @@ extern "C" {
         op2num: *const fmpz,
         op2den: *const fmpz,
     );
-    pub fn fmpq_mul(res: *mut fmpq, op1: *const fmpq, op2: *const fmpq);
+    pub fn fmpq_mul_si(res: *mut fmpq, op1: *const fmpq, c: slong);
+    pub fn fmpq_mul_ui(res: *mut fmpq, op1: *const fmpq, c: ulong);
     pub fn fmpq_mul_fmpz(res: *mut fmpq, op: *const fmpq, x: *const fmpz);
-    pub fn _fmpq_pow_si(
-        rnum: *mut fmpz,
-        rden: *mut fmpz,
-        opnum: *const fmpz,
-        opden: *const fmpz,
-        e: mp_limb_signed_t,
-    );
-    pub fn fmpq_pow_si(rop: *mut fmpq, op: *const fmpq, e: mp_limb_signed_t);
-    pub fn fmpq_pow_fmpz(a: *mut fmpq, b: *const fmpq, e: *const fmpz) -> libc::c_int;
-    pub fn _fmpq_addmul(
-        rnum: *mut fmpz,
-        rden: *mut fmpz,
-        op1num: *const fmpz,
-        op1den: *const fmpz,
-        op2num: *const fmpz,
-        op2den: *const fmpz,
-    );
-    pub fn fmpq_addmul(res: *mut fmpq, op1: *const fmpq, op2: *const fmpq);
-    pub fn _fmpq_submul(
-        rnum: *mut fmpz,
-        rden: *mut fmpz,
-        op1num: *const fmpz,
-        op1den: *const fmpz,
-        op2num: *const fmpz,
-        op2den: *const fmpz,
-    );
-    pub fn fmpq_submul(res: *mut fmpq, op1: *const fmpq, op2: *const fmpq);
+    pub fn fmpq_mul_2exp(res: *mut fmpq, x: *const fmpq, exp: flint_bitcnt_t);
+    pub fn fmpq_mul(res: *mut fmpq, op1: *const fmpq, op2: *const fmpq);
     pub fn fmpq_inv(dest: *mut fmpq, src: *const fmpq);
     pub fn _fmpq_div(
         rnum: *mut fmpz,
@@ -389,10 +305,59 @@ extern "C" {
         op2num: *const fmpz,
         op2den: *const fmpz,
     );
-    pub fn fmpq_div(res: *mut fmpq, op1: *const fmpq, op2: *const fmpq);
     pub fn fmpq_div_fmpz(res: *mut fmpq, op: *const fmpq, x: *const fmpz);
-    pub fn fmpq_mul_2exp(res: *mut fmpq, x: *const fmpq, exp: mp_limb_t);
-    pub fn fmpq_div_2exp(res: *mut fmpq, x: *const fmpq, exp: mp_limb_t);
+    pub fn fmpq_div_2exp(res: *mut fmpq, x: *const fmpq, exp: flint_bitcnt_t);
+    pub fn fmpq_div(res: *mut fmpq, op1: *const fmpq, op2: *const fmpq);
+    pub fn _fmpq_pow_si(
+        rnum: *mut fmpz,
+        rden: *mut fmpz,
+        opnum: *const fmpz,
+        opden: *const fmpz,
+        e: slong,
+    );
+    pub fn fmpq_pow_si(rop: *mut fmpq, op: *const fmpq, e: slong);
+    pub fn fmpq_pow_fmpz(a: *mut fmpq, b: *const fmpq, e: *const fmpz) -> libc::c_int;
+    pub fn _fmpq_addmul(
+        rnum: *mut fmpz,
+        rden: *mut fmpz,
+        op1num: *const fmpz,
+        op1den: *const fmpz,
+        op2num: *const fmpz,
+        op2den: *const fmpz,
+    );
+    pub fn _fmpq_submul(
+        rnum: *mut fmpz,
+        rden: *mut fmpz,
+        op1num: *const fmpz,
+        op1den: *const fmpz,
+        op2num: *const fmpz,
+        op2den: *const fmpz,
+    );
+    pub fn fmpq_addmul(res: *mut fmpq, op1: *const fmpq, op2: *const fmpq);
+    pub fn fmpq_submul(res: *mut fmpq, op1: *const fmpq, op2: *const fmpq);
+    pub fn _fmpq_fprint(file: *mut FILE, num: *const fmpz, den: *const fmpz) -> libc::c_int;
+    pub fn fmpq_fprint(file: *mut FILE, x: *const fmpq) -> libc::c_int;
+    pub fn _fmpq_print(num: *const fmpz, den: *const fmpz) -> libc::c_int;
+    pub fn fmpq_print(x: *const fmpq) -> libc::c_int;
+    pub fn _fmpq_randtest(
+        num: *mut fmpz,
+        den: *mut fmpz,
+        state: *mut flint_rand_struct,
+        bits: flint_bitcnt_t,
+    );
+    pub fn _fmpq_randbits(
+        num: *mut fmpz,
+        den: *mut fmpz,
+        state: *mut flint_rand_struct,
+        bits: flint_bitcnt_t,
+    );
+    pub fn fmpq_randtest(res: *mut fmpq, state: *mut flint_rand_struct, bits: flint_bitcnt_t);
+    pub fn fmpq_randtest_not_zero(
+        res: *mut fmpq,
+        state: *mut flint_rand_struct,
+        bits: flint_bitcnt_t,
+    );
+    pub fn fmpq_randbits(res: *mut fmpq, state: *mut flint_rand_struct, bits: flint_bitcnt_t);
     pub fn _fmpq_mod_fmpz(
         res: *mut fmpz,
         num: *const fmpz,
@@ -456,8 +421,6 @@ extern "C" {
         N: *const fmpz,
         D: *const fmpz,
     ) -> libc::c_int;
-    pub fn fmpq_height_bits(x: *const fmpq) -> mp_limb_t;
-    pub fn fmpq_height(height: *mut fmpz, x: *const fmpq);
     pub fn _fmpq_next_calkin_wilf(
         rnum: *mut fmpz,
         rden: *mut fmpz,
@@ -496,30 +459,25 @@ extern "C" {
         r_den: *const fmpz,
     );
     pub fn fmpq_simplest_between(mid: *mut fmpq, l: *const fmpq, r: *const fmpq);
-    pub fn fmpq_get_cfrac_naive(
-        c: *mut fmpz,
-        rem: *mut fmpq,
-        x: *const fmpq,
-        n: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
-    pub fn fmpq_get_cfrac(
-        c: *mut fmpz,
-        rem: *mut fmpq,
-        x: *const fmpq,
-        n: mp_limb_signed_t,
-    ) -> mp_limb_signed_t;
-    pub fn fmpq_set_cfrac(x: *mut fmpq, c: *const fmpz, n: mp_limb_signed_t);
-    pub fn fmpq_cfrac_bound(x: *const fmpq) -> mp_limb_signed_t;
+    pub fn fmpq_get_cfrac_naive(c: *mut fmpz, rem: *mut fmpq, x: *const fmpq, n: slong) -> slong;
+    pub fn fmpq_get_cfrac(c: *mut fmpz, rem: *mut fmpq, x: *const fmpq, n: slong) -> slong;
+    pub fn fmpq_set_cfrac(x: *mut fmpq, c: *const fmpz, n: slong);
+    pub fn fmpq_cfrac_bound(x: *const fmpq) -> slong;
     pub fn fmpq_dedekind_sum_naive(s: *mut fmpq, h: *const fmpz, k: *const fmpz);
     pub fn fmpq_dedekind_sum(s: *mut fmpq, h: *const fmpz, k: *const fmpz);
-    pub fn _fmpq_harmonic_ui(num: *mut fmpz, den: *mut fmpz, n: mp_limb_t);
-    pub fn fmpq_harmonic_ui(x: *mut fmpq, n: mp_limb_t);
+    pub fn _fmpq_harmonic_ui(num: *mut fmpz, den: *mut fmpz, n: ulong);
+    pub fn fmpq_harmonic_ui(x: *mut fmpq, n: ulong);
     pub fn _fmpz_mat22_init(M: *mut _fmpz_mat22_struct);
     pub fn _fmpz_mat22_clear(M: *mut _fmpz_mat22_struct);
     pub fn _fmpz_mat22_one(M: *mut _fmpz_mat22_struct);
     pub fn _fmpz_mat22_is_one(M: *mut _fmpz_mat22_struct) -> libc::c_int;
-    pub fn _fmpz_mat22_bits(N: *const _fmpz_mat22_struct) -> mp_limb_t;
+    pub fn _fmpz_mat22_bits(N: *const _fmpz_mat22_struct) -> flint_bitcnt_t;
     pub fn _fmpz_mat22_rmul(M: *mut _fmpz_mat22_struct, N: *const _fmpz_mat22_struct);
+    pub fn _fmpz_mat22_rmul_ui(M: *mut _fmpz_mat22_struct, N: *const _ui_mat22_struct);
+    pub fn _fmpz_mat22_rmul_inv_ui(M: *mut _fmpz_mat22_struct, N: *const _ui_mat22_struct);
+    pub fn _fmpz_mat22_rmul_elem(M: *mut _fmpz_mat22_struct, q: *const fmpz);
+    pub fn _fmpz_mat22_lmul_elem(M: *mut _fmpz_mat22_struct, q: *const fmpz);
+    pub fn _fmpz_mat22_rmul_inv_elem(M: *mut _fmpz_mat22_struct, q: *const fmpz);
     pub fn _fmpz_mat22_addmul_inv_vec(
         ya: *mut fmpz,
         yb: *mut fmpz,
@@ -538,21 +496,12 @@ extern "C" {
         B21: *mut fmpz,
         B22: *mut fmpz,
     );
-    pub fn _fmpz_mat22_rmul_ui(M: *mut _fmpz_mat22_struct, N: *const _ui_mat22_struct);
-    pub fn _fmpz_mat22_rmul_inv_ui(M: *mut _fmpz_mat22_struct, N: *const _ui_mat22_struct);
-    pub fn _fmpz_mat22_rmul_elem(M: *mut _fmpz_mat22_struct, q: *const fmpz);
-    pub fn _fmpz_mat22_rmul_inv_elem(M: *mut _fmpz_mat22_struct, q: *const fmpz);
-    pub fn _fmpz_mat22_lmul_elem(M: *mut _fmpz_mat22_struct, q: *const fmpz);
     pub fn _fmpq_cfrac_list_init(v: *mut _fmpq_cfrac_list_struct);
     pub fn _fmpq_cfrac_list_clear(v: *mut _fmpq_cfrac_list_struct);
-    pub fn _fmpq_cfrac_list_fit_length(v: *mut _fmpq_cfrac_list_struct, len: mp_limb_signed_t);
+    pub fn _fmpq_cfrac_list_fit_length(v: *mut _fmpq_cfrac_list_struct, len: slong);
     pub fn _fmpq_cfrac_list_push_back(v: *mut _fmpq_cfrac_list_struct, a: *const fmpz);
     pub fn _fmpq_cfrac_list_push_back_zero(v: *mut _fmpq_cfrac_list_struct);
-    pub fn _fmpq_cfrac_list_append_ui(
-        v: *mut _fmpq_cfrac_list_struct,
-        a: *const mp_limb_t,
-        n: mp_limb_signed_t,
-    );
+    pub fn _fmpq_cfrac_list_append_ui(v: *mut _fmpq_cfrac_list_struct, a: *const ulong, n: slong);
     pub fn _fmpq_ball_init(x: *mut _fmpq_ball_struct);
     pub fn _fmpq_ball_clear(x: *mut _fmpq_ball_struct);
     #[link_name = "_fmpq_ball_swap__extern"]

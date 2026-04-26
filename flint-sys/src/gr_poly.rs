@@ -5,36 +5,9 @@ use crate::flint::*;
 use crate::fmpq_types::*;
 use crate::fmpz_types::*;
 use crate::gr::*;
+use crate::gr_types::*;
 
 
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct gr_poly_struct {
-    pub coeffs: gr_ptr,
-    pub alloc: mp_limb_signed_t,
-    pub length: mp_limb_signed_t,
-}
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of gr_poly_struct"][::std::mem::size_of::<gr_poly_struct>() - 24usize];
-    ["Alignment of gr_poly_struct"][::std::mem::align_of::<gr_poly_struct>() - 8usize];
-    ["Offset of field: gr_poly_struct::coeffs"]
-        [::std::mem::offset_of!(gr_poly_struct, coeffs) - 0usize];
-    ["Offset of field: gr_poly_struct::alloc"]
-        [::std::mem::offset_of!(gr_poly_struct, alloc) - 8usize];
-    ["Offset of field: gr_poly_struct::length"]
-        [::std::mem::offset_of!(gr_poly_struct, length) - 16usize];
-};
-impl Default for gr_poly_struct {
-    fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
-pub type gr_poly_t = [gr_poly_struct; 1usize];
 pub type gr_poly_roots_op = ::std::option::Option<
     unsafe extern "C" fn(
         arg1: *mut gr_vec_struct,
@@ -54,41 +27,68 @@ pub type gr_poly_roots_op_other = ::std::option::Option<
         arg6: gr_ctx_ptr,
     ) -> libc::c_int,
 >;
+pub type _gr_method_compose_mod_op = ::std::option::Option<
+    unsafe extern "C" fn(
+        arg1: gr_ptr,
+        arg2: gr_srcptr,
+        arg3: slong,
+        arg4: gr_srcptr,
+        arg5: gr_srcptr,
+        arg6: slong,
+        arg7: *mut gr_ctx_struct,
+    ) -> libc::c_int,
+>;
+pub type _gr_method_compose_mod_preinv_op = ::std::option::Option<
+    unsafe extern "C" fn(
+        arg1: gr_ptr,
+        arg2: gr_srcptr,
+        arg3: slong,
+        arg4: gr_srcptr,
+        arg5: gr_srcptr,
+        arg6: slong,
+        arg7: gr_srcptr,
+        arg8: slong,
+        arg9: *mut gr_ctx_struct,
+    ) -> libc::c_int,
+>;
 extern "C" {
     pub fn gr_poly_init(poly: *mut gr_poly_struct, ctx: *mut gr_ctx_struct);
-    pub fn gr_poly_init2(poly: *mut gr_poly_struct, len: mp_limb_signed_t, ctx: *mut gr_ctx_struct);
+    pub fn gr_poly_init2(poly: *mut gr_poly_struct, len: slong, ctx: *mut gr_ctx_struct);
     pub fn gr_poly_clear(poly: *mut gr_poly_struct, ctx: *mut gr_ctx_struct);
+    #[link_name = "gr_poly_coeff_ptr__extern"]
+    pub fn gr_poly_coeff_ptr(
+        poly: *mut gr_poly_struct,
+        i: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> gr_ptr;
     #[link_name = "gr_poly_entry_ptr__extern"]
     pub fn gr_poly_entry_ptr(
         poly: *mut gr_poly_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *mut gr_ctx_struct,
     ) -> gr_ptr;
+    #[link_name = "gr_poly_coeff_srcptr__extern"]
+    pub fn gr_poly_coeff_srcptr(
+        poly: *const gr_poly_struct,
+        i: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> gr_srcptr;
     #[link_name = "gr_poly_entry_srcptr__extern"]
     pub fn gr_poly_entry_srcptr(
         poly: *const gr_poly_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *mut gr_ctx_struct,
     ) -> gr_srcptr;
     #[link_name = "gr_poly_length__extern"]
-    pub fn gr_poly_length(poly: *const gr_poly_struct, ctx: *mut gr_ctx_struct)
-        -> mp_limb_signed_t;
+    pub fn gr_poly_length(poly: *const gr_poly_struct, UNUSED_ctx: *mut gr_ctx_struct) -> slong;
     #[link_name = "gr_poly_swap__extern"]
     pub fn gr_poly_swap(
         poly1: *mut gr_poly_struct,
         poly2: *mut gr_poly_struct,
-        ctx: *mut gr_ctx_struct,
+        UNUSED_ctx: *mut gr_ctx_struct,
     );
-    pub fn gr_poly_fit_length(
-        poly: *mut gr_poly_struct,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    );
-    pub fn _gr_poly_set_length(
-        poly: *mut gr_poly_struct,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    );
+    pub fn gr_poly_fit_length(poly: *mut gr_poly_struct, len: slong, ctx: *mut gr_ctx_struct);
+    pub fn _gr_poly_set_length(poly: *mut gr_poly_struct, len: slong, ctx: *mut gr_ctx_struct);
     pub fn _gr_poly_normalise(poly: *mut gr_poly_struct, ctx: *mut gr_ctx_struct);
     pub fn gr_poly_set(
         res: *mut gr_poly_struct,
@@ -98,20 +98,20 @@ extern "C" {
     pub fn _gr_poly_reverse(
         res: gr_ptr,
         poly: gr_srcptr,
-        len: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        len: slong,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_reverse(
         res: *mut gr_poly_struct,
         poly: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_truncate(
         poly: *mut gr_poly_struct,
         src: *const gr_poly_struct,
-        newlen: mp_limb_signed_t,
+        newlen: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_poly_zero__extern"]
@@ -119,24 +119,57 @@ extern "C" {
     pub fn gr_poly_one(poly: *mut gr_poly_struct, ctx: *mut gr_ctx_struct) -> libc::c_int;
     pub fn gr_poly_neg_one(poly: *mut gr_poly_struct, ctx: *mut gr_ctx_struct) -> libc::c_int;
     pub fn gr_poly_gen(poly: *mut gr_poly_struct, ctx: *mut gr_ctx_struct) -> libc::c_int;
+    pub fn _gr_poly_write(
+        out: *mut gr_stream_struct,
+        poly: gr_srcptr,
+        len: slong,
+        x: *const libc::c_char,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
     pub fn gr_poly_write(
         out: *mut gr_stream_struct,
         poly: *const gr_poly_struct,
         x: *const libc::c_char,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    pub fn _gr_poly_get_str(
+        res: *mut *mut libc::c_char,
+        f: gr_srcptr,
+        len: slong,
+        x: *const libc::c_char,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_get_str(
+        res: *mut *mut libc::c_char,
+        poly: *const gr_poly_struct,
+        x: *const libc::c_char,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_set_str(
+        res: gr_ptr,
+        s: *const libc::c_char,
+        x: *const libc::c_char,
+        len: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_set_str(
+        res: *mut gr_poly_struct,
+        s: *const libc::c_char,
+        x: *const libc::c_char,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
     pub fn gr_poly_print(poly: *const gr_poly_struct, ctx: *mut gr_ctx_struct) -> libc::c_int;
     pub fn gr_poly_randtest(
         poly: *mut gr_poly_struct,
-        state: *mut flint_rand_s,
-        len: mp_limb_signed_t,
+        state: *mut flint_rand_struct,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_equal(
         poly1: gr_srcptr,
-        len1: mp_limb_signed_t,
+        len1: slong,
         poly2: gr_srcptr,
-        len2: mp_limb_signed_t,
+        len2: slong,
         ctx: *mut gr_ctx_struct,
     ) -> truth_t;
     pub fn gr_poly_equal(
@@ -155,12 +188,12 @@ extern "C" {
     ) -> libc::c_int;
     pub fn gr_poly_set_si(
         poly: *mut gr_poly_struct,
-        x: mp_limb_signed_t,
+        x: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_set_ui(
         poly: *mut gr_poly_struct,
-        x: mp_limb_t,
+        x: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_set_fmpz(
@@ -191,38 +224,38 @@ extern "C" {
     ) -> libc::c_int;
     pub fn gr_poly_set_coeff_scalar(
         poly: *mut gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         x: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_set_coeff_si(
         poly: *mut gr_poly_struct,
-        n: mp_limb_signed_t,
-        x: mp_limb_signed_t,
+        n: slong,
+        x: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_set_coeff_ui(
         poly: *mut gr_poly_struct,
-        n: mp_limb_signed_t,
-        x: mp_limb_t,
+        n: slong,
+        x: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_set_coeff_fmpz(
         poly: *mut gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         x: *const fmpz,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_set_coeff_fmpq(
         poly: *mut gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         x: *const fmpq,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_get_coeff_scalar(
         res: gr_ptr,
         poly: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_neg(
@@ -233,9 +266,9 @@ extern "C" {
     pub fn _gr_poly_add(
         res: gr_ptr,
         poly1: gr_srcptr,
-        len1: mp_limb_signed_t,
+        len1: slong,
         poly2: gr_srcptr,
-        len2: mp_limb_signed_t,
+        len2: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_add(
@@ -247,9 +280,9 @@ extern "C" {
     pub fn _gr_poly_sub(
         res: gr_ptr,
         poly1: gr_srcptr,
-        len1: mp_limb_signed_t,
+        len1: slong,
         poly2: gr_srcptr,
-        len2: mp_limb_signed_t,
+        len2: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_sub(
@@ -261,9 +294,9 @@ extern "C" {
     pub fn _gr_poly_mul(
         res: gr_ptr,
         poly1: gr_srcptr,
-        len1: mp_limb_signed_t,
+        len1: slong,
         poly2: gr_srcptr,
-        len2: mp_limb_signed_t,
+        len2: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_mul(
@@ -275,27 +308,167 @@ extern "C" {
     pub fn _gr_poly_mullow_generic(
         res: gr_ptr,
         poly1: gr_srcptr,
-        len1: mp_limb_signed_t,
+        len1: slong,
         poly2: gr_srcptr,
-        len2: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        len2: slong,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_poly_mullow__extern"]
     pub fn _gr_poly_mullow(
         res: gr_ptr,
         poly1: gr_srcptr,
-        len1: mp_limb_signed_t,
+        len1: slong,
         poly2: gr_srcptr,
-        len2: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        len2: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_mullow(
         res: *mut gr_poly_struct,
         poly1: *const gr_poly_struct,
         poly2: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_mullow_classical(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        len2: slong,
+        n: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_mullow_classical(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        n: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_mullow_complex_reorder(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        len2: slong,
+        n: slong,
+        karatsuba: libc::c_int,
+        ctx: *mut gr_ctx_struct,
+        real_ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_mullow_complex_reorder(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        n: slong,
+        karatsuba: libc::c_int,
+        ctx: *mut gr_ctx_struct,
+        real_ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_mullow_bivariate_KS(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        len2: slong,
+        n: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_mullow_bivariate_KS(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        n: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_mul_karatsuba(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        len2: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_mul_karatsuba(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_mul_toom33(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        len2: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_mul_toom33(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_add_scalar(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        c: gr_srcptr,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_add_ui(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        c: ulong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_add_si(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        c: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_add_fmpz(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        c: *const fmpz,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_add_fmpq(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        c: *const fmpq,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_sub_scalar(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        c: gr_srcptr,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_sub_ui(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        c: ulong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_sub_si(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        c: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_sub_fmpz(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        c: *const fmpz,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_sub_fmpq(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        c: *const fmpq,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_mul_scalar(
@@ -304,60 +477,102 @@ extern "C" {
         c: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    pub fn gr_poly_scalar_mul(
+        res: *mut gr_poly_struct,
+        c: gr_srcptr,
+        poly: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_mul_ui(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        c: ulong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_mul_si(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        c: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_mul_fmpz(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        c: *const fmpz,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_mul_fmpq(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        c: *const fmpq,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_addmul_scalar(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        c: gr_srcptr,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_submul_scalar(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        c: gr_srcptr,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
     pub fn _gr_poly_pow_series_ui_binexp(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        exp: mp_limb_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        exp: ulong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_pow_series_ui_binexp(
         res: *mut gr_poly_struct,
         poly: *const gr_poly_struct,
-        exp: mp_limb_t,
-        len: mp_limb_signed_t,
+        exp: ulong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_pow_series_ui(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        exp: mp_limb_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        exp: ulong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_pow_series_ui(
         res: *mut gr_poly_struct,
         poly: *const gr_poly_struct,
-        exp: mp_limb_t,
-        len: mp_limb_signed_t,
+        exp: ulong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_pow_ui_binexp(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        exp: mp_limb_t,
+        flen: slong,
+        exp: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_pow_ui_binexp(
         res: *mut gr_poly_struct,
         poly: *const gr_poly_struct,
-        exp: mp_limb_t,
+        exp: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_pow_ui(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        exp: mp_limb_t,
+        flen: slong,
+        exp: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_pow_ui(
         res: *mut gr_poly_struct,
         poly: *const gr_poly_struct,
-        exp: mp_limb_t,
+        exp: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_pow_fmpz(
@@ -369,9 +584,9 @@ extern "C" {
     pub fn _gr_poly_pow_series_fmpq_recurrence(
         h: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
+        flen: slong,
         exp: *const fmpq,
-        len: mp_limb_signed_t,
+        len: slong,
         precomp: libc::c_int,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -379,33 +594,33 @@ extern "C" {
         res: *mut gr_poly_struct,
         poly: *const gr_poly_struct,
         exp: *const fmpq,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_shift_left(
         res: gr_ptr,
         poly: gr_srcptr,
-        len: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        len: slong,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_shift_left(
         res: *mut gr_poly_struct,
         poly: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_shift_right(
         res: gr_ptr,
         poly: gr_srcptr,
-        len: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        len: slong,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_shift_right(
         res: *mut gr_poly_struct,
         poly: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_div_scalar(
@@ -423,9 +638,9 @@ extern "C" {
         Q: gr_ptr,
         R: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         invB: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -433,18 +648,18 @@ extern "C" {
         Q: gr_ptr,
         R: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_divrem_basecase(
         Q: gr_ptr,
         R: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_divrem_basecase(
@@ -458,31 +673,31 @@ extern "C" {
         Q: gr_ptr,
         R: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         invB: gr_srcptr,
-        cutoff: mp_limb_signed_t,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_divrem_divconquer_noinv(
         Q: gr_ptr,
         R: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        lenB: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_divrem_divconquer(
         Q: gr_ptr,
         R: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        lenB: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_divrem_divconquer(
@@ -490,16 +705,16 @@ extern "C" {
         R: *mut gr_poly_struct,
         A: *const gr_poly_struct,
         B: *const gr_poly_struct,
-        cutoff: mp_limb_signed_t,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_divrem_newton(
         Q: gr_ptr,
         R: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_divrem_newton(
@@ -514,18 +729,18 @@ extern "C" {
         Q: gr_ptr,
         R: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_divrem_generic(
         Q: gr_ptr,
         R: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_divrem(
@@ -538,61 +753,61 @@ extern "C" {
     pub fn _gr_poly_div_divconquer_preinv1(
         Q: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         invB: gr_srcptr,
-        cutoff: mp_limb_signed_t,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_div_divconquer_noinv(
         Q: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        lenB: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_div_divconquer(
         Q: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        lenB: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_div_divconquer(
         Q: *mut gr_poly_struct,
         A: *const gr_poly_struct,
         B: *const gr_poly_struct,
-        cutoff: mp_limb_signed_t,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_div_basecase_preinv1(
         Q: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         invB: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_div_basecase_noinv(
         Q: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_div_basecase(
         Q: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_div_basecase(
@@ -604,9 +819,9 @@ extern "C" {
     pub fn _gr_poly_div_newton(
         Q: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_div_newton(
@@ -619,17 +834,17 @@ extern "C" {
     pub fn _gr_poly_div(
         Q: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_div_generic(
         Q: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_div(
@@ -641,9 +856,9 @@ extern "C" {
     pub fn _gr_poly_rem(
         R: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_rem(
@@ -652,200 +867,236 @@ extern "C" {
         B: *const gr_poly_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    pub fn _gr_poly_div_newton_n_preinv(
+        Q: gr_ptr,
+        A: gr_srcptr,
+        lenA: slong,
+        UNUSED_B: gr_srcptr,
+        lenB: slong,
+        Binv: gr_srcptr,
+        lenBinv: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_div_newton_n_preinv(
+        Q: *mut gr_poly_struct,
+        A: *const gr_poly_struct,
+        B: *const gr_poly_struct,
+        Binv: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_divrem_newton_n_preinv(
+        Q: gr_ptr,
+        R: gr_ptr,
+        A: gr_srcptr,
+        lenA: slong,
+        B: gr_srcptr,
+        lenB: slong,
+        Binv: gr_srcptr,
+        lenBinv: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_divrem_newton_n_preinv(
+        Q: *mut gr_poly_struct,
+        R: *mut gr_poly_struct,
+        A: *const gr_poly_struct,
+        B: *const gr_poly_struct,
+        Binv: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
     pub fn _gr_poly_inv_series_newton(
         Qinv: gr_ptr,
         Q: gr_srcptr,
-        Qlen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        Qlen: slong,
+        len: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_inv_series_newton(
         Qinv: *mut gr_poly_struct,
         Q: *const gr_poly_struct,
-        len: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        len: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_inv_series_basecase_preinv1(
         res: gr_ptr,
         A: gr_srcptr,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         Ainv: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_inv_series_basecase_generic(
         Qinv: gr_ptr,
         Q: gr_srcptr,
-        Qlen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        Qlen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_inv_series_basecase(
         Qinv: *mut gr_poly_struct,
         Q: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_poly_inv_series_basecase__extern"]
     pub fn _gr_poly_inv_series_basecase(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_poly_inv_series__extern"]
     pub fn _gr_poly_inv_series(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_inv_series_generic(
         Qinv: gr_ptr,
         Q: gr_srcptr,
-        Qlen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        Qlen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_inv_series(
         Qinv: *mut gr_poly_struct,
         Q: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_div_series_newton(
         res: gr_ptr,
         B: gr_srcptr,
-        Blen: mp_limb_signed_t,
+        Blen: slong,
         A: gr_srcptr,
-        Alen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        Alen: slong,
+        len: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_div_series_newton(
         Q: *mut gr_poly_struct,
         A: *const gr_poly_struct,
         B: *const gr_poly_struct,
-        len: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        len: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_div_series_divconquer(
         res: gr_ptr,
         B: gr_srcptr,
-        Blen: mp_limb_signed_t,
+        Blen: slong,
         A: gr_srcptr,
-        Alen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        Alen: slong,
+        len: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_div_series_divconquer(
         Q: *mut gr_poly_struct,
         A: *const gr_poly_struct,
         B: *const gr_poly_struct,
-        len: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        len: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_div_series_basecase_generic(
         Q: gr_ptr,
         A: gr_srcptr,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         B: gr_srcptr,
-        Blen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        Blen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_div_series_basecase(
         Q: *mut gr_poly_struct,
         A: *const gr_poly_struct,
         B: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_div_series_basecase_preinv1(
         Q: gr_ptr,
         A: gr_srcptr,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         B: gr_srcptr,
-        Blen: mp_limb_signed_t,
+        Blen: slong,
         Binv: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_div_series_basecase_noinv(
         Q: gr_ptr,
         A: gr_srcptr,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         B: gr_srcptr,
-        Blen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        Blen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_div_series_invmul(
         Q: gr_ptr,
         A: gr_srcptr,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         B: gr_srcptr,
-        Blen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        Blen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_div_series_invmul(
         Q: *mut gr_poly_struct,
         A: *const gr_poly_struct,
         B: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_poly_div_series_basecase__extern"]
     pub fn _gr_poly_div_series_basecase(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
+        flen: slong,
         g: gr_srcptr,
-        glen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        glen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_poly_div_series__extern"]
     pub fn _gr_poly_div_series(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
+        flen: slong,
         g: gr_srcptr,
-        glen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        glen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_div_series_generic(
         Q: gr_ptr,
         A: gr_srcptr,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         B: gr_srcptr,
-        Blen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        Blen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_div_series(
         Q: *mut gr_poly_struct,
         A: *const gr_poly_struct,
         B: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_divexact_basecase_bidirectional(
         Q: gr_ptr,
         A: gr_srcptr,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         B: gr_srcptr,
-        Blen: mp_limb_signed_t,
+        Blen: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_divexact_basecase_bidirectional(
@@ -857,9 +1108,9 @@ extern "C" {
     pub fn _gr_poly_divexact_bidirectional(
         Q: gr_ptr,
         A: gr_srcptr,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         B: gr_srcptr,
-        Blen: mp_limb_signed_t,
+        Blen: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_divexact_bidirectional(
@@ -871,17 +1122,17 @@ extern "C" {
     pub fn _gr_poly_divexact_basecase_noinv(
         Q: gr_ptr,
         A: gr_srcptr,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         B: gr_srcptr,
-        Blen: mp_limb_signed_t,
+        Blen: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_divexact_basecase(
         Q: gr_ptr,
         A: gr_srcptr,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         B: gr_srcptr,
-        Blen: mp_limb_signed_t,
+        Blen: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_divexact_basecase(
@@ -894,17 +1145,17 @@ extern "C" {
     pub fn _gr_poly_divexact(
         Q: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_divexact_generic(
         Q: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_divexact(
@@ -916,156 +1167,156 @@ extern "C" {
     pub fn _gr_poly_divexact_series_basecase_noinv(
         Q: gr_ptr,
         A: gr_srcptr,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         B: gr_srcptr,
-        Blen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        Blen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_divexact_series_basecase(
         Q: gr_ptr,
         A: gr_srcptr,
-        Alen: mp_limb_signed_t,
+        Alen: slong,
         B: gr_srcptr,
-        Blen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        Blen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_divexact_series_basecase(
         Q: *mut gr_poly_struct,
         A: *const gr_poly_struct,
         B: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_sqrt_series_newton(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_sqrt_series_newton(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        len: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        len: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_sqrt_series_basecase(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_sqrt_series_basecase(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_sqrt_series_miller(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_sqrt_series_miller(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_poly_sqrt_series__extern"]
     pub fn _gr_poly_sqrt_series(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_sqrt_series_generic(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_sqrt_series(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_rsqrt_series_newton(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_rsqrt_series_newton(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        len: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        len: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_rsqrt_series_basecase(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_rsqrt_series_basecase(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_rsqrt_series_miller(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_rsqrt_series_miller(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_poly_rsqrt_series__extern"]
     pub fn _gr_poly_rsqrt_series(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_rsqrt_series_generic(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_rsqrt_series(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_evaluate_rectangular(
         res: gr_ptr,
         poly: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         x: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -1078,7 +1329,7 @@ extern "C" {
     pub fn _gr_poly_evaluate_modular(
         res: gr_ptr,
         poly: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         x: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -1091,7 +1342,7 @@ extern "C" {
     pub fn _gr_poly_evaluate_horner(
         res: gr_ptr,
         poly: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         x: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -1104,7 +1355,7 @@ extern "C" {
     pub fn _gr_poly_evaluate(
         res: gr_ptr,
         poly: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         x: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -1117,7 +1368,7 @@ extern "C" {
     pub fn _gr_poly_evaluate_other_horner(
         res: gr_ptr,
         f: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         x: gr_srcptr,
         x_ctx: *mut gr_ctx_struct,
         ctx: *mut gr_ctx_struct,
@@ -1132,7 +1383,7 @@ extern "C" {
     pub fn _gr_poly_evaluate_other_rectangular(
         res: gr_ptr,
         f: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         x: gr_srcptr,
         x_ctx: *mut gr_ctx_struct,
         ctx: *mut gr_ctx_struct,
@@ -1147,7 +1398,7 @@ extern "C" {
     pub fn _gr_poly_evaluate_other(
         res: gr_ptr,
         f: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         x: gr_srcptr,
         x_ctx: *mut gr_ctx_struct,
         ctx: *mut gr_ctx_struct,
@@ -1162,7 +1413,7 @@ extern "C" {
     pub fn _gr_poly_taylor_shift_horner(
         res: gr_ptr,
         poly: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -1175,7 +1426,7 @@ extern "C" {
     pub fn _gr_poly_taylor_shift_divconquer(
         res: gr_ptr,
         poly: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -1188,7 +1439,7 @@ extern "C" {
     pub fn _gr_poly_taylor_shift_convolution(
         res: gr_ptr,
         poly: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -1201,7 +1452,7 @@ extern "C" {
     pub fn _gr_poly_taylor_shift_generic(
         res: gr_ptr,
         poly: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -1209,7 +1460,7 @@ extern "C" {
     pub fn _gr_poly_taylor_shift(
         res: gr_ptr,
         f: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         c: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -1222,9 +1473,9 @@ extern "C" {
     pub fn _gr_poly_compose_horner(
         res: gr_ptr,
         poly1: gr_srcptr,
-        len1: mp_limb_signed_t,
+        len1: slong,
         poly2: gr_srcptr,
-        len2: mp_limb_signed_t,
+        len2: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_compose_horner(
@@ -1236,9 +1487,9 @@ extern "C" {
     pub fn _gr_poly_compose_divconquer(
         res: gr_ptr,
         poly1: gr_srcptr,
-        len1: mp_limb_signed_t,
+        len1: slong,
         poly2: gr_srcptr,
-        len2: mp_limb_signed_t,
+        len2: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_compose_divconquer(
@@ -1250,9 +1501,9 @@ extern "C" {
     pub fn _gr_poly_compose(
         res: gr_ptr,
         poly1: gr_srcptr,
-        len1: mp_limb_signed_t,
+        len1: slong,
         poly2: gr_srcptr,
-        len2: mp_limb_signed_t,
+        len2: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_compose(
@@ -1264,123 +1515,123 @@ extern "C" {
     pub fn _gr_poly_compose_series_horner(
         res: gr_ptr,
         poly1: gr_srcptr,
-        len1: mp_limb_signed_t,
+        len1: slong,
         poly2: gr_srcptr,
-        len2: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        len2: slong,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_compose_series_horner(
         res: *mut gr_poly_struct,
         poly1: *const gr_poly_struct,
         poly2: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_compose_series_brent_kung(
         res: gr_ptr,
         poly1: gr_srcptr,
-        len1: mp_limb_signed_t,
+        len1: slong,
         poly2: gr_srcptr,
-        len2: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        len2: slong,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_compose_series_brent_kung(
         res: *mut gr_poly_struct,
         poly1: *const gr_poly_struct,
         poly2: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_compose_series_divconquer(
         res: gr_ptr,
         poly1: gr_srcptr,
-        len1: mp_limb_signed_t,
+        len1: slong,
         poly2: gr_srcptr,
-        len2: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        len2: slong,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_compose_series_divconquer(
         res: *mut gr_poly_struct,
         poly1: *const gr_poly_struct,
         poly2: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_compose_series(
         res: gr_ptr,
         poly1: gr_srcptr,
-        len1: mp_limb_signed_t,
+        len1: slong,
         poly2: gr_srcptr,
-        len2: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        len2: slong,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_compose_series(
         res: *mut gr_poly_struct,
         poly1: *const gr_poly_struct,
         poly2: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_revert_series_lagrange(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        flen: slong,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_revert_series_lagrange(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_revert_series_lagrange_fast(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        flen: slong,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_revert_series_lagrange_fast(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_revert_series_newton(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        flen: slong,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_revert_series_newton(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_revert_series(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        flen: slong,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_revert_series(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_derivative(
         res: gr_ptr,
         poly: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_derivative(
@@ -1391,20 +1642,20 @@ extern "C" {
     pub fn _gr_poly_nth_derivative(
         res: gr_ptr,
         poly: gr_srcptr,
-        n: mp_limb_t,
-        len: mp_limb_signed_t,
+        n: ulong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_nth_derivative(
         res: *mut gr_poly_struct,
         poly: *const gr_poly_struct,
-        n: mp_limb_t,
+        n: ulong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_integral(
         res: gr_ptr,
         poly: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_integral(
@@ -1415,7 +1666,7 @@ extern "C" {
     pub fn _gr_poly_make_monic(
         res: gr_ptr,
         poly: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_make_monic(
@@ -1423,54 +1674,63 @@ extern "C" {
         src: *const gr_poly_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
-    pub fn _gr_poly_is_monic(
-        poly: gr_srcptr,
-        len: mp_limb_signed_t,
-        ctx: *mut gr_ctx_struct,
-    ) -> truth_t;
+    pub fn _gr_poly_is_monic(poly: gr_srcptr, len: slong, ctx: *mut gr_ctx_struct) -> truth_t;
     pub fn gr_poly_is_monic(res: *const gr_poly_struct, ctx: *mut gr_ctx_struct) -> truth_t;
+    pub fn _gr_poly_canonical_associate(
+        res: gr_ptr,
+        u: gr_ptr,
+        poly: gr_srcptr,
+        len: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_canonical_associate(
+        res: *mut gr_poly_struct,
+        u: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
     pub fn _gr_poly_hgcd(
         r: gr_ptr,
-        sgn: *mut mp_limb_signed_t,
+        sgn: *mut slong,
         M: *mut gr_ptr,
-        lenM: *mut mp_limb_signed_t,
+        lenM: *mut slong,
         A: gr_ptr,
-        lenA: *mut mp_limb_signed_t,
+        lenA: *mut slong,
         B: gr_ptr,
-        lenB: *mut mp_limb_signed_t,
+        lenB: *mut slong,
         a: gr_srcptr,
-        lena: mp_limb_signed_t,
+        lena: slong,
         b: gr_srcptr,
-        lenb: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        lenb: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_gcd_hgcd(
         G: gr_ptr,
-        _lenG: *mut mp_limb_signed_t,
+        _lenG: *mut slong,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
-        inner_cutoff: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        lenB: slong,
+        inner_cutoff: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_gcd_hgcd(
         G: *mut gr_poly_struct,
         A: *const gr_poly_struct,
         B: *const gr_poly_struct,
-        inner_cutoff: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        inner_cutoff: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_gcd_euclidean(
         G: gr_ptr,
-        lenG: *mut mp_limb_signed_t,
+        lenG: *mut slong,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_gcd_euclidean(
@@ -1479,13 +1739,38 @@ extern "C" {
         B: *const gr_poly_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    pub fn _gr_poly_gcd_subresultant(
+        G: gr_ptr,
+        lenG: *mut slong,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        len2: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_gcd_subresultant(
+        G: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_gcd_generic(
+        G: gr_ptr,
+        lenG: *mut slong,
+        A: gr_srcptr,
+        lenA: slong,
+        B: gr_srcptr,
+        lenB: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    #[link_name = "_gr_poly_gcd__extern"]
     pub fn _gr_poly_gcd(
         G: gr_ptr,
-        lenG: *mut mp_limb_signed_t,
+        lenG: *mut slong,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_gcd(
@@ -1494,15 +1779,23 @@ extern "C" {
         B: *const gr_poly_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    pub fn gr_poly_gcd_wrapper(
+        gcd_impl: gr_method_poly_gcd_op,
+        canonicalise_unit: libc::c_int,
+        G: *mut gr_poly_struct,
+        A: *const gr_poly_struct,
+        B: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
     pub fn _gr_poly_xgcd_euclidean(
-        lenG: *mut mp_limb_signed_t,
+        lenG: *mut slong,
         G: gr_ptr,
         S: gr_ptr,
         T: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
+        lenB: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_xgcd_euclidean(
@@ -1514,16 +1807,16 @@ extern "C" {
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_xgcd_hgcd(
-        Glen: *mut mp_limb_signed_t,
+        Glen: *mut slong,
         G: gr_ptr,
         S: gr_ptr,
         T: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
-        hgcd_cutoff: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        lenB: slong,
+        hgcd_cutoff: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_xgcd_hgcd(
@@ -1532,16 +1825,56 @@ extern "C" {
         T: *mut gr_poly_struct,
         A: *const gr_poly_struct,
         B: *const gr_poly_struct,
-        hgcd_cutoff: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        hgcd_cutoff: slong,
+        cutoff: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    #[link_name = "_gr_poly_xgcd__extern"]
+    pub fn _gr_poly_xgcd(
+        Glen: *mut slong,
+        G: gr_ptr,
+        S: gr_ptr,
+        T: gr_ptr,
+        A: gr_srcptr,
+        lenA: slong,
+        B: gr_srcptr,
+        lenB: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_xgcd_generic(
+        Glen: *mut slong,
+        G: gr_ptr,
+        S: gr_ptr,
+        T: gr_ptr,
+        A: gr_srcptr,
+        lenA: slong,
+        B: gr_srcptr,
+        lenB: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_xgcd_wrapper(
+        _xgcd_op: gr_method_poly_xgcd_op,
+        G: *mut gr_poly_struct,
+        S: *mut gr_poly_struct,
+        T: *mut gr_poly_struct,
+        A: *const gr_poly_struct,
+        B: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_xgcd(
+        G: *mut gr_poly_struct,
+        S: *mut gr_poly_struct,
+        T: *mut gr_poly_struct,
+        A: *const gr_poly_struct,
+        B: *const gr_poly_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_resultant_euclidean(
         res: gr_ptr,
         poly1: gr_srcptr,
-        len1: mp_limb_signed_t,
+        len1: slong,
         poly2: gr_srcptr,
-        len2: mp_limb_signed_t,
+        len2: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_resultant_euclidean(
@@ -1553,27 +1886,27 @@ extern "C" {
     pub fn _gr_poly_resultant_hgcd(
         res: gr_ptr,
         A: gr_srcptr,
-        lenA: mp_limb_signed_t,
+        lenA: slong,
         B: gr_srcptr,
-        lenB: mp_limb_signed_t,
-        inner_cutoff: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        lenB: slong,
+        inner_cutoff: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_resultant_hgcd(
         r: gr_ptr,
         f: *const gr_poly_struct,
         g: *const gr_poly_struct,
-        inner_cutoff: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        inner_cutoff: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_resultant_sylvester(
         res: gr_ptr,
         poly1: gr_srcptr,
-        len1: mp_limb_signed_t,
+        len1: slong,
         poly2: gr_srcptr,
-        len2: mp_limb_signed_t,
+        len2: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_resultant_sylvester(
@@ -1585,9 +1918,9 @@ extern "C" {
     pub fn _gr_poly_resultant_small(
         res: gr_ptr,
         poly1: gr_srcptr,
-        len1: mp_limb_signed_t,
+        len1: slong,
         poly2: gr_srcptr,
-        len2: mp_limb_signed_t,
+        len2: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_resultant_small(
@@ -1599,9 +1932,9 @@ extern "C" {
     pub fn _gr_poly_resultant(
         res: gr_ptr,
         poly1: gr_srcptr,
-        len1: mp_limb_signed_t,
+        len1: slong,
         poly2: gr_srcptr,
-        len2: mp_limb_signed_t,
+        len2: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_resultant(
@@ -1610,28 +1943,106 @@ extern "C" {
         g: *const gr_poly_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
-    pub fn _gr_poly_tree_alloc(len: mp_limb_signed_t, ctx: *mut gr_ctx_struct) -> *mut gr_ptr;
-    pub fn _gr_poly_tree_free(tree: *mut gr_ptr, len: mp_limb_signed_t, ctx: *mut gr_ctx_struct);
+    pub fn _gr_poly_newton_basis_evaluate(
+        res: gr_ptr,
+        basis: gr_srcptr,
+        poly: gr_srcptr,
+        len: slong,
+        x: gr_srcptr,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_newton_basis_evaluate(
+        res: gr_ptr,
+        basis: *const gr_vec_struct,
+        poly: *const gr_poly_struct,
+        x: gr_srcptr,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_newton_basis_interpolate_exact(
+        res: gr_ptr,
+        basis: gr_srcptr,
+        ys: gr_srcptr,
+        len: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_newton_basis_interpolate_exact(
+        res: *mut gr_poly_struct,
+        basis: *const gr_vec_struct,
+        ys: *const gr_vec_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_newton_basis_interpolate(
+        res: gr_ptr,
+        basis: gr_srcptr,
+        ys: gr_srcptr,
+        len: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_newton_basis_interpolate(
+        res: *mut gr_poly_struct,
+        basis: *const gr_vec_struct,
+        ys: *const gr_vec_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_newton_basis_to_monomial(
+        res: gr_ptr,
+        basis: gr_srcptr,
+        poly: gr_srcptr,
+        len: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_newton_basis_to_monomial(
+        res: *mut gr_poly_struct,
+        basis: *const gr_vec_struct,
+        poly: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_newton_basis_from_monomial(
+        res: gr_ptr,
+        basis: gr_srcptr,
+        poly: gr_srcptr,
+        len: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_newton_basis_from_monomial(
+        res: *mut gr_poly_struct,
+        basis: *const gr_vec_struct,
+        poly: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_tree_alloc(len: slong, ctx: *mut gr_ctx_struct) -> *mut gr_ptr;
+    pub fn _gr_poly_tree_free(tree: *mut gr_ptr, len: slong, ctx: *mut gr_ctx_struct);
     pub fn _gr_poly_tree_build(
         tree: *mut gr_ptr,
         roots: gr_srcptr,
-        len: mp_limb_signed_t,
+        len: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_product_roots(
+        poly: gr_ptr,
+        xs: gr_srcptr,
+        n: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_product_roots(
+        poly: *mut gr_poly_struct,
+        xs: *const gr_vec_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_evaluate_vec_fast_precomp(
         vs: gr_ptr,
         poly: gr_srcptr,
-        plen: mp_limb_signed_t,
-        tree: *mut gr_ptr,
-        len: mp_limb_signed_t,
+        plen: slong,
+        tree: *const gr_ptr,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_evaluate_vec_fast(
         ys: gr_ptr,
         poly: gr_srcptr,
-        plen: mp_limb_signed_t,
+        plen: slong,
         xs: gr_srcptr,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_evaluate_vec_fast(
@@ -1643,15 +2054,94 @@ extern "C" {
     pub fn _gr_poly_evaluate_vec_iter(
         ys: gr_ptr,
         poly: gr_srcptr,
-        plen: mp_limb_signed_t,
+        plen: slong,
         xs: gr_srcptr,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_evaluate_vec_iter(
         ys: *mut gr_vec_struct,
         poly: *const gr_poly_struct,
         xs: *const gr_vec_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_interpolate_exact_newton(
+        res: gr_ptr,
+        xs: gr_srcptr,
+        ys: gr_srcptr,
+        len: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_interpolate_exact_newton(
+        poly: *mut gr_poly_struct,
+        xs: *const gr_vec_struct,
+        ys: *const gr_vec_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_interpolate_newton(
+        res: gr_ptr,
+        xs: gr_srcptr,
+        ys: gr_srcptr,
+        len: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_interpolate_newton(
+        poly: *mut gr_poly_struct,
+        xs: *const gr_vec_struct,
+        ys: *const gr_vec_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_interpolation_weights(
+        w: gr_ptr,
+        tree: *const gr_ptr,
+        len: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_interpolate_fast_precomp(
+        poly: gr_ptr,
+        ys: gr_srcptr,
+        tree: *const gr_ptr,
+        weights: gr_srcptr,
+        len: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_interpolate_fast(
+        res: gr_ptr,
+        xs: gr_srcptr,
+        ys: gr_srcptr,
+        len: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_interpolate_fast(
+        poly: *mut gr_poly_struct,
+        xs: *const gr_vec_struct,
+        ys: *const gr_vec_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_interpolate_exact(
+        res: gr_ptr,
+        xs: gr_srcptr,
+        ys: gr_srcptr,
+        len: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_interpolate_exact(
+        poly: *mut gr_poly_struct,
+        xs: *const gr_vec_struct,
+        ys: *const gr_vec_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_interpolate(
+        res: gr_ptr,
+        xs: gr_srcptr,
+        ys: gr_srcptr,
+        len: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_interpolate(
+        poly: *mut gr_poly_struct,
+        xs: *const gr_vec_struct,
+        ys: *const gr_vec_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_factor_squarefree(
@@ -1664,6 +2154,95 @@ extern "C" {
     pub fn gr_poly_squarefree_part(
         res: *mut gr_poly_struct,
         poly: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_leading_taylor_shift(
+        shift: gr_ptr,
+        p: *const gr_poly_struct,
+        q: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_shift_equivalent(
+        shift: *mut fmpz,
+        p: *const gr_poly_struct,
+        q: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> truth_t;
+    pub fn gr_poly_dispersion_resultant(
+        disp: *mut fmpz,
+        disp_set: *mut gr_vec_struct,
+        f: *const gr_poly_struct,
+        g: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_dispersion_from_factors(
+        disp: *mut fmpz,
+        disp_set: *mut gr_vec_struct,
+        ffac: *const gr_vec_struct,
+        gfac: *const gr_vec_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_dispersion_factor(
+        disp: *mut fmpz,
+        disp_set: *mut gr_vec_struct,
+        f: *const gr_poly_struct,
+        g: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_dispersion(
+        disp: *mut fmpz,
+        disp_set: *mut gr_vec_struct,
+        f: *const gr_poly_struct,
+        g: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_shiftless_decomposition_from_factors(
+        slfac: *mut gr_vec_struct,
+        slshifts: *mut gr_vec_struct,
+        slmult: *mut gr_vec_struct,
+        fac: *const gr_vec_struct,
+        mult: *const gr_vec_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_shiftless_decomposition_from_factors(
+        slfac: *mut gr_vec_struct,
+        slshifts: *mut gr_vec_struct,
+        slmult: *mut gr_vec_struct,
+        fac: *const gr_vec_struct,
+        mult: *const gr_vec_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_shiftless_decomposition_factor(
+        c: gr_ptr,
+        slfac: *mut gr_vec_struct,
+        slshifts: *mut gr_vec_struct,
+        slmult: *mut gr_vec_struct,
+        pol: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_shiftless_decomposition(
+        c: gr_ptr,
+        slfac: *mut gr_vec_struct,
+        slshifts: *mut gr_vec_struct,
+        slmult: *mut gr_vec_struct,
+        pol: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_refine_roots_aberth(
+        w: gr_ptr,
+        f: gr_srcptr,
+        f_prime: gr_srcptr,
+        deg: slong,
+        z: gr_srcptr,
+        progressive: libc::c_int,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_refine_roots_wdk(
+        w: gr_ptr,
+        f: gr_srcptr,
+        deg: slong,
+        z: gr_srcptr,
+        progressive: libc::c_int,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "gr_poly_roots__extern"]
@@ -1686,176 +2265,176 @@ extern "C" {
     pub fn _gr_poly_asin_series(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_asin_series(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_asinh_series(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_asinh_series(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_acos_series(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_acos_series(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_acosh_series(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_acosh_series(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_atan_series(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_atan_series(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_atanh_series(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_atanh_series(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_log_series(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_log_series(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_log1p_series(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_log1p_series(
         res: *mut gr_poly_struct,
         f: *const gr_poly_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_exp_series_basecase(
         f: gr_ptr,
         h: gr_srcptr,
-        hlen: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        hlen: slong,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_exp_series_basecase(
         f: *mut gr_poly_struct,
         h: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_exp_series_basecase_mul(
         f: gr_ptr,
         h: gr_srcptr,
-        hlen: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        hlen: slong,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_exp_series_basecase_mul(
         f: *mut gr_poly_struct,
         h: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_exp_series_newton(
         f: gr_ptr,
         g: gr_ptr,
         h: gr_srcptr,
-        hlen: mp_limb_signed_t,
-        n: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        hlen: slong,
+        n: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_exp_series_newton(
         f: *mut gr_poly_struct,
         h: *const gr_poly_struct,
-        n: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        n: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     #[link_name = "_gr_poly_exp_series__extern"]
     pub fn _gr_poly_exp_series(
         res: gr_ptr,
         f: gr_srcptr,
-        flen: mp_limb_signed_t,
-        len: mp_limb_signed_t,
+        flen: slong,
+        len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_exp_series_generic(
         f: gr_ptr,
         h: gr_srcptr,
-        hlen: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        hlen: slong,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_exp_series(
         f: *mut gr_poly_struct,
         h: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_sin_cos_series_basecase(
         s: gr_ptr,
         c: gr_ptr,
         h: gr_srcptr,
-        hlen: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        hlen: slong,
+        n: slong,
         times_pi: libc::c_int,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -1863,7 +2442,7 @@ extern "C" {
         s: *mut gr_poly_struct,
         c: *mut gr_poly_struct,
         h: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         times_pi: libc::c_int,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -1871,8 +2450,8 @@ extern "C" {
         s: gr_ptr,
         c: gr_ptr,
         h: gr_srcptr,
-        hlen: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        hlen: slong,
+        n: slong,
         times_pi: libc::c_int,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
@@ -1880,49 +2459,408 @@ extern "C" {
         s: *mut gr_poly_struct,
         c: *mut gr_poly_struct,
         h: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         times_pi: libc::c_int,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_tan_series_basecase(
         f: gr_ptr,
         h: gr_srcptr,
-        hlen: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        hlen: slong,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_tan_series_basecase(
         f: *mut gr_poly_struct,
         h: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_tan_series_newton(
         f: gr_ptr,
         h: gr_srcptr,
-        hlen: mp_limb_signed_t,
-        n: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        hlen: slong,
+        n: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_tan_series_newton(
         f: *mut gr_poly_struct,
         h: *const gr_poly_struct,
-        n: mp_limb_signed_t,
-        cutoff: mp_limb_signed_t,
+        n: slong,
+        cutoff: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_tan_series(
         f: gr_ptr,
         h: gr_srcptr,
-        hlen: mp_limb_signed_t,
-        n: mp_limb_signed_t,
+        hlen: slong,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_tan_series(
         f: *mut gr_poly_struct,
         h: *const gr_poly_struct,
-        n: mp_limb_signed_t,
+        n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    pub fn _gr_poly_mulmod(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        len2: slong,
+        f: gr_srcptr,
+        lenf: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_mulmod(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        f: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_mulmod_preinv(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        len2: slong,
+        f: gr_srcptr,
+        lenf: slong,
+        finv: gr_srcptr,
+        lenfinv: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_mulmod_preinv(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        f: *const gr_poly_struct,
+        finv: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_powmod_fmpz_binexp(
+        res: gr_ptr,
+        poly: gr_srcptr,
+        e: *const fmpz,
+        f: gr_srcptr,
+        lenf: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_powmod_fmpz_binexp(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        e: *const fmpz,
+        f: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_powmod_fmpz_binexp_preinv(
+        res: gr_ptr,
+        poly: gr_srcptr,
+        e: *const fmpz,
+        f: gr_srcptr,
+        lenf: slong,
+        finv: gr_srcptr,
+        lenfinv: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_powmod_fmpz_binexp_preinv(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        e: *const fmpz,
+        f: *const gr_poly_struct,
+        finv: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_powmod_x_fmpz_preinv(
+        res: gr_ptr,
+        e: *const fmpz,
+        f: gr_srcptr,
+        lenf: slong,
+        finv: gr_srcptr,
+        lenfinv: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_powmod_x_fmpz_preinv(
+        res: *mut gr_poly_struct,
+        e: *const fmpz,
+        f: *const gr_poly_struct,
+        finv: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_powmod_ui_binexp(
+        res: gr_ptr,
+        poly: gr_srcptr,
+        e: ulong,
+        f: gr_srcptr,
+        lenf: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_powmod_ui_binexp(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        e: ulong,
+        f: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_powmod_ui_binexp_preinv(
+        res: gr_ptr,
+        poly: gr_srcptr,
+        e: ulong,
+        f: gr_srcptr,
+        lenf: slong,
+        finv: gr_srcptr,
+        lenfinv: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_powmod_ui_binexp_preinv(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        e: ulong,
+        f: *const gr_poly_struct,
+        finv: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_powmod_fmpz_sliding_preinv(
+        res: gr_ptr,
+        poly: gr_srcptr,
+        e: *const fmpz,
+        k: ulong,
+        f: gr_srcptr,
+        lenf: slong,
+        finv: gr_srcptr,
+        lenfinv: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_powmod_fmpz_sliding_preinv(
+        res: *mut gr_poly_struct,
+        poly: *const gr_poly_struct,
+        e: *const fmpz,
+        k: ulong,
+        f: *const gr_poly_struct,
+        finv: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_compose_mod_wrapper(
+        _compose_mod: _gr_method_compose_mod_op,
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        poly3: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_compose_mod_preinv_wrapper(
+        _compose_mod: _gr_method_compose_mod_preinv_op,
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        poly3: *const gr_poly_struct,
+        poly3inv: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_compose_mod_horner(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        poly3: gr_srcptr,
+        len3: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_compose_mod_horner(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        poly3: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_compose_mod_brent_kung(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        poly3: gr_srcptr,
+        len3: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_compose_mod_brent_kung(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        poly3: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_compose_mod(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        poly3: gr_srcptr,
+        len3: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_compose_mod(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        poly3: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_compose_mod_horner_preinv(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        poly3: gr_srcptr,
+        len3: slong,
+        poly3inv: gr_srcptr,
+        inv3len: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_compose_mod_horner_preinv(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        poly3: *const gr_poly_struct,
+        poly3inv: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_compose_mod_brent_kung_preinv(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        poly3: gr_srcptr,
+        len3: slong,
+        poly3inv: gr_srcptr,
+        inv3len: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_compose_mod_brent_kung_preinv(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        poly3: *const gr_poly_struct,
+        poly3inv: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_compose_mod_preinv(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        poly3: gr_srcptr,
+        len3: slong,
+        poly3inv: gr_srcptr,
+        inv3len: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_compose_mod_preinv(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        poly3: *const gr_poly_struct,
+        poly3inv: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_reduce_matrix_mod_poly(
+        A: *mut gr_mat_struct,
+        B: *const gr_mat_struct,
+        f: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_precompute_matrix(
+        A: *mut gr_mat_struct,
+        poly1: gr_srcptr,
+        poly2: gr_srcptr,
+        len2: slong,
+        poly2inv: gr_srcptr,
+        len2inv: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_precompute_matrix(
+        A: *mut gr_mat_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        poly2inv: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_compose_mod_brent_kung_precomp_preinv(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        A: *const gr_mat_struct,
+        poly3: gr_srcptr,
+        len3: slong,
+        poly3inv: gr_srcptr,
+        len3inv: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_compose_mod_brent_kung_precomp_preinv(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        A: *const gr_mat_struct,
+        poly3: *const gr_poly_struct,
+        poly3inv: *const gr_poly_struct,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_test_mullow(
+        mullow_impl: gr_method_poly_binary_trunc_op,
+        mullow_ref: gr_method_poly_binary_trunc_op,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
+    pub fn _gr_poly_test_divrem(
+        divrem_impl: gr_method_poly_binary_binary_op,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
+    pub fn _gr_poly_test_div(
+        div_impl: gr_method_poly_binary_op,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
+    pub fn _gr_poly_test_inv_series(
+        inv_series_impl: gr_method_poly_unary_trunc_op,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
+    pub fn _gr_poly_test_div_series(
+        div_series_impl: gr_method_poly_binary_trunc_op,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
+    pub fn _gr_poly_test_gcd_field(
+        gcd_impl: gr_method_poly_gcd_op,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
+    pub fn _gr_poly_test_gcd_ufd(
+        gcd_impl: gr_method_poly_gcd_op,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
+    pub fn _gr_poly_test_xgcd(
+        xgcd_impl: gr_method_poly_xgcd_op,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
 }

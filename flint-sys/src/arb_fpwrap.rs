@@ -190,13 +190,13 @@ extern "C" {
     pub fn arb_fpwrap_double_lambertw(
         res: *mut f64,
         x: f64,
-        branch: mp_limb_signed_t,
+        branch: slong,
         flags: libc::c_int,
     ) -> libc::c_int;
     pub fn arb_fpwrap_cdouble_lambertw(
         res: *mut complex_double,
         x: complex_double,
-        branch: mp_limb_signed_t,
+        branch: slong,
         flags: libc::c_int,
     ) -> libc::c_int;
     pub fn arb_fpwrap_double_rising(
@@ -326,7 +326,7 @@ extern "C" {
     ) -> libc::c_int;
     pub fn arb_fpwrap_cdouble_zeta_zero(
         res: *mut complex_double,
-        n: mp_limb_t,
+        n: ulong,
         flags: libc::c_int,
     ) -> libc::c_int;
     pub fn arb_fpwrap_double_erf(res: *mut f64, x: f64, flags: libc::c_int) -> libc::c_int;
@@ -585,22 +585,22 @@ extern "C" {
     ) -> libc::c_int;
     pub fn arb_fpwrap_double_airy_ai_zero(
         res: *mut f64,
-        n: mp_limb_t,
+        n: ulong,
         flags: libc::c_int,
     ) -> libc::c_int;
     pub fn arb_fpwrap_double_airy_ai_prime_zero(
         res: *mut f64,
-        n: mp_limb_t,
+        n: ulong,
         flags: libc::c_int,
     ) -> libc::c_int;
     pub fn arb_fpwrap_double_airy_bi_zero(
         res: *mut f64,
-        n: mp_limb_t,
+        n: ulong,
         flags: libc::c_int,
     ) -> libc::c_int;
     pub fn arb_fpwrap_double_airy_bi_prime_zero(
         res: *mut f64,
-        n: mp_limb_t,
+        n: ulong,
         flags: libc::c_int,
     ) -> libc::c_int;
     pub fn arb_fpwrap_double_coulomb_f(
@@ -760,14 +760,14 @@ extern "C" {
     pub fn arb_fpwrap_double_legendre_root(
         res1: *mut f64,
         res2: *mut f64,
-        n: mp_limb_t,
-        k: mp_limb_t,
+        n: ulong,
+        k: ulong,
         flags: libc::c_int,
     ) -> libc::c_int;
     pub fn arb_fpwrap_cdouble_spherical_y(
         res: *mut complex_double,
-        n: mp_limb_signed_t,
-        m: mp_limb_signed_t,
+        n: slong,
+        m: slong,
         x1: complex_double,
         x2: complex_double,
         flags: libc::c_int,
@@ -837,9 +837,9 @@ extern "C" {
     pub fn arb_fpwrap_double_hypgeom_pfq(
         res: *mut f64,
         a: *const f64,
-        p: mp_limb_signed_t,
+        p: slong,
         b: *const f64,
-        q: mp_limb_signed_t,
+        q: slong,
         z: f64,
         regularized: libc::c_int,
         flags: libc::c_int,
@@ -847,9 +847,9 @@ extern "C" {
     pub fn arb_fpwrap_cdouble_hypgeom_pfq(
         res: *mut complex_double,
         a: *const complex_double,
-        p: mp_limb_signed_t,
+        p: slong,
         b: *const complex_double,
-        q: mp_limb_signed_t,
+        q: slong,
         z: complex_double,
         regularized: libc::c_int,
         flags: libc::c_int,

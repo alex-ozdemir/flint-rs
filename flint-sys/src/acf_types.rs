@@ -4,7 +4,6 @@ use crate::arf_types::*;
 
 
 #[repr(C)]
-#[derive(Debug, Copy, Clone)]
 pub struct acf_struct {
     pub real: arf_struct,
     pub imag: arf_struct,

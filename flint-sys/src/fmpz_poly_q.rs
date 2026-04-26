@@ -12,22 +12,22 @@ extern "C" {
     pub fn fmpz_poly_q_clear(rop: *mut fmpz_poly_q_struct);
     pub fn fmpz_poly_q_randtest(
         poly: *mut fmpz_poly_q_struct,
-        state: *mut flint_rand_s,
-        len1: mp_limb_signed_t,
-        bits1: mp_limb_t,
-        len2: mp_limb_signed_t,
-        bits2: mp_limb_t,
+        state: *mut flint_rand_struct,
+        len1: slong,
+        bits1: flint_bitcnt_t,
+        len2: slong,
+        bits2: flint_bitcnt_t,
     );
     pub fn fmpz_poly_q_randtest_not_zero(
         poly: *mut fmpz_poly_q_struct,
-        state: *mut flint_rand_s,
-        len1: mp_limb_signed_t,
-        bits1: mp_limb_t,
-        len2: mp_limb_signed_t,
-        bits2: mp_limb_t,
+        state: *mut flint_rand_struct,
+        len1: slong,
+        bits1: flint_bitcnt_t,
+        len2: slong,
+        bits2: flint_bitcnt_t,
     );
     pub fn fmpz_poly_q_set(rop: *mut fmpz_poly_q_struct, op: *const fmpz_poly_q_struct);
-    pub fn fmpz_poly_q_set_si(rop: *mut fmpz_poly_q_struct, op: mp_limb_signed_t);
+    pub fn fmpz_poly_q_set_si(rop: *mut fmpz_poly_q_struct, op: slong);
     pub fn fmpz_poly_q_swap(op1: *mut fmpz_poly_q_struct, op2: *mut fmpz_poly_q_struct);
     #[link_name = "fmpz_poly_q_zero__extern"]
     pub fn fmpz_poly_q_zero(rop: *mut fmpz_poly_q_struct);
@@ -70,7 +70,7 @@ extern "C" {
     pub fn fmpz_poly_q_scalar_mul_si(
         rop: *mut fmpz_poly_q_struct,
         op: *const fmpz_poly_q_struct,
-        x: mp_limb_signed_t,
+        x: slong,
     );
     pub fn fmpz_poly_q_scalar_mul_fmpz(
         rop: *mut fmpz_poly_q_struct,
@@ -85,7 +85,7 @@ extern "C" {
     pub fn fmpz_poly_q_scalar_div_si(
         rop: *mut fmpz_poly_q_struct,
         op: *const fmpz_poly_q_struct,
-        x: mp_limb_signed_t,
+        x: slong,
     );
     pub fn fmpz_poly_q_scalar_div_fmpz(
         rop: *mut fmpz_poly_q_struct,
@@ -107,11 +107,7 @@ extern "C" {
         op1: *const fmpz_poly_q_struct,
         op2: *const fmpz_poly_q_struct,
     );
-    pub fn fmpz_poly_q_pow(
-        rop: *mut fmpz_poly_q_struct,
-        op: *const fmpz_poly_q_struct,
-        exp: mp_limb_t,
-    );
+    pub fn fmpz_poly_q_pow(rop: *mut fmpz_poly_q_struct, op: *const fmpz_poly_q_struct, exp: ulong);
     pub fn fmpz_poly_q_derivative(rop: *mut fmpz_poly_q_struct, op: *const fmpz_poly_q_struct);
     pub fn fmpz_poly_q_evaluate_fmpq(
         rop: *mut fmpq,

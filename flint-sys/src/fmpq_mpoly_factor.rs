@@ -10,16 +10,16 @@ use crate::mpoly_types::*;
 extern "C" {
     pub fn fmpq_mpoly_factor_init(
         f: *mut fmpq_mpoly_factor_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_factor_realloc(
         f: *mut fmpq_mpoly_factor_struct,
-        alloc: mp_limb_signed_t,
+        alloc: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_factor_fit_length(
         f: *mut fmpq_mpoly_factor_struct,
-        len: mp_limb_signed_t,
+        len: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_factor_clear(
@@ -29,45 +29,45 @@ extern "C" {
     #[link_name = "fmpq_mpoly_factor_length__extern"]
     pub fn fmpq_mpoly_factor_length(
         f: *const fmpq_mpoly_factor_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
+    ) -> slong;
     #[link_name = "fmpq_mpoly_factor_get_constant_fmpq__extern"]
     pub fn fmpq_mpoly_factor_get_constant_fmpq(
         c: *mut fmpq,
         f: *const fmpq_mpoly_factor_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_factor_get_base__extern"]
     pub fn fmpq_mpoly_factor_get_base(
         p: *mut fmpq_mpoly_struct,
         f: *const fmpq_mpoly_factor_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_factor_swap_base__extern"]
     pub fn fmpq_mpoly_factor_swap_base(
         p: *mut fmpq_mpoly_struct,
         f: *mut fmpq_mpoly_factor_struct,
-        i: mp_limb_signed_t,
+        i: slong,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_factor_get_exp_si__extern"]
     pub fn fmpq_mpoly_factor_get_exp_si(
         f: *mut fmpq_mpoly_factor_struct,
-        i: mp_limb_signed_t,
-        ctx: *const fmpq_mpoly_ctx_struct,
-    ) -> mp_limb_signed_t;
+        i: slong,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
+    ) -> slong;
     pub fn fmpq_mpoly_factor_sort(
         f: *mut fmpq_mpoly_factor_struct,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_factor_make_monic(
         f: *mut fmpq_mpoly_factor_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpq_mpoly_factor_make_integral(
         f: *mut fmpq_mpoly_factor_struct,
-        ctx: *const fmpq_mpoly_ctx_struct,
+        UNUSED_ctx: *const fmpq_mpoly_ctx_struct,
     ) -> libc::c_int;
     pub fn fmpq_mpoly_factor_squarefree(
         f: *mut fmpq_mpoly_factor_struct,
