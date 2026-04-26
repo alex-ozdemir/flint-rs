@@ -432,6 +432,60 @@ extern "C" {
         poly2: *const acb_poly_struct,
         prec: slong,
     );
+    pub fn _acb_poly_mulmid_transpose(
+        z: acb_ptr,
+        x: acb_srcptr,
+        xlen: slong,
+        y: acb_srcptr,
+        ylen: slong,
+        nlo: slong,
+        nhi: slong,
+        prec: slong,
+    );
+    pub fn acb_poly_mulmid_transpose(
+        res: *mut acb_poly_struct,
+        poly1: *const acb_poly_struct,
+        poly2: *const acb_poly_struct,
+        nlo: slong,
+        nhi: slong,
+        prec: slong,
+    );
+    pub fn _acb_poly_mulmid_classical(
+        z: acb_ptr,
+        x: acb_srcptr,
+        xlen: slong,
+        y: acb_srcptr,
+        ylen: slong,
+        nlo: slong,
+        nhi: slong,
+        prec: slong,
+    );
+    pub fn acb_poly_mulmid_classical(
+        res: *mut acb_poly_struct,
+        poly1: *const acb_poly_struct,
+        poly2: *const acb_poly_struct,
+        nlo: slong,
+        nhi: slong,
+        prec: slong,
+    );
+    pub fn _acb_poly_mulmid(
+        z: acb_ptr,
+        x: acb_srcptr,
+        xlen: slong,
+        y: acb_srcptr,
+        ylen: slong,
+        nlo: slong,
+        nhi: slong,
+        prec: slong,
+    );
+    pub fn acb_poly_mulmid(
+        res: *mut acb_poly_struct,
+        poly1: *const acb_poly_struct,
+        poly2: *const acb_poly_struct,
+        nlo: slong,
+        nhi: slong,
+        prec: slong,
+    );
     #[link_name = "_acb_poly_mul_monic__extern"]
     pub fn _acb_poly_mul_monic(
         res: acb_ptr,
@@ -1257,4 +1311,82 @@ extern "C" {
     );
     #[link_name = "acb_poly_allocated_bytes__extern"]
     pub fn acb_poly_allocated_bytes(x: *const acb_poly_struct) -> slong;
+    pub fn cd_poly_roots_initial_values(
+        z_r: *mut f64,
+        z_i: *mut f64,
+        p_r: *const f64,
+        p_i: *const f64,
+        n: slong,
+        z0: *const f64,
+        d: slong,
+    );
+    pub fn cd_poly_weierstrass(
+        results_r: *mut f64,
+        results_i: *mut f64,
+        lc_r: f64,
+        lc_i: f64,
+        values_r: *const f64,
+        values_i: *const f64,
+        n_start: slong,
+        n_end: slong,
+        d: slong,
+    );
+    pub fn cd_poly_weierstrass_distinct_orders(
+        results_r: *mut f64,
+        results_i: *mut f64,
+        lc_r: f64,
+        lc_i: f64,
+        col_values_r: *const f64,
+        col_values_i: *const f64,
+        d: slong,
+        row_values_r: *const f64,
+        row_values_i: *const f64,
+        n_start: slong,
+        n_end: slong,
+    );
+    pub fn cd_poly_wdk_update(
+        z_r: *mut f64,
+        z_i: *mut f64,
+        vp_r: *const f64,
+        vp_i: *const f64,
+        wdk_r: *const f64,
+        wdk_i: *const f64,
+        n_start: slong,
+        n_end: slong,
+        stepsize_bound: f64,
+    ) -> f64;
+    pub fn cd_poly_refine_roots(z: *mut f64, p: *const f64, n: slong, stepsize_bound: f64) -> f64;
+    pub fn cd_poly_refine_roots_with_pivot(
+        z: *mut f64,
+        p: *const f64,
+        n: slong,
+        stepsize_bound: f64,
+    ) -> f64;
+    pub fn cd_poly_horner(
+        results_r: *mut f64,
+        results_i: *mut f64,
+        values_r: *const f64,
+        values_i: *const f64,
+        n_start: slong,
+        n_end: slong,
+        coefficients_r: *const f64,
+        coefficients_i: *const f64,
+        n: slong,
+    );
+    pub fn cd_poly_find_roots(
+        z: *mut f64,
+        p: *const f64,
+        z0: *const f64,
+        n: slong,
+        num_iter: slong,
+        reltol: f64,
+    ) -> f64;
+    pub fn _acb_poly_find_roots_double(
+        roots: acb_ptr,
+        poly: acb_srcptr,
+        initial: acb_srcptr,
+        len: slong,
+        maxiter: slong,
+        prec: slong,
+    ) -> f64;
 }

@@ -1,10 +1,38 @@
 #!/bin/sh
 set -euo pipefail
 # Invoke from flint-sys as flint-bindgen/scripts/gen_bindings.sh
+#
+# Override the bundled FLINT source version with either:
+#   flint-bindgen/scripts/gen_bindings.sh 3.5.0
+#   FLINT_VERSION=3.5.0 flint-bindgen/scripts/gen_bindings.sh
+FLINT_VERSION=${FLINT_VERSION:-3.5.0}
+
+if [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
+    echo "Usage: $0 [FLINT_VERSION]"
+    echo
+    echo "Defaults to FLINT_VERSION=${FLINT_VERSION}."
+    exit 0
+fi
+
+if [ "$#" -gt 1 ]; then
+    echo "Usage: $0 [FLINT_VERSION]" >&2
+    exit 2
+fi
+
+if [ "$#" -eq 1 ]; then
+    FLINT_VERSION=$1
+fi
+
+FLINT_SRC_DIR="flint-${FLINT_VERSION}"
 
 logdir=$(realpath flint-bindgen/scripts/logs)
 mkdir -p ${logdir}
 # rm ${logdir}/*
+
+if [ ! -x "${FLINT_SRC_DIR}/configure" ]; then
+    echo "Expected ${FLINT_SRC_DIR}/configure to exist and be executable." >&2
+    exit 1
+fi
 
 echo "Removing old build artifacts..."
 cargo clean
@@ -16,7 +44,7 @@ popd
 echo "Starting flint-sys build to get gmp and mpfr..."
 cargo b >${logdir}/00-gmp_mpfr.log 2>&1 || true
 gmp_mpfr_dir=$(realpath $(find target/debug/build -type d -name "gmp-mpfr-sys-*" -execdir test -d "{}/out" \; -print))
-echo "Building FLINT..."
+echo "Building FLINT ${FLINT_VERSION}..."
 rm -rf flint-bindgen/flint-build
 rm -rf flint-bindgen/flint-out
 mkdir -p flint-bindgen/flint-build
@@ -24,7 +52,7 @@ mkdir -p flint-bindgen/flint-out
 pushd flint-bindgen/flint-build
 
 echo "  Running configure..."
-../../flint-3.4.0/configure --disable-shared \
+"../../${FLINT_SRC_DIR}/configure" --disable-shared \
     --with-mpfr=${gmp_mpfr_dir}/out \
     --with-gmp=${gmp_mpfr_dir}/out \
     CFLAGS="-fPIC" \

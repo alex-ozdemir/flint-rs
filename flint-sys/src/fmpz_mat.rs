@@ -562,6 +562,15 @@ extern "C" {
         mod_: *const fmpz,
     );
     pub fn fmpz_mat_is_in_snf(A: *const fmpz_mat_struct) -> libc::c_int;
+    pub fn fmpz_mat_is_diagonal(A: *const fmpz_mat_struct) -> libc::c_int;
+    pub fn _fmpz_mat_snf_iter_bound(A: *const fmpz_mat_struct) -> slong;
+    pub fn fmpz_mat_snf_transform(
+        S: *mut fmpz_mat_struct,
+        U: *mut fmpz_mat_struct,
+        V: *mut fmpz_mat_struct,
+        A: *const fmpz_mat_struct,
+    );
+    pub fn fmpz_mat_elementary_divisors(ed: *mut fmpz, A: *const fmpz_mat_struct) -> slong;
     pub fn fmpz_mat_is_hadamard(A: *const fmpz_mat_struct) -> libc::c_int;
     pub fn fmpz_mat_hadamard(A: *mut fmpz_mat_struct) -> libc::c_int;
     pub fn fmpz_mat_gram(B: *mut fmpz_mat_struct, A: *const fmpz_mat_struct);

@@ -87,13 +87,13 @@ extern "C" {
     pub fn arb_unit_interval(x: *mut arb_struct);
     pub fn arb_indeterminate(x: *mut arb_struct);
     pub fn arb_is_finite(x: *const arb_struct) -> libc::c_int;
-    pub fn arb_set(x: *mut arb_struct, y: *const arb_struct);
+    pub fn arb_set(y: *mut arb_struct, x: *const arb_struct);
     #[link_name = "arb_swap__extern"]
     pub fn arb_swap(x: *mut arb_struct, y: *mut arb_struct);
     pub fn arb_set_round(z: *mut arb_struct, x: *const arb_struct, prec: slong);
     pub fn arb_trim(y: *mut arb_struct, x: *const arb_struct);
     pub fn arb_neg(y: *mut arb_struct, x: *const arb_struct);
-    pub fn arb_neg_round(x: *mut arb_struct, y: *const arb_struct, prec: slong);
+    pub fn arb_neg_round(y: *mut arb_struct, x: *const arb_struct, prec: slong);
     pub fn arb_abs(y: *mut arb_struct, x: *const arb_struct);
     pub fn arb_nonnegative_abs(y: *mut arb_struct, x: *const arb_struct);
     pub fn arb_sgn(res: *mut arb_struct, x: *const arb_struct);
@@ -109,10 +109,10 @@ extern "C" {
     pub fn arb_get_str(x: *const arb_struct, n: slong, flags: ulong) -> *mut libc::c_char;
     #[link_name = "arb_set_arf__extern"]
     pub fn arb_set_arf(x: *mut arb_struct, y: *const arf_struct);
-    pub fn arb_set_si(x: *mut arb_struct, y: slong);
-    pub fn arb_set_ui(x: *mut arb_struct, y: ulong);
-    pub fn arb_set_d(x: *mut arb_struct, y: f64);
-    pub fn arb_set_fmpz(x: *mut arb_struct, y: *const fmpz);
+    pub fn arb_set_si(y: *mut arb_struct, x: slong);
+    pub fn arb_set_ui(y: *mut arb_struct, x: ulong);
+    pub fn arb_set_d(y: *mut arb_struct, x: f64);
+    pub fn arb_set_fmpz(y: *mut arb_struct, x: *const fmpz);
     #[link_name = "arb_set_fmpz_2exp__extern"]
     pub fn arb_set_fmpz_2exp(x: *mut arb_struct, y: *const fmpz, exp: *const fmpz);
     pub fn arb_set_round_fmpz_2exp(

@@ -11,7 +11,7 @@ extern "C" {
     pub fn ca_vec_entry_ptr(vec: *mut ca_vec_struct, i: slong) -> ca_ptr;
     pub fn _ca_vec_init(len: slong, ctx: *mut ca_ctx_struct) -> ca_ptr;
     pub fn ca_vec_init(vec: *mut ca_vec_struct, len: slong, ctx: *mut ca_ctx_struct);
-    pub fn _ca_vec_clear(v: ca_ptr, len: slong, ctx: *mut ca_ctx_struct);
+    pub fn _ca_vec_clear(vec: ca_ptr, len: slong, ctx: *mut ca_ctx_struct);
     pub fn ca_vec_clear(vec: *mut ca_vec_struct, ctx: *mut ca_ctx_struct);
     pub fn _ca_vec_swap(vec1: ca_ptr, vec2: ca_ptr, len: slong, ctx: *mut ca_ctx_struct);
     #[link_name = "ca_vec_swap__extern"]
@@ -19,7 +19,7 @@ extern "C" {
     #[link_name = "ca_vec_length__extern"]
     pub fn ca_vec_length(vec: *const ca_vec_struct, ctx: *mut ca_ctx_struct) -> slong;
     pub fn _ca_vec_fit_length(vec: *mut ca_vec_struct, len: slong, ctx: *mut ca_ctx_struct);
-    pub fn ca_vec_set_length(res: *mut ca_vec_struct, len: slong, ctx: *mut ca_ctx_struct);
+    pub fn ca_vec_set_length(vec: *mut ca_vec_struct, len: slong, ctx: *mut ca_ctx_struct);
     pub fn _ca_vec_set(res: ca_ptr, src: ca_srcptr, len: slong, ctx: *mut ca_ctx_struct);
     pub fn ca_vec_set(res: *mut ca_vec_struct, src: *const ca_vec_struct, ctx: *mut ca_ctx_struct);
     pub fn _ca_vec_zero(res: ca_ptr, len: slong, ctx: *mut ca_ctx_struct);
@@ -64,14 +64,14 @@ extern "C" {
     );
     pub fn _ca_vec_scalar_addmul_ca(
         res: ca_ptr,
-        vec: ca_srcptr,
+        src: ca_srcptr,
         len: slong,
         c: *const ca_struct,
         ctx: *mut ca_ctx_struct,
     );
     pub fn _ca_vec_scalar_submul_ca(
         res: ca_ptr,
-        vec: ca_srcptr,
+        src: ca_srcptr,
         len: slong,
         c: *const ca_struct,
         ctx: *mut ca_ctx_struct,

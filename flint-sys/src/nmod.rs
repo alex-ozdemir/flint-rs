@@ -2,8 +2,88 @@
 
 use crate::deps::*;
 use crate::flint::*;
+use crate::gr_types::*;
 
 
+pub type ull_t = __uint128_t;
+#[repr(C)]
+pub struct nmod_redc_ctx_struct {
+    pub mod_: nmod_t,
+    pub nred: ulong,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of nmod_redc_ctx_struct"][::std::mem::size_of::<nmod_redc_ctx_struct>() - 32usize];
+    ["Alignment of nmod_redc_ctx_struct"][::std::mem::align_of::<nmod_redc_ctx_struct>() - 8usize];
+    ["Offset of field: nmod_redc_ctx_struct::mod_"]
+        [::std::mem::offset_of!(nmod_redc_ctx_struct, mod_) - 0usize];
+    ["Offset of field: nmod_redc_ctx_struct::nred"]
+        [::std::mem::offset_of!(nmod_redc_ctx_struct, nred) - 24usize];
+};
+impl Default for nmod_redc_ctx_struct {
+    fn default() -> Self {
+        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+pub type nmod_redc_ctx_t = [nmod_redc_ctx_struct; 1usize];
+#[repr(C)]
+pub struct _gr_nmod_ctx_struct {
+    pub nmod: nmod_t,
+    pub a: ulong,
+    pub is_prime: truth_t,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _gr_nmod_ctx_struct"][::std::mem::size_of::<_gr_nmod_ctx_struct>() - 40usize];
+    ["Alignment of _gr_nmod_ctx_struct"][::std::mem::align_of::<_gr_nmod_ctx_struct>() - 8usize];
+    ["Offset of field: _gr_nmod_ctx_struct::nmod"]
+        [::std::mem::offset_of!(_gr_nmod_ctx_struct, nmod) - 0usize];
+    ["Offset of field: _gr_nmod_ctx_struct::a"]
+        [::std::mem::offset_of!(_gr_nmod_ctx_struct, a) - 24usize];
+    ["Offset of field: _gr_nmod_ctx_struct::is_prime"]
+        [::std::mem::offset_of!(_gr_nmod_ctx_struct, is_prime) - 32usize];
+};
+impl Default for _gr_nmod_ctx_struct {
+    fn default() -> Self {
+        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
+#[repr(C)]
+pub struct _gr_nmod_redc_ctx_struct {
+    pub ctx: nmod_redc_ctx_struct,
+    pub one: ulong,
+    pub is_prime: truth_t,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of _gr_nmod_redc_ctx_struct"]
+        [::std::mem::size_of::<_gr_nmod_redc_ctx_struct>() - 48usize];
+    ["Alignment of _gr_nmod_redc_ctx_struct"]
+        [::std::mem::align_of::<_gr_nmod_redc_ctx_struct>() - 8usize];
+    ["Offset of field: _gr_nmod_redc_ctx_struct::ctx"]
+        [::std::mem::offset_of!(_gr_nmod_redc_ctx_struct, ctx) - 0usize];
+    ["Offset of field: _gr_nmod_redc_ctx_struct::one"]
+        [::std::mem::offset_of!(_gr_nmod_redc_ctx_struct, one) - 32usize];
+    ["Offset of field: _gr_nmod_redc_ctx_struct::is_prime"]
+        [::std::mem::offset_of!(_gr_nmod_redc_ctx_struct, is_prime) - 40usize];
+};
+impl Default for _gr_nmod_redc_ctx_struct {
+    fn default() -> Self {
+        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
+        unsafe {
+            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
+            s.assume_init()
+        }
+    }
+}
 #[repr(C)]
 pub struct nmod_discrete_log_pohlig_hellman_table_entry_struct {
     pub gammapow: ulong,
@@ -122,6 +202,7 @@ impl Default for nmod_discrete_log_pohlig_hellman_struct {
     }
 }
 pub type nmod_discrete_log_pohlig_hellman_t = [nmod_discrete_log_pohlig_hellman_struct; 1usize];
+pub type __uint128_t = u128;
 extern "C" {
     #[link_name = "nmod_set_ui__extern"]
     pub fn nmod_set_ui(x: ulong, mod_: nmod_t) -> ulong;
@@ -133,16 +214,20 @@ extern "C" {
     pub fn _nmod_sub(a: ulong, b: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_add__extern"]
     pub fn nmod_add(a: ulong, b: ulong, mod_: nmod_t) -> ulong;
+    #[link_name = "nmod_ui_add_ui__extern"]
+    pub fn nmod_ui_add_ui(a: ulong, b: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_sub__extern"]
     pub fn nmod_sub(a: ulong, b: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_neg__extern"]
     pub fn nmod_neg(a: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_mul__extern"]
     pub fn nmod_mul(a: ulong, b: ulong, mod_: nmod_t) -> ulong;
+    #[link_name = "nmod_ui_mul_ui__extern"]
+    pub fn nmod_ui_mul_ui(a: ulong, b: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "_nmod_mul_fullword__extern"]
     pub fn _nmod_mul_fullword(a: ulong, b: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_addmul__extern"]
-    pub fn nmod_addmul(a: ulong, b: ulong, c: ulong, mod_: nmod_t) -> ulong;
+    pub fn nmod_addmul(s: ulong, a: ulong, b: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_fmma__extern"]
     pub fn nmod_fmma(a: ulong, b: ulong, c: ulong, d: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_inv__extern"]
@@ -150,12 +235,115 @@ extern "C" {
     #[link_name = "nmod_div__extern"]
     pub fn nmod_div(a: ulong, b: ulong, mod_: nmod_t) -> ulong;
     pub fn nmod_divides(a: *mut ulong, b: ulong, c: ulong, mod_: nmod_t) -> libc::c_int;
-    #[link_name = "nmod_pow_ui__extern"]
+    pub fn _nmod_pow_ui_redc(a: ulong, exp: ulong, mod_: nmod_t) -> ulong;
+    pub fn _nmod_pow_ui_binexp(a: ulong, exp: ulong, mod_: nmod_t) -> ulong;
     pub fn nmod_pow_ui(a: ulong, exp: ulong, mod_: nmod_t) -> ulong;
+    #[link_name = "nmod_ui_pow_ui__extern"]
+    pub fn nmod_ui_pow_ui(a: ulong, exp: ulong, mod_: nmod_t) -> ulong;
+    pub fn _nmod_2_pow_ui_binexp(exp: ulong, mod_: nmod_t) -> ulong;
+    pub fn nmod_2_pow_ui(exp: ulong, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_pow_fmpz__extern"]
     pub fn nmod_pow_fmpz(a: ulong, exp: *const fmpz, mod_: nmod_t) -> ulong;
     #[link_name = "nmod_init__extern"]
     pub fn nmod_init(mod_: *mut nmod_t, n: ulong);
+    #[link_name = "ull_hi__extern"]
+    pub fn ull_hi(x: ull_t) -> ulong;
+    #[link_name = "ull_lo__extern"]
+    pub fn ull_lo(x: ull_t) -> ulong;
+    #[link_name = "ull_add__extern"]
+    pub fn ull_add(x: ull_t, y: ull_t) -> ull_t;
+    #[link_name = "ull_add_u__extern"]
+    pub fn ull_add_u(x: ull_t, y: ulong) -> ull_t;
+    #[link_name = "ull_u_mul_u__extern"]
+    pub fn ull_u_mul_u(x: ulong, y: ulong) -> ull_t;
+    #[link_name = "ull__extern"]
+    pub fn ull(hi: ulong, lo: ulong) -> ull_t;
+    #[link_name = "n_to_redc_preinv__extern"]
+    pub fn n_to_redc_preinv(a: ulong, n: ulong, ninv: ulong, norm: ulong) -> ulong;
+    #[link_name = "n_redc_fast__extern"]
+    pub fn n_redc_fast(x: ulong, n: ulong, nred: ulong) -> ulong;
+    #[link_name = "n_ll_redc_fast__extern"]
+    pub fn n_ll_redc_fast(x: ull_t, n: ulong, nred: ulong) -> ulong;
+    #[link_name = "n_redc__extern"]
+    pub fn n_redc(x: ulong, n: ulong, nred: ulong) -> ulong;
+    #[link_name = "n_ll_redc__extern"]
+    pub fn n_ll_redc(x: ull_t, n: ulong, nred: ulong) -> ulong;
+    #[link_name = "n_mulmod_redc__extern"]
+    pub fn n_mulmod_redc(a: ulong, b: ulong, n: ulong, nred: ulong) -> ulong;
+    #[link_name = "n_mulmod_redc_fast__extern"]
+    pub fn n_mulmod_redc_fast(a: ulong, b: ulong, n: ulong, nred: ulong) -> ulong;
+    #[link_name = "nmod_redc_ctx_init_nmod__extern"]
+    pub fn nmod_redc_ctx_init_nmod(ctx: *mut nmod_redc_ctx_struct, mod_: nmod_t);
+    #[link_name = "nmod_redc_ctx_init_ui__extern"]
+    pub fn nmod_redc_ctx_init_ui(ctx: *mut nmod_redc_ctx_struct, n: ulong);
+    #[link_name = "nmod_redc_set_nmod__extern"]
+    pub fn nmod_redc_set_nmod(x: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_set_ui__extern"]
+    pub fn nmod_redc_set_ui(x: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_get_nmod__extern"]
+    pub fn nmod_redc_get_nmod(x: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_neg__extern"]
+    pub fn nmod_redc_neg(x: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_add__extern"]
+    pub fn nmod_redc_add(x: ulong, y: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_sub__extern"]
+    pub fn nmod_redc_sub(x: ulong, y: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_mul__extern"]
+    pub fn nmod_redc_mul(x: ulong, y: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_can_use_fast__extern"]
+    pub fn nmod_redc_can_use_fast(ctx: *const nmod_redc_ctx_struct) -> libc::c_int;
+    #[link_name = "nmod_redc_fast_mul__extern"]
+    pub fn nmod_redc_fast_mul(x: ulong, y: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_fast_neg__extern"]
+    pub fn nmod_redc_fast_neg(x: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_fast_add__extern"]
+    pub fn nmod_redc_fast_add(x: ulong, y: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_fast_sub__extern"]
+    pub fn nmod_redc_fast_sub(x: ulong, y: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_fast_normalise__extern"]
+    pub fn nmod_redc_fast_normalise(x: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_fast_mul_two__extern"]
+    pub fn nmod_redc_fast_mul_two(x: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    pub fn _nmod_redc_pow_ui(a: ulong, exp: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    pub fn _nmod_redc_fast_pow_ui(a: ulong, exp: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    pub fn _nmod_redc_2_pow_ui(exp: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    pub fn _nmod_redc_fast_2_pow_ui(exp: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "n_to_redc_half_preinv__extern"]
+    pub fn n_to_redc_half_preinv(a: ulong, n: ulong, ninv: ulong, UNUSED_norm: ulong) -> ulong;
+    #[link_name = "n_redc_half_fast__extern"]
+    pub fn n_redc_half_fast(x: ulong, n: ulong, nred: ulong) -> ulong;
+    #[link_name = "n_redc_half__extern"]
+    pub fn n_redc_half(x: ulong, n: ulong, nred: ulong) -> ulong;
+    #[link_name = "n_mulmod_redc_half__extern"]
+    pub fn n_mulmod_redc_half(a: ulong, b: ulong, n: ulong, nred: ulong) -> ulong;
+    #[link_name = "n_mulmod_redc_half_fast__extern"]
+    pub fn n_mulmod_redc_half_fast(a: ulong, b: ulong, n: ulong, nred: ulong) -> ulong;
+    #[link_name = "nmod_redc_half_ctx_init_nmod__extern"]
+    pub fn nmod_redc_half_ctx_init_nmod(ctx: *mut nmod_redc_ctx_struct, mod_: nmod_t);
+    #[link_name = "nmod_redc_half_ctx_init_ui__extern"]
+    pub fn nmod_redc_half_ctx_init_ui(ctx: *mut nmod_redc_ctx_struct, n: ulong);
+    #[link_name = "nmod_redc_half_set_nmod__extern"]
+    pub fn nmod_redc_half_set_nmod(x: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_half_set_ui__extern"]
+    pub fn nmod_redc_half_set_ui(x: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_half_get_nmod__extern"]
+    pub fn nmod_redc_half_get_nmod(x: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_half_add__extern"]
+    pub fn nmod_redc_half_add(x: ulong, y: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_half_sub__extern"]
+    pub fn nmod_redc_half_sub(x: ulong, y: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_half_mul__extern"]
+    pub fn nmod_redc_half_mul(x: ulong, y: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_half_can_use_fast__extern"]
+    pub fn nmod_redc_half_can_use_fast(ctx: *const nmod_redc_ctx_struct) -> libc::c_int;
+    #[link_name = "nmod_redc_half_fast_mul__extern"]
+    pub fn nmod_redc_half_fast_mul(x: ulong, y: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_half_fast_add__extern"]
+    pub fn nmod_redc_half_fast_add(x: ulong, y: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    #[link_name = "nmod_redc_half_fast_sub__extern"]
+    pub fn nmod_redc_half_fast_sub(x: ulong, y: ulong, ctx: *const nmod_redc_ctx_struct) -> ulong;
+    pub fn gr_ctx_init_nmod_redc(ctx: *mut gr_ctx_struct, n: ulong) -> libc::c_int;
+    pub fn gr_ctx_init_nmod_redc_fast(ctx: *mut gr_ctx_struct, n: ulong) -> libc::c_int;
     pub fn nmod_discrete_log_pohlig_hellman_init(L: *mut nmod_discrete_log_pohlig_hellman_struct);
     pub fn nmod_discrete_log_pohlig_hellman_clear(L: *mut nmod_discrete_log_pohlig_hellman_struct);
     pub fn nmod_discrete_log_pohlig_hellman_precompute_prime(

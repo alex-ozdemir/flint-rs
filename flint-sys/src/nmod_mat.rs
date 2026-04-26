@@ -61,11 +61,7 @@ extern "C" {
         diag: nn_srcptr,
         n: slong,
     ) -> libc::c_int;
-    pub fn nmod_mat_randrank(
-        arg1: *mut nmod_mat_struct,
-        state: *mut flint_rand_struct,
-        rank: slong,
-    );
+    pub fn nmod_mat_randrank(mat: *mut nmod_mat_struct, state: *mut flint_rand_struct, rank: slong);
     pub fn nmod_mat_randops(mat: *mut nmod_mat_struct, state: *mut flint_rand_struct, count: slong);
     pub fn nmod_mat_randtril(
         mat: *mut nmod_mat_struct,
@@ -333,6 +329,7 @@ extern "C" {
         m: slong,
     ) -> slong;
     pub fn nmod_mat_nullspace(X: *mut nmod_mat_struct, A: *const nmod_mat_struct) -> slong;
+    pub fn nmod_mat_left_nullspace(X: *mut nmod_mat_struct, A: *const nmod_mat_struct) -> slong;
     pub fn nmod_mat_strong_echelon_form(A: *mut nmod_mat_struct);
     pub fn nmod_mat_howell_form(A: *mut nmod_mat_struct) -> slong;
     pub fn nmod_mat_similarity(M: *mut nmod_mat_struct, r: slong, d: ulong);

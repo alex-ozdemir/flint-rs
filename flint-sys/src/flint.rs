@@ -7,11 +7,11 @@ use crate::deps::*;
 pub const FLINT_HAVE_VA_LIST: u32 = 1;
 pub const FLINT_HAVE_FILE: u32 = 1;
 pub const __FLINT_VERSION: u32 = 3;
-pub const __FLINT_VERSION_MINOR: u32 = 4;
+pub const __FLINT_VERSION_MINOR: u32 = 5;
 pub const __FLINT_VERSION_PATCHLEVEL: u32 = 0;
 #[allow(unsafe_code)]
 pub const FLINT_VERSION: &::std::ffi::CStr =
-    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"3.4.0\0") };
+    unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"3.5.0\0") };
 #[allow(unsafe_code)]
 pub const _WORD_FMT: &::std::ffi::CStr =
     unsafe { ::std::ffi::CStr::from_bytes_with_nul_unchecked(b"l\0") };
@@ -200,21 +200,19 @@ extern "C" {
     pub fn flint_rand_set_seed(state: *mut flint_rand_struct, seed1: ulong, seed2: ulong);
     #[link_name = "flint_rand_get_seed__extern"]
     pub fn flint_rand_get_seed(seed1: *mut ulong, seed2: *mut ulong, state: *mut flint_rand_struct);
-    pub fn _flint_rand_init_gmp_state(arg1: *mut flint_rand_struct);
-    pub fn _flint_rand_clear_gmp_state(arg1: *mut flint_rand_struct);
     #[link_name = "flint_rand_clear__extern"]
-    pub fn flint_rand_clear(state: *mut flint_rand_struct);
+    pub fn flint_rand_clear(UNUSED_state: *mut flint_rand_struct);
+    pub fn _flint_rand_init_gmp_state(state: *mut flint_rand_struct);
+    pub fn _flint_rand_clear_gmp_state(state: *mut flint_rand_struct);
     pub fn flint_randinit(arg1: *mut flint_rand_struct);
     pub fn flint_randclear(arg1: *mut flint_rand_struct);
     pub fn flint_randseed(arg1: *mut flint_rand_struct, arg2: ulong, arg3: ulong);
     pub fn flint_get_randseed(arg1: *mut ulong, arg2: *mut ulong, arg3: *mut flint_rand_struct);
-    pub fn _flint_rand_init_gmp(arg1: *mut flint_rand_struct);
     pub fn flint_rand_alloc() -> *mut flint_rand_struct;
     pub fn flint_rand_free(state: *mut flint_rand_struct);
     pub fn n_randlimb(arg1: *mut flint_rand_struct) -> ulong;
     pub fn n_randtest(arg1: *mut flint_rand_struct) -> ulong;
     pub fn n_randtest_not_zero(arg1: *mut flint_rand_struct) -> ulong;
-    #[link_name = "n_randint__extern"]
     pub fn n_randint(state: *mut flint_rand_struct, limit: ulong) -> ulong;
     pub fn flint_merge_sort(
         buf: *mut libc::c_void,
@@ -245,6 +243,12 @@ extern "C" {
     pub fn parse_fmt(floating: *mut libc::c_int, fmt: *const libc::c_char) -> libc::c_int;
     pub fn flint_printf(str_: *const libc::c_char, ...) -> libc::c_int;
     pub fn flint_sprintf(s: *mut libc::c_char, str_: *const libc::c_char, ...) -> libc::c_int;
+    pub fn flint_snprintf(
+        s: *mut libc::c_char,
+        n: usize,
+        str_: *const libc::c_char,
+        ...
+    ) -> libc::c_int;
     pub fn flint_scanf(str_: *const libc::c_char, ...) -> libc::c_int;
     pub fn flint_sscanf(s: *const libc::c_char, str_: *const libc::c_char, ...) -> libc::c_int;
     pub fn flint_fprintf(f: *mut FILE, str_: *const libc::c_char, ...) -> libc::c_int;

@@ -305,15 +305,6 @@ extern "C" {
         poly2: *const gr_poly_struct,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
-    pub fn _gr_poly_mullow_generic(
-        res: gr_ptr,
-        poly1: gr_srcptr,
-        len1: slong,
-        poly2: gr_srcptr,
-        len2: slong,
-        n: slong,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
     #[link_name = "_gr_poly_mullow__extern"]
     pub fn _gr_poly_mullow(
         res: gr_ptr,
@@ -324,14 +315,7 @@ extern "C" {
         len: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
-    pub fn gr_poly_mullow(
-        res: *mut gr_poly_struct,
-        poly1: *const gr_poly_struct,
-        poly2: *const gr_poly_struct,
-        n: slong,
-        ctx: *mut gr_ctx_struct,
-    ) -> libc::c_int;
-    pub fn _gr_poly_mullow_classical(
+    pub fn _gr_poly_mullow_generic(
         res: gr_ptr,
         poly1: gr_srcptr,
         len1: slong,
@@ -340,12 +324,34 @@ extern "C" {
         n: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
-    pub fn gr_poly_mullow_classical(
+    pub fn gr_poly_mullow(
         res: *mut gr_poly_struct,
         poly1: *const gr_poly_struct,
         poly2: *const gr_poly_struct,
         n: slong,
         ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_mulmid_complex_reorder(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        len2: slong,
+        nlo: slong,
+        nhi: slong,
+        karatsuba: libc::c_int,
+        ctx: *mut gr_ctx_struct,
+        real_ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_mulmid_complex_reorder(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        nlo: slong,
+        nhi: slong,
+        karatsuba: libc::c_int,
+        ctx: *mut gr_ctx_struct,
+        real_ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn _gr_poly_mullow_complex_reorder(
         res: gr_ptr,
@@ -377,6 +383,108 @@ extern "C" {
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_poly_mullow_bivariate_KS(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        n: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_mullow_toom_serial(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        len2: slong,
+        trunc: slong,
+        num_points: slong,
+        splitting_degree: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_mullow_toom_serial(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        n: slong,
+        num_points: slong,
+        splitting_degree: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    #[link_name = "_gr_poly_mulmid__extern"]
+    pub fn _gr_poly_mulmid(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        len2: slong,
+        nlo: slong,
+        nhi: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_mulmid_generic(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        len2: slong,
+        nlo: slong,
+        nhi: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_mulmid(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        nlo: slong,
+        nhi: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_mulmid_classical(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        len2: slong,
+        nlo: slong,
+        nhi: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_mulmid_classical(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        nlo: slong,
+        nhi: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _gr_poly_mulmid_bivariate_KS(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        len2: slong,
+        nlo: slong,
+        nhi: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_mulmid_bivariate_KS(
+        res: *mut gr_poly_struct,
+        poly1: *const gr_poly_struct,
+        poly2: *const gr_poly_struct,
+        nlo: slong,
+        nhi: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    #[link_name = "_gr_poly_mullow_classical__extern"]
+    pub fn _gr_poly_mullow_classical(
+        res: gr_ptr,
+        poly1: gr_srcptr,
+        len1: slong,
+        poly2: gr_srcptr,
+        len2: slong,
+        n: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_poly_mullow_classical(
         res: *mut gr_poly_struct,
         poly1: *const gr_poly_struct,
         poly2: *const gr_poly_struct,
@@ -970,10 +1078,10 @@ extern "C" {
     ) -> libc::c_int;
     pub fn _gr_poly_div_series_newton(
         res: gr_ptr,
-        B: gr_srcptr,
-        Blen: slong,
         A: gr_srcptr,
         Alen: slong,
+        B: gr_srcptr,
+        Blen: slong,
         len: slong,
         cutoff: slong,
         ctx: *mut gr_ctx_struct,
@@ -988,10 +1096,10 @@ extern "C" {
     ) -> libc::c_int;
     pub fn _gr_poly_div_series_divconquer(
         res: gr_ptr,
-        B: gr_srcptr,
-        Blen: slong,
         A: gr_srcptr,
         Alen: slong,
+        B: gr_srcptr,
+        Blen: slong,
         len: slong,
         cutoff: slong,
         ctx: *mut gr_ctx_struct,
@@ -2809,6 +2917,23 @@ extern "C" {
     pub fn _gr_poly_test_mullow(
         mullow_impl: gr_method_poly_binary_trunc_op,
         mullow_ref: gr_method_poly_binary_trunc_op,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
+    pub fn _gr_poly_test_mulmid(
+        mulmid_impl: gr_method_poly_binary_trunc2_op,
+        mulmid_ref: gr_method_poly_binary_trunc2_op,
+        state: *mut flint_rand_struct,
+        iters: slong,
+        maxn: slong,
+        ctx: *mut gr_ctx_struct,
+    );
+    pub fn _gr_poly_test_approx_mulmid_pos_entrywise_accurate(
+        mulmid_impl: gr_method_poly_binary_trunc2_op,
+        mulmid_ref: gr_method_poly_binary_trunc2_op,
+        rel_tol: gr_srcptr,
         state: *mut flint_rand_struct,
         iters: slong,
         maxn: slong,

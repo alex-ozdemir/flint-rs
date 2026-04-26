@@ -45,11 +45,11 @@ extern "C" {
         prec: slong,
     ) -> libc::c_int;
     pub fn arb_calc_isolate_roots(
-        blocks: *mut arf_interval_ptr,
+        found: *mut arf_interval_ptr,
         flags: *mut *mut libc::c_int,
         func: arb_calc_func_t,
         param: *mut libc::c_void,
-        block: *const arf_interval_struct,
+        interval: *const arf_interval_struct,
         maxdepth: slong,
         maxeval: slong,
         maxfound: slong,

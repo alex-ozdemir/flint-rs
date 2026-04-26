@@ -3,7 +3,9 @@
 use libc::*;
 use crate::deps::*;
 use crate::flint::*;
+use crate::fmpz_mod_types::*;
 use crate::fmpz_types::*;
+use crate::nmod_types::*;
 use crate::padic_types::*;
 
 
@@ -40,6 +42,11 @@ impl Default for qadic_ctx_struct {
     }
 }
 pub type qadic_ctx_t = [qadic_ctx_struct; 1usize];
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct qadic2_sqrt_precomp {
+    _unused: [u8; 0],
+}
 extern "C" {
     #[link_name = "qadic_val__extern"]
     pub fn qadic_val(op: *const padic_poly_struct) -> slong;
@@ -58,6 +65,24 @@ extern "C" {
         ctx: *mut qadic_ctx_struct,
         p: *const fmpz,
         d: slong,
+        min: slong,
+        max: slong,
+        var: *const libc::c_char,
+        mode: padic_print_mode,
+    );
+    pub fn qadic_ctx_init_modulus(
+        ctx: *mut qadic_ctx_struct,
+        p: *const fmpz,
+        modulus: *const fmpz_mod_poly_struct,
+        min: slong,
+        max: slong,
+        var: *const libc::c_char,
+        mode: padic_print_mode,
+    );
+    pub fn qadic_ctx_init_modulus_nmod(
+        ctx: *mut qadic_ctx_struct,
+        p: ulong,
+        modulus: *const nmod_poly_struct,
         min: slong,
         max: slong,
         var: *const libc::c_char,
@@ -423,6 +448,15 @@ extern "C" {
         op: *const padic_poly_struct,
         ctx: *const qadic_ctx_struct,
     ) -> libc::c_int;
+    pub fn _qadic_char2_sqrt_precomp_init(ctx: *const qadic_ctx_struct)
+        -> *mut qadic2_sqrt_precomp;
+    pub fn _qadic_char2_sqrt_with_precomp(
+        rop: *mut padic_poly_struct,
+        op: *const padic_poly_struct,
+        ctx: *const qadic_ctx_struct,
+        data: *const qadic2_sqrt_precomp,
+    ) -> libc::c_int;
+    pub fn _qadic_char2_sqrt_precomp_clear(data: *mut qadic2_sqrt_precomp);
     pub fn qadic_fprint_pretty(
         file: *mut FILE,
         op: *const padic_poly_struct,

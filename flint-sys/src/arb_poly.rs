@@ -222,6 +222,60 @@ extern "C" {
         len: slong,
         prec: slong,
     );
+    pub fn _arb_poly_mulmid_block(
+        z: arb_ptr,
+        x: arb_srcptr,
+        xlen: slong,
+        y: arb_srcptr,
+        ylen: slong,
+        nlo: slong,
+        nhi: slong,
+        prec: slong,
+    );
+    pub fn arb_poly_mulmid_block(
+        res: *mut arb_poly_struct,
+        poly1: *const arb_poly_struct,
+        poly2: *const arb_poly_struct,
+        nlo: slong,
+        nhi: slong,
+        prec: slong,
+    );
+    pub fn _arb_poly_mulmid_classical(
+        z: arb_ptr,
+        x: arb_srcptr,
+        xlen: slong,
+        y: arb_srcptr,
+        ylen: slong,
+        nlo: slong,
+        nhi: slong,
+        prec: slong,
+    );
+    pub fn arb_poly_mulmid_classical(
+        res: *mut arb_poly_struct,
+        poly1: *const arb_poly_struct,
+        poly2: *const arb_poly_struct,
+        nlo: slong,
+        nhi: slong,
+        prec: slong,
+    );
+    pub fn _arb_poly_mulmid(
+        z: arb_ptr,
+        x: arb_srcptr,
+        xlen: slong,
+        y: arb_srcptr,
+        ylen: slong,
+        nlo: slong,
+        nhi: slong,
+        prec: slong,
+    );
+    pub fn arb_poly_mulmid(
+        res: *mut arb_poly_struct,
+        poly1: *const arb_poly_struct,
+        poly2: *const arb_poly_struct,
+        nlo: slong,
+        nhi: slong,
+        prec: slong,
+    );
     pub fn _arb_poly_mul(
         C: arb_ptr,
         A: arb_srcptr,
