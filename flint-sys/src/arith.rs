@@ -56,24 +56,6 @@ extern "C" {
     pub fn arith_stirling_number_1u_vec(row: *mut fmpz, n: ulong, klen: slong);
     pub fn arith_stirling_number_1_vec(row: *mut fmpz, n: ulong, klen: slong);
     pub fn arith_stirling_number_2_vec(row: *mut fmpz, n: ulong, klen: slong);
-    pub fn arith_stirling_number_1u_vec_next(
-        row: *mut fmpz,
-        prev: *const fmpz,
-        n: slong,
-        klen: slong,
-    );
-    pub fn arith_stirling_number_1_vec_next(
-        row: *mut fmpz,
-        prev: *const fmpz,
-        n: slong,
-        klen: slong,
-    );
-    pub fn arith_stirling_number_2_vec_next(
-        row: *mut fmpz,
-        prev: *const fmpz,
-        n: slong,
-        klen: slong,
-    );
     pub fn arith_stirling_matrix_1u(mat: *mut fmpz_mat_struct);
     pub fn arith_stirling_matrix_1(mat: *mut fmpz_mat_struct);
     pub fn arith_stirling_matrix_2(mat: *mut fmpz_mat_struct);

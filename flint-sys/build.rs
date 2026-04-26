@@ -1,7 +1,6 @@
 // Adapted from https://gitlab.com/tspiteri/gmp-mpfr-sys/-/blob/master/build.rs
 // Also see https://github.com/rust-lang/rust-bindgen/discussions/2405
 
-
 use std::{
     env,
     ffi::{OsStr, OsString},
@@ -12,9 +11,9 @@ use std::{
     str,
 };
 
-const FLINT_DIR: &str = "flint-3.4.0";
+const FLINT_DIR: &str = "flint-3.5.0";
 const FLINT_LIB: &str = "libflint.a";
-const FLINT_VER: &str = "3.4.0";
+const FLINT_VER: &str = "3.5.0";
 
 include!("flint-bindgen/scripts/build_headers.rs");
 
@@ -140,7 +139,12 @@ fn save_cache(env: &Environment) -> bool {
     ok = ok && create_dir(&cache_dir.join("include")).is_ok();
 
     ok = ok && copy_file(&env.lib_dir.join(FLINT_LIB), &cache_dir.join(FLINT_LIB)).is_ok();
-    ok = ok && copy_file(&env.lib_dir.join("libextern.a"), &cache_dir.join("lib").join("libextern.a")).is_ok();
+    ok = ok
+        && copy_file(
+            &env.lib_dir.join("libextern.a"),
+            &cache_dir.join("lib").join("libextern.a"),
+        )
+        .is_ok();
 
     for h in FLINT_HEADERS {
         ok = ok && copy_file(&env.include_dir.join(h), &cache_dir.join("include").join(h)).is_ok();
@@ -155,7 +159,12 @@ fn load_cache(env: &Environment) -> bool {
     };
     let mut ok = true;
     ok = ok && copy_file(&cache_dir.join(FLINT_LIB), &env.lib_dir.join(FLINT_LIB)).is_ok();
-    ok = ok && copy_file(&cache_dir.join("lib").join("libextern.a"), &env.lib_dir.join("libextern.a")).is_ok();
+    ok = ok
+        && copy_file(
+            &cache_dir.join("lib").join("libextern.a"),
+            &env.lib_dir.join("libextern.a"),
+        )
+        .is_ok();
 
     for h in FLINT_HEADERS {
         ok = ok && copy_file(&cache_dir.join("include").join(h), &env.include_dir.join(h)).is_ok();
@@ -206,8 +215,8 @@ fn build_extern(env: &Environment) {
 
     // Compile the generated wrappers into an object file.
     let clang_output = std::process::Command::new("clang")
-        // TODO: -flto=thin causes a lot of problems, needs lld linker isntead of ld for some 
-        // reason and setting this in .cargo/config doesn't seem to be respected by cargo test, so 
+        // TODO: -flto=thin causes a lot of problems, needs lld linker isntead of ld for some
+        // reason and setting this in .cargo/config doesn't seem to be respected by cargo test, so
         // tests break. See https://github.com/rust-lang/rust-bindgen/discussions/2405
         //.arg("-flto=thin")
         .arg("-O")
@@ -220,14 +229,14 @@ fn build_extern(env: &Environment) {
         .arg("-fPIC")
         .output()
         .expect("Could not compile object file.");
-    
+
     if !clang_output.status.success() {
         panic!(
             "Could not compile object file:\n{}",
             String::from_utf8_lossy(&clang_output.stderr)
         );
     }
-    
+
     // Turn the object file into a static library
     #[cfg(not(target_os = "windows"))]
     let lib_output = Command::new("ar")
@@ -239,7 +248,10 @@ fn build_extern(env: &Environment) {
     #[cfg(target_os = "windows")]
     let lib_output = Command::new("LIB")
         .arg(obj_path)
-        .arg(format!("/OUT:{}", env.lib_dir.join("libextern.a").display()))
+        .arg(format!(
+            "/OUT:{}",
+            env.lib_dir.join("libextern.a").display()
+        ))
         .output()
         .expect("Could not build static library extern.");
     if !lib_output.status.success() {
@@ -249,8 +261,6 @@ fn build_extern(env: &Environment) {
         );
     }
 }
-
-
 
 fn write_link_info(env: &Environment) {
     let out_str = env.out_dir.to_str().unwrap_or_else(|| {

@@ -45,6 +45,13 @@ extern "C" {
         c: ulong,
         mod_: nmod_t,
     );
+    pub fn _nmod_vec_scalar_mul_nmod_redc(
+        res: nn_ptr,
+        vec: nn_srcptr,
+        len: slong,
+        c: ulong,
+        mod_: nmod_t,
+    );
     pub fn _nmod_vec_scalar_mul_nmod_generic(
         res: nn_ptr,
         vec: nn_srcptr,
@@ -80,6 +87,21 @@ extern "C" {
         c: ulong,
         mod_: nmod_t,
     );
+    #[link_name = "_nmod_vec_nored_scalar_addmul_halflimb__extern"]
+    pub fn _nmod_vec_nored_scalar_addmul_halflimb(
+        res: nn_ptr,
+        vec: nn_srcptr,
+        len: slong,
+        c: ulong,
+    );
+    pub fn _nmod_vec_nored_ll_scalar_addmul_halflimb(
+        res: nn_ptr,
+        vec: nn_srcptr,
+        len: slong,
+        c: ulong,
+    );
+    pub fn _nmod_vec_nored_ll_scalar_addmul(res: nn_ptr, vec: nn_srcptr, len: slong, c: ulong);
+    pub fn _nmod_vec_nored_lll_scalar_addmul(res: nn_ptr, vec: nn_srcptr, len: slong, c: ulong);
     pub fn _nmod_vec_invert(res: nn_ptr, vec: nn_srcptr, len: ulong, mod_: nmod_t);
     pub fn _nmod_vec_invert_naive(res: nn_ptr, vec: nn_srcptr, len: ulong, mod_: nmod_t);
     pub fn _nmod_vec_invert_generic(res: nn_ptr, vec: nn_srcptr, len: ulong, mod_: nmod_t);

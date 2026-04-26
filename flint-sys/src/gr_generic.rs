@@ -15,6 +15,7 @@ extern "C" {
     pub fn gr_generic_ctx_clear(ctx: *mut gr_ctx_struct);
     pub fn gr_generic_ctx_ngens_0(ngens: *mut slong, ctx: *mut gr_ctx_struct) -> slong;
     pub fn gr_generic_ctx_ngens_1(ngens: *mut slong, ctx: *mut gr_ctx_struct) -> slong;
+    pub fn gr_generic_ctx_base(ctx: *mut gr_ctx_struct) -> gr_ptr;
     pub fn gr_generic_set_shallow(res: gr_ptr, x: gr_srcptr, ctx: *const gr_ctx_struct);
     pub fn gr_generic_write_n(
         out: *mut gr_stream_struct,
@@ -531,32 +532,39 @@ extern "C" {
         c: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
-    pub fn gr_generic_vec_scalar_addmul(
+    pub fn gr_generic_vec_addmul_scalar(
         vec1: gr_ptr,
         vec2: gr_srcptr,
         len: slong,
         c: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
-    pub fn gr_generic_vec_scalar_submul(
+    pub fn gr_generic_vec_submul_scalar(
         vec1: gr_ptr,
         vec2: gr_srcptr,
         len: slong,
         c: gr_srcptr,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
-    pub fn gr_generic_vec_scalar_addmul_si(
+    pub fn gr_generic_vec_addmul_scalar_si(
         vec1: gr_ptr,
         vec2: gr_srcptr,
         len: slong,
         c: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
-    pub fn gr_generic_vec_scalar_submul_si(
+    pub fn gr_generic_vec_submul_scalar_si(
         vec1: gr_ptr,
         vec2: gr_srcptr,
         len: slong,
         c: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn gr_generic_vec_addmul_scalar_fmpz(
+        vec1: gr_ptr,
+        vec2: gr_srcptr,
+        len: slong,
+        c: *const fmpz,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
     pub fn gr_generic_vec_equal(

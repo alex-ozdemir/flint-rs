@@ -392,6 +392,57 @@ extern "C" {
         m: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    pub fn _mpn_mod_poly_mulmid_classical(
+        res: nn_ptr,
+        poly1: nn_srcptr,
+        len1: slong,
+        poly2: nn_srcptr,
+        len2: slong,
+        nlo: slong,
+        nhi: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _mpn_mod_poly_mulmid_karatsuba(
+        res: nn_ptr,
+        poly1: nn_srcptr,
+        len1: slong,
+        poly2: nn_srcptr,
+        len2: slong,
+        nlo: slong,
+        nhi: slong,
+        cutoff: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _mpn_mod_poly_mulmid_KS(
+        res: nn_ptr,
+        poly1: nn_srcptr,
+        len1: slong,
+        poly2: nn_srcptr,
+        len2: slong,
+        nlo: slong,
+        nhi: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _mpn_mod_poly_mulmid_fft_small(
+        res: nn_ptr,
+        poly1: nn_srcptr,
+        len1: slong,
+        poly2: nn_srcptr,
+        len2: slong,
+        nlo: slong,
+        nhi: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
+    pub fn _mpn_mod_poly_mulmid(
+        res: nn_ptr,
+        poly1: nn_srcptr,
+        len1: slong,
+        poly2: nn_srcptr,
+        len2: slong,
+        nlo: slong,
+        nhi: slong,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
     pub fn _mpn_mod_poly_mullow_classical(
         res: nn_ptr,
         poly1: nn_srcptr,

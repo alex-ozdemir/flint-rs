@@ -760,6 +760,14 @@ extern "C" {
         c: slong,
         ctx: *mut gr_ctx_struct,
     ) -> libc::c_int;
+    #[link_name = "_gr_vec_addmul_scalar_fmpz__extern"]
+    pub fn _gr_vec_addmul_scalar_fmpz(
+        vec1: gr_ptr,
+        vec2: gr_srcptr,
+        len: slong,
+        c: *const fmpz,
+        ctx: *mut gr_ctx_struct,
+    ) -> libc::c_int;
     #[link_name = "_gr_vec_equal__extern"]
     pub fn _gr_vec_equal(
         vec1: gr_srcptr,

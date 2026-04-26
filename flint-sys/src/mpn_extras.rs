@@ -143,7 +143,13 @@ extern "C" {
         dinv: mp_srcptr,
         norm: ulong,
     );
-    pub fn _flint_mpn_get_str(x: mp_srcptr, n: mp_size_t) -> *mut libc::c_char;
+    pub fn flint_mpn_get_str(
+        res: *mut libc::c_char,
+        base: libc::c_int,
+        x: mp_srcptr,
+        xn: mp_size_t,
+        negative: libc::c_int,
+    ) -> *mut libc::c_char;
     pub fn flint_mpn_2add_n_inplace(
         arg1: mp_ptr,
         arg2: mp_srcptr,
@@ -195,20 +201,20 @@ extern "C" {
     pub static flint_mpn_mul_n_func_tab: [flint_mpn_mul_func_t; 0usize];
     pub static flint_mpn_sqr_func_tab: [flint_mpn_sqr_func_t; 0usize];
     pub fn flint_mpn_mul_toom22(
-        arg1: mp_ptr,
-        arg2: mp_srcptr,
-        arg3: mp_size_t,
-        arg4: mp_srcptr,
-        arg5: mp_size_t,
-        arg6: mp_ptr,
+        pp: mp_ptr,
+        ap: mp_srcptr,
+        an: mp_size_t,
+        bp: mp_srcptr,
+        bn: mp_size_t,
+        scratch: mp_ptr,
     );
     pub fn flint_mpn_mul_toom32(
-        arg1: mp_ptr,
-        arg2: mp_srcptr,
-        arg3: mp_size_t,
-        arg4: mp_srcptr,
-        arg5: mp_size_t,
-        arg6: mp_ptr,
+        pp: mp_ptr,
+        ap: mp_srcptr,
+        an: mp_size_t,
+        bp: mp_srcptr,
+        bn: mp_size_t,
+        scratch: mp_ptr,
     );
     pub fn _flint_mpn_mul(
         r: mp_ptr,
@@ -331,7 +337,7 @@ extern "C" {
     pub fn _flint_mpn_sqrhigh_mulders_recursive(rp: mp_ptr, np: mp_srcptr, n: mp_size_t);
     pub fn _flint_mpn_sqrhigh_mulders(res: mp_ptr, u: mp_srcptr, n: mp_size_t) -> mp_limb_t;
     pub fn _flint_mpn_sqrhigh_sqr(res: mp_ptr, u: mp_srcptr, n: mp_size_t) -> mp_limb_t;
-    pub fn _flint_mpn_sqrhigh(arg1: mp_ptr, arg2: mp_srcptr, arg3: mp_size_t) -> mp_limb_t;
+    pub fn _flint_mpn_sqrhigh(res: mp_ptr, u: mp_srcptr, n: mp_size_t) -> mp_limb_t;
     #[link_name = "flint_mpn_sqrhigh__extern"]
     pub fn flint_mpn_sqrhigh(rp: mp_ptr, xp: mp_srcptr, n: mp_size_t) -> mp_limb_t;
     pub fn _flint_mpn_mulhigh_normalised(
@@ -389,6 +395,40 @@ extern "C" {
         d: mp_srcptr,
         n: mp_size_t,
         dinv: mp_srcptr,
+    ) -> mp_limb_t;
+    pub fn flint_mpn_divrem_1_preinv(
+        qp: mp_ptr,
+        up: mp_srcptr,
+        n: mp_size_t,
+        d: mp_limb_t,
+        dinv: mp_limb_t,
+        norm: libc::c_uint,
+    ) -> mp_limb_t;
+    pub fn flint_mpn_divrem_2_1_preinv_norm(
+        qp: mp_ptr,
+        up: mp_srcptr,
+        d: mp_limb_t,
+        dinv: mp_limb_t,
+    ) -> mp_limb_t;
+    pub fn flint_mpn_divrem_2_1_preinv_unnorm(
+        qp: mp_ptr,
+        up: mp_srcptr,
+        d: mp_limb_t,
+        dinv: mp_limb_t,
+        norm: libc::c_uint,
+    ) -> mp_limb_t;
+    pub fn flint_mpn_divrem_3_1_preinv_norm(
+        qp: mp_ptr,
+        up: mp_srcptr,
+        d: mp_limb_t,
+        dinv: mp_limb_t,
+    ) -> mp_limb_t;
+    pub fn flint_mpn_divrem_3_1_preinv_unnorm(
+        qp: mp_ptr,
+        up: mp_srcptr,
+        d: mp_limb_t,
+        dinv: mp_limb_t,
+        norm: libc::c_uint,
     ) -> mp_limb_t;
     pub fn flint_mpn_fmms1(
         y: mp_ptr,
@@ -539,5 +579,12 @@ extern "C" {
         exp: libc::c_long,
     ) -> f64;
     pub fn flint_mpn_rrandom(rp: mp_ptr, state: *mut flint_rand_struct, n: mp_size_t);
+    pub fn flint_mpn_rrandomb(rp: mp_ptr, state: *mut flint_rand_struct, n: flint_bitcnt_t);
     pub fn flint_mpn_urandomb(rp: mp_ptr, state: *mut flint_rand_struct, n: flint_bitcnt_t);
+    pub fn flint_mpn_urandomm(
+        rp: mp_ptr,
+        state: *mut flint_rand_struct,
+        xp: mp_srcptr,
+        xn: mp_size_t,
+    );
 }

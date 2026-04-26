@@ -3,7 +3,7 @@ from os import listdir
 from os.path import isfile, join
 
 def combine_externs(extern_path):
-    includes = ""
+    includes = "#include <gmp.h>\n#include <mpfr.h>\n"
     out = ""
     for f in listdir(extern_path):
         fp = join(extern_path, f)

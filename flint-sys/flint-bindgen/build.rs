@@ -5,27 +5,25 @@ use std::path::PathBuf;
 
 include!("scripts/bindgen_headers.rs");
 
-
 fn get_imports(header: &str) -> String {
     // Avoid glob-importing headers with bindgen-generated anonymous type names
     // that collide with mpoly_types in unrelated generated modules.
     let headers = FLINT_HEADERS.into_iter().filter(|&h| {
-        h != &header
-            && *h != "acb_dft.h"
-            && (*h != "dlog.h" || header == "dirichlet.h")
+        h != &header && *h != "acb_dft.h" && (*h != "dlog.h" || header == "dirichlet.h")
     });
     let mut out = String::from("use libc::*;\n");
     out += "use crate::deps::*;\n";
     out += "use crate::bindgen::*;\n";
 
     for h in headers {
-        let temp = h.split(".")
+        let temp = h
+            .split(".")
             .next()
             .expect("Error making import statement")
             .replace("-", "_");
         out += &format!("use crate::{}::*;\n", temp);
     }
-    return out
+    return out;
 }
 
 fn generate_bindings(
@@ -36,14 +34,14 @@ fn generate_bindings(
 ) {
     let include_arg = format!("-I{}", include_path.display());
     let include_fp = include_path.join("flint").join(header);
-    
+
     let mut out_fp = out_path.join(header);
     let mut extern_out_fp = out_path.join("extern").join(header);
     out_fp.set_extension("rs");
     extern_out_fp.set_extension("c");
 
     let imports = get_imports(header);
-    
+
     let mut builder = bindgen::Builder::default()
         .header(include_fp.to_string_lossy())
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
@@ -69,6 +67,8 @@ fn generate_bindings(
         .blocklist_item("FP_SUBNORMAL")
         .blocklist_item("FP_NORMAL")
         .blocklist_function("flint_vprintf")
+        .blocklist_function("flint_vsprintf")
+        .blocklist_function("flint_vsnprintf")
         .blocklist_function("flint_vfprintf")
         .blocklist_function("flint_va_end")
         .blocklist_function("flint_set_throw");
@@ -85,15 +85,18 @@ fn generate_bindings(
         .generate()
         .expect(&format!("Unable to generate bindings for {}", header));
 
-    bindings.write_to_file(out_fp).expect(&format!("Unable to write bindings for {}", header));
+    bindings
+        .write_to_file(out_fp)
+        .expect(&format!("Unable to write bindings for {}", header));
 }
 
 fn main() {
     println!("cargo:rustc-link-lib=flint");
-        
+
     // Use INCLUDE_DIR env variable to pass flint include dir if needed
-    let include_path = PathBuf::from(env::var("INCLUDE_DIR")
-        .expect("Environment variable INCLUDE_DIR is not defined."));
+    let include_path = PathBuf::from(
+        env::var("INCLUDE_DIR").expect("Environment variable INCLUDE_DIR is not defined."),
+    );
     let deps_include_path = env::var("DEPS_INCLUDE_DIR")
         .ok()
         .map(PathBuf::from)

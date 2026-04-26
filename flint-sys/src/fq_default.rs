@@ -123,29 +123,6 @@ impl Default for _gr_fmpz_mod_ctx_struct {
         }
     }
 }
-#[repr(C)]
-pub struct _gr_nmod_ctx_struct {
-    pub nmod: nmod_t,
-    pub a: ulong,
-}
-#[allow(clippy::unnecessary_operation, clippy::identity_op)]
-const _: () = {
-    ["Size of _gr_nmod_ctx_struct"][::std::mem::size_of::<_gr_nmod_ctx_struct>() - 32usize];
-    ["Alignment of _gr_nmod_ctx_struct"][::std::mem::align_of::<_gr_nmod_ctx_struct>() - 8usize];
-    ["Offset of field: _gr_nmod_ctx_struct::nmod"]
-        [::std::mem::offset_of!(_gr_nmod_ctx_struct, nmod) - 0usize];
-    ["Offset of field: _gr_nmod_ctx_struct::a"]
-        [::std::mem::offset_of!(_gr_nmod_ctx_struct, a) - 24usize];
-};
-impl Default for _gr_nmod_ctx_struct {
-    fn default() -> Self {
-        let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
-        unsafe {
-            ::std::ptr::write_bytes(s.as_mut_ptr(), 0, 1);
-            s.assume_init()
-        }
-    }
-}
 extern "C" {
     pub fn fq_default_ctx_init_type(
         ctx: *mut fq_default_ctx_struct,

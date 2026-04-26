@@ -6,9 +6,6 @@ use crate::flint::*;
 use crate::nmod_types::*;
 
 
-pub const NMOD_POLY_HGCD_CUTOFF: u32 = 100;
-pub const NMOD_POLY_GCD_CUTOFF: u32 = 340;
-pub const NMOD_POLY_SMALL_GCD_CUTOFF: u32 = 200;
 pub const NMOD_POLY_MULMOD_PRECOND_NONE: u32 = 0;
 pub const NMOD_POLY_MULMOD_PRECOND_SHOUP: u32 = 1;
 pub const NMOD_POLY_MULMOD_PRECOND_MATRIX: u32 = 2;
@@ -626,7 +623,8 @@ extern "C" {
     );
     pub fn _nmod_poly_bit_unpack(
         res: nn_ptr,
-        len: slong,
+        nlo: slong,
+        nhi: slong,
         mpn: nn_srcptr,
         bits: flint_bitcnt_t,
         mod_: nmod_t,
@@ -685,14 +683,12 @@ extern "C" {
         len1: slong,
         in2: nn_srcptr,
         len2: slong,
-        bits: flint_bitcnt_t,
         mod_: nmod_t,
     );
     pub fn nmod_poly_mul_KS(
         res: *mut nmod_poly_struct,
         poly1: *const nmod_poly_struct,
         poly2: *const nmod_poly_struct,
-        bits: flint_bitcnt_t,
     );
     pub fn _nmod_poly_mul_KS2(
         res: nn_ptr,
@@ -726,7 +722,6 @@ extern "C" {
         len1: slong,
         in2: nn_srcptr,
         len2: slong,
-        bits: flint_bitcnt_t,
         n: slong,
         mod_: nmod_t,
     );
@@ -734,7 +729,6 @@ extern "C" {
         res: *mut nmod_poly_struct,
         poly1: *const nmod_poly_struct,
         poly2: *const nmod_poly_struct,
-        bits: flint_bitcnt_t,
         n: slong,
     );
     pub fn _nmod_poly_mul(
@@ -750,12 +744,13 @@ extern "C" {
         poly1: *const nmod_poly_struct,
         poly2: *const nmod_poly_struct,
     );
-    pub fn _nmod_poly_mullow_fft_small_repack(
+    pub fn _nmod_poly_mulmid_fft_small_repack(
         z: nn_ptr,
         a: nn_srcptr,
         an: slong,
         b: nn_srcptr,
         bn: slong,
+        znlo: slong,
         zn: slong,
         mod_: nmod_t,
     ) -> libc::c_int;
@@ -766,6 +761,16 @@ extern "C" {
         squaring: libc::c_int,
         mod_: nmod_t,
     ) -> libc::c_int;
+    pub fn _nmod_poly_mulmid_fft_small(
+        z: nn_ptr,
+        a: nn_srcptr,
+        an: slong,
+        b: nn_srcptr,
+        bn: slong,
+        znlo: slong,
+        zn: slong,
+        mod_: nmod_t,
+    );
     pub fn _nmod_poly_mullow_fft_small(
         z: nn_ptr,
         a: nn_srcptr,
@@ -789,6 +794,57 @@ extern "C" {
         poly1: *const nmod_poly_struct,
         poly2: *const nmod_poly_struct,
         trunc: slong,
+    );
+    pub fn _nmod_poly_mulmid_classical(
+        res: nn_ptr,
+        poly1: nn_srcptr,
+        len1: slong,
+        poly2: nn_srcptr,
+        len2: slong,
+        nlo: slong,
+        nhi: slong,
+        mod_: nmod_t,
+    );
+    pub fn nmod_poly_mulmid_classical(
+        res: *mut nmod_poly_struct,
+        poly1: *const nmod_poly_struct,
+        poly2: *const nmod_poly_struct,
+        nlo: slong,
+        nhi: slong,
+    );
+    pub fn _nmod_poly_mulmid_KS(
+        res: nn_ptr,
+        poly1: nn_srcptr,
+        len1: slong,
+        poly2: nn_srcptr,
+        len2: slong,
+        nlo: slong,
+        nhi: slong,
+        mod_: nmod_t,
+    );
+    pub fn nmod_poly_mulmid_KS(
+        res: *mut nmod_poly_struct,
+        poly1: *const nmod_poly_struct,
+        poly2: *const nmod_poly_struct,
+        nlo: slong,
+        nhi: slong,
+    );
+    pub fn _nmod_poly_mulmid(
+        res: nn_ptr,
+        poly1: nn_srcptr,
+        len1: slong,
+        poly2: nn_srcptr,
+        len2: slong,
+        nlo: slong,
+        nhi: slong,
+        mod_: nmod_t,
+    );
+    pub fn nmod_poly_mulmid(
+        res: *mut nmod_poly_struct,
+        poly1: *const nmod_poly_struct,
+        poly2: *const nmod_poly_struct,
+        nlo: slong,
+        nhi: slong,
     );
     pub fn _nmod_poly_mulhigh(
         res: nn_ptr,
@@ -1068,6 +1124,16 @@ extern "C" {
         f: *const nmod_poly_struct,
         n: slong,
         g: *const nmod_poly_struct,
+    );
+    pub fn _nmod_poly_divrem_q1_preinv1(
+        Q: nn_ptr,
+        R: nn_ptr,
+        A: nn_srcptr,
+        lenA: slong,
+        B: nn_srcptr,
+        lenB: slong,
+        invL: ulong,
+        mod_: nmod_t,
     );
     pub fn _nmod_poly_divrem_basecase_preinv1(
         Q: nn_ptr,
@@ -1738,6 +1804,10 @@ extern "C" {
     pub fn _nmod_poly_hamming_weight(a: nn_srcptr, len: slong) -> slong;
     #[link_name = "nmod_poly_hamming_weight__extern"]
     pub fn nmod_poly_hamming_weight(A: *const nmod_poly_struct) -> slong;
+    pub fn nmod_poly_hgcd_iter_recursive_cutoff(mod_: nmod_t) -> slong;
+    pub fn nmod_poly_hgcd_outer_cutoff(mod_: nmod_t) -> slong;
+    pub fn nmod_poly_gcd_hgcd_cutoff(mod_: nmod_t) -> slong;
+    pub fn nmod_poly_xgcd_hgcd_cutoff(mod_: nmod_t) -> slong;
     pub fn _nmod_poly_gcd_euclidean(
         G: nn_ptr,
         A: nn_srcptr,
@@ -1747,6 +1817,19 @@ extern "C" {
         mod_: nmod_t,
     ) -> slong;
     pub fn nmod_poly_gcd_euclidean(
+        G: *mut nmod_poly_struct,
+        A: *const nmod_poly_struct,
+        B: *const nmod_poly_struct,
+    );
+    pub fn _nmod_poly_gcd_euclidean_redc_fast(
+        G: nn_ptr,
+        A: nn_srcptr,
+        lenA: slong,
+        B: nn_srcptr,
+        lenB: slong,
+        mod_: nmod_t,
+    ) -> slong;
+    pub fn nmod_poly_gcd_euclidean_redc_fast(
         G: *mut nmod_poly_struct,
         A: *const nmod_poly_struct,
         B: *const nmod_poly_struct,

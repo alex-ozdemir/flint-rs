@@ -519,7 +519,7 @@ extern "C" {
     pub fn fmpq_mpoly_reduce_easy(
         A: *mut fmpq_mpoly_struct,
         easy_length: slong,
-        arg1: *const fmpq_mpoly_ctx_struct,
+        ctx: *const fmpq_mpoly_ctx_struct,
     );
     #[link_name = "fmpq_mpoly_sort_terms__extern"]
     pub fn fmpq_mpoly_sort_terms(A: *mut fmpq_mpoly_struct, ctx: *const fmpq_mpoly_ctx_struct);

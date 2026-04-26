@@ -11,11 +11,11 @@ pub const FLINT_PSEUDOSQUARES_CUTOFF: u32 = 1000;
 pub const FLINT_PRIMES_TAB_DEFAULT_CUTOFF: u32 = 1000000;
 pub const FLINT_PRIME_PI_ODD_LOOKUP_CUTOFF: u32 = 311;
 pub const FLINT_SIEVE_SIZE: u32 = 65536;
-pub const FLINT_ODDPRIME_SMALL_CUTOFF: u32 = 4096;
 pub const FLINT_FACTOR_TRIAL_PRIMES_BEFORE_PRIMALITY_TEST: u32 = 64;
 pub const FLINT_FACTOR_TRIAL_PRIMES: u32 = 6542;
 pub const FLINT_FACTOR_SQUFOF_ITERS: u32 = 50000;
 pub const FLINT_FACTOR_ONE_LINE_ITERS: u32 = 40000;
+pub const FLINT_FACTOR_POLLARD_BRENT_ITERS: u32 = 32768;
 #[repr(C)]
 pub struct n_ecm_s {
     pub x: ulong,
@@ -60,6 +60,12 @@ extern "C" {
     pub fn n_randtest(state: *mut flint_rand_struct) -> ulong;
     pub fn n_randtest_not_zero(state: *mut flint_rand_struct) -> ulong;
     pub fn n_randtest_prime(state: *mut flint_rand_struct, proved: libc::c_int) -> ulong;
+    #[link_name = "n_mulhi__extern"]
+    pub fn n_mulhi(a: ulong, b: ulong) -> ulong;
+    #[link_name = "_n_randlimb__extern"]
+    pub fn _n_randlimb(state: *mut flint_rand_struct) -> ulong;
+    #[link_name = "_n_randint__extern"]
+    pub fn _n_randint(state: *mut flint_rand_struct, limit: ulong) -> ulong;
     pub fn n_revbin(in_: ulong, bits: ulong) -> ulong;
     pub fn n_divides(q: *mut ulong, n: ulong, p: ulong) -> libc::c_int;
     #[link_name = "n_divisible_odd_gm__extern"]
@@ -67,6 +73,24 @@ extern "C" {
     pub fn n_divrem2_precomp(q: *mut ulong, a: ulong, n: ulong, npre: f64) -> ulong;
     pub fn n_divrem2_preinv(q: *mut ulong, a: ulong, n: ulong, ninv: ulong) -> ulong;
     pub fn n_div2_preinv(a: ulong, n: ulong, ninv: ulong) -> ulong;
+    #[link_name = "n_divrem_preinv__extern"]
+    pub fn n_divrem_preinv(
+        q: *mut ulong,
+        a: ulong,
+        n: ulong,
+        ninv: ulong,
+        norm: libc::c_uint,
+    ) -> ulong;
+    #[link_name = "n_divrem_preinv_unnorm__extern"]
+    pub fn n_divrem_preinv_unnorm(
+        q: *mut ulong,
+        a: ulong,
+        n: ulong,
+        ninv: ulong,
+        norm: libc::c_uint,
+    ) -> ulong;
+    #[link_name = "n_divrem_norm__extern"]
+    pub fn n_divrem_norm(q: *mut ulong, a: ulong, n: ulong) -> ulong;
     pub fn n_factorial_mod2_preinv(n: ulong, p: ulong, pinv: ulong) -> ulong;
     pub fn n_factorial_fast_mod2_preinv(n: ulong, p: ulong, pinv: ulong) -> ulong;
     pub fn n_sqrt(a: ulong) -> ulong;
@@ -82,15 +106,13 @@ extern "C" {
     pub fn _n_pow_check(n: ulong, exp: ulong) -> ulong;
     pub fn n_root(n: ulong, root: ulong) -> ulong;
     pub fn n_rootrem(remainder: *mut ulong, n: ulong, root: ulong) -> ulong;
-    pub fn n_root_estimate(a: f64, n: libc::c_int) -> ulong;
     pub fn n_is_perfect_power235(n: ulong) -> libc::c_int;
     pub fn n_is_perfect_power(root: *mut ulong, n: ulong) -> libc::c_int;
     pub fn n_sizeinbase(n: ulong, base: libc::c_int) -> libc::c_int;
+    pub fn n_nonzero_sizeinbase10(n: ulong) -> slong;
     pub fn n_flog(n: ulong, b: ulong) -> ulong;
     pub fn n_clog(n: ulong, b: ulong) -> ulong;
     pub fn n_clog_2exp(n: ulong, b: ulong) -> ulong;
-    pub fn __gmpn_gcd_11(arg1: mp_limb_t, arg2: mp_limb_t) -> mp_limb_t;
-    pub fn __gmpn_gcd_1(arg1: mp_srcptr, arg2: mp_size_t, arg3: mp_limb_t) -> mp_limb_t;
     #[link_name = "n_gcd__extern"]
     pub fn n_gcd(x: ulong, y: ulong) -> ulong;
     pub fn n_xgcd(a: *mut ulong, b: *mut ulong, x: ulong, y: ulong) -> ulong;
@@ -139,6 +161,30 @@ extern "C" {
     pub fn n_sqrtmodn(sqrt: *mut *mut ulong, a: ulong, fac: *mut n_factor_t) -> slong;
     #[link_name = "n_invmod__extern"]
     pub fn n_invmod(x: ulong, y: ulong) -> ulong;
+    pub fn n_binvert(a: ulong) -> ulong;
+    #[link_name = "n_barrett_precomp__extern"]
+    pub fn n_barrett_precomp(n: ulong) -> ulong;
+    #[link_name = "n_mod_barrett_lazy__extern"]
+    pub fn n_mod_barrett_lazy(x: ulong, n: ulong, npre: ulong) -> ulong;
+    #[link_name = "n_mod_barrett__extern"]
+    pub fn n_mod_barrett(x: ulong, n: ulong, npre: ulong) -> ulong;
+    #[link_name = "n_lemire_precomp__extern"]
+    pub fn n_lemire_precomp(n: ulong) -> ulong;
+    #[link_name = "n_mod_lemire__extern"]
+    pub fn n_mod_lemire(x: ulong, n: ulong, npre: ulong) -> ulong;
+    pub fn n_ll_small_preinv(minv: nn_ptr, m: nn_srcptr);
+    pub fn n_ll_small_powmod_triple(
+        res1: nn_ptr,
+        res2: nn_ptr,
+        res3: nn_ptr,
+        b1: ulong,
+        b2: ulong,
+        b3: ulong,
+        exp: nn_srcptr,
+        m: nn_srcptr,
+        minv: nn_srcptr,
+    );
+    pub fn n_ll_small_2_powmod(res: nn_ptr, exp: nn_srcptr, m: nn_srcptr, minv: nn_srcptr);
     #[link_name = "n_mulmod_precomp_shoup__extern"]
     pub fn n_mulmod_precomp_shoup(a: ulong, n: ulong) -> ulong;
     #[link_name = "n_mulmod_shoup__extern"]
@@ -186,8 +232,6 @@ extern "C" {
     pub fn n_cleanup_primes();
     pub fn n_primes_arr_readonly(n: ulong) -> *const ulong;
     pub fn n_prime_inverses_arr_readonly(n: ulong) -> *const f64;
-    pub fn n_is_oddprime_small(n: ulong) -> libc::c_int;
-    pub fn n_is_oddprime_binary(n: ulong) -> libc::c_int;
     pub fn n_is_probabprime(n: ulong) -> libc::c_int;
     pub fn n_is_probabprime_fermat(n: ulong, i: ulong) -> libc::c_int;
     pub fn n_is_probabprime_fibonacci(n: ulong) -> libc::c_int;
@@ -209,6 +253,7 @@ extern "C" {
     pub fn n_prime_pi(n: ulong) -> ulong;
     pub fn n_prime_pi_bounds(lo: *mut ulong, hi: *mut ulong, n: ulong);
     pub fn n_nextprime(n: ulong, UNUSED_proved: libc::c_int) -> ulong;
+    pub fn n_ll_is_prime(nhi: ulong, nlo: ulong) -> libc::c_int;
     #[link_name = "n_factor_init__extern"]
     pub fn n_factor_init(factors: *mut n_factor_t);
     pub fn n_factor_evaluate(fac: *const n_factor_t) -> ulong;
@@ -244,10 +289,8 @@ extern "C" {
     pub fn n_factor_pollard_brent_single(
         factor: *mut ulong,
         n: ulong,
-        ninv: ulong,
         ai: ulong,
         xi: ulong,
-        normbits: ulong,
         max_iters: ulong,
     ) -> libc::c_int;
     pub fn n_factor_pollard_brent(

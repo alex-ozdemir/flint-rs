@@ -325,7 +325,7 @@ extern "C" {
     pub fn flint_mpz_init_set_readonly(z: *mut __mpz_struct, f: *const fmpz);
     pub fn fmpz_init_set_readonly(f: *mut fmpz, z: *const __mpz_struct);
     pub fn flint_mpz_clear_readonly(z: *mut __mpz_struct);
-    pub fn _fmpz_clear_readonly_mpz(arg1: *mut __mpz_struct);
+    pub fn _fmpz_clear_readonly_mpz(z: *mut __mpz_struct);
     pub fn _fmpz_clear_mpz(f: fmpz);
     pub fn _fmpz_cleanup_mpz_content();
     pub fn _fmpz_cleanup();

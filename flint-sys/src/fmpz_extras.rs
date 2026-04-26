@@ -32,9 +32,9 @@ extern "C" {
     pub fn fmpz_min(z: *mut fmpz, x: *const fmpz, y: *const fmpz);
     pub fn fmpz_lshift_mpn(
         z: *mut fmpz,
-        d: nn_srcptr,
-        dn: slong,
-        sgnbit: libc::c_int,
+        src: nn_srcptr,
+        n: slong,
+        negative: libc::c_int,
         shift: flint_bitcnt_t,
     );
     #[link_name = "fmpz_allocated_bytes__extern"]

@@ -1,6 +1,6 @@
 [package]
 name = "flint-sys"
-version = "0.8.0"
+version = "0.9.0"
 links = "flint"
 authors = ["Alex Ozdemir <aozdemir@hmc.edu>", "William Youmans <youmansw@fau.edu>"]
 edition = "2021"

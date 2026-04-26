@@ -299,21 +299,21 @@ extern "C" {
         ctx: *const fq_nmod_ctx_struct,
     );
     pub fn fq_nmod_ctx_init(
-        arg1: *mut fq_nmod_ctx_struct,
-        arg2: *mut fmpz,
-        arg3: slong,
-        arg4: *const libc::c_char,
+        ctx: *mut fq_nmod_ctx_struct,
+        p: *mut fmpz,
+        d: slong,
+        var: *const libc::c_char,
     );
     pub fn _fq_nmod_ctx_init_conway(
-        arg1: *mut fq_nmod_ctx_struct,
-        arg2: *mut fmpz,
-        arg3: slong,
-        arg4: *const libc::c_char,
+        ctx: *mut fq_nmod_ctx_struct,
+        p: *mut fmpz,
+        d: slong,
+        var: *const libc::c_char,
     ) -> libc::c_int;
     pub fn fq_nmod_ctx_init_conway(
-        arg1: *mut fq_nmod_ctx_struct,
-        arg2: *mut fmpz,
-        arg3: slong,
-        arg4: *const libc::c_char,
+        ctx: *mut fq_nmod_ctx_struct,
+        p: *mut fmpz,
+        d: slong,
+        var: *const libc::c_char,
     );
 }

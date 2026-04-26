@@ -377,22 +377,24 @@ extern "C" {
         bit_size: flint_bitcnt_t,
         negate: libc::c_int,
     );
+    pub fn fmpz_poly_bit_pack(
+        f: *mut fmpz,
+        poly: *const fmpz_poly_struct,
+        bit_size: flint_bitcnt_t,
+    );
     pub fn _fmpz_poly_bit_unpack(
         poly: *mut fmpz,
-        len: slong,
+        nlo: slong,
+        nhi: slong,
         arr: nn_srcptr,
         bit_size: flint_bitcnt_t,
         negate: libc::c_int,
     ) -> libc::c_int;
     pub fn _fmpz_poly_bit_unpack_unsigned(
         poly: *mut fmpz,
-        len: slong,
+        nlo: slong,
+        nhi: slong,
         arr: nn_srcptr,
-        bit_size: flint_bitcnt_t,
-    );
-    pub fn fmpz_poly_bit_pack(
-        f: *mut fmpz,
-        poly: *const fmpz_poly_struct,
         bit_size: flint_bitcnt_t,
     );
     pub fn fmpz_poly_bit_unpack(
@@ -451,11 +453,63 @@ extern "C" {
         len1: slong,
         poly2: *const fmpz,
         len2: slong,
+        nlo: slong,
+        nhi: slong,
     );
     pub fn fmpz_poly_mulmid_classical(
         res: *mut fmpz_poly_struct,
         poly1: *const fmpz_poly_struct,
         poly2: *const fmpz_poly_struct,
+        nlo: slong,
+        nhi: slong,
+    );
+    pub fn _fmpz_poly_mulmid_SS(
+        res: *mut fmpz,
+        poly1: *const fmpz,
+        len1: slong,
+        poly2: *const fmpz,
+        len2: slong,
+        nlo: slong,
+        nhi: slong,
+    );
+    pub fn fmpz_poly_mulmid_SS(
+        res: *mut fmpz_poly_struct,
+        poly1: *const fmpz_poly_struct,
+        poly2: *const fmpz_poly_struct,
+        nlo: slong,
+        nhi: slong,
+    );
+    pub fn _fmpz_poly_mulmid_KS(
+        res: *mut fmpz,
+        poly1: *const fmpz,
+        len1: slong,
+        poly2: *const fmpz,
+        len2: slong,
+        nlo: slong,
+        nhi: slong,
+    );
+    pub fn fmpz_poly_mulmid_KS(
+        res: *mut fmpz_poly_struct,
+        poly1: *const fmpz_poly_struct,
+        poly2: *const fmpz_poly_struct,
+        nlo: slong,
+        nhi: slong,
+    );
+    pub fn _fmpz_poly_mulmid(
+        res: *mut fmpz,
+        poly1: *const fmpz,
+        len1: slong,
+        poly2: *const fmpz,
+        len2: slong,
+        nlo: slong,
+        nhi: slong,
+    );
+    pub fn fmpz_poly_mulmid(
+        res: *mut fmpz_poly_struct,
+        poly1: *const fmpz_poly_struct,
+        poly2: *const fmpz_poly_struct,
+        nlo: slong,
+        nhi: slong,
     );
     pub fn fmpz_poly_mul_karatsuba(
         res: *mut fmpz_poly_struct,
@@ -528,11 +582,11 @@ extern "C" {
         n: slong,
     );
     pub fn _fmpz_poly_mul_SS(
-        output: *mut fmpz,
-        input1: *const fmpz,
-        length1: slong,
-        input2: *const fmpz,
-        length2: slong,
+        res: *mut fmpz,
+        poly1: *const fmpz,
+        len1: slong,
+        poly2: *const fmpz,
+        len2: slong,
     );
     pub fn fmpz_poly_mul_SS(
         res: *mut fmpz_poly_struct,
@@ -540,11 +594,11 @@ extern "C" {
         poly2: *const fmpz_poly_struct,
     );
     pub fn _fmpz_poly_mullow_SS(
-        output: *mut fmpz,
-        input1: *const fmpz,
-        length1: slong,
-        input2: *const fmpz,
-        length2: slong,
+        res: *mut fmpz,
+        poly1: *const fmpz,
+        len1: slong,
+        poly2: *const fmpz,
+        len2: slong,
         n: slong,
     );
     pub fn fmpz_poly_mullow_SS(

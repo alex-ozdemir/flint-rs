@@ -360,42 +360,6 @@ impl Default for mpoly_parse_struct {
 pub type mpoly_parse_t = [mpoly_parse_struct; 1usize];
 extern "C" {
     pub fn mpoly_divide_threads(n: slong, la: f64, lb: f64) -> slong;
-    pub fn __gmpn_add_n(
-        arg1: mp_ptr,
-        arg2: mp_srcptr,
-        arg3: mp_srcptr,
-        arg4: mp_size_t,
-    ) -> mp_limb_t;
-    pub fn __gmpn_sub_n(
-        arg1: mp_ptr,
-        arg2: mp_srcptr,
-        arg3: mp_srcptr,
-        arg4: mp_size_t,
-    ) -> mp_limb_t;
-    pub fn __gmpn_addmul_1(
-        arg1: mp_ptr,
-        arg2: mp_srcptr,
-        arg3: mp_size_t,
-        arg4: mp_limb_t,
-    ) -> mp_limb_t;
-    pub fn __gmpn_submul_1(
-        arg1: mp_ptr,
-        arg2: mp_srcptr,
-        arg3: mp_size_t,
-        arg4: mp_limb_t,
-    ) -> mp_limb_t;
-    pub fn __gmpn_rshift(
-        arg1: mp_ptr,
-        arg2: mp_srcptr,
-        arg3: mp_size_t,
-        arg4: libc::c_uint,
-    ) -> mp_limb_t;
-    pub fn __gmpn_mul_1(
-        arg1: mp_ptr,
-        arg2: mp_srcptr,
-        arg3: mp_size_t,
-        arg4: mp_limb_t,
-    ) -> mp_limb_t;
     pub fn mpoly_ctx_init(ctx: *mut mpoly_ctx_struct, nvars: slong, ord: ordering_t);
     pub fn mpoly_ctx_init_rand(
         mctx: *mut mpoly_ctx_struct,

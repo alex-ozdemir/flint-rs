@@ -656,6 +656,24 @@ extern "C" {
         n: slong,
         ctx: *const fmpz_mod_ctx_struct,
     );
+    pub fn _fmpz_mod_poly_mulmid(
+        res: *mut fmpz,
+        poly1: *const fmpz,
+        len1: slong,
+        poly2: *const fmpz,
+        len2: slong,
+        nlo: slong,
+        nhi: slong,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
+    pub fn fmpz_mod_poly_mulmid(
+        res: *mut fmpz_mod_poly_struct,
+        poly1: *const fmpz_mod_poly_struct,
+        poly2: *const fmpz_mod_poly_struct,
+        nlo: slong,
+        nhi: slong,
+        ctx: *const fmpz_mod_ctx_struct,
+    );
     pub fn _fmpz_mod_poly_sqr(
         res: *mut fmpz,
         poly: *const fmpz,

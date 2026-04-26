@@ -12,16 +12,18 @@ pub const BLOCK_SIZE: u32 = 262144;
 #[repr(C)]
 pub struct prime_t {
     pub pinv: ulong,
+    pub pinv2: ulong,
     pub p: libc::c_int,
     pub size: libc::c_char,
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of prime_t"][::std::mem::size_of::<prime_t>() - 16usize];
+    ["Size of prime_t"][::std::mem::size_of::<prime_t>() - 24usize];
     ["Alignment of prime_t"][::std::mem::align_of::<prime_t>() - 8usize];
     ["Offset of field: prime_t::pinv"][::std::mem::offset_of!(prime_t, pinv) - 0usize];
-    ["Offset of field: prime_t::p"][::std::mem::offset_of!(prime_t, p) - 8usize];
-    ["Offset of field: prime_t::size"][::std::mem::offset_of!(prime_t, size) - 12usize];
+    ["Offset of field: prime_t::pinv2"][::std::mem::offset_of!(prime_t, pinv2) - 8usize];
+    ["Offset of field: prime_t::p"][::std::mem::offset_of!(prime_t, p) - 16usize];
+    ["Offset of field: prime_t::size"][::std::mem::offset_of!(prime_t, size) - 20usize];
 };
 impl Default for prime_t {
     fn default() -> Self {

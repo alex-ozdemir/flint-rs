@@ -92,7 +92,7 @@ extern "C" {
     pub static mut global_thread_pool: thread_pool_t;
     pub static mut global_thread_pool_initialized: libc::c_int;
     pub fn thread_pool_idle_loop(varg: *mut libc::c_void) -> *mut libc::c_void;
-    pub fn thread_pool_init(T: *mut thread_pool_struct, l: slong);
+    pub fn thread_pool_init(T: *mut thread_pool_struct, size: slong);
     pub fn thread_pool_set_affinity(
         T: *mut thread_pool_struct,
         cpus: *mut libc::c_int,

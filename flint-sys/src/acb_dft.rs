@@ -471,7 +471,7 @@ extern "C" {
         f: acb_srcptr,
         g: acb_srcptr,
         len: slong,
-        arg1: *const acb_dft_rad2_struct,
+        rad2: *const acb_dft_rad2_struct,
         prec: slong,
     );
     pub fn _acb_dft_precomp_init(
