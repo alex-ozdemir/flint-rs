@@ -318,6 +318,14 @@ impl Default for fmpz_comb_temp_struct {
 }
 pub type fmpz_comb_temp_t = [fmpz_comb_temp_struct; 1usize];
 extern "C" {
+    pub fn _fmpz_new_mpz() -> mpz_ptr;
+    pub fn _fmpz_promote(f: *mut fmpz) -> mpz_ptr;
+    pub fn _fmpz_promote_val(f: *mut fmpz) -> mpz_ptr;
+    pub fn _fmpz_init_readonly_mpz(f: *mut fmpz, z: *const __mpz_struct);
+    pub fn flint_mpz_init_set_readonly(z: *mut __mpz_struct, f: *const fmpz);
+    pub fn fmpz_init_set_readonly(f: *mut fmpz, z: *const __mpz_struct);
+    pub fn flint_mpz_clear_readonly(z: *mut __mpz_struct);
+    pub fn _fmpz_clear_readonly_mpz(arg1: *mut __mpz_struct);
     pub fn _fmpz_clear_mpz(f: fmpz);
     pub fn _fmpz_cleanup_mpz_content();
     pub fn _fmpz_cleanup();
@@ -403,6 +411,11 @@ extern "C" {
     pub fn fmpz_get_nmod(f: *const fmpz, mod_: nmod_t) -> ulong;
     pub fn fmpz_get_d(f: *const fmpz) -> f64;
     pub fn fmpz_set_d(f: *mut fmpz, c: f64);
+    pub fn fmpz_get_mpz(x: *mut __mpz_struct, f: *const fmpz);
+    pub fn fmpz_set_mpz(f: *mut fmpz, x: *const __mpz_struct);
+    pub fn fmpz_get_mpf(x: *mut __mpf_struct, f: *const fmpz);
+    pub fn fmpz_set_mpf(f: *mut fmpz, x: *const __mpf_struct);
+    pub fn fmpz_get_mpfr(x: *mut __mpfr_struct, f: *const fmpz, rnd: mpfr_rnd_t);
     pub fn fmpz_get_mpn(n: *mut nn_ptr, n_in: *mut fmpz) -> libc::c_int;
     #[link_name = "fmpz_is_zero__extern"]
     pub fn fmpz_is_zero(f: *const fmpz) -> libc::c_int;

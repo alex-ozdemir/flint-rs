@@ -7,7 +7,13 @@ include!("scripts/bindgen_headers.rs");
 
 
 fn get_imports(header: &str) -> String {
-    let headers = FLINT_HEADERS.into_iter().filter(|&h| h != &header);
+    // Avoid glob-importing headers with bindgen-generated anonymous type names
+    // that collide with mpoly_types in unrelated generated modules.
+    let headers = FLINT_HEADERS.into_iter().filter(|&h| {
+        h != &header
+            && *h != "acb_dft.h"
+            && (*h != "dlog.h" || header == "dirichlet.h")
+    });
     let mut out = String::from("use libc::*;\n");
     out += "use crate::deps::*;\n";
     out += "use crate::bindgen::*;\n";
@@ -22,7 +28,12 @@ fn get_imports(header: &str) -> String {
     return out
 }
 
-fn generate_bindings(header: &str, include_path: &PathBuf, out_path: &PathBuf) {
+fn generate_bindings(
+    header: &str,
+    include_path: &PathBuf,
+    deps_include_path: Option<&PathBuf>,
+    out_path: &PathBuf,
+) {
     let include_arg = format!("-I{}", include_path.display());
     let include_fp = include_path.join("flint").join(header);
     
@@ -33,7 +44,7 @@ fn generate_bindings(header: &str, include_path: &PathBuf, out_path: &PathBuf) {
 
     let imports = get_imports(header);
     
-    let bindings = bindgen::Builder::default()
+    let mut builder = bindgen::Builder::default()
         .header(include_fp.to_string_lossy())
         .parse_callbacks(Box::new(bindgen::CargoCallbacks::new()))
         .wrap_static_fns(true)
@@ -60,7 +71,17 @@ fn generate_bindings(header: &str, include_path: &PathBuf, out_path: &PathBuf) {
         .blocklist_function("flint_vprintf")
         .blocklist_function("flint_vfprintf")
         .blocklist_function("flint_va_end")
-        .blocklist_function("flint_set_throw")
+        .blocklist_function("flint_set_throw");
+
+    if let Some(deps_include_path) = deps_include_path {
+        builder = builder.clang_arg(format!("-I{}", deps_include_path.display()));
+    }
+
+    let bindings = builder
+        .clang_arg("-include")
+        .clang_arg("gmp.h")
+        .clang_arg("-include")
+        .clang_arg("mpfr.h")
         .generate()
         .expect(&format!("Unable to generate bindings for {}", header));
 
@@ -73,9 +94,13 @@ fn main() {
     // Use INCLUDE_DIR env variable to pass flint include dir if needed
     let include_path = PathBuf::from(env::var("INCLUDE_DIR")
         .expect("Environment variable INCLUDE_DIR is not defined."));
+    let deps_include_path = env::var("DEPS_INCLUDE_DIR")
+        .ok()
+        .map(PathBuf::from)
+        .filter(|p| p.is_dir());
     let out_path = PathBuf::from(env::var("OUT_DIR").unwrap());
 
     for h in FLINT_HEADERS {
-        generate_bindings(h, &include_path, &out_path);
+        generate_bindings(h, &include_path, deps_include_path.as_ref(), &out_path);
     }
 }

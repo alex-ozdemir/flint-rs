@@ -52,9 +52,29 @@ extern "C" {
     pub fn padic_set_ui(rop: *mut padic_struct, op: ulong, ctx: *const padic_ctx_struct);
     pub fn padic_set_fmpz(rop: *mut padic_struct, op: *const fmpz, ctx: *const padic_ctx_struct);
     pub fn padic_set_fmpq(rop: *mut padic_struct, op: *const fmpq, ctx: *const padic_ctx_struct);
+    pub fn padic_set_mpz(
+        rop: *mut padic_struct,
+        op: *const __mpz_struct,
+        ctx: *const padic_ctx_struct,
+    );
+    pub fn padic_set_mpq(
+        rop: *mut padic_struct,
+        op: *const __mpq_struct,
+        ctx: *const padic_ctx_struct,
+    );
     pub fn padic_set(rop: *mut padic_struct, op: *const padic_struct, ctx: *const padic_ctx_struct);
     pub fn padic_get_fmpz(rop: *mut fmpz, op: *const padic_struct, ctx: *const padic_ctx_struct);
     pub fn padic_get_fmpq(rop: *mut fmpq, op: *const padic_struct, ctx: *const padic_ctx_struct);
+    pub fn padic_get_mpz(
+        rop: *mut __mpz_struct,
+        op: *const padic_struct,
+        ctx: *const padic_ctx_struct,
+    );
+    pub fn padic_get_mpq(
+        rop: *mut __mpq_struct,
+        op: *const padic_struct,
+        ctx: *const padic_ctx_struct,
+    );
     #[link_name = "padic_swap__extern"]
     pub fn padic_swap(op1: *mut padic_struct, op2: *mut padic_struct);
     #[link_name = "padic_zero__extern"]

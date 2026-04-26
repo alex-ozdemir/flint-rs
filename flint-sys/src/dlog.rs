@@ -58,13 +58,13 @@ pub const DLOG_BSGS_LIM: u32 = 500;
 pub const DLOG_LOOP_MAX_FACTOR: u32 = 6;
 pub const DLOG_G_SMALL: u32 = 0;
 pub const DLOG_G_BIG: u32 = 1;
-pub const DLOG_MODPE: _bindgen_ty_1 = 0;
-pub const DLOG_CRT: _bindgen_ty_1 = 1;
-pub const DLOG_POWER: _bindgen_ty_1 = 2;
-pub const DLOG_BSGS: _bindgen_ty_1 = 3;
-pub const DLOG_TABLE: _bindgen_ty_1 = 4;
-pub const DLOG_23: _bindgen_ty_1 = 5;
-pub type _bindgen_ty_1 = libc::c_uint;
+pub const DLOG_MODPE: _bindgen_ty_2 = 0;
+pub const DLOG_CRT: _bindgen_ty_2 = 1;
+pub const DLOG_POWER: _bindgen_ty_2 = 2;
+pub const DLOG_BSGS: _bindgen_ty_2 = 3;
+pub const DLOG_TABLE: _bindgen_ty_2 = 4;
+pub const DLOG_23: _bindgen_ty_2 = 5;
+pub type _bindgen_ty_2 = libc::c_uint;
 pub type dlog_preconn_ptr = *mut dlog_precomp_struct;
 #[repr(C)]
 pub struct dlog_1modpe_struct {

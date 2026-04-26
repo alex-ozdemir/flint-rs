@@ -89,8 +89,8 @@ extern "C" {
     pub fn n_flog(n: ulong, b: ulong) -> ulong;
     pub fn n_clog(n: ulong, b: ulong) -> ulong;
     pub fn n_clog_2exp(n: ulong, b: ulong) -> ulong;
-    pub fn __gmpn_gcd_11(arg1: ulong, arg2: ulong) -> ulong;
-    pub fn __gmpn_gcd_1(arg1: nn_srcptr, arg2: libc::c_long, arg3: ulong) -> ulong;
+    pub fn __gmpn_gcd_11(arg1: mp_limb_t, arg2: mp_limb_t) -> mp_limb_t;
+    pub fn __gmpn_gcd_1(arg1: mp_srcptr, arg2: mp_size_t, arg3: mp_limb_t) -> mp_limb_t;
     #[link_name = "n_gcd__extern"]
     pub fn n_gcd(x: ulong, y: ulong) -> ulong;
     pub fn n_xgcd(a: *mut ulong, b: *mut ulong, x: ulong, y: ulong) -> ulong;

@@ -2358,4 +2358,4 @@ void _arb_poly_mul_monic__extern(arb_ptr res, arb_srcptr poly1, slong len1, arb_
 slong arb_poly_allocated_bytes__extern(const arb_poly_t x) { return arb_poly_allocated_bytes(x); }
 int n_zerobits__extern(ulong e) { return n_zerobits(e); }
 slong poly_pow_length__extern(slong poly_len, ulong exp, slong trunc) { return poly_pow_length(poly_len, exp, trunc); }
-
+mpfr_rnd_t arf_rnd_to_mpfr__extern(arf_rnd_t rnd) { return arf_rnd_to_mpfr(rnd); }

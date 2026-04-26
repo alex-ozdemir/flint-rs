@@ -188,7 +188,7 @@ impl Default for fmpz_mpolyd_ctx_struct {
 }
 pub type fmpz_mpolyd_ctx_t = [fmpz_mpolyd_ctx_struct; 1usize];
 #[repr(C)]
-pub struct _bindgen_ty_2 {
+pub struct _bindgen_ty_3 {
     pub powers: *mut fmpz,
     pub length: slong,
     pub alloc: slong,
@@ -196,17 +196,17 @@ pub struct _bindgen_ty_2 {
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _bindgen_ty_2"][::std::mem::size_of::<_bindgen_ty_2>() - 32usize];
-    ["Alignment of _bindgen_ty_2"][::std::mem::align_of::<_bindgen_ty_2>() - 8usize];
-    ["Offset of field: _bindgen_ty_2::powers"]
-        [::std::mem::offset_of!(_bindgen_ty_2, powers) - 0usize];
-    ["Offset of field: _bindgen_ty_2::length"]
-        [::std::mem::offset_of!(_bindgen_ty_2, length) - 8usize];
-    ["Offset of field: _bindgen_ty_2::alloc"]
-        [::std::mem::offset_of!(_bindgen_ty_2, alloc) - 16usize];
-    ["Offset of field: _bindgen_ty_2::tmp"][::std::mem::offset_of!(_bindgen_ty_2, tmp) - 24usize];
+    ["Size of _bindgen_ty_3"][::std::mem::size_of::<_bindgen_ty_3>() - 32usize];
+    ["Alignment of _bindgen_ty_3"][::std::mem::align_of::<_bindgen_ty_3>() - 8usize];
+    ["Offset of field: _bindgen_ty_3::powers"]
+        [::std::mem::offset_of!(_bindgen_ty_3, powers) - 0usize];
+    ["Offset of field: _bindgen_ty_3::length"]
+        [::std::mem::offset_of!(_bindgen_ty_3, length) - 8usize];
+    ["Offset of field: _bindgen_ty_3::alloc"]
+        [::std::mem::offset_of!(_bindgen_ty_3, alloc) - 16usize];
+    ["Offset of field: _bindgen_ty_3::tmp"][::std::mem::offset_of!(_bindgen_ty_3, tmp) - 24usize];
 };
-impl Default for _bindgen_ty_2 {
+impl Default for _bindgen_ty_3 {
     fn default() -> Self {
         let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
         unsafe {
@@ -215,7 +215,7 @@ impl Default for _bindgen_ty_2 {
         }
     }
 }
-pub type fmpz_pow_cache_t = [_bindgen_ty_2; 1usize];
+pub type fmpz_pow_cache_t = [_bindgen_ty_3; 1usize];
 #[repr(C)]
 pub struct fmpz_mpoly_geobucket {
     pub polys: [fmpz_mpoly_struct; 32usize],
@@ -1814,7 +1814,7 @@ extern "C" {
     ) -> libc::c_int;
     #[doc = "Internal functions (guaranteed to change without notice)"]
     pub fn mpoly_void_ring_init_fmpz_mpoly_ctx(
-        R: *mut _bindgen_ty_1,
+        R: *mut _bindgen_ty_2,
         ctx: *const fmpz_mpoly_ctx_struct,
     );
     pub fn fmpz_mpoly_pow_fps(
@@ -1880,19 +1880,19 @@ extern "C" {
     pub fn fmpz_mpolyd_init(poly: *mut fmpz_mpolyd_struct, nvars: slong);
     pub fn fmpz_mpolyd_fit_length(poly: *mut fmpz_mpolyd_struct, len: slong);
     pub fn fmpz_mpolyd_clear(poly: *mut fmpz_mpolyd_struct);
-    pub fn fmpz_pow_cache_init(T: *mut _bindgen_ty_2, val: *const fmpz);
-    pub fn fmpz_pow_cache_clear(T: *mut _bindgen_ty_2);
+    pub fn fmpz_pow_cache_init(T: *mut _bindgen_ty_3, val: *const fmpz);
+    pub fn fmpz_pow_cache_clear(T: *mut _bindgen_ty_3);
     pub fn fmpz_pow_cache_mulpow_ui(
         a: *mut fmpz,
         b: *const fmpz,
         k: ulong,
-        T: *mut _bindgen_ty_2,
+        T: *mut _bindgen_ty_3,
     ) -> libc::c_int;
     pub fn fmpz_pow_cache_mulpow_fmpz(
         a: *mut fmpz,
         b: *const fmpz,
         k: *const fmpz,
-        T: *mut _bindgen_ty_2,
+        T: *mut _bindgen_ty_3,
     ) -> libc::c_int;
     pub fn fmpz_mpoly_to_mpoly_perm_deflate_threaded_pool(
         A: *mut fmpz_mpoly_struct,

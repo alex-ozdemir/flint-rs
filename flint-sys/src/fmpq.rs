@@ -162,15 +162,22 @@ extern "C" {
     pub fn fmpq_one(res: *mut fmpq);
     #[link_name = "fmpq_set__extern"]
     pub fn fmpq_set(dest: *mut fmpq, src: *const fmpq);
+    pub fn flint_mpq_init_set_readonly(z: *mut __mpq_struct, f: *const fmpq);
+    pub fn flint_mpq_clear_readonly(z: *mut __mpq_struct);
+    pub fn fmpq_init_set_readonly(f: *mut fmpq, z: *const __mpq_struct);
     pub fn fmpq_clear_readonly(f: *mut fmpq);
     pub fn _fmpq_set_si(rnum: *mut fmpz, rden: *mut fmpz, p: slong, q: ulong);
     pub fn _fmpq_set_ui(rnum: *mut fmpz, rden: *mut fmpz, p: ulong, q: ulong);
     pub fn fmpq_set_si(res: *mut fmpq, p: slong, q: ulong);
     pub fn fmpq_set_ui(res: *mut fmpq, p: ulong, q: ulong);
     pub fn fmpq_set_fmpz_frac(res: *mut fmpq, p: *const fmpz, q: *const fmpz);
+    pub fn fmpq_set_mpq(dest: *mut fmpq, src: *const __mpq_struct);
     #[link_name = "fmpq_set_fmpz__extern"]
     pub fn fmpq_set_fmpz(q: *mut fmpq, n: *const fmpz);
     pub fn fmpq_get_d(a: *const fmpq) -> f64;
+    pub fn fmpq_get_mpz_frac(a: *mut __mpz_struct, b: *mut __mpz_struct, c: *mut fmpq);
+    pub fn fmpq_get_mpq(dest: *mut __mpq_struct, src: *const fmpq);
+    pub fn fmpq_get_mpfr(r: *mut __mpfr_struct, x: *const fmpq, rnd: mpfr_rnd_t) -> libc::c_int;
     pub fn fmpq_set_str(
         res: *mut fmpq,
         str_: *const libc::c_char,

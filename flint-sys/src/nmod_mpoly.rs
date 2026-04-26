@@ -1373,7 +1373,7 @@ extern "C" {
     );
     #[doc = "Internal functions (guaranteed to change without notice)"]
     pub fn mpoly_void_ring_init_nmod_mpoly_ctx(
-        R: *mut _bindgen_ty_1,
+        R: *mut _bindgen_ty_2,
         ctx: *const nmod_mpoly_ctx_struct,
     );
     pub fn nmod_mpolyl_lead_coeff(

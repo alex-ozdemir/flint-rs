@@ -361,28 +361,41 @@ pub type mpoly_parse_t = [mpoly_parse_struct; 1usize];
 extern "C" {
     pub fn mpoly_divide_threads(n: slong, la: f64, lb: f64) -> slong;
     pub fn __gmpn_add_n(
-        arg1: nn_ptr,
-        arg2: nn_srcptr,
-        arg3: nn_srcptr,
-        arg4: libc::c_long,
-    ) -> ulong;
+        arg1: mp_ptr,
+        arg2: mp_srcptr,
+        arg3: mp_srcptr,
+        arg4: mp_size_t,
+    ) -> mp_limb_t;
     pub fn __gmpn_sub_n(
-        arg1: nn_ptr,
-        arg2: nn_srcptr,
-        arg3: nn_srcptr,
-        arg4: libc::c_long,
-    ) -> ulong;
-    pub fn __gmpn_addmul_1(arg1: nn_ptr, arg2: nn_srcptr, arg3: libc::c_long, arg4: ulong)
-        -> ulong;
-    pub fn __gmpn_submul_1(arg1: nn_ptr, arg2: nn_srcptr, arg3: libc::c_long, arg4: ulong)
-        -> ulong;
+        arg1: mp_ptr,
+        arg2: mp_srcptr,
+        arg3: mp_srcptr,
+        arg4: mp_size_t,
+    ) -> mp_limb_t;
+    pub fn __gmpn_addmul_1(
+        arg1: mp_ptr,
+        arg2: mp_srcptr,
+        arg3: mp_size_t,
+        arg4: mp_limb_t,
+    ) -> mp_limb_t;
+    pub fn __gmpn_submul_1(
+        arg1: mp_ptr,
+        arg2: mp_srcptr,
+        arg3: mp_size_t,
+        arg4: mp_limb_t,
+    ) -> mp_limb_t;
     pub fn __gmpn_rshift(
-        arg1: nn_ptr,
-        arg2: nn_srcptr,
-        arg3: libc::c_long,
+        arg1: mp_ptr,
+        arg2: mp_srcptr,
+        arg3: mp_size_t,
         arg4: libc::c_uint,
-    ) -> ulong;
-    pub fn __gmpn_mul_1(arg1: nn_ptr, arg2: nn_srcptr, arg3: libc::c_long, arg4: ulong) -> ulong;
+    ) -> mp_limb_t;
+    pub fn __gmpn_mul_1(
+        arg1: mp_ptr,
+        arg2: mp_srcptr,
+        arg3: mp_size_t,
+        arg4: mp_limb_t,
+    ) -> mp_limb_t;
     pub fn mpoly_ctx_init(ctx: *mut mpoly_ctx_struct, nvars: slong, ord: ordering_t);
     pub fn mpoly_ctx_init_rand(
         mctx: *mut mpoly_ctx_struct,
@@ -1504,29 +1517,29 @@ extern "C" {
         N: slong,
         cmpmask: *const ulong,
     ) -> libc::c_int;
-    pub fn mpoly_void_ring_elem_init(R: *mut _bindgen_ty_1) -> *mut libc::c_void;
-    pub fn mpoly_void_ring_elem_clear(a: *mut libc::c_void, R: *mut _bindgen_ty_1);
-    pub fn mpoly_univar_init(A: *mut mpoly_univar_struct, R: *mut _bindgen_ty_1);
-    pub fn mpoly_univar_init2(A: *mut mpoly_univar_struct, len: slong, R: *mut _bindgen_ty_1);
-    pub fn mpoly_univar_clear(A: *mut mpoly_univar_struct, R: *mut _bindgen_ty_1);
+    pub fn mpoly_void_ring_elem_init(R: *mut _bindgen_ty_2) -> *mut libc::c_void;
+    pub fn mpoly_void_ring_elem_clear(a: *mut libc::c_void, R: *mut _bindgen_ty_2);
+    pub fn mpoly_univar_init(A: *mut mpoly_univar_struct, R: *mut _bindgen_ty_2);
+    pub fn mpoly_univar_init2(A: *mut mpoly_univar_struct, len: slong, R: *mut _bindgen_ty_2);
+    pub fn mpoly_univar_clear(A: *mut mpoly_univar_struct, R: *mut _bindgen_ty_2);
     pub fn mpoly_univar_swap(A: *mut mpoly_univar_struct, B: *mut mpoly_univar_struct);
-    pub fn mpoly_univar_fit_length(A: *mut mpoly_univar_struct, len: slong, R: *mut _bindgen_ty_1);
+    pub fn mpoly_univar_fit_length(A: *mut mpoly_univar_struct, len: slong, R: *mut _bindgen_ty_2);
     pub fn mpoly_univar_pseudo_gcd_ducos(
         G: *mut mpoly_univar_struct,
         B: *mut mpoly_univar_struct,
         A: *mut mpoly_univar_struct,
-        R: *mut _bindgen_ty_1,
+        R: *mut _bindgen_ty_2,
     ) -> libc::c_int;
     pub fn mpoly_univar_resultant(
         r: *mut libc::c_void,
         fx: *mut mpoly_univar_struct,
         gx: *mut mpoly_univar_struct,
-        R: *mut _bindgen_ty_1,
+        R: *mut _bindgen_ty_2,
     ) -> libc::c_int;
     pub fn mpoly_univar_discriminant(
         d: *mut libc::c_void,
         fx: *mut mpoly_univar_struct,
-        R: *mut _bindgen_ty_1,
+        R: *mut _bindgen_ty_2,
     ) -> libc::c_int;
     pub fn mpoly_parse_init(E: *mut mpoly_parse_struct);
     pub fn mpoly_parse_clear(E: *mut mpoly_parse_struct);

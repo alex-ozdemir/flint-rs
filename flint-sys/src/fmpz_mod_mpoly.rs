@@ -1207,7 +1207,7 @@ extern "C" {
         ctx: *const fmpz_mod_mpoly_ctx_struct,
     );
     pub fn mpoly_void_ring_init_fmpz_mod_mpoly_ctx(
-        R: *mut _bindgen_ty_1,
+        R: *mut _bindgen_ty_2,
         ctx: *const fmpz_mod_mpoly_ctx_struct,
     );
     pub fn fmpz_mod_mpoly_geobucket_init(

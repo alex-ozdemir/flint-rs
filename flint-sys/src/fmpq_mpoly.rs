@@ -883,7 +883,7 @@ extern "C" {
     ) -> libc::c_int;
     #[doc = "Internal functions (guaranteed to change without notice)"]
     pub fn mpoly_void_ring_init_fmpq_mpoly_ctx(
-        R: *mut _bindgen_ty_1,
+        R: *mut _bindgen_ty_2,
         ctx: *const fmpq_mpoly_ctx_struct,
     );
     pub fn fmpq_mpoly_repack_bits(

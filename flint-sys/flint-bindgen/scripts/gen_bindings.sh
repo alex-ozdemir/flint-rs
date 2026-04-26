@@ -42,8 +42,13 @@ pushd flint-bindgen/scripts
 python headers.py ../flint-out/include/flint
 popd
 echo "Generating bindings..."
+deps_include_dir=${gmp_mpfr_dir}/out/include
 pushd flint-bindgen
-INCLUDE_DIR=flint-out/include cargo b -vv >${logdir}/04-bindgen.log 2>&1
+if [ -d "${deps_include_dir}" ]; then
+    INCLUDE_DIR=flint-out/include DEPS_INCLUDE_DIR=${deps_include_dir} cargo b -vv >${logdir}/04-bindgen.log 2>&1
+else
+    INCLUDE_DIR=flint-out/include cargo b -vv >${logdir}/04-bindgen.log 2>&1
+fi
 bindings_dir=$(realpath $(find target/debug/build -type d -name "flint-bindgen-*" -execdir test -d "{}/out" \; -print))
 popd
 echo "Consolidating function wrappers..."

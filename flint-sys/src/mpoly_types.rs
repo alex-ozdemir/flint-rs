@@ -173,7 +173,7 @@ impl Default for fq_nmod_mpoly_ctx_struct {
 }
 pub type fq_nmod_mpoly_ctx_t = [fq_nmod_mpoly_ctx_struct; 1usize];
 #[repr(C)]
-pub struct _bindgen_ty_1 {
+pub struct _bindgen_ty_2 {
     pub elem_size: slong,
     pub ctx: *const libc::c_void,
     pub init: ::std::option::Option<
@@ -277,38 +277,38 @@ pub struct _bindgen_ty_1 {
 }
 #[allow(clippy::unnecessary_operation, clippy::identity_op)]
 const _: () = {
-    ["Size of _bindgen_ty_1"][::std::mem::size_of::<_bindgen_ty_1>() - 152usize];
-    ["Alignment of _bindgen_ty_1"][::std::mem::align_of::<_bindgen_ty_1>() - 8usize];
-    ["Offset of field: _bindgen_ty_1::elem_size"]
-        [::std::mem::offset_of!(_bindgen_ty_1, elem_size) - 0usize];
-    ["Offset of field: _bindgen_ty_1::ctx"][::std::mem::offset_of!(_bindgen_ty_1, ctx) - 8usize];
-    ["Offset of field: _bindgen_ty_1::init"][::std::mem::offset_of!(_bindgen_ty_1, init) - 16usize];
-    ["Offset of field: _bindgen_ty_1::clear"]
-        [::std::mem::offset_of!(_bindgen_ty_1, clear) - 24usize];
-    ["Offset of field: _bindgen_ty_1::is_zero"]
-        [::std::mem::offset_of!(_bindgen_ty_1, is_zero) - 32usize];
-    ["Offset of field: _bindgen_ty_1::zero"][::std::mem::offset_of!(_bindgen_ty_1, zero) - 40usize];
-    ["Offset of field: _bindgen_ty_1::one"][::std::mem::offset_of!(_bindgen_ty_1, one) - 48usize];
-    ["Offset of field: _bindgen_ty_1::set_fmpz"]
-        [::std::mem::offset_of!(_bindgen_ty_1, set_fmpz) - 56usize];
-    ["Offset of field: _bindgen_ty_1::set"][::std::mem::offset_of!(_bindgen_ty_1, set) - 64usize];
-    ["Offset of field: _bindgen_ty_1::swap"][::std::mem::offset_of!(_bindgen_ty_1, swap) - 72usize];
-    ["Offset of field: _bindgen_ty_1::neg"][::std::mem::offset_of!(_bindgen_ty_1, neg) - 80usize];
-    ["Offset of field: _bindgen_ty_1::add"][::std::mem::offset_of!(_bindgen_ty_1, add) - 88usize];
-    ["Offset of field: _bindgen_ty_1::sub"][::std::mem::offset_of!(_bindgen_ty_1, sub) - 96usize];
-    ["Offset of field: _bindgen_ty_1::mul_fmpz"]
-        [::std::mem::offset_of!(_bindgen_ty_1, mul_fmpz) - 104usize];
-    ["Offset of field: _bindgen_ty_1::mul"][::std::mem::offset_of!(_bindgen_ty_1, mul) - 112usize];
-    ["Offset of field: _bindgen_ty_1::divexact"]
-        [::std::mem::offset_of!(_bindgen_ty_1, divexact) - 120usize];
-    ["Offset of field: _bindgen_ty_1::divides"]
-        [::std::mem::offset_of!(_bindgen_ty_1, divides) - 128usize];
-    ["Offset of field: _bindgen_ty_1::pow_fmpz"]
-        [::std::mem::offset_of!(_bindgen_ty_1, pow_fmpz) - 136usize];
-    ["Offset of field: _bindgen_ty_1::length"]
-        [::std::mem::offset_of!(_bindgen_ty_1, length) - 144usize];
+    ["Size of _bindgen_ty_2"][::std::mem::size_of::<_bindgen_ty_2>() - 152usize];
+    ["Alignment of _bindgen_ty_2"][::std::mem::align_of::<_bindgen_ty_2>() - 8usize];
+    ["Offset of field: _bindgen_ty_2::elem_size"]
+        [::std::mem::offset_of!(_bindgen_ty_2, elem_size) - 0usize];
+    ["Offset of field: _bindgen_ty_2::ctx"][::std::mem::offset_of!(_bindgen_ty_2, ctx) - 8usize];
+    ["Offset of field: _bindgen_ty_2::init"][::std::mem::offset_of!(_bindgen_ty_2, init) - 16usize];
+    ["Offset of field: _bindgen_ty_2::clear"]
+        [::std::mem::offset_of!(_bindgen_ty_2, clear) - 24usize];
+    ["Offset of field: _bindgen_ty_2::is_zero"]
+        [::std::mem::offset_of!(_bindgen_ty_2, is_zero) - 32usize];
+    ["Offset of field: _bindgen_ty_2::zero"][::std::mem::offset_of!(_bindgen_ty_2, zero) - 40usize];
+    ["Offset of field: _bindgen_ty_2::one"][::std::mem::offset_of!(_bindgen_ty_2, one) - 48usize];
+    ["Offset of field: _bindgen_ty_2::set_fmpz"]
+        [::std::mem::offset_of!(_bindgen_ty_2, set_fmpz) - 56usize];
+    ["Offset of field: _bindgen_ty_2::set"][::std::mem::offset_of!(_bindgen_ty_2, set) - 64usize];
+    ["Offset of field: _bindgen_ty_2::swap"][::std::mem::offset_of!(_bindgen_ty_2, swap) - 72usize];
+    ["Offset of field: _bindgen_ty_2::neg"][::std::mem::offset_of!(_bindgen_ty_2, neg) - 80usize];
+    ["Offset of field: _bindgen_ty_2::add"][::std::mem::offset_of!(_bindgen_ty_2, add) - 88usize];
+    ["Offset of field: _bindgen_ty_2::sub"][::std::mem::offset_of!(_bindgen_ty_2, sub) - 96usize];
+    ["Offset of field: _bindgen_ty_2::mul_fmpz"]
+        [::std::mem::offset_of!(_bindgen_ty_2, mul_fmpz) - 104usize];
+    ["Offset of field: _bindgen_ty_2::mul"][::std::mem::offset_of!(_bindgen_ty_2, mul) - 112usize];
+    ["Offset of field: _bindgen_ty_2::divexact"]
+        [::std::mem::offset_of!(_bindgen_ty_2, divexact) - 120usize];
+    ["Offset of field: _bindgen_ty_2::divides"]
+        [::std::mem::offset_of!(_bindgen_ty_2, divides) - 128usize];
+    ["Offset of field: _bindgen_ty_2::pow_fmpz"]
+        [::std::mem::offset_of!(_bindgen_ty_2, pow_fmpz) - 136usize];
+    ["Offset of field: _bindgen_ty_2::length"]
+        [::std::mem::offset_of!(_bindgen_ty_2, length) - 144usize];
 };
-impl Default for _bindgen_ty_1 {
+impl Default for _bindgen_ty_2 {
     fn default() -> Self {
         let mut s = ::std::mem::MaybeUninit::<Self>::uninit();
         unsafe {
@@ -317,7 +317,7 @@ impl Default for _bindgen_ty_1 {
         }
     }
 }
-pub type mpoly_void_ring_t = [_bindgen_ty_1; 1usize];
+pub type mpoly_void_ring_t = [_bindgen_ty_2; 1usize];
 #[repr(C)]
 pub struct mpoly_gcd_info_struct {
     pub Amax_exp: *mut ulong,

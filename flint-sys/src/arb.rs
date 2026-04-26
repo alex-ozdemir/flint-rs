@@ -216,6 +216,7 @@ extern "C" {
     pub fn arb_contains_fmpq(x: *const arb_struct, y: *const fmpq) -> libc::c_int;
     pub fn arb_contains_fmpz(x: *const arb_struct, y: *const fmpz) -> libc::c_int;
     pub fn arb_contains_si(x: *const arb_struct, y: slong) -> libc::c_int;
+    pub fn arb_contains_mpfr(x: *const arb_struct, y: *const __mpfr_struct) -> libc::c_int;
     pub fn arb_overlaps(x: *const arb_struct, y: *const arb_struct) -> libc::c_int;
     pub fn arb_contains(x: *const arb_struct, y: *const arb_struct) -> libc::c_int;
     pub fn arb_contains_interior(x: *const arb_struct, y: *const arb_struct) -> libc::c_int;
@@ -244,11 +245,22 @@ extern "C" {
         b: *const arf_struct,
         prec: slong,
     );
+    pub fn arb_set_interval_mpfr(
+        x: *mut arb_struct,
+        a: *const __mpfr_struct,
+        b: *const __mpfr_struct,
+        prec: slong,
+    );
     pub fn arb_get_interval_arf(
         a: *mut arf_struct,
         b: *mut arf_struct,
         x: *const arb_struct,
         prec: slong,
+    );
+    pub fn arb_get_interval_mpfr(
+        a: *mut __mpfr_struct,
+        b: *mut __mpfr_struct,
+        x: *const arb_struct,
     );
     pub fn arb_set_interval_mag(
         res: *mut arb_struct,
@@ -285,6 +297,7 @@ extern "C" {
         prec: slong,
     );
     pub fn arb_can_round_arf(x: *const arb_struct, prec: slong, rnd: arf_rnd_t) -> libc::c_int;
+    pub fn arb_can_round_mpfr(x: *const arb_struct, prec: slong, rnd: mpfr_rnd_t) -> libc::c_int;
     pub fn arb_add(z: *mut arb_struct, x: *const arb_struct, y: *const arb_struct, prec: slong);
     pub fn arb_add_arf(z: *mut arb_struct, x: *const arb_struct, y: *const arf_struct, prec: slong);
     pub fn arb_add_ui(z: *mut arb_struct, x: *const arb_struct, y: ulong, prec: slong);

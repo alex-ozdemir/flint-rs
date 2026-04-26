@@ -27,6 +27,8 @@ extern "C" {
     pub fn arf_rounds_down(rnd: arf_rnd_t, sgnbit: libc::c_int) -> libc::c_int;
     #[link_name = "arf_rounds_up__extern"]
     pub fn arf_rounds_up(rnd: arf_rnd_t, sgnbit: libc::c_int) -> libc::c_int;
+    #[link_name = "arf_rnd_to_mpfr__extern"]
+    pub fn arf_rnd_to_mpfr(rnd: arf_rnd_t) -> mpfr_rnd_t;
     pub fn _arf_promote(x: *mut arf_struct, n: slong);
     pub fn _arf_demote(x: *mut arf_struct);
     #[link_name = "arf_init__extern"]
@@ -163,6 +165,21 @@ extern "C" {
     pub fn arf_neg_round(
         y: *mut arf_struct,
         x: *const arf_struct,
+        prec: slong,
+        rnd: arf_rnd_t,
+    ) -> libc::c_int;
+    pub fn arf_get_mpfr(
+        x: *mut __mpfr_struct,
+        y: *const arf_struct,
+        rnd: mpfr_rnd_t,
+    ) -> libc::c_int;
+    pub fn arf_set_mpfr(x: *mut arf_struct, y: *const __mpfr_struct);
+    pub fn _arf_call_mpfr_func(
+        r1: arf_ptr,
+        r2: arf_ptr,
+        func: ::std::option::Option<unsafe extern "C" fn() -> libc::c_int>,
+        x: arf_srcptr,
+        y: arf_srcptr,
         prec: slong,
         rnd: arf_rnd_t,
     ) -> libc::c_int;
